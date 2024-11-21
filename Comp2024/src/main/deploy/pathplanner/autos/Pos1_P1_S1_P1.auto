@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.76,
+      "y": 6.66
+    },
+    "rotation": 60.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pos1_P1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P1-S1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1-P1"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "AutoPreloadScore",
+  "choreoAuto": false
+}
