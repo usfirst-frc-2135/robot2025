@@ -48,7 +48,7 @@
   "folder": "FromSpike",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -26.6
   },
   "useDefaultConstraints": true
 }

@@ -69,7 +69,7 @@
   "folder": "FromPreload_0",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 47.0
   },
   "useDefaultConstraints": true
 }
