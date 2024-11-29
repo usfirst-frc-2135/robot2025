@@ -5,7 +5,6 @@ package frc.robot.lib.phoenix;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -37,8 +36,8 @@ public final class CTREConfigs6
 
     // Current limit settings
     inRotaryConfig.CurrentLimits.SupplyCurrentLimit = 25.0;       // Amps
-    inRotaryConfig.CurrentLimits.SupplyCurrentThreshold = 25.0;   // Amps
-    inRotaryConfig.CurrentLimits.SupplyTimeThreshold = 0.001;     // Seconds
+    inRotaryConfig.CurrentLimits.SupplyCurrentLowerLimit = 25.0;  // Amps
+    inRotaryConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;  // Seconds
     inRotaryConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     inRotaryConfig.CurrentLimits.StatorCurrentLimit = 100.0;       // Amps
@@ -95,8 +94,8 @@ public final class CTREConfigs6
     double kQuarterRotation = 0.25;
     double CompRobotOffset = -0.015;
 
-    config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
     if (Robot.isReal( ))
       config.MagnetSensor.MagnetOffset =
           (Robot.isComp( )) ? (-0.311768 - kQuarterRotation + CompRobotOffset) : (0.1184 - kQuarterRotation);
@@ -119,8 +118,8 @@ public final class CTREConfigs6
     // inRotaryConfig.ClosedLoopRamps.*                           // Seconds to ramp
 
     shooterConfig.CurrentLimits.SupplyCurrentLimit = 35.0;        // Amps
-    shooterConfig.CurrentLimits.SupplyCurrentThreshold = 35.0;    // Amps
-    shooterConfig.CurrentLimits.SupplyTimeThreshold = 0.001;      // Seconds
+    shooterConfig.CurrentLimits.SupplyCurrentLowerLimit = 35.0;   // Amps
+    shooterConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;   // Seconds
     shooterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     // shooterConfig.CurrentLimits.StatorCurrentLimit = 100.0;        // Amps
@@ -167,8 +166,8 @@ public final class CTREConfigs6
 
     // Current limit settings
     fdRotaryConfig.CurrentLimits.SupplyCurrentLimit = 32.0;       // Amps
-    fdRotaryConfig.CurrentLimits.SupplyCurrentThreshold = 32.0;   // Amps
-    fdRotaryConfig.CurrentLimits.SupplyTimeThreshold = 0.001;     // Seconds
+    fdRotaryConfig.CurrentLimits.SupplyCurrentLowerLimit = 32.0;  // Amps
+    fdRotaryConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;  // Seconds
     fdRotaryConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     fdRotaryConfig.CurrentLimits.StatorCurrentLimit = 150.0;       // Amps
@@ -224,8 +223,8 @@ public final class CTREConfigs6
     CANcoderConfiguration config = new CANcoderConfiguration( );
     double kQuarterRotation = 0.25;
 
-    config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
     if (Robot.isReal( ))
       config.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (0.059814 - kQuarterRotation) : (-0.2581 - kQuarterRotation);
     else
@@ -238,7 +237,7 @@ public final class CTREConfigs6
    * 
    * Climber motors (2) - Falcon 500
    */
-  public static TalonFXConfiguration climberFXConfig(double min, double max)
+  public static TalonFXConfiguration climberFXConfig(boolean inverted, double min, double max)
   {
     TalonFXConfiguration climberConfig = new TalonFXConfiguration( );
 
@@ -248,8 +247,8 @@ public final class CTREConfigs6
 
     // Current limit settings
     climberConfig.CurrentLimits.SupplyCurrentLimit = 80.0;        // Amps
-    climberConfig.CurrentLimits.SupplyCurrentThreshold = 80.0;    // Amps
-    climberConfig.CurrentLimits.SupplyTimeThreshold = 0.001;      // Seconds
+    climberConfig.CurrentLimits.SupplyCurrentLowerLimit = 80.0;   // Amps
+    climberConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;   // Seconds
     climberConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     climberConfig.CurrentLimits.StatorCurrentLimit = 800.0;        // Amps
@@ -268,7 +267,7 @@ public final class CTREConfigs6
 
     // Motor output settings
     climberConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;   // Percentage
-    climberConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    climberConfig.MotorOutput.Inverted = (inverted) ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
     climberConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Open Loop settings

@@ -4,13 +4,19 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
+import org.json.simple.parser.ParseException;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -77,8 +83,8 @@ public class RobotContainer
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
   private static final CommandXboxController          m_operatorPad   = new CommandXboxController(Constants.kOperatorPadPort);
 
-  private static final double                         kMaxSpeed       = TunerConstants.kSpeedAt12VoltsMps; // Maximum top speed
-  private static final double                         kMaxAngularRate = 3.0 * Math.PI;                     // 1.5 rotations per second max angular velocity
+  private static final double                         kMaxSpeed       = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // Maximum top speed
+  private static final double                         kMaxAngularRate = 3.0 * Math.PI;                                      // 1.5 rotations per second max angular velocity
   private Command                                     m_autoCommand;
 
   // Setting up bindings for necessary control of the swerve drive platform
@@ -95,6 +101,9 @@ public class RobotContainer
   private final SwerveRequest.PointWheelsAt           point           = new SwerveRequest.PointWheelsAt( );
   private final SwerveRequest.RobotCentric            aim             = new SwerveRequest.RobotCentric( );
   private final SwerveRequest.Idle                    idle            = new SwerveRequest.Idle( );
+  @SuppressWarnings("unused")
+  private final SwerveRequest.RobotCentric            forwardStraight =
+      new SwerveRequest.RobotCentric( ).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   private final Telemetry                             logger          = new Telemetry(kMaxSpeed);
 
@@ -105,7 +114,7 @@ public class RobotContainer
   private final Vision                                m_vision        = new Vision( );
 
   // These subsystems may use LED or vision and must be created afterward
-  private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.DriveTrain;
+  public final CommandSwerveDrivetrain                m_drivetrain    = TunerConstants.createDrivetrain( );
   private final Intake                                m_intake        = new Intake( );
   private final Shooter                               m_shooter       = new Shooter( );
   private final Feeder                                m_feeder        = new Feeder( );
@@ -157,8 +166,8 @@ public class RobotContainer
       Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE3.toString( ), "Pos3_Stop"),
 
       Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE1.toString( ), "Pos1_L1"),
-      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE2.toString( ), "Pos2_L2"),
-      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE3.toString( ), "Pos3_L3"),
+      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE2.toString( ), "Pos2_L4"),
+      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE3.toString( ), "Pos3_L5"),
 
       Map.entry(AutoChooser.AUTOPRELOADLEAVE.toString( ) + StartPose.POSE1.toString( ), "Pos1_P0_L0"),
       Map.entry(AutoChooser.AUTOPRELOADLEAVE.toString( ) + StartPose.POSE2.toString( ), "Pos2_P2_L2"),
@@ -180,9 +189,9 @@ public class RobotContainer
       Map.entry(AutoChooser.AUTOPRELOADCLINE.toString( ) + StartPose.POSE2.toString( ), "Pos2_P2_C5_P4_C4_P4"),
       Map.entry(AutoChooser.AUTOPRELOADCLINE.toString( ) + StartPose.POSE3.toString( ), "Pos3_P4_C5_P4_C4_P4"),
 
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE1.toString( ), "Pos1_test1"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE2.toString( ), "Pos2_test2"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE3.toString( ), "Pos3_test3") //
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE1.toString( ), "Pos1_Test1"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE2.toString( ), "Pos2_Test2"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE3.toString( ), "Pos3_Test3") //
   ));
 
   // Shuffleboard objects
@@ -197,7 +206,6 @@ public class RobotContainer
   {
     Robot.timeMarker("robotContainer: before DAQ thread");
 
-    m_drivetrain.getDaqThread( ).setThreadPriority(99);                   // Start swerve telemetry thread
     facing.HeadingController = new PhoenixPIDController(10.0, 0.0, 0.0);  // Swerve steer PID for facing request
 
     addDashboardWidgets( );           // Add dashboard widgets for commands
@@ -287,7 +295,7 @@ public class RobotContainer
     m_driverPad.rightBumper( ).onTrue(new AcquireNote(m_intake, m_led, m_hid));
     m_driverPad.rightBumper( ).onFalse(new RetractIntake(m_intake, m_led, m_hid));
     m_driverPad.back( ).whileTrue(m_drivetrain.applyRequest(( ) -> brake));                       // aka View
-    m_driverPad.start( ).onTrue(m_drivetrain.runOnce(( ) -> m_drivetrain.seedFieldRelative( )));  // aka Menu
+    m_driverPad.start( ).onTrue(m_drivetrain.runOnce(( ) -> m_drivetrain.seedFieldCentric( )));  // aka Menu
 
     //
     // Driver - POV buttons
@@ -437,7 +445,17 @@ public class RobotContainer
     }
 
     // Get list of paths within the auto
-    List<PathPlannerPath> ppPathList = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
+    List<PathPlannerPath> ppPathList;
+    try
+    {
+      ppPathList = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
+    }
+    catch (ParseException | IOException e)
+    {
+      DataLogManager.log(String.format("getAuto: ERROR - parse or IO exception when reading the auto file"));
+      return m_autoCommand = m_drivetrain.applyRequest(( ) -> idle);
+    }
+
     if (ppPathList.isEmpty( ))
     {
       DataLogManager.log(String.format("getAuto: ERROR - auto path list is empty"));
@@ -458,9 +476,17 @@ public class RobotContainer
     // }
 
     // Set field centric robot position to start of auto sequence
-    Pose2d startPose = initialPath.getPreviewStartingHolonomicPose( );
-    if (startPose != null)
-      m_drivetrain.seedFieldRelative(startPose);
+    Optional<Pose2d> startPose;
+    try
+    {
+      startPose = initialPath.getStartingHolonomicPose( );
+    }
+    catch (Exception nullException)
+    {
+      DataLogManager.log(String.format("getAuto: starting pose is missing"));
+      return m_autoCommand = m_drivetrain.applyRequest(( ) -> idle);
+    }
+    m_drivetrain.resetPose(startPose.get( ));
 
     // Create the correct base command and pass the path list
     switch (autoOption)
