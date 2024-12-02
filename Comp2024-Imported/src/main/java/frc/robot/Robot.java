@@ -80,10 +80,7 @@ public class Robot extends TimedRobot
   @Override
   public void disabledInit( )
   {
-    DataLogManager.log(String.format("===================================================================="));
-    DataLogManager.log(String.format("disabledInit: Match %s%s, %s Alliance", DriverStation.getMatchType( ).toString( ),
-        DriverStation.getMatchNumber( ), DriverStation.getAlliance( ).toString( )));
-    DataLogManager.log(String.format("===================================================================="));
+    displayMatchBanner("disabledInit");
 
     Robot.timeMarker("disabledInit: before init");
 
@@ -118,10 +115,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit( )
   {
-    DataLogManager.log(String.format("===================================================================="));
-    DataLogManager.log(String.format("autonomousInit: Match %s%s, %s Alliance", DriverStation.getMatchType( ).toString( ),
-        DriverStation.getMatchNumber( ), DriverStation.getAlliance( ).toString( )));
-    DataLogManager.log(String.format("===================================================================="));
+    displayMatchBanner("autonomousInit");
 
     if (m_autonomousCommand != null)
     {
@@ -155,10 +149,7 @@ public class Robot extends TimedRobot
   @Override
   public void teleopInit( )
   {
-    DataLogManager.log(String.format("===================================================================="));
-    DataLogManager.log(String.format("teleopInit: Match %s%s, %s Alliance", DriverStation.getMatchType( ).toString( ),
-        DriverStation.getMatchNumber( ), DriverStation.getAlliance( ).toString( )));
-    DataLogManager.log(String.format("===================================================================="));
+    displayMatchBanner("teleopInit");
 
     // Make sure that the autonomous command stops running when Teleop starts running
     if (m_autonomousCommand != null)
@@ -257,6 +248,18 @@ public class Robot extends TimedRobot
         .log(String.format("***** TimeMarker ***** absolute: %.3f relative: %.3f - %s", current, current - m_timeMark, msg));
 
     m_timeMark = current;
+  }
+
+  /****************************************************************************
+   * 
+   * Display a mode change banner for the match type and number
+   */
+  public static void displayMatchBanner(String msg)
+  {
+    DataLogManager.log(String.format("===================================================================="));
+    DataLogManager.log(String.format("%s: Match %s%s, %s Alliance", msg, DriverStation.getMatchType( ).toString( ),
+        DriverStation.getMatchNumber( ), DriverStation.getAlliance( ).toString( )));
+    DataLogManager.log(String.format("===================================================================="));
   }
 
 }
