@@ -30,8 +30,7 @@ public class Robot extends TimedRobot
    * 
    * This function runs when the Robot class is first started and used for initialization.
    */
-  @Override
-  public void robotInit( )
+  public Robot( )
   {
     // Starts recording to data log
     DataLogManager.start( );
