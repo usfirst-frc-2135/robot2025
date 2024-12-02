@@ -95,7 +95,7 @@ public final class CTREConfigs6
     double CompRobotOffset = -0.015;
 
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
     if (Robot.isReal( ))
       config.MagnetSensor.MagnetOffset =
           (Robot.isComp( )) ? (-0.311768 - kQuarterRotation + CompRobotOffset) : (0.1184 - kQuarterRotation);
@@ -224,7 +224,7 @@ public final class CTREConfigs6
     double kQuarterRotation = 0.25;
 
     config.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
     if (Robot.isReal( ))
       config.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (0.059814 - kQuarterRotation) : (-0.2581 - kQuarterRotation);
     else
