@@ -4,13 +4,13 @@
   "holonomicMode": true,
   "pathFolders": [
     "FromCenterline",
-    "FromPreload_0",
-    "FromPreload_1",
-    "FromPreload_2",
-    "FromPreload_3",
+    "FromP0",
+    "FromP1",
+    "FromP2",
+    "FromP3",
+    "FromP4",
     "FromSpike",
-    "FromStartPose",
-    "FromPreload_4"
+    "FromStartPose"
   ],
   "autoFolders": [
     "AutoLeave",
@@ -30,7 +30,6 @@
   "robotMass": 63.6,
   "robotMOI": 6.883,
   "robotTrackwidth": 0.577,
-  "robotWheelbase": 0.577,
   "driveWheelRadius": 0.051,
   "driveGearing": 6.746,
   "maxDriveSpeed": 4.063,

@@ -77,7 +77,7 @@ public class RobotContainer
 {
   private final boolean                               m_macOSXSim     = false;        // Enables Mac OS X controller compatibility in simulation
   private static final String                         kAutoTab        = "Autonomous"; // Shuffleboard tab name for autonomous mode
-  //private static final String                         kCommandTab     = "Command";    // Shuffleboard tab name for commands
+  // private static final String                         kCommandTab     = "Command";    // Shuffleboard tab name for commands
 
   // Gamepad controllers
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
@@ -206,7 +206,7 @@ public class RobotContainer
   {
     Robot.timeMarker("robotContainer: before DAQ thread");
 
-    facing.HeadingController = new PhoenixPIDController(10.0, 0.0, 0.0);  // Swerve steer PID for facing request
+    facing.HeadingController = new PhoenixPIDController(10.0, 0.0, 0.0);  // Swerve steer PID for facing swerve request
 
     addDashboardWidgets( );           // Add dashboard widgets for commands
 
