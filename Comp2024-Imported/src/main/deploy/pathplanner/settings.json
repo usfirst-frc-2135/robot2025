@@ -30,6 +30,7 @@
   "robotMass": 63.6,
   "robotMOI": 6.883,
   "robotTrackwidth": 0.577,
+  "robotWheelbase": 0.577,
   "driveWheelRadius": 0.051,
   "driveGearing": 6.746,
   "maxDriveSpeed": 4.063,
