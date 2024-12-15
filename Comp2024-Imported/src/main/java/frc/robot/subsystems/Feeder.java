@@ -93,8 +93,8 @@ public class Feeder extends SubsystemBase
   //               hstop  climb   amp    handoff hstop
   //      Comp     -152.1 -135.0  -130.2 -1.5    -1.5
   //      Practice -152.1 -135.0  -130.2 -1.5    -1.5
-  private static final double       kRotaryAngleClimb    = Robot.isComp( ) ? -135.0 : -135.0;  // TODO: Tune on practice robot
-  private static final double       kRotaryAngleAmp      = Robot.isComp( ) ? -130.2 : -130.2;  //
+  private static final double       kRotaryAngleClimb    = Robot.isComp( ) ? -135.0 : -135.0;  // One degree from hardstops
+  private static final double       kRotaryAngleAmp      = Robot.isComp( ) ? -130.2 : -130.2;  // 
   private static final double       kRotaryAngleHandoff  = Robot.isComp( ) ? -1.5 : -1.5;      //
   private static final double       kRotaryAngleMin      = kRotaryAngleClimb - 3.0;
   private static final double       kRotaryAngleMax      = kRotaryAngleHandoff + 0.5;
