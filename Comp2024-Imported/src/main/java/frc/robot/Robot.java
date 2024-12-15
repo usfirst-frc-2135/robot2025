@@ -1,6 +1,7 @@
 
 package frc.robot;
 
+// import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.net.PortForwarder;
@@ -34,6 +35,7 @@ public class Robot extends TimedRobot
   {
     // Starts recording to data log
     DataLogManager.start( );
+    // SignalLogger.start();
     DriverStation.startDataLog(DataLogManager.getLog( )); // Logs joystick data
     Robot.timeMarker("robotInit: start");
 
