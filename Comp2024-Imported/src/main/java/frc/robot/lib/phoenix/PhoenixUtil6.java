@@ -155,7 +155,7 @@ public class PhoenixUtil6
         fwvBuild = (statusSignal.getValue( ) >> 0) & 0xff;
       }
       else
-        Timer.delay(0.1);
+        Timer.delay(0.100);
     }
 
     canCoderValid = (fwvMajor >= Constants.kPhoenix6MajorVersion);
@@ -194,7 +194,7 @@ public class PhoenixUtil6
     // Display Talon firmware versions
     deviceID = pigeon2.getDeviceID( );
 
-    Timer.delay(0.25);
+    Timer.delay(0.250);
 
     // This can take multiple attempts before ready
     for (int i = 0; i < kRetries && fwvMajor == 0; i++)
@@ -209,7 +209,7 @@ public class PhoenixUtil6
         fwvBuild = (statusSignal.getValue( ) >> 0) & 0xff;
       }
       else
-        Timer.delay(0.1);
+        Timer.delay(0.100);
     }
 
     pigeon2Valid = (fwvMajor >= Constants.kPhoenix6MajorVersion);
