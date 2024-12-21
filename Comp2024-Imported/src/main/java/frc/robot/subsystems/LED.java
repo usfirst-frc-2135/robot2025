@@ -20,6 +20,11 @@ import com.ctre.phoenix.led.TwinkleOffAnimation;
 import com.ctre.phoenix.led.TwinkleOffAnimation.TwinkleOffPercent;
 
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -64,14 +69,14 @@ public class LED extends SubsystemBase
   private Animation                        m_previousAnimation = null;
 
   // Shuffleboard objects
-  // private static final String              kLEDTab             = "LED";
-  // ShuffleboardTab                          m_ledTab            = Shuffleboard.getTab(kLEDTab);
-  // ShuffleboardLayout                       m_ledList           =
-  //     m_ledTab.getLayout("LED", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
-  // ComplexWidget                            m_colorWidget       = m_ledList.add("color", m_colorChooser);
-  // ComplexWidget                            m_animationWidget   = m_ledList.add("animation", m_animationChooser);
-  // ComplexWidget                            m_commandEntry      =
-  //     m_ledList.add("LEDSet", this.getLEDCommand(COLOR.DASHBOARD, ANIMATION.DASHBOARD));
+  private static final String              kLEDTab             = "LED";
+  ShuffleboardTab                          m_ledTab            = Shuffleboard.getTab(kLEDTab);
+  ShuffleboardLayout                       m_ledList           =
+      m_ledTab.getLayout("LED", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
+  ComplexWidget                            m_colorWidget       = m_ledList.add("color", m_colorChooser);
+  ComplexWidget                            m_animationWidget   = m_ledList.add("animation", m_animationChooser);
+  ComplexWidget                            m_commandEntry      =
+      m_ledList.add("LEDSet", this.getLEDCommand(COLOR.DASHBOARD, ANIMATION.DASHBOARD));
 
   /****************************************************************************
    * 

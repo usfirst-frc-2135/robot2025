@@ -160,7 +160,6 @@ public class Feeder extends SubsystemBase
       m_subsystemTab.getLayout("Roller", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
   private GenericEntry              m_rollSpeedEntry     = m_rollerList.add("rollSpeed", 0.0).getEntry( );
   private GenericEntry              m_rollSupCurEntry    = m_rollerList.add("rollSupCur", 0.0).getEntry( );
-  // private GenericEntry                      m_rollStatCurEntry   = m_rollerList.add("rollStatCur", 0.0).getEntry( );
 
   private ShuffleboardLayout        m_rotaryList         =
       m_subsystemTab.getLayout("Rotary", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 3);

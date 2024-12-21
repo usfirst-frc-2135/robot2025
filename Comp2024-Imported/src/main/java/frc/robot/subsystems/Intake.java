@@ -160,15 +160,13 @@ public class Intake extends SubsystemBase
   private ShuffleboardTab           m_subsystemTab        = Shuffleboard.getTab(kSubsystemName);
   private ShuffleboardLayout        m_rollerList          =
       m_subsystemTab.getLayout("Roller", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
-  private GenericEntry              m_rollValidEntry      = m_rollerList.add("rollValid", false).getEntry( );
-  // private GenericEntry               m_rollSpeedEntry      = m_rollerList.add("rollSpeed", 0.0).getEntry( );
-  // private GenericEntry               m_rollSupCurEntry     = m_rollerList.add("rollSupCur", 0.0).getEntry( );
-  // private GenericEntry                      m_rollStatCurEntry    = m_rollerList.add("rollStatCur", 0.0).getEntry( );
+  private GenericEntry              m_rollSpeedEntry      = m_rollerList.add("rollSpeed", 0.0).getEntry( );
+  private GenericEntry              m_rollSupCurEntry     = m_rollerList.add("rollSupCur", 0.0).getEntry( );
 
   private ShuffleboardLayout        m_rotaryList          =
       m_subsystemTab.getLayout("Rotary", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 3);
   private GenericEntry              m_rotDegreesEntry     = m_rotaryList.add("rotDegrees", 0.0).getEntry( );
-  // private GenericEntry               m_rotCLoopErrorEntry  = m_rotaryList.add("rotCLoopError", 0.0).getEntry( );
+  private GenericEntry              m_rotCLoopErrorEntry  = m_rotaryList.add("rotCLoopError", 0.0).getEntry( );
 
   private ShuffleboardLayout        m_statusList          =
       m_subsystemTab.getLayout("Status", BuiltInLayouts.kList).withPosition(4, 0).withSize(2, 3);
@@ -246,14 +244,14 @@ public class Intake extends SubsystemBase
     m_noteDetected = m_noteDebouncer.calculate(m_noteInIntake.get( ));
 
     // Update dashboard
-    // m_rollSpeedEntry.setDouble(m_rollerMotor.get( ));
-    // m_rollSupCurEntry.setDouble(m_rollerMotor.getSupplyCurrent( ));
+    m_rollSpeedEntry.setDouble(m_rollerMotor.get( ));
+    m_rollSupCurEntry.setDouble(m_rollerMotor.getSupplyCurrent( ));
 
     m_ccDegreesEntry.setDouble(m_ccDegrees);
     m_rotDegreesEntry.setDouble(m_currentDegrees);
     m_noteDetectedEntry.setBoolean(m_noteDetected);
     m_targetDegreesEntry.setDouble(m_targetDegrees);
-    // m_rotCLoopErrorEntry.setDouble(m_targetDegrees - m_currentDegrees);
+    m_rotCLoopErrorEntry.setDouble(m_targetDegrees - m_currentDegrees);
   }
 
   /****************************************************************************
@@ -302,6 +300,7 @@ public class Intake extends SubsystemBase
     cmdList.add("InRollAcquire", getMoveToPositionCommand(INRollerMode.ACQUIRE, this::getCurrentPosition));
     cmdList.add("InRollExpel", getMoveToPositionCommand(INRollerMode.EXPEL, this::getCurrentPosition));
     cmdList.add("InRollShoot", getMoveToPositionCommand(INRollerMode.SHOOT, this::getCurrentPosition));
+    cmdList.add("InRollHandoff", getMoveToPositionCommand(INRollerMode.HANDOFF, this::getCurrentPosition));
     cmdList.add("InRollHold", getMoveToPositionCommand(INRollerMode.HOLD, this::getCurrentPosition));
 
     cmdList.add("InRotDeploy", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeDeployed));

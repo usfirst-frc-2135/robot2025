@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -22,10 +23,13 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -78,7 +82,7 @@ public class RobotContainer
 {
   private final boolean                               m_macOSXSim     = false;        // Enables Mac OS X controller compatibility in simulation
   private static final String                         kAutoTab        = "Autonomous"; // Shuffleboard tab name for autonomous mode
-  // private static final String                         kCommandTab     = "Command";    // Shuffleboard tab name for commands
+  private static final String                         kCommandTab     = "Command";    // Shuffleboard tab name for commands
 
   // Gamepad controllers
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
@@ -246,26 +250,29 @@ public class RobotContainer
     autoTab.add("AutoChooserRun", new InstantCommand(( ) -> getAutonomousCommand( ))).withPosition(6, 2);
 
     // Command tab
-    // ShuffleboardTab cmdTab = Shuffleboard.getTab(kCommandTab);
-    // cmdTab.add("AcquireNote", new AcquireNote(m_intake, m_led, m_hid));
-    // cmdTab.add("ExpelNote", new ExpelNote(m_intake, m_led));
-    // cmdTab.add("HandoffToFeeder", new HandoffToFeeder(m_intake, m_feeder, m_led));
+    ShuffleboardTab cmdTab = Shuffleboard.getTab(kCommandTab);
+    cmdTab.add("AcquireNote", new AcquireNote(m_intake, m_led, m_hid));
+    cmdTab.add("ExpelNote", new ExpelNote(m_intake, m_led));
+    cmdTab.add("HandoffToFeeder", new HandoffToFeeder(m_intake, m_feeder, m_led));
+    cmdTab.add("PassNote", new PassNote(m_shooter, m_intake, m_led));
+    cmdTab.add("PrepareToClimb", new PrepareToClimb(m_climber, m_feeder));
+    cmdTab.add("RetractIntake", new RetractIntake(m_intake, m_led, m_hid));
+    cmdTab.add("ScoreAmp", new ScoreAmp(m_feeder));
+    cmdTab.add("ScoreSpeaker", new ScoreSpeaker(m_shooter, m_intake, m_led));
 
-    // cmdTab.add("RetractIntake", new RetractIntake(m_intake, m_led, m_hid));
-    // cmdTab.add("ScoreAmp", new ScoreAmp(m_feeder));
-    // cmdTab.add("ScoreSpeaker", new ScoreSpeaker(m_shooter, m_intake, m_led));
+    Time duration = Seconds.of(1.0);
+    cmdTab.add("HIDRumbleDriver", m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+    cmdTab.add("HIDRumbleOperator", m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
 
-    // cmdTab.add("HIDRumbleDriver", m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Constants.kRumbleIntensity));
-    // cmdTab.add("HIDRumbleOperator", m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Constants.kRumbleIntensity));
-    // cmdTab.add("PrepareToClimb", new PrepareToClimb(m_climber, m_feeder));
+    ShuffleboardLayout subList =
+        cmdTab.getLayout("Subsystems", BuiltInLayouts.kList).withProperties(Map.of("Label position", "HIDDEN"));
 
-    // ShuffleboardLayout subList = cmdTab.getLayout("Subsystems", BuiltInLayouts.kList).withProperties(Map.of("Label position", "HIDDEN"));
-    // subList.add(m_intake);
-    // subList.add(m_shooter);
-    // subList.add(m_feeder);
-    // subList.add(m_climber);
+    subList.add(m_intake);
+    subList.add(m_shooter);
+    subList.add(m_feeder);
+    subList.add(m_climber);
 
-    // cmdTab.add(CommandScheduler.getInstance( ));
+    cmdTab.add(CommandScheduler.getInstance( ));
   }
 
   /****************************************************************************
@@ -280,7 +287,9 @@ public class RobotContainer
     // Driver Controller Assignments
     //
     // Driver - A, B, X, Y
+    //
     //  --- Normal button definitions ---
+    //
     m_driverPad.a( ).whileTrue(m_drivetrain.applyRequest(( ) -> aim                 //
         .withVelocityX(-m_vision.limelight_range_proportional(kMaxSpeed))            //
         .withVelocityY(0)                                                 //
@@ -329,6 +338,7 @@ public class RobotContainer
 
     //
     // Driver Left/Right Trigger
+    //
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
@@ -370,6 +380,7 @@ public class RobotContainer
 
     //
     // Operator Left/Right Trigger
+    //
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
@@ -416,7 +427,7 @@ public class RobotContainer
     m_feeder.setDefaultCommand(m_feeder.getHoldPositionCommand(FDRollerMode.HOLD, m_feeder::getCurrentPosition));
     m_climber.setDefaultCommand(m_climber.getHoldPositionCommand(m_climber::getClimberPosition));
 
-    //Default command - manual mode
+    // Default command - manual mode
     // m_intake.setDefaultCommand(m_intake.getJoystickCommand(( ) -> getIntakeAxis( )));
     // m_feeder.setDefaultCommand(m_feeder.getJoystickCommand(( ) -> getFeederAxis( )));
     // m_climber.setDefaultCommand(m_climber.getJoystickCommand(( ) -> getClimberAxis( )));
@@ -479,7 +490,8 @@ public class RobotContainer
     if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
       initialPath = initialPath.flipPath( );
 
-    // { // Debug only: print states of first path
+    // {
+    //   // Debug only: print states of first path
     //   List<PathPlannerTrajectory.State> states = initialPath.getTrajectory(new ChassisSpeeds( ), new Rotation2d( )).getStates( );
     //   for (int i = 0; i < states.size( ); i++)
     //     DataLogManager.log(String.format("autoCommand: Auto path state: (%d) %s", i, states.get(i).getTargetHolonomicPose( )));

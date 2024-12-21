@@ -226,6 +226,7 @@ public class Shooter extends SubsystemBase
     ShuffleboardLayout cmdList = m_shooterTab.getLayout("Commands", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 3)
         .withProperties(Map.of("Label position", "HIDDEN"));
     cmdList.add("ShRunScore", getShooterScoreCommand( ));
+    cmdList.add("ShRunPass", getShooterPassCommand( ));
     cmdList.add("ShRunStop", getShooterStopCommand( ));
   }
 
@@ -361,18 +362,7 @@ public class Shooter extends SubsystemBase
    */
   public Command getShooterPassCommand( )
   {
-    return getShooterCommand(ShooterMode.PASS).withName("ShooterPassNote");
-  }
-
-  /****************************************************************************
-   * 
-   * Create shooter mode command for feeding notes
-   * 
-   * @return instant command that runs shooter motors for feeding
-   */
-  public Command getShooterFeedCommand( )
-  {
-    return getShooterCommand(ShooterMode.PASS).withName("ShooterScore");
+    return getShooterCommand(ShooterMode.PASS).withName("ShooterPass");
   }
 
   /****************************************************************************
