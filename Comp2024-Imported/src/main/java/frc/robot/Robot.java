@@ -5,8 +5,10 @@ package frc.robot;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -39,6 +41,9 @@ public class Robot extends TimedRobot
     // SignalLogger.start();
     DriverStation.startDataLog(DataLogManager.getLog( )); // Logs joystick data
     Robot.timeMarker("robotInit: start");
+
+    // Start the web server for remoote dashboard layout
+    WebServer.start(5800, Filesystem.getDeployDirectory( ).getPath( ));
 
     // Log when commands initialize, interrupt, and end states
     CommandScheduler.getInstance( ).onCommandInitialize(cmd -> DataLogManager.log(String.format("%s: Init", cmd.getName( ))));
