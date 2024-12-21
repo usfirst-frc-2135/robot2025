@@ -27,6 +27,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
@@ -101,6 +103,14 @@ public class Intake extends SubsystemBase
   private static final double       kRotaryAngleMin       = kRotaryAngleRetracted - 3.0;
   private static final double       kRotaryAngleMax       = kRotaryAngleDeployed + 3.0;
 
+  // Alerts
+  private final Alert               m_rollerAlert         =
+      new Alert(String.format("%s: Roller motor init failed!", getSubsystem( )), AlertType.kError);
+  private final Alert               m_rotaryAlert         =
+      new Alert(String.format("%s: Rotary motor init failed!", getSubsystem( )), AlertType.kError);
+  private final Alert               m_canCoderAlert       =
+      new Alert(String.format("%s: CANcoder init failed!", getSubsystem( )), AlertType.kError);
+
   // Device objects
   private final WPI_TalonSRX        m_rollerMotor         = new WPI_TalonSRX(Ports.kCANID_IntakeRoller);
   private final TalonFX             m_rotaryMotor         = new TalonFX(Ports.kCANID_IntakeRotary);
@@ -157,13 +167,11 @@ public class Intake extends SubsystemBase
 
   private ShuffleboardLayout        m_rotaryList          =
       m_subsystemTab.getLayout("Rotary", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 3);
-  private GenericEntry              m_rotValidEntry       = m_rotaryList.add("rotValid", false).getEntry( );
   private GenericEntry              m_rotDegreesEntry     = m_rotaryList.add("rotDegrees", 0.0).getEntry( );
   // private GenericEntry               m_rotCLoopErrorEntry  = m_rotaryList.add("rotCLoopError", 0.0).getEntry( );
 
   private ShuffleboardLayout        m_statusList          =
       m_subsystemTab.getLayout("Status", BuiltInLayouts.kList).withPosition(4, 0).withSize(2, 3);
-  private GenericEntry              m_ccValidEntry        = m_statusList.add("ccValid", false).getEntry( );
   private GenericEntry              m_ccDegreesEntry      = m_statusList.add("ccDegrees", 0.0).getEntry( );
   private GenericEntry              m_targetDegreesEntry  = m_statusList.add("targetDegrees", 0.0).getEntry( );
   private GenericEntry              m_noteDetectedEntry   = m_statusList.add("noteInDetected", false).getEntry( );
@@ -182,7 +190,6 @@ public class Intake extends SubsystemBase
         CTREConfigs5.intakeRollerConfig( ));
     m_rollerMotor.setInverted(kRollerMotorInvert);
     PhoenixUtil5.getInstance( ).talonSRXCheckError(m_rollerMotor, "setInverted");
-    m_rollValidEntry.setBoolean(m_rollerValid);
 
     // Rotary motor and CANcoder init
     m_rotaryValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rotaryMotor, kSubsystemName + "Rotary",
@@ -190,8 +197,10 @@ public class Intake extends SubsystemBase
             Ports.kCANID_IntakeCANcoder, kRotaryGearRatio));
     m_canCoderValid = PhoenixUtil6.getInstance( ).canCoderInitialize6(m_CANcoder, kSubsystemName + "Rotary",
         CTREConfigs6.intakeRotaryCancoderConfig( ));
-    m_rotValidEntry.setBoolean(m_rotaryValid);
-    m_ccValidEntry.setBoolean(m_canCoderValid);
+
+    m_rollerAlert.set(!m_rollerValid);
+    m_rotaryAlert.set(!m_rotaryValid);
+    m_canCoderAlert.set(!m_canCoderValid);
 
     m_rotaryPosition = m_rotaryMotor.getPosition( );
     m_ccPosition = m_CANcoder.getAbsolutePosition( ).waitForUpdate(10.0, false);

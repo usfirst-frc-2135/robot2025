@@ -25,6 +25,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -92,6 +94,12 @@ public class Climber extends SubsystemBase
   private final TalonFX               m_leftMotor            = new TalonFX(Ports.kCANID_ClimberL);
   private final TalonFX               m_rightMotor           = new TalonFX(Ports.kCANID_ClimberR);
 
+  // Alerts
+  private final Alert                 m_leftAlert            =
+      new Alert(String.format("%s: Left motor init failed!", getSubsystem( )), AlertType.kError);
+  private final Alert                 m_rightAlert           =
+      new Alert(String.format("%s: Right motor init failed!", getSubsystem( )), AlertType.kError);
+
   // Simulation objects
   private final TalonFXSimState       m_climberSim           = m_leftMotor.getSimState( );
   private final ElevatorSim           m_elevSim              = new ElevatorSim(DCMotor.getFalcon500(1), kGearRatio,
@@ -138,13 +146,11 @@ public class Climber extends SubsystemBase
   private ShuffleboardTab             m_subsystemTab         = Shuffleboard.getTab(kSubsystemName);
   private ShuffleboardLayout          m_leftList             =
       m_subsystemTab.getLayout("Left", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
-  private GenericEntry                m_leftValidEntry       = m_leftList.add("leftValid", false).getEntry( );
   private GenericEntry                m_leftInchesEntry      = m_leftList.add("leftInches", 0.0).getEntry( );
   // private GenericEntry               m_leftCLoopErrorEntry  = m_leftList.add("leftCLoopError", 0.0).getEntry( );
 
   private ShuffleboardLayout          m_rightList            =
       m_subsystemTab.getLayout("Right", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 3);
-  private GenericEntry                m_rightValidEntry      = m_rightList.add("righttValid", false).getEntry( );
   private GenericEntry                m_rightInchesEntry     = m_rightList.add("rightInches", 0.0).getEntry( );
   // private GenericEntry               m_rightCLoopErrorEntry = m_rightList.add("rightCLoopError", 0.0).getEntry( );
 
@@ -169,8 +175,9 @@ public class Climber extends SubsystemBase
     boolean rightValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rightMotor, kSubsystemName + "Right",
         CTREConfigs6.climberFXConfig(false, Units.degreesToRotations(kLengthMin), Units.degreesToRotations(kLengthMax)));
     m_climberValid = leftValid && rightValid;
-    m_leftValidEntry.setBoolean(leftValid);
-    m_rightValidEntry.setBoolean(rightValid);
+
+    m_leftAlert.set(!leftValid);
+    m_rightAlert.set(!rightValid);
 
     m_leftPosition = m_leftMotor.getRotorPosition( );
     m_leftSupplyCur = m_leftMotor.getSupplyCurrent( );

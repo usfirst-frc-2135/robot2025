@@ -27,6 +27,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
@@ -105,6 +107,14 @@ public class Feeder extends SubsystemBase
   private final CANcoder            m_CANcoder           = new CANcoder(Ports.kCANID_FeederCANcoder);
   private final DigitalInput        m_noteInFeeder       = new DigitalInput(Ports.kDIO1_NoteInFeeder);
 
+  // Alerts
+  private final Alert               m_rollerAlert        =
+      new Alert(String.format("%s: Roller motor init failed!", getSubsystem( )), AlertType.kError);
+  private final Alert               m_rotaryAlert        =
+      new Alert(String.format("%s: Rotary motor init failed!", getSubsystem( )), AlertType.kError);
+  private final Alert               m_canCoderAlert      =
+      new Alert(String.format("%s: CANcoder init failed!", getSubsystem( )), AlertType.kError);
+
   // Simulation objects
   private final TalonFXSimState     m_rotarySim          = m_rotaryMotor.getSimState( );
   private final CANcoderSimState    m_CANcoderSim        = m_CANcoder.getSimState( );
@@ -148,20 +158,17 @@ public class Feeder extends SubsystemBase
   private ShuffleboardTab           m_subsystemTab       = Shuffleboard.getTab(kSubsystemName);
   private ShuffleboardLayout        m_rollerList         =
       m_subsystemTab.getLayout("Roller", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
-  private GenericEntry              m_rollValidEntry     = m_rollerList.add("rollValid", false).getEntry( );
   private GenericEntry              m_rollSpeedEntry     = m_rollerList.add("rollSpeed", 0.0).getEntry( );
   private GenericEntry              m_rollSupCurEntry    = m_rollerList.add("rollSupCur", 0.0).getEntry( );
   // private GenericEntry                      m_rollStatCurEntry   = m_rollerList.add("rollStatCur", 0.0).getEntry( );
 
   private ShuffleboardLayout        m_rotaryList         =
       m_subsystemTab.getLayout("Rotary", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 3);
-  private GenericEntry              m_rotValidEntry      = m_rotaryList.add("rotValid", false).getEntry( );
   private GenericEntry              m_rotDegreesEntry    = m_rotaryList.add("rotDegrees", 0.0).getEntry( );
   // private GenericEntry               m_rotCLoopErrorEntry = m_rotaryList.add("rotCLoopError", 0.0).getEntry( );
 
   private ShuffleboardLayout        m_statusList         =
       m_subsystemTab.getLayout("Status", BuiltInLayouts.kList).withPosition(4, 0).withSize(2, 3);
-  private GenericEntry              m_ccValidEntry       = m_statusList.add("ccValid", false).getEntry( );
   private GenericEntry              m_ccDegreesEntry     = m_statusList.add("ccDegrees", 0.0).getEntry( );
   private GenericEntry              m_targetDegreesEntry = m_statusList.add("targetDegrees", 0.0).getEntry( );
   private GenericEntry              m_noteDetectedEntry  = m_statusList.add("noteInDetected", false).getEntry( );
@@ -180,7 +187,6 @@ public class Feeder extends SubsystemBase
         CTREConfigs5.feederRollerConfig( ));
     m_rollerMotor.setInverted(kRollerMotorInvert);
     PhoenixUtil5.getInstance( ).talonSRXCheckError(m_rollerMotor, "setInverted");
-    m_rollValidEntry.setBoolean(m_rollerValid);
 
     // Rotary motor and CANcoder init
     m_rotaryValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rotaryMotor, kSubsystemName + "Rotary",
@@ -188,8 +194,10 @@ public class Feeder extends SubsystemBase
             Ports.kCANID_FeederCANcoder, kRotaryGearRatio));
     m_canCoderValid = PhoenixUtil6.getInstance( ).canCoderInitialize6(m_CANcoder, kSubsystemName + "Rotary",
         CTREConfigs6.feederRotaryCancoderConfig( ));
-    m_rotValidEntry.setBoolean(m_rotaryValid);
-    m_ccValidEntry.setBoolean(m_canCoderValid);
+
+    m_rollerAlert.set(!m_rollerValid);
+    m_rotaryAlert.set(!m_rotaryValid);
+    m_canCoderAlert.set(!m_canCoderValid);
 
     m_rotaryPosition = m_rotaryMotor.getPosition( );
     m_ccPosition = m_CANcoder.getAbsolutePosition( );

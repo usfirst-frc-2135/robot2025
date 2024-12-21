@@ -21,6 +21,8 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -67,6 +69,12 @@ public class Shooter extends SubsystemBase
   private final TalonFX                       m_lowerMotor            = new TalonFX(Ports.kCANID_ShooterLower);
   private final TalonFX                       m_upperMotor            = new TalonFX(Ports.kCANID_ShooterUpper);
 
+  // Alerts
+  private final Alert                         m_lowerAlert            =
+      new Alert(String.format("%s: Lower motor init failed!", getSubsystem( )), AlertType.kError);
+  private final Alert                         m_upperAlert            =
+      new Alert(String.format("%s: Upper motor init failed!", getSubsystem( )), AlertType.kError);
+
   // Simulation objects
   private final TalonFXSimState               m_lowerMotorSim         = new TalonFXSimState(m_lowerMotor);
   private final TalonFXSimState               m_upperMotorSim         = new TalonFXSimState(m_upperMotor);
@@ -97,12 +105,10 @@ public class Shooter extends SubsystemBase
   ShuffleboardTab                             m_shooterTab            = Shuffleboard.getTab(kSubsystemName);
   ShuffleboardLayout                          m_lowerList             =
       m_shooterTab.getLayout("Lower", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
-  GenericEntry                                m_lowerValidEntry       = m_lowerList.add("lowerValid", false).getEntry( );
   GenericEntry                                m_lowerSpeedEntry       = m_lowerList.add("lowerSpeed", 0.0).getEntry( );
 
   ShuffleboardLayout                          m_upperList             =
       m_shooterTab.getLayout("Upper", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 3);
-  GenericEntry                                m_upperValidEntry       = m_upperList.add("upperValid", false).getEntry( );
   GenericEntry                                m_upperSpeedEntry       = m_upperList.add("upperSpeed", 0.0).getEntry( );
 
   ShuffleboardLayout                          m_statusList            =
@@ -124,9 +130,10 @@ public class Shooter extends SubsystemBase
         PhoenixUtil6.getInstance( ).talonFXInitialize6(m_lowerMotor, kSubsystemName + "Lower", CTREConfigs6.shooterFXConfig( ));
     boolean upperValid =
         PhoenixUtil6.getInstance( ).talonFXInitialize6(m_upperMotor, kSubsystemName + "Upper", CTREConfigs6.shooterFXConfig( ));
-    m_lowerValidEntry.setBoolean(lowerValid);
-    m_upperValidEntry.setBoolean(upperValid);
     m_shooterValid = lowerValid && upperValid;
+
+    m_lowerAlert.set(!lowerValid);
+    m_upperAlert.set(!upperValid);
 
     m_lowerVelocity = m_lowerMotor.getRotorVelocity( );
     m_upperVelocity = m_upperMotor.getRotorVelocity( );
