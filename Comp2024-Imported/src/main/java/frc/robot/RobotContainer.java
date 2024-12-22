@@ -119,7 +119,7 @@ public class RobotContainer
   private final Vision                                m_vision        = new Vision( );
 
   // These subsystems may use LED or vision and must be created afterward
-  public final CommandSwerveDrivetrain                m_drivetrain    = TunerConstants.createDrivetrain( );
+  private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.createDrivetrain( );
   private final Intake                                m_intake        = new Intake( );
   private final Shooter                               m_shooter       = new Shooter( );
   private final Feeder                                m_feeder        = new Feeder( );
@@ -201,7 +201,7 @@ public class RobotContainer
 
   // Shuffleboard objects
   private ShuffleboardTab               autoTab        = Shuffleboard.getTab(kAutoTab);
-  private SimpleWidget                  autoDelay      = autoTab.add("AutoDelay", 0.0).withPosition(6, 2).withSize(2, 1);
+  private SimpleWidget                  autoDelay      = autoTab.add("AutoDelay", 0.0);
 
   /****************************************************************************
    * 
@@ -229,8 +229,8 @@ public class RobotContainer
   private void addDashboardWidgets( )
   {
     // Set up Shuffleboard layout from code
-    autoTab.add("AutoMode", m_autoChooser).withPosition(6, 0).withSize(2, 1);
-    autoTab.add("StartPosition", m_startChooser).withPosition(6, 1).withSize(2, 1);
+    autoTab.add("AutoMode", m_autoChooser);
+    autoTab.add("StartPosition", m_startChooser);
 
     // Configure autonomous sendable chooser
     m_autoChooser.setDefaultOption("0 - AutoStop", AutoChooser.AUTOSTOP);
@@ -247,7 +247,7 @@ public class RobotContainer
     m_startChooser.addOption("POSE2", StartPose.POSE2);
     m_startChooser.addOption("POSE3", StartPose.POSE3);
 
-    autoTab.add("AutoChooserRun", new InstantCommand(( ) -> getAutonomousCommand( ))).withPosition(6, 2);
+    autoTab.add("AutoChooserRun", new InstantCommand(( ) -> getAutonomousCommand( )));
 
     // Command tab
     ShuffleboardTab cmdTab = Shuffleboard.getTab(kCommandTab);
@@ -264,8 +264,7 @@ public class RobotContainer
     cmdTab.add("HIDRumbleDriver", m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
     cmdTab.add("HIDRumbleOperator", m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
 
-    ShuffleboardLayout subList =
-        cmdTab.getLayout("Subsystems", BuiltInLayouts.kList).withProperties(Map.of("Label position", "HIDDEN"));
+    ShuffleboardLayout subList = cmdTab.getLayout("Subsystems", BuiltInLayouts.kList);
 
     subList.add(m_intake);
     subList.add(m_shooter);

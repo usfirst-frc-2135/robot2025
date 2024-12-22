@@ -80,13 +80,13 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     // Shuffleboard objects
     ShuffleboardTab                     swerveTab                = Shuffleboard.getTab(kSwerveTab);
-    ShuffleboardLayout                  poseList                 = swerveTab.getLayout("Pose", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 3);
+    ShuffleboardLayout                  poseList                 = swerveTab.getLayout("Pose", BuiltInLayouts.kList);
 
-    GenericEntry                        poseXEntry               = poseList.add("X", 0.0).withPosition(0, 0).getEntry( );
-    GenericEntry                        poseYEntry               = poseList.add("Y", 0.0).withPosition(0, 1).getEntry( );
-    GenericEntry                        poseRotEntry             = poseList.add("rotation", 0.0).withPosition(0, 2).getEntry( );
-    ComplexWidget                       setPose                  = poseList.add("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true)).withPosition(0, 2);
-    GenericEntry                        shooterDistanceEntry     = swerveTab.add("shooterDistance", 0.0).withPosition(8, 2).withSize(2, 1).getEntry( );
+    GenericEntry                        poseXEntry               = poseList.add("X", 0.0).getEntry( );
+    GenericEntry                        poseYEntry               = poseList.add("Y", 0.0).getEntry( );
+    GenericEntry                        poseRotEntry             = poseList.add("rotation", 0.0).getEntry( );
+    ComplexWidget                       setPose                  = poseList.add("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
+    GenericEntry                        shooterDistanceEntry     = swerveTab.add("shooterDistance", 0.0).getEntry( );
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;

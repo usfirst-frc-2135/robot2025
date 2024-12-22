@@ -158,21 +158,13 @@ public class Intake extends SubsystemBase
 
   // Shuffleboard objects
   private ShuffleboardTab           m_subsystemTab        = Shuffleboard.getTab(kSubsystemName);
-  private ShuffleboardLayout        m_rollerList          =
-      m_subsystemTab.getLayout("Roller", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
-  private GenericEntry              m_rollSpeedEntry      = m_rollerList.add("rollSpeed", 0.0).getEntry( );
-  private GenericEntry              m_rollSupCurEntry     = m_rollerList.add("rollSupCur", 0.0).getEntry( );
+  private GenericEntry              m_rollSpeedEntry      = m_subsystemTab.add("rollSpeed", 0.0).getEntry( );
+  private GenericEntry              m_rollSupCurEntry     = m_subsystemTab.add("rollSupCur", 0.0).getEntry( );
+  private GenericEntry              m_rotDegreesEntry     = m_subsystemTab.add("rotDegrees", 0.0).getEntry( );
 
-  private ShuffleboardLayout        m_rotaryList          =
-      m_subsystemTab.getLayout("Rotary", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 3);
-  private GenericEntry              m_rotDegreesEntry     = m_rotaryList.add("rotDegrees", 0.0).getEntry( );
-  private GenericEntry              m_rotCLoopErrorEntry  = m_rotaryList.add("rotCLoopError", 0.0).getEntry( );
-
-  private ShuffleboardLayout        m_statusList          =
-      m_subsystemTab.getLayout("Status", BuiltInLayouts.kList).withPosition(4, 0).withSize(2, 3);
-  private GenericEntry              m_ccDegreesEntry      = m_statusList.add("ccDegrees", 0.0).getEntry( );
-  private GenericEntry              m_targetDegreesEntry  = m_statusList.add("targetDegrees", 0.0).getEntry( );
-  private GenericEntry              m_noteDetectedEntry   = m_statusList.add("noteInDetected", false).getEntry( );
+  private GenericEntry              m_ccDegreesEntry      = m_subsystemTab.add("ccDegrees", 0.0).getEntry( );
+  private GenericEntry              m_targetDegreesEntry  = m_subsystemTab.add("targetDegrees", 0.0).getEntry( );
+  private GenericEntry              m_noteDetectedEntry   = m_subsystemTab.add("noteInDetected", false).getEntry( );
 
   /****************************************************************************
    * 
@@ -251,7 +243,6 @@ public class Intake extends SubsystemBase
     m_rotDegreesEntry.setDouble(m_currentDegrees);
     m_noteDetectedEntry.setBoolean(m_noteDetected);
     m_targetDegreesEntry.setDouble(m_targetDegrees);
-    m_rotCLoopErrorEntry.setDouble(m_targetDegrees - m_currentDegrees);
   }
 
   /****************************************************************************
@@ -291,11 +282,11 @@ public class Intake extends SubsystemBase
   private void initDashboard( )
   {
     // Initialize dashboard widgets
-    m_subsystemTab.add("INRotaryMech", m_rotaryMech).withPosition(0, 2);
+    m_subsystemTab.add("INRotaryMech", m_rotaryMech);
 
     // Shuffleboard layout
-    ShuffleboardLayout cmdList = m_subsystemTab.getLayout("Commands", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 3)
-        .withProperties(Map.of("Label position", "HIDDEN"));
+    ShuffleboardLayout cmdList =
+        m_subsystemTab.getLayout("Commands", BuiltInLayouts.kList).withProperties(Map.of("Label position", "HIDDEN"));
     cmdList.add("InRollStop", getMoveToPositionCommand(INRollerMode.STOP, this::getCurrentPosition));
     cmdList.add("InRollAcquire", getMoveToPositionCommand(INRollerMode.ACQUIRE, this::getCurrentPosition));
     cmdList.add("InRollExpel", getMoveToPositionCommand(INRollerMode.EXPEL, this::getCurrentPosition));

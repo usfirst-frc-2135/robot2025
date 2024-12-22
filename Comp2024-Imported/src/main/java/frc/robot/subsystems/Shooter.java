@@ -103,19 +103,12 @@ public class Shooter extends SubsystemBase
 
   // Shuffleboard objects
   ShuffleboardTab                             m_shooterTab            = Shuffleboard.getTab(kSubsystemName);
-  ShuffleboardLayout                          m_lowerList             =
-      m_shooterTab.getLayout("Lower", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
-  GenericEntry                                m_lowerSpeedEntry       = m_lowerList.add("lowerSpeed", 0.0).getEntry( );
+  GenericEntry                                m_lowerSpeedEntry       = m_shooterTab.add("lowerSpeed", 0.0).getEntry( );
+  GenericEntry                                m_upperSpeedEntry       = m_shooterTab.add("upperSpeed", 0.0).getEntry( );
 
-  ShuffleboardLayout                          m_upperList             =
-      m_shooterTab.getLayout("Upper", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 3);
-  GenericEntry                                m_upperSpeedEntry       = m_upperList.add("upperSpeed", 0.0).getEntry( );
-
-  ShuffleboardLayout                          m_statusList            =
-      m_shooterTab.getLayout("Status", BuiltInLayouts.kList).withPosition(4, 0).withSize(2, 3);
-  GenericEntry                                m_atDesiredRPMEntry     = m_statusList.add("atDesiredRPM", false).getEntry( );
-  GenericEntry                                m_targetRPMEntry        = m_statusList.add("targetRPM", 0.0).getEntry( );
-  GenericEntry                                m_flywheelScoreEntry    = m_statusList.add("flywheelRPM", 0.0).getEntry( );
+  GenericEntry                                m_atDesiredRPMEntry     = m_shooterTab.add("atDesiredRPM", false).getEntry( );
+  GenericEntry                                m_targetRPMEntry        = m_shooterTab.add("targetRPM", 0.0).getEntry( );
+  GenericEntry                                m_flywheelScoreEntry    = m_shooterTab.add("flywheelRPM", 0.0).getEntry( );
 
   /****************************************************************************
    * 
@@ -223,8 +216,8 @@ public class Shooter extends SubsystemBase
   {
     m_flywheelScoreEntry.setDouble(kFlywheelScoreRPM);
 
-    ShuffleboardLayout cmdList = m_shooterTab.getLayout("Commands", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 3)
-        .withProperties(Map.of("Label position", "HIDDEN"));
+    ShuffleboardLayout cmdList =
+        m_shooterTab.getLayout("Commands", BuiltInLayouts.kList).withProperties(Map.of("Label position", "HIDDEN"));
     cmdList.add("ShRunScore", getShooterScoreCommand( ));
     cmdList.add("ShRunPass", getShooterPassCommand( ));
     cmdList.add("ShRunStop", getShooterStopCommand( ));

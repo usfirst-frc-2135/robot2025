@@ -133,32 +133,22 @@ public class Climber extends SubsystemBase
   // Manual mode config parameters
   private VoltageOut                  m_requestVolts         = new VoltageOut(0);
   private ClimberMode                 m_mode                 = ClimberMode.INIT;  // Manual movement mode with joysticks
-  private int                         m_hardStopCounter      = 0;
 
   // Motion Magic config parameters
   private MotionMagicVoltage          m_mmRequestVolts       = new MotionMagicVoltage(0).withSlot(0);
   private Debouncer                   m_mmWithinTolerance    = new Debouncer(0.060, DebounceType.kRising);
   private Timer                       m_mmMoveTimer          = new Timer( ); // Safety timer for movements
-  private double                      m_totalArbFeedForward;  // Arbitrary feedforward added to counteract gravity
+  private double                      m_mmArbFeedForward;     // Arbitrary feedforward added to counteract gravity
+  private int                         m_mmHardStopCounter    = 0;
   private boolean                     m_mmMoveIsFinished;     // Movement has completed (within tolerance)
 
   // Shuffleboard objects
   private ShuffleboardTab             m_subsystemTab         = Shuffleboard.getTab(kSubsystemName);
-  private ShuffleboardLayout          m_leftList             =
-      m_subsystemTab.getLayout("Left", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
-  private GenericEntry                m_leftInchesEntry      = m_leftList.add("leftInches", 0.0).getEntry( );
-  // private GenericEntry               m_leftCLoopErrorEntry  = m_leftList.add("leftCLoopError", 0.0).getEntry( );
-
-  private ShuffleboardLayout          m_rightList            =
-      m_subsystemTab.getLayout("Right", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 3);
-  private GenericEntry                m_rightInchesEntry     = m_rightList.add("rightInches", 0.0).getEntry( );
-  // private GenericEntry               m_rightCLoopErrorEntry = m_rightList.add("rightCLoopError", 0.0).getEntry( );
-
-  private ShuffleboardLayout          m_statusList           =
-      m_subsystemTab.getLayout("Status", BuiltInLayouts.kList).withPosition(4, 0).withSize(2, 3);
-  private GenericEntry                m_leftCalibratedEntry  = m_statusList.add("leftCalibrated", false).getEntry( );
-  private GenericEntry                m_rightCalibratedEntry = m_statusList.add("rightCalibrated", false).getEntry( );
-  private GenericEntry                m_targetInchesEntry    = m_statusList.add("targetInches", 0.0).getEntry( );
+  private GenericEntry                m_leftInchesEntry      = m_subsystemTab.add("leftInches", 0.0).getEntry( );
+  private GenericEntry                m_rightInchesEntry     = m_subsystemTab.add("rightInches", 0.0).getEntry( );
+  private GenericEntry                m_leftCalibratedEntry  = m_subsystemTab.add("leftCalibrated", false).getEntry( );
+  private GenericEntry                m_rightCalibratedEntry = m_subsystemTab.add("rightCalibrated", false).getEntry( );
+  private GenericEntry                m_targetInchesEntry    = m_subsystemTab.add("targetInches", 0.0).getEntry( );
 
   /****************************************************************************
    * 
@@ -233,8 +223,6 @@ public class Climber extends SubsystemBase
     m_leftInchesEntry.setDouble(m_leftCurInches);
     m_rightInchesEntry.setDouble(m_rightCurInches);
     m_targetInchesEntry.setDouble(m_targetInches);
-    // m_leftCLoopErrorEntry.setDouble(m_targetInches - m_leftCurInches);
-    // m_rightCLoopErrorEntry.setDouble(m_targetInches - m_rightCurInches);
   }
 
   /****************************************************************************
@@ -272,10 +260,10 @@ public class Climber extends SubsystemBase
   private void initDashboard( )
   {
     // Initialize dashboard widgets
-    m_subsystemTab.add(kSubsystemName + "Mech", m_climberMech).withPosition(0, 2);
+    m_subsystemTab.add(kSubsystemName + "Mech", m_climberMech);
 
-    ShuffleboardLayout cmdList = m_subsystemTab.getLayout("Commands", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 3)
-        .withProperties(Map.of("Label position", "HIDDEN"));
+    ShuffleboardLayout cmdList =
+        m_subsystemTab.getLayout("Commands", BuiltInLayouts.kList).withProperties(Map.of("Label position", "HIDDEN"));
     cmdList.add("ClRunExtended", getMoveToPositionCommand(this::getClimberFullyExtended));
     cmdList.add("ClRunChain", getMoveToPositionCommand(this::getClimberChainLevel));
     cmdList.add("ClRunClimbed", getMoveToPositionCommand(this::getClimberClimbed));
@@ -375,7 +363,7 @@ public class Climber extends SubsystemBase
   private void moveToPositionInit(double newLength, boolean holdPosition)
   {
     m_mmMoveTimer.restart( );
-    m_hardStopCounter = 0;
+    m_mmHardStopCounter = 0;
 
     if (!(m_leftCalibrated && m_rightCalibrated))
     {
@@ -432,7 +420,7 @@ public class Climber extends SubsystemBase
   {
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
     double error = m_targetInches - m_leftCurInches;
-    boolean hittingHardStop = (m_targetInches <= 0.0) && (m_leftCurInches <= 1.0) && (m_hardStopCounter++ >= 10);
+    boolean hittingHardStop = (m_targetInches <= 0.0) && (m_leftCurInches <= 1.0) && (m_mmHardStopCounter++ >= 10);
 
     setMMPosition(m_targetInches);
 
@@ -579,9 +567,9 @@ public class Climber extends SubsystemBase
     {
       // y = mx + b, where 0 degrees is 0.0 climber and 90 degrees is 1/4 winch turn (the climber constant)
       m_leftMotor.setControl(m_mmRequestVolts.withPosition(Conversions.inchesToWinchRotations(targetInches, kRolloutRatio))
-          .withFeedForward(m_totalArbFeedForward));
+          .withFeedForward(m_mmArbFeedForward));
       m_rightMotor.setControl(m_mmRequestVolts.withPosition(Conversions.inchesToWinchRotations(targetInches, kRolloutRatio))
-          .withFeedForward(m_totalArbFeedForward));
+          .withFeedForward(m_mmArbFeedForward));
     }
   }
 

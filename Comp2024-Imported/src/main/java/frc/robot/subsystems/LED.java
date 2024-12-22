@@ -71,8 +71,7 @@ public class LED extends SubsystemBase
   // Shuffleboard objects
   private static final String              kLEDTab             = "LED";
   ShuffleboardTab                          m_ledTab            = Shuffleboard.getTab(kLEDTab);
-  ShuffleboardLayout                       m_ledList           =
-      m_ledTab.getLayout("LED", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
+  ShuffleboardLayout                       m_ledList           = m_ledTab.getLayout("LED", BuiltInLayouts.kList);
   ComplexWidget                            m_colorWidget       = m_ledList.add("color", m_colorChooser);
   ComplexWidget                            m_animationWidget   = m_ledList.add("animation", m_animationChooser);
   ComplexWidget                            m_commandEntry      =

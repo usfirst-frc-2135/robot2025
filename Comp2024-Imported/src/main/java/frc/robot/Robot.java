@@ -250,12 +250,11 @@ public class Robot extends TimedRobot
    */
   public static void timeMarker(String msg)
   {
-    double current = Timer.getFPGATimestamp( );
+    double now = Timer.getFPGATimestamp( );
 
-    DataLogManager
-        .log(String.format("***** TimeMarker ***** absolute: %.3f relative: %.3f - %s", current, current - m_timeMark, msg));
+    DataLogManager.log(String.format("***** TimeMarker ***** absolute: %.3f relative: %.3f - %s", now, now - m_timeMark, msg));
 
-    m_timeMark = current;
+    m_timeMark = now;
   }
 
   /****************************************************************************
