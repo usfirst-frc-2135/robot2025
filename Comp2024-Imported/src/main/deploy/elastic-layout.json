@@ -8,32 +8,6 @@
         "layouts": [],
         "containers": [
           {
-            "title": "AutoMode",
-            "x": 768.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/Shuffleboard/Autonomous/AutoMode",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
-            "title": "StartPosition",
-            "x": 768.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/Shuffleboard/Autonomous/StartPosition",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
             "title": "Pose",
             "x": 0.0,
             "y": 0.0,
@@ -50,20 +24,6 @@
               "show_trajectories": true,
               "robot_color": 4294198070,
               "trajectory_color": 4294967295
-            }
-          },
-          {
-            "title": "AutoDelay",
-            "x": 768.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/Shuffleboard/Autonomous/AutoDelay",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
             }
           },
           {
@@ -89,6 +49,46 @@
             "properties": {
               "topic": "/SmartDashboard/Alerts",
               "period": 0.06
+            }
+          },
+          {
+            "title": "AutoMode",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/AutoMode",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "StartPosition",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/StartPosition",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "AutoDelay",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/AutoDelay",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]
@@ -843,24 +843,7 @@
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/Shuffleboard/Climber/leftCalibrated",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "rightCalibrated",
-            "x": 128.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/Shuffleboard/Climber/rightCalibrated",
+              "topic": "/climber/leftCalibrated",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,
@@ -877,10 +860,27 @@
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "/Shuffleboard/Climber/leftInches",
+              "topic": "/climber/leftInches",
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": false
+            }
+          },
+          {
+            "title": "rightCalibrated",
+            "x": 128.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/climber/rightCalibrated",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           },
           {
@@ -891,7 +891,7 @@
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "/Shuffleboard/Climber/rightInches",
+              "topic": "/climber/rightInches",
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": false
@@ -905,7 +905,7 @@
             "height": 128.0,
             "type": "Text Display",
             "properties": {
-              "topic": "/Shuffleboard/Climber/targetInches",
+              "topic": "/climber/targetInches",
               "period": 0.06,
               "data_type": "double",
               "show_submit_button": false
@@ -917,61 +917,48 @@
     {
       "name": "LED",
       "grid_layout": {
-        "layouts": [
+        "layouts": [],
+        "containers": [
           {
-            "title": "LED",
+            "title": "LEDSet",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/LEDSet",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "animation",
             "x": 0.0,
             "y": 0.0,
             "width": 256.0,
-            "height": 384.0,
-            "type": "List Layout",
+            "height": 128.0,
+            "type": "ComboBox Chooser",
             "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "color",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "ComboBox Chooser",
-                "properties": {
-                  "topic": "/Shuffleboard/LED/LED/color",
-                  "period": 0.06,
-                  "sort_options": false
-                }
-              },
-              {
-                "title": "animation",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "ComboBox Chooser",
-                "properties": {
-                  "topic": "/Shuffleboard/LED/LED/animation",
-                  "period": 0.06,
-                  "sort_options": false
-                }
-              },
-              {
-                "title": "LEDSet",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/Shuffleboard/LED/LED/LEDSet",
-                  "period": 0.06,
-                  "show_type": true
-                }
-              }
-            ]
+              "topic": "/SmartDashboard/animation",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "color",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/color",
+              "period": 0.06,
+              "sort_options": false
+            }
           }
-        ],
-        "containers": []
+        ]
       }
     },
     {

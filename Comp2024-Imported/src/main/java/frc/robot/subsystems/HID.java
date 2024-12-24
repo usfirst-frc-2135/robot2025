@@ -91,7 +91,7 @@ public class HID extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Initialize subsystem during mode changes
+   * Initialize subsystem during robot mode changes
    */
   public void initialize( )
   {

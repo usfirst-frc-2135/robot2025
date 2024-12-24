@@ -4,8 +4,8 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
 
-import java.util.Map;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -24,24 +24,25 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -77,7 +78,7 @@ public class Intake extends SubsystemBase
   private static final double  kRotaryGearRatio      = 30.83;
   private static final double  kRotaryLengthMeters   = 0.3;       // Simulation
   private static final double  kRotaryWeightKg       = 4.0;       // Simulation
-  private static final double  kRotaryManualVolts    = 3.5;       // Motor voltage during manual operation (joystick)
+  private static final Voltage kRotaryManualVolts    = Volts.of(3.5);       // Motor voltage during manual operation (joystick)
 
   /** Rotary manual move parameters */
   private enum RotaryMode
@@ -103,6 +104,12 @@ public class Intake extends SubsystemBase
   private static final double       kRotaryAngleMin       = kRotaryAngleRetracted - 3.0;
   private static final double       kRotaryAngleMax       = kRotaryAngleDeployed + 3.0;
 
+  // Device objects
+  private final WPI_TalonSRX        m_rollerMotor         = new WPI_TalonSRX(Ports.kCANID_IntakeRoller);
+  private final TalonFX             m_rotaryMotor         = new TalonFX(Ports.kCANID_IntakeRotary);
+  private final CANcoder            m_CANcoder            = new CANcoder(Ports.kCANID_IntakeCANcoder);
+  private final DigitalInput        m_noteInIntake        = new DigitalInput(Ports.kDIO0_NoteInIntake);
+
   // Alerts
   private final Alert               m_rollerAlert         =
       new Alert(String.format("%s: Roller motor init failed!", getSubsystem( )), AlertType.kError);
@@ -110,12 +117,6 @@ public class Intake extends SubsystemBase
       new Alert(String.format("%s: Rotary motor init failed!", getSubsystem( )), AlertType.kError);
   private final Alert               m_canCoderAlert       =
       new Alert(String.format("%s: CANcoder init failed!", getSubsystem( )), AlertType.kError);
-
-  // Device objects
-  private final WPI_TalonSRX        m_rollerMotor         = new WPI_TalonSRX(Ports.kCANID_IntakeRoller);
-  private final TalonFX             m_rotaryMotor         = new TalonFX(Ports.kCANID_IntakeRotary);
-  private final CANcoder            m_CANcoder            = new CANcoder(Ports.kCANID_IntakeCANcoder);
-  private final DigitalInput        m_noteInIntake        = new DigitalInput(Ports.kDIO0_NoteInIntake);
 
   // Simulation objects
   private final TalonFXSimState     m_rotarySim           = m_rotaryMotor.getSimState( );
@@ -147,7 +148,7 @@ public class Intake extends SubsystemBase
   private double                    m_ccDegrees           = 0.0; // CANcoder angle in degrees
 
   // Manual mode config parameters
-  private VoltageOut                m_requestVolts        = new VoltageOut(0);
+  private VoltageOut                m_requestVolts        = new VoltageOut(Volts.of(0));
   private RotaryMode                m_rotaryMode          = RotaryMode.INIT;     // Manual movement mode with joysticks
 
   // Motion Magic config parameters
@@ -156,15 +157,14 @@ public class Intake extends SubsystemBase
   private Timer                     m_mmMoveTimer         = new Timer( ); // Safety timer for movements
   private boolean                   m_mmMoveIsFinished;   // Movement has completed (within tolerance)
 
-  // Shuffleboard objects
-  private ShuffleboardTab           m_subsystemTab        = Shuffleboard.getTab(kSubsystemName);
-  private GenericEntry              m_rollSpeedEntry      = m_subsystemTab.add("rollSpeed", 0.0).getEntry( );
-  private GenericEntry              m_rollSupCurEntry     = m_subsystemTab.add("rollSupCur", 0.0).getEntry( );
-  private GenericEntry              m_rotDegreesEntry     = m_subsystemTab.add("rotDegrees", 0.0).getEntry( );
+  // Network tables publisher objects
+  private DoublePublisher           m_rollSpeedPub;
+  private DoublePublisher           m_rollSupCurPub;
+  private DoublePublisher           m_rotDegreesPub;
 
-  private GenericEntry              m_ccDegreesEntry      = m_subsystemTab.add("ccDegrees", 0.0).getEntry( );
-  private GenericEntry              m_targetDegreesEntry  = m_subsystemTab.add("targetDegrees", 0.0).getEntry( );
-  private GenericEntry              m_noteDetectedEntry   = m_subsystemTab.add("noteInDetected", false).getEntry( );
+  private DoublePublisher           m_ccDegreesPub;
+  private DoublePublisher           m_targetDegreesPub;
+  private BooleanPublisher          m_noteDetectedPub;
 
   /****************************************************************************
    * 
@@ -181,7 +181,7 @@ public class Intake extends SubsystemBase
     m_rollerMotor.setInverted(kRollerMotorInvert);
     PhoenixUtil5.getInstance( ).talonSRXCheckError(m_rollerMotor, "setInverted");
 
-    // Rotary motor and CANcoder init
+    // Initialize rotary motor and CANcoder objects
     m_rotaryValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rotaryMotor, kSubsystemName + "Rotary",
         CTREConfigs6.intakeRotaryFXConfig(Units.degreesToRotations(kRotaryAngleMin), Units.degreesToRotations(kRotaryAngleMax),
             Ports.kCANID_IntakeCANcoder, kRotaryGearRatio));
@@ -192,9 +192,11 @@ public class Intake extends SubsystemBase
     m_rotaryAlert.set(!m_rotaryValid);
     m_canCoderAlert.set(!m_canCoderValid);
 
+    // Initialize status signal objects
     m_rotaryPosition = m_rotaryMotor.getPosition( );
-    m_ccPosition = m_CANcoder.getAbsolutePosition( ).waitForUpdate(10.0, false);
+    m_ccPosition = m_CANcoder.getAbsolutePosition( );
 
+    // Initialize the climber status signals
     Double ccRotations = (m_canCoderValid) ? m_ccPosition.refresh( ).getValue( ).in(Rotations) : 0.0;
     m_currentDegrees = Units.rotationsToDegrees(ccRotations);
     DataLogManager.log(String.format("%s: CANcoder initial degrees %.1f", getSubsystem( ), m_currentDegrees));
@@ -235,14 +237,14 @@ public class Intake extends SubsystemBase
     m_ccDegrees = Units.rotationsToDegrees((m_canCoderValid) ? m_ccPosition.getValue( ).in(Rotations) : 0.0);
     m_noteDetected = m_noteDebouncer.calculate(m_noteInIntake.get( ));
 
-    // Update dashboard
-    m_rollSpeedEntry.setDouble(m_rollerMotor.get( ));
-    m_rollSupCurEntry.setDouble(m_rollerMotor.getSupplyCurrent( ));
+    // Update network table publishers
+    m_rollSpeedPub.set(m_rollerMotor.get( ));
+    m_rollSupCurPub.set(m_rollerMotor.getSupplyCurrent( ));
 
-    m_ccDegreesEntry.setDouble(m_ccDegrees);
-    m_rotDegreesEntry.setDouble(m_currentDegrees);
-    m_noteDetectedEntry.setBoolean(m_noteDetected);
-    m_targetDegreesEntry.setDouble(m_targetDegrees);
+    m_ccDegreesPub.set(m_ccDegrees);
+    m_rotDegreesPub.set(m_currentDegrees);
+    m_targetDegreesPub.set(m_targetDegrees);
+    m_noteDetectedPub.set(m_noteDetected);
   }
 
   /****************************************************************************
@@ -281,29 +283,39 @@ public class Intake extends SubsystemBase
    */
   private void initDashboard( )
   {
-    // Initialize dashboard widgets
-    m_subsystemTab.add("INRotaryMech", m_rotaryMech);
+    // Get the default instance of NetworkTables that was created automatically when the robot program starts
+    NetworkTableInstance inst = NetworkTableInstance.getDefault( );
+    NetworkTable table = inst.getTable("intake");
 
-    // Shuffleboard layout
-    ShuffleboardLayout cmdList =
-        m_subsystemTab.getLayout("Commands", BuiltInLayouts.kList).withProperties(Map.of("Label position", "HIDDEN"));
-    cmdList.add("InRollStop", getMoveToPositionCommand(INRollerMode.STOP, this::getCurrentPosition));
-    cmdList.add("InRollAcquire", getMoveToPositionCommand(INRollerMode.ACQUIRE, this::getCurrentPosition));
-    cmdList.add("InRollExpel", getMoveToPositionCommand(INRollerMode.EXPEL, this::getCurrentPosition));
-    cmdList.add("InRollShoot", getMoveToPositionCommand(INRollerMode.SHOOT, this::getCurrentPosition));
-    cmdList.add("InRollHandoff", getMoveToPositionCommand(INRollerMode.HANDOFF, this::getCurrentPosition));
-    cmdList.add("InRollHold", getMoveToPositionCommand(INRollerMode.HOLD, this::getCurrentPosition));
+    // Initialize network tables publishers
+    m_rollSpeedPub = table.getDoubleTopic("rollSpeed").publish( );
+    m_rollSupCurPub = table.getDoubleTopic("rollSupCur").publish( );
 
-    cmdList.add("InRotDeploy", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeDeployed));
-    cmdList.add("InRotRetract", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeRetracted));
-    cmdList.add("InRotHandoff", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeHandoff));
+    m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
+    m_rotDegreesPub = table.getDoubleTopic("rotDegrees").publish( );
+    m_noteDetectedPub = table.getBooleanTopic("noteDetected").publish( );
+    m_targetDegreesPub = table.getDoubleTopic("taregetDegrees").publish( );
+
+    SmartDashboard.putData("INRotaryMech", m_rotaryMech);
+
+    // Add commands
+    SmartDashboard.putData("InRollStop", getMoveToPositionCommand(INRollerMode.STOP, this::getCurrentPosition));
+    SmartDashboard.putData("InRollAcquire", getMoveToPositionCommand(INRollerMode.ACQUIRE, this::getCurrentPosition));
+    SmartDashboard.putData("InRollExpel", getMoveToPositionCommand(INRollerMode.EXPEL, this::getCurrentPosition));
+    SmartDashboard.putData("InRollShoot", getMoveToPositionCommand(INRollerMode.SHOOT, this::getCurrentPosition));
+    SmartDashboard.putData("InRollHandoff", getMoveToPositionCommand(INRollerMode.HANDOFF, this::getCurrentPosition));
+    SmartDashboard.putData("InRollHold", getMoveToPositionCommand(INRollerMode.HOLD, this::getCurrentPosition));
+
+    SmartDashboard.putData("InRotDeploy", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeDeployed));
+    SmartDashboard.putData("InRotRetract", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeRetracted));
+    SmartDashboard.putData("InRotHandoff", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeHandoff));
   }
 
   // Put methods for controlling this subsystem here. Call these from Commands.
 
   /****************************************************************************
    * 
-   * Initialize subsystem during mode changes
+   * Initialize subsystem during robot mode changes
    */
   public void initialize( )
   {
@@ -367,7 +379,7 @@ public class Intake extends SubsystemBase
 
     m_targetDegrees = m_currentDegrees;
 
-    m_rotaryMotor.setControl(m_requestVolts.withOutput(axisValue * kRotaryManualVolts));
+    m_rotaryMotor.setControl(m_requestVolts.withOutput(kRotaryManualVolts.times(axisValue)));
   }
 
   ////////////////////////////////////////////////////////////////////////////

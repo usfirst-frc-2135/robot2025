@@ -27,12 +27,8 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -81,8 +77,6 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer
 {
   private final boolean                               m_macOSXSim     = false;        // Enables Mac OS X controller compatibility in simulation
-  private static final String                         kAutoTab        = "Autonomous"; // Shuffleboard tab name for autonomous mode
-  private static final String                         kCommandTab     = "Command";    // Shuffleboard tab name for commands
 
   // Gamepad controllers
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
@@ -199,10 +193,6 @@ public class RobotContainer
       Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE3.toString( ), "Pos3_Test3") //
   ));
 
-  // Shuffleboard objects
-  private ShuffleboardTab               autoTab        = Shuffleboard.getTab(kAutoTab);
-  private SimpleWidget                  autoDelay      = autoTab.add("AutoDelay", 0.0);
-
   /****************************************************************************
    * 
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -228,9 +218,10 @@ public class RobotContainer
    */
   private void addDashboardWidgets( )
   {
-    // Set up Shuffleboard layout from code
-    autoTab.add("AutoMode", m_autoChooser);
-    autoTab.add("StartPosition", m_startChooser);
+    // Network tables publisher objects
+    SmartDashboard.putData("AutoMode", m_autoChooser);
+    SmartDashboard.putData("StartPosition", m_startChooser);
+    SmartDashboard.putNumber("AutoDelay", 0.0);
 
     // Configure autonomous sendable chooser
     m_autoChooser.setDefaultOption("0 - AutoStop", AutoChooser.AUTOSTOP);
@@ -247,31 +238,31 @@ public class RobotContainer
     m_startChooser.addOption("POSE2", StartPose.POSE2);
     m_startChooser.addOption("POSE3", StartPose.POSE3);
 
-    autoTab.add("AutoChooserRun", new InstantCommand(( ) -> getAutonomousCommand( )));
+    SmartDashboard.putData("AutoChooserRun", new InstantCommand(( ) -> getAutonomousCommand( )));
 
     // Command tab
-    ShuffleboardTab cmdTab = Shuffleboard.getTab(kCommandTab);
-    cmdTab.add("AcquireNote", new AcquireNote(m_intake, m_led, m_hid));
-    cmdTab.add("ExpelNote", new ExpelNote(m_intake, m_led));
-    cmdTab.add("HandoffToFeeder", new HandoffToFeeder(m_intake, m_feeder, m_led));
-    cmdTab.add("PassNote", new PassNote(m_shooter, m_intake, m_led));
-    cmdTab.add("PrepareToClimb", new PrepareToClimb(m_climber, m_feeder));
-    cmdTab.add("RetractIntake", new RetractIntake(m_intake, m_led, m_hid));
-    cmdTab.add("ScoreAmp", new ScoreAmp(m_feeder));
-    cmdTab.add("ScoreSpeaker", new ScoreSpeaker(m_shooter, m_intake, m_led));
+    SmartDashboard.putData("AcquireNote", new AcquireNote(m_intake, m_led, m_hid));
+    SmartDashboard.putData("ExpelNote", new ExpelNote(m_intake, m_led));
+    SmartDashboard.putData("HandoffToFeeder", new HandoffToFeeder(m_intake, m_feeder, m_led));
+    SmartDashboard.putData("PassNote", new PassNote(m_shooter, m_intake, m_led));
+    SmartDashboard.putData("PrepareToClimb", new PrepareToClimb(m_climber, m_feeder));
+    SmartDashboard.putData("RetractIntake", new RetractIntake(m_intake, m_led, m_hid));
+    SmartDashboard.putData("ScoreAmp", new ScoreAmp(m_feeder));
+    SmartDashboard.putData("ScoreSpeaker", new ScoreSpeaker(m_shooter, m_intake, m_led));
 
     Time duration = Seconds.of(1.0);
-    cmdTab.add("HIDRumbleDriver", m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
-    cmdTab.add("HIDRumbleOperator", m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+    SmartDashboard.putData("HIDRumbleDriver",
+        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+    SmartDashboard.putData("HIDRumbleOperator",
+        m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
 
-    ShuffleboardLayout subList = cmdTab.getLayout("Subsystems", BuiltInLayouts.kList);
+    // Network tables publisher objects
+    SmartDashboard.putData("intake", m_intake);
+    SmartDashboard.putData("shooter", m_shooter);
+    SmartDashboard.putData("feeder", m_feeder);
+    SmartDashboard.putData("climber", m_climber);
 
-    subList.add(m_intake);
-    subList.add(m_shooter);
-    subList.add(m_feeder);
-    subList.add(m_climber);
-
-    cmdTab.add(CommandScheduler.getInstance( ));
+    SmartDashboard.putData(CommandScheduler.getInstance( ));
   }
 
   /****************************************************************************
@@ -541,7 +532,7 @@ public class RobotContainer
 
     DataLogManager.log(String.format("getAuto: autoMode %s startOption %s (%s)", autoKey, startPose, m_autoCommand.getName( )));
 
-    double delay = autoDelay.getEntry( ).getDouble(0.0);
+    double delay = SmartDashboard.getNumber("AutoDelay", 0.0);
     if (delay > 0.0)
       m_autoCommand = new SequentialCommandGroup( //
           new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)), //

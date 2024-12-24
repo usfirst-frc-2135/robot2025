@@ -3,7 +3,8 @@
 //
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
@@ -30,7 +31,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
-import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
@@ -39,11 +41,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -59,7 +57,6 @@ import frc.robot.lib.LimelightHelpers;
  */
 public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsystem {
     private static final boolean        m_useLimelight           = true;
-    private static final String         kSwerveTab               = "Swerve";
     private Pose2d                      m_allianceSpeakerATPose  = new Pose2d( );
 
     /* What to publish over networktables for telemetry */
@@ -78,15 +75,11 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         1.5 * Math.PI             // kMaxAngularSpeedRadiansPerSecondSquared       (slowed from 1.5 * Math.PIfor testing)  
     );
 
-    // Shuffleboard objects
-    ShuffleboardTab                     swerveTab                = Shuffleboard.getTab(kSwerveTab);
-    ShuffleboardLayout                  poseList                 = swerveTab.getLayout("Pose", BuiltInLayouts.kList);
-
-    GenericEntry                        poseXEntry               = poseList.add("X", 0.0).getEntry( );
-    GenericEntry                        poseYEntry               = poseList.add("Y", 0.0).getEntry( );
-    GenericEntry                        poseRotEntry             = poseList.add("rotation", 0.0).getEntry( );
-    ComplexWidget                       setPose                  = poseList.add("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
-    GenericEntry                        shooterDistanceEntry     = swerveTab.add("shooterDistance", 0.0).getEntry( );
+    // Network tables publisher objects
+    DoubleEntry                         poseXEntry;
+    DoubleEntry                         poseYEntry;
+    DoubleEntry                         poseRotEntry;
+    DoublePublisher                     shooterDistancePub;
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -187,6 +180,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             startSimThread();
         }
         configureAutoBuilder();
+        initDashboard();
     }
 
     /**
@@ -208,7 +202,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             startSimThread();
         }
         configureAutoBuilder();
-    }
+        initDashboard();
+   }
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -317,7 +312,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             });
         }
         double speakerTagDistance = this.getState( ).Pose.getTranslation( ).getDistance(m_allianceSpeakerATPose.getTranslation( ));
-        shooterDistanceEntry.setDouble(Units.metersToInches(speakerTagDistance));
+        shooterDistancePub.set(Units.metersToInches(speakerTagDistance));
 
         if (m_useLimelight && Robot.isReal( )) {
             visionUpdate( );
@@ -341,6 +336,20 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     // @formatter:on
 
+    private void initDashboard( )
+    {
+        // Get the default instance of NetworkTables that was created automatically when the robot program starts
+        NetworkTableInstance inst = NetworkTableInstance.getDefault( );
+        NetworkTable table = inst.getTable("swerve");
+
+        poseXEntry = table.getDoubleTopic("X").getEntry(0.0);
+        poseYEntry = table.getDoubleTopic("Y").getEntry(0.0);
+        poseRotEntry = table.getDoubleTopic("rotation").getEntry(0.0);
+        shooterDistancePub = table.getDoubleTopic("shooterDistance").getEntry(0.0);
+        SmartDashboard.putData("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
+
+    }
+
     public Command getPathCommand(PathPlannerPath ppPath)
     {
         // Create a path following command using AutoBuilder. This will also trigger event markers.
@@ -355,7 +364,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
      * Users typically need to provide a standard deviation that scales with the distance to target
      * and changes with number of tags available.
      *
-     * This example is sufficient to show that vision integration is possible, though exact implementation
+     * This example is sufficient to show that vision integration is possible, though exact
+     * implementation
      * of how to use vision should be tuned per-robot and to the team's specification.
      */
     private void visionUpdate( )
@@ -425,8 +435,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     {
         resetPose(        //
                 new Pose2d(           //
-                        new Translation2d(poseXEntry.getDouble(0.0), poseYEntry.getDouble(0.0)), //
-                        new Rotation2d(poseRotEntry.getDouble(0.0)))        //
+                        new Translation2d(poseXEntry.get(0.0), poseYEntry.get(0.0)), //
+                        new Rotation2d(poseRotEntry.get(0.0)))        //
         );
     }
 

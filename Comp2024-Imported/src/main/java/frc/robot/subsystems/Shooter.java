@@ -5,8 +5,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.util.Map;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -18,20 +16,21 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -83,7 +82,7 @@ public class Shooter extends SubsystemBase
   private final FlywheelSim                   m_upperFlywheelSim      = new FlywheelSim(
       LinearSystemId.createFlywheelSystem(DCMotor.getFalcon500(1), kMOI, kFlywheelGearRatio), DCMotor.getFalcon500(1), 0.0);
 
-  // Status signals
+  // CTRE Status signals for sensors
   private final StatusSignal<AngularVelocity> m_lowerVelocity;   // Default 4Hz (250ms)
   private final StatusSignal<AngularVelocity> m_upperVelocity;   // Default 4Hz (250ms)
 
@@ -101,14 +100,13 @@ public class Shooter extends SubsystemBase
   private LinearFilter                        m_lowerFlywheelFilter   = LinearFilter.singlePoleIIR(0.060, 0.020);
   private LinearFilter                        m_upperFlywheelFilter   = LinearFilter.singlePoleIIR(0.060, 0.020);
 
-  // Shuffleboard objects
-  ShuffleboardTab                             m_shooterTab            = Shuffleboard.getTab(kSubsystemName);
-  GenericEntry                                m_lowerSpeedEntry       = m_shooterTab.add("lowerSpeed", 0.0).getEntry( );
-  GenericEntry                                m_upperSpeedEntry       = m_shooterTab.add("upperSpeed", 0.0).getEntry( );
+  // Network tables publisher objects
+  private DoublePublisher                     m_lowerSpeedPub;
+  private DoublePublisher                     m_upperSpeedPub;
 
-  GenericEntry                                m_atDesiredRPMEntry     = m_shooterTab.add("atDesiredRPM", false).getEntry( );
-  GenericEntry                                m_targetRPMEntry        = m_shooterTab.add("targetRPM", 0.0).getEntry( );
-  GenericEntry                                m_flywheelScoreEntry    = m_shooterTab.add("flywheelRPM", 0.0).getEntry( );
+  private BooleanPublisher                    m_atDesiredRPMPub;
+  private DoublePublisher                     m_targetRPMPub;
+  private DoubleEntry                         m_flywheelScoreEntry;
 
   /****************************************************************************
    * 
@@ -128,6 +126,7 @@ public class Shooter extends SubsystemBase
     m_lowerAlert.set(!lowerValid);
     m_upperAlert.set(!upperValid);
 
+    // Initialize status signal objects
     m_lowerVelocity = m_lowerMotor.getRotorVelocity( );
     m_upperVelocity = m_upperMotor.getRotorVelocity( );
 
@@ -157,18 +156,19 @@ public class Shooter extends SubsystemBase
   {
     // This method will be called once per scheduler run
 
-    // Calculate flywheel RPM and display on dashboard
+    // Update network table publishers
     if (m_shooterValid)
     {
+      // Calculate flywheel RPM and update network tables publishers
       BaseStatusSignal.refreshAll(m_lowerVelocity, m_upperVelocity);
       m_lowerRPM = m_lowerFlywheelFilter.calculate((m_lowerVelocity.getValue( ).in(RotationsPerSecond) * 60.0));
       m_upperRPM = m_upperFlywheelFilter.calculate((m_upperVelocity.getValue( ).in(RotationsPerSecond) * 60.0));
-      m_lowerSpeedEntry.setDouble(m_lowerRPM);
-      m_upperSpeedEntry.setDouble(m_upperRPM);
+      m_lowerSpeedPub.set(m_lowerRPM);
+      m_upperSpeedPub.set(m_upperRPM);
 
       m_isAttargetRPM = ((m_lowerRPM > kToleranceRPM) && MathUtil.isNear(m_targetRPM, m_lowerRPM, kToleranceRPM))
           && ((m_upperRPM > kToleranceRPM) && MathUtil.isNear(m_targetRPM, m_upperRPM, kToleranceRPM));
-      m_atDesiredRPMEntry.setBoolean(m_isAttargetRPM);
+      m_atDesiredRPMPub.set(m_isAttargetRPM);
 
       if (m_isAttargetRPM != m_isAttargetRPMPrevious)
       {
@@ -177,7 +177,7 @@ public class Shooter extends SubsystemBase
       }
     }
 
-    m_targetRPMEntry.setDouble(m_targetRPM);
+    m_targetRPMPub.set(m_targetRPM);
   }
 
   /****************************************************************************
@@ -214,20 +214,30 @@ public class Shooter extends SubsystemBase
    */
   private void initDashboard( )
   {
-    m_flywheelScoreEntry.setDouble(kFlywheelScoreRPM);
+    // Get the default instance of NetworkTables that was created automatically when the robot program starts
+    NetworkTableInstance inst = NetworkTableInstance.getDefault( );
+    NetworkTable table = inst.getTable("shooter");
 
-    ShuffleboardLayout cmdList =
-        m_shooterTab.getLayout("Commands", BuiltInLayouts.kList).withProperties(Map.of("Label position", "HIDDEN"));
-    cmdList.add("ShRunScore", getShooterScoreCommand( ));
-    cmdList.add("ShRunPass", getShooterPassCommand( ));
-    cmdList.add("ShRunStop", getShooterStopCommand( ));
+    // Initialize network tables publishers
+    m_lowerSpeedPub = table.getDoubleTopic("lowerSpeed").publish( );
+    m_upperSpeedPub = table.getDoubleTopic("upperSpeed").publish( );
+
+    m_atDesiredRPMPub = table.getBooleanTopic("atDesiredRPM").publish( );
+    m_targetRPMPub = table.getDoubleTopic("targetRPM").publish( );
+    m_flywheelScoreEntry = table.getDoubleTopic("flywheelRPM").getEntry(0.0);
+    m_flywheelScoreEntry.set(kFlywheelScoreRPM);
+
+    // Add commands
+    SmartDashboard.putData("ShRunScore", getShooterScoreCommand( ));
+    SmartDashboard.putData("ShRunPass", getShooterPassCommand( ));
+    SmartDashboard.putData("ShRunStop", getShooterStopCommand( ));
   }
 
   // Put methods for controlling this subsystem here. Call these from Commands.
 
   /****************************************************************************
    * 
-   * Initialize subsystem during mode changes
+   * Initialize subsystem during robot mode changes
    */
   public void initialize( )
   {
@@ -271,7 +281,7 @@ public class Shooter extends SubsystemBase
         m_targetRPM = 0.0;
         break;
       case SCORE :
-        m_targetRPM = m_flywheelScoreEntry.getDouble(0.0);
+        m_targetRPM = m_flywheelScoreEntry.get(0.0);
         break;
       case PASS :
         m_targetRPM = kFlywheelPassRPM;
