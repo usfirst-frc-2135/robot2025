@@ -89,7 +89,9 @@ public class Feeder extends SubsystemBase
 
   // Rotary constants
   private static final double       kToleranceDegrees   = 3.0;      // PID tolerance in degrees
-  private static final double       kMMMoveTimeout      = 1.0;      // Seconds allowed for a Motion Magic movement
+  private static final double       kMMDebounceTime     = 0.060;   // Seconds to debounce a final position check
+  private static final double       kMMMoveTimeout      = 1.0;     // Seconds allowed for a Motion Magic movement
+  private static final double       kNoteDebounceTime   = 0.030;   // Seconds to debounce detected note sensor
 
   // Rotary angles - Motion Magic move parameters 
   //    Measured hardstops and pre-defined positions:
@@ -135,7 +137,7 @@ public class Feeder extends SubsystemBase
 
   // Roller variables
   private boolean                   m_rollerValid;        // Health indicator for motor 
-  private Debouncer                 m_noteDebouncer     = new Debouncer(0.030, DebounceType.kBoth);
+  private Debouncer                 m_noteDebouncer     = new Debouncer(kNoteDebounceTime, DebounceType.kBoth);
   private boolean                   m_noteDetected;       // Detection state of note in rollers
 
   // Rotary variables
@@ -151,8 +153,8 @@ public class Feeder extends SubsystemBase
 
   // Motion Magic config parameters
   private MotionMagicVoltage        m_mmRequestVolts    = new MotionMagicVoltage(0).withSlot(0);
-  private Debouncer                 m_mmWithinTolerance = new Debouncer(0.060, DebounceType.kRising);
-  private Timer                     m_mmMoveTimer       = new Timer( ); // Safety timer for movements
+  private Debouncer                 m_mmWithinTolerance = new Debouncer(kMMDebounceTime, DebounceType.kRising);
+  private Timer                     m_mmMoveTimer       = new Timer( ); // Movement timer
   private boolean                   m_mmMoveIsFinished;   // Movement has completed (within tolerance)
 
   // Network tables publisher objects

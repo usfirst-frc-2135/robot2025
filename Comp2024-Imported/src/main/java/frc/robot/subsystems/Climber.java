@@ -69,11 +69,12 @@ public class Climber extends SubsystemBase
   private static final Voltage kCalibrateSpeedVolts = Volts.of(-1.0);           // Motor voltage during calibration
   private static final Voltage kManualSpeedVolts    = Volts.of(3.0);  // Motor voltage during manual operation (joystick)
   private static final double  kCalibrateStallAmps  = 25.0;    // Motor amps during calibration stall
+  private static final double  kCalibrateStallTime  = 0.100;   // Seconds of stall before calibrating
+  private static final double  kCalibrationTimeout  = 3.0;     // Max calibration time
 
   private static final double  kToleranceInches     = 0.5;     // Climber PID tolerance in inches
   private static final double  kMMDebounceTime      = 0.060;   // Seconds to debounce a final position check
   private static final double  kMMMoveTimeout       = 4.0;     // Seconds allowed for a Motion Magic movement
-  private static final double  kCalibrationTimeout  = 3.0;     // Max calibration time
 
   // Climber lengths - Motion Magic config parameters
   private static final double  kLengthClimbed       = 0.0;     // By definition - Climber fully climbed
@@ -128,8 +129,8 @@ public class Climber extends SubsystemBase
 
   // Calibration variables
   private Timer                       m_calibrateTimer    = new Timer( );
-  private Debouncer                   m_leftStalled       = new Debouncer(0.100, DebounceType.kRising);
-  private Debouncer                   m_rightStalled      = new Debouncer(0.100, DebounceType.kRising);
+  private Debouncer                   m_leftStalled       = new Debouncer(kCalibrateStallTime, DebounceType.kRising);
+  private Debouncer                   m_rightStalled      = new Debouncer(kCalibrateStallTime, DebounceType.kRising);
   private boolean                     m_leftCalibrated    = false;
   private boolean                     m_rightCalibrated   = false;
 
@@ -140,7 +141,7 @@ public class Climber extends SubsystemBase
   // Motion Magic mode config parameters
   private MotionMagicVoltage          m_mmRequestVolts    = new MotionMagicVoltage(0).withSlot(0);
   private Debouncer                   m_mmWithinTolerance = new Debouncer(kMMDebounceTime, DebounceType.kRising);
-  private Timer                       m_mmMoveTimer       = new Timer( );           // Safety timer for movements
+  private Timer                       m_mmMoveTimer       = new Timer( );           // Movement timer
   private Voltage                     m_mmArbFeedForward  = Volts.of(0);  // Arbitrary feedforward added to counteract gravity
   private int                         m_mmHardStopCounter = 0;
   private boolean                     m_mmMoveIsFinished  = true;                   // Movement has completed (within tolerance)
