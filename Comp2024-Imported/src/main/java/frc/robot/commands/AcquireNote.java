@@ -48,6 +48,7 @@ public class AcquireNote extends SequentialCommandGroup
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         
         intake.getMoveToPositionCommand(INConsts.INRollerMode.STOP, intake::getIntakeRetracted)
+        
         // @formatter:on
     );
   }

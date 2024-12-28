@@ -37,7 +37,7 @@ public class AutoPreloadSteal extends SequentialCommandGroup
    * 3c - Feed the note
    * 
    * @param ppPaths
-   *          swerve drivetrain subsystem
+   *          list of auto paths to follow
    * @param drivetrain
    *          swerve drivetrain subsystem
    * @param intake
@@ -56,6 +56,7 @@ public class AutoPreloadSteal extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
+        
         new InstantCommand(()->Robot.timeMarker(getName())),
 
         new LogCommand(getName(), "Drive to scoring pose"),

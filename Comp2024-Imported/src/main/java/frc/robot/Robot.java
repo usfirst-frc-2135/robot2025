@@ -38,9 +38,9 @@ public class Robot extends TimedRobot
     // Starts recording to data log
     DataLogManager.start( );
     DataLogManager.logConsoleOutput(true);
-    // SignalLogger.start();
     DriverStation.startDataLog(DataLogManager.getLog( )); // Logs joystick data
-    Robot.timeMarker("robotInit: start");
+    // SignalLogger.start();                              // Start CTRE signal logging
+    Robot.timeMarker("Robot: start");
 
     // Start the web server for remoote dashboard layout
     WebServer.start(5800, Filesystem.getDeployDirectory( ).getPath( ));
@@ -58,8 +58,9 @@ public class Robot extends TimedRobot
     PortForwarder.add(5804, "limelight.local", 5804);
     PortForwarder.add(5805, "limelight.local", 5805);
 
-    FollowPathCommand.warmupCommand( ).withName("PathPlannerWarmupCommand").schedule( ); // Recommended by PathPlanner docs
-    Robot.timeMarker("robotInit: after warmup");
+    FollowPathCommand.warmupCommand( ).withName("PathPlanner - warmupCommand").schedule( ); // Recommended by PathPlanner docs
+
+    Robot.timeMarker("Robot: after warmup");
   }
 
   /****************************************************************************
@@ -88,7 +89,7 @@ public class Robot extends TimedRobot
   @Override
   public void disabledInit( )
   {
-    displayMatchBanner("disabledInit");
+    datalogMatchBanner("disabledInit");
 
     Robot.timeMarker("disabledInit: before init");
 
@@ -123,7 +124,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit( )
   {
-    displayMatchBanner("autonomousInit");
+    datalogMatchBanner("autonomousInit");
 
     if (m_autonomousCommand != null)
     {
@@ -157,7 +158,7 @@ public class Robot extends TimedRobot
   @Override
   public void teleopInit( )
   {
-    displayMatchBanner("teleopInit");
+    datalogMatchBanner("teleopInit");
 
     // Make sure that the autonomous command stops running when Teleop starts running
     if (m_autonomousCommand != null)
@@ -212,7 +213,7 @@ public class Robot extends TimedRobot
 
   /****************************************************************************
    * 
-   * Our robot detection process between competition and beta (practice) robots
+   * Our robot detection process to differentiate between competition and beta (practice) robots
    */
   public static boolean isComp( )
   {
@@ -246,7 +247,7 @@ public class Robot extends TimedRobot
 
   /****************************************************************************
    * 
-   * Our robot detection process between competition and beta (practice) robots
+   * Method for printing the absolute and relative time from the previous call
    */
   public static void timeMarker(String msg)
   {
@@ -261,7 +262,7 @@ public class Robot extends TimedRobot
    * 
    * Display a mode change banner for the match type and number
    */
-  public static void displayMatchBanner(String msg)
+  public static void datalogMatchBanner(String msg)
   {
     DataLogManager.log(String.format("===================================================================="));
     DataLogManager.log(String.format("%s: Match %s%s, %s Alliance", msg, DriverStation.getMatchType( ).toString( ),

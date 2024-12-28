@@ -20,7 +20,7 @@ public class AutoTest extends SequentialCommandGroup
    * 1 - Run an auto with a test path
    * 
    * @param ppPaths
-   *          swerve drivetrain subsystem
+   *          list of auto paths to follow
    * @param drivetrain
    *          swerve drivetrain subsystem
    * @param intake
@@ -38,8 +38,10 @@ public class AutoTest extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
+
         new LogCommand(getName(), "Drive a test path"),
         drivetrain.getPathCommand(ppPaths.get(0))
+        
         // @formatter:on
     );
   }

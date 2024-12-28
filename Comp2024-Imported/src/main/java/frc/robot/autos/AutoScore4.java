@@ -28,8 +28,8 @@ public class AutoScore4 extends SequentialCommandGroup
 {
   /**
    * Autonomous command to:
-   * 1 - Drive to a scoring position
-   * 1a - Shoot the preloaded note
+   * 1a - Drive to a scoring position
+   * 1b - Shoot the preloaded note
    * 2a - Deploy intake and run rollers
    * 2b - Drive to a spike and back while acquiring a note
    * 2c - Shoot a the first spike note
@@ -41,7 +41,7 @@ public class AutoScore4 extends SequentialCommandGroup
    * 4c - Shoot a the third spike note
    * 
    * @param ppPaths
-   *          swerve drivetrain subsystem
+   *          list of auto paths to follow
    * @param drivetrain
    *          swerve drivetrain subsystem
    * @param intake
@@ -60,6 +60,7 @@ public class AutoScore4 extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
+        
         new InstantCommand(()->Robot.timeMarker(getName())),
 
         new LogCommand(getName(), "Drive to scoring pose"),

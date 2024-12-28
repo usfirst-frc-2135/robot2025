@@ -20,12 +20,12 @@ public class AutoPreloadLeave extends SequentialCommandGroup
 {
   /**
    * Autonomous command to:
-   * 1 - Drive to a scoring position
-   * 2 - Shoot the preloaded note
-   * 3 - Leave the starting zone while avoiding spike notes
+   * 1a - Drive to a scoring position
+   * 1b - Shoot the preloaded note
+   * 2a - Leave the starting zone while avoiding spike notes
    * 
    * @param ppPaths
-   *          swerve drivetrain subsystem
+   *          list of auto paths to follow
    * @param drivetrain
    *          swerve drivetrain subsystem
    * @param intake
@@ -44,6 +44,7 @@ public class AutoPreloadLeave extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
+
         new LogCommand(getName(), "Drive to scoring pose"),
         drivetrain.getPathCommand(ppPaths.get(0)),
 
@@ -52,6 +53,7 @@ public class AutoPreloadLeave extends SequentialCommandGroup
 
         new LogCommand(getName(), "Leave zone"),
         drivetrain.getPathCommand(ppPaths.get(1))
+        
         // @formatter:on
     );
   }

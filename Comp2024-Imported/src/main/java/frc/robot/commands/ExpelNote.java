@@ -30,7 +30,7 @@ public class ExpelNote extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-
+        
         new LogCommand(getName(), "Stop rollers & Deploy intake rotary"),
         intake.getMoveToPositionCommand(INConsts.INRollerMode.STOP, intake::getIntakeDeployed),
 

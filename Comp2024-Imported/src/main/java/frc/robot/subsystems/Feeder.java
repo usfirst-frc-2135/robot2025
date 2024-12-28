@@ -76,7 +76,7 @@ public class Feeder extends SubsystemBase
   private static final double  kRotaryGearRatio    = 27.0;
   private static final double  kRotaryLengthMeters = 0.5;       // Simulation
   private static final double  kRotaryWeightKg     = 4.0;       // Simulation
-  private static final Voltage kRotaryManualVolts  = Volts.of(3.5);       // Motor voltage during manual operation (joystick)
+  private static final Voltage kRotaryManualVolts  = Volts.of(3.5); // Motor voltage during manual operation (joystick)
 
   /** Rotary manual move parameters */
   private enum RotaryMode
@@ -88,10 +88,10 @@ public class Feeder extends SubsystemBase
   }
 
   // Rotary constants
-  private static final double       kToleranceDegrees   = 3.0;      // PID tolerance in degrees
-  private static final double       kMMDebounceTime     = 0.060;   // Seconds to debounce a final position check
-  private static final double       kMMMoveTimeout      = 1.0;     // Seconds allowed for a Motion Magic movement
-  private static final double       kNoteDebounceTime   = 0.030;   // Seconds to debounce detected note sensor
+  private static final double       kToleranceDegrees   = 3.0;    // PID tolerance in degrees
+  private static final double       kMMDebounceTime     = 0.060;  // Seconds to debounce a final position check
+  private static final double       kMMMoveTimeout      = 1.0;    // Seconds allowed for a Motion Magic movement
+  private static final double       kNoteDebounceTime   = 0.030;  // Seconds to debounce detected note sensor
 
   // Rotary angles - Motion Magic move parameters 
   //    Measured hardstops and pre-defined positions:
@@ -136,26 +136,26 @@ public class Feeder extends SubsystemBase
   // Declare module variables
 
   // Roller variables
-  private boolean                   m_rollerValid;        // Health indicator for motor 
+  private boolean                   m_rollerValid;              // Health indicator for motor 
   private Debouncer                 m_noteDebouncer     = new Debouncer(kNoteDebounceTime, DebounceType.kBoth);
-  private boolean                   m_noteDetected;       // Detection state of note in rollers
+  private boolean                   m_noteDetected;             // Detection state of note in rollers
 
   // Rotary variables
-  private boolean                   m_rotaryValid;        // Health indicator for motor 
-  private boolean                   m_canCoderValid;      // Health indicator for CANcoder 
-  private double                    m_currentDegrees    = 0.0; // Current angle in degrees
-  private double                    m_targetDegrees     = 0.0; // Target angle in degrees
-  private double                    m_ccDegrees         = 0.0; // CANcoder angle in degrees
+  private boolean                   m_rotaryValid;              // Health indicator for motor 
+  private boolean                   m_canCoderValid;            // Health indicator for CANcoder 
+  private double                    m_currentDegrees    = 0.0;  // Current angle in degrees
+  private double                    m_targetDegrees     = 0.0;  // Target angle in degrees
+  private double                    m_ccDegrees         = 0.0;  // CANcoder angle in degrees
 
   // Manual mode config parameters
   private VoltageOut                m_requestVolts      = new VoltageOut(Volts.of(0));
-  private RotaryMode                m_rotaryMode        = RotaryMode.INIT;     // Manual movement mode with joysticks
+  private RotaryMode                m_rotaryMode        = RotaryMode.INIT;  // Manual movement mode with joysticks
 
   // Motion Magic config parameters
   private MotionMagicVoltage        m_mmRequestVolts    = new MotionMagicVoltage(0).withSlot(0);
   private Debouncer                 m_mmWithinTolerance = new Debouncer(kMMDebounceTime, DebounceType.kRising);
-  private Timer                     m_mmMoveTimer       = new Timer( ); // Movement timer
-  private boolean                   m_mmMoveIsFinished;   // Movement has completed (within tolerance)
+  private Timer                     m_mmMoveTimer       = new Timer( );     // Movement timer
+  private boolean                   m_mmMoveIsFinished;         // Movement has completed (within tolerance)
 
   // Network tables publisher objects
   private DoublePublisher           m_rollSpeedPub;
@@ -440,16 +440,18 @@ public class Feeder extends SubsystemBase
    * 
    * Detect Motion Magic finished state
    * 
+   * @param holdPosition
+   *          hold the current position
    * @return true when movement has completed
    */
-  public boolean moveToPositionIsFinished(boolean hold)
+  public boolean moveToPositionIsFinished(boolean holdPosition)
   {
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
     double error = m_targetDegrees - m_currentDegrees;
 
     m_rotaryMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
 
-    if (hold)
+    if (holdPosition)
       return false;
 
     if (m_mmWithinTolerance.calculate(Math.abs(error) < kToleranceDegrees) || timedOut)
@@ -624,18 +626,18 @@ public class Feeder extends SubsystemBase
    *          roller mode to apply
    * @param position
    *          double supplier that provides the target distance
-   * @param hold
+   * @param holdPosition
    *          boolen to indicate whether the command ever finishes
    * @return continuous command that runs climber motors
    */
-  private Command getMMPositionCommand(FDRollerMode mode, DoubleSupplier position, boolean hold)
+  private Command getMMPositionCommand(FDRollerMode mode, DoubleSupplier position, boolean holdPosition)
   {
-    return new FunctionalCommand(                                 // Command with all phases declared
-        ( ) -> moveToPositionInit(mode, position.getAsDouble( ), hold), // Init method
-        ( ) -> moveToPositionExecute( ),                          // Execute method
-        interrupted -> moveToPositionEnd( ),                      // End method
-        ( ) -> moveToPositionIsFinished(hold),                    // IsFinished method
-        this                                                      // Subsytem required
+    return new FunctionalCommand(                                               // Command with all phases declared
+        ( ) -> moveToPositionInit(mode, position.getAsDouble( ), holdPosition), // Init method
+        ( ) -> moveToPositionExecute( ),                                        // Execute method
+        interrupted -> moveToPositionEnd( ),                                    // End method
+        ( ) -> moveToPositionIsFinished(holdPosition),                          // IsFinished method
+        this                                                                    // Subsytem required
     );
   }
 

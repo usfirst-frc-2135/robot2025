@@ -52,6 +52,7 @@ public class PassNote extends SequentialCommandGroup
         intake.getMoveToPositionCommand(INConsts.INRollerMode.STOP, intake::getCurrentPosition),
 
         shooter.getShooterScoreCommand()    // Set back to speaker shooting speed
+        
         // @formatter:on
     );
   }

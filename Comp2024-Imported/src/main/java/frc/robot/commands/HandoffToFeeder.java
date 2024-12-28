@@ -32,7 +32,7 @@ public class HandoffToFeeder extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-
+        
         new LogCommand(getName(), "Align Feeder and Intake"),
         feeder.getMoveToPositionCommand(FDConsts.FDRollerMode.HANDOFF, feeder::getFeederHandoff),
         intake.getMoveToPositionCommand(INConsts.INRollerMode.STOP, intake::getIntakeHandoff),

@@ -20,7 +20,7 @@ public class AutoLeave extends SequentialCommandGroup
    * 1 - Leave the starting zone while avoiding spike notes
    * 
    * @param ppAuto
-   *          swerve drivetrain subsystem
+   *          list of auto paths to follow
    * @param drivetrain
    *          swerve drivetrain subsystem
    * @param led
@@ -34,8 +34,10 @@ public class AutoLeave extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
+
         new LogCommand(getName(), "Leave zone"),
         drivetrain.getPathCommand(ppAuto.get(0))
+        
         // @formatter:on
     );
   }

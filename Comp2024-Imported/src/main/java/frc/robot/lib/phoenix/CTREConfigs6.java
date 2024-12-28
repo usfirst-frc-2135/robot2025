@@ -25,6 +25,15 @@ public final class CTREConfigs6
   /****************************************************************************
    * 
    * Intake rotary motor - Falcon 500
+   * 
+   * @param min
+   *          minimum angle of rotation
+   * @param max
+   *          maximum angle of rotation (must be greater than min)
+   * @param ccPort
+   *          CANcoder port number
+   * @param gearRatio
+   *          gear box ratio
    */
   public static TalonFXConfiguration intakeRotaryFXConfig(double min, double max, int ccPort, double gearRatio)
   {
@@ -40,7 +49,7 @@ public final class CTREConfigs6
     inRotaryConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;  // Seconds
     inRotaryConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    inRotaryConfig.CurrentLimits.StatorCurrentLimit = 100.0;       // Amps
+    inRotaryConfig.CurrentLimits.StatorCurrentLimit = 100.0;      // Amps
     inRotaryConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
@@ -54,26 +63,26 @@ public final class CTREConfigs6
 
     // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio
     inRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 50.0 / gearRatio;  // Rotations / second
-    inRotaryConfig.MotionMagic.MotionMagicAcceleration = 220.0 / gearRatio;    // Rotations / second ^ 2
-    inRotaryConfig.MotionMagic.MotionMagicJerk = 1600.0 / gearRatio;           // Rotations / second ^ 3
+    inRotaryConfig.MotionMagic.MotionMagicAcceleration = 220.0 / gearRatio;   // Rotations / second ^ 2
+    inRotaryConfig.MotionMagic.MotionMagicJerk = 1600.0 / gearRatio;          // Rotations / second ^ 3
 
     // Motor output settings
-    inRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;  // Percentage
+    inRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
     inRotaryConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     inRotaryConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Open Loop settings
-    // inRotaryConfig.OpenLoopRamps.*                             // Seconds to ramp
+    // inRotaryConfig.OpenLoopRamps.*                               // Seconds to ramp
 
     // Slot settings - remote/fused CANcoder affects all feedback constants by the gearRatio
     inRotaryConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine; // Feedforward: Mechanism is an arm and needs cosine
-    inRotaryConfig.Slot0.kS = 0.0;                                // Feedforward: Voltage or duty cylce to overcome static friction
-    inRotaryConfig.Slot0.kG = -0.50;                               // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
-    inRotaryConfig.Slot0.kV = 0.1129;                             // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
+    inRotaryConfig.Slot0.kS = 0.0;                                  // Feedforward: Voltage or duty cylce to overcome static friction
+    inRotaryConfig.Slot0.kG = -0.50;                                // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
+    inRotaryConfig.Slot0.kV = 0.1129;                               // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    inRotaryConfig.Slot0.kP = 3.6 * gearRatio;                    // Feedback: Voltage or duty cycle per velocity error (velocity modes)
-    inRotaryConfig.Slot0.kI = 0.0 * gearRatio;                    // Feedback: Voltage or duty cycle per accumulated error
-    inRotaryConfig.Slot0.kD = 0.0 * gearRatio;                    // Feedback: Voltage or duty cycle per unit of acceleration error (velocity modes)
+    inRotaryConfig.Slot0.kP = 3.6 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity error (velocity modes)
+    inRotaryConfig.Slot0.kI = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per accumulated error
+    inRotaryConfig.Slot0.kD = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per unit of acceleration error (velocity modes)
 
     // Software limit switches
     inRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;  // Rotations
@@ -100,7 +109,7 @@ public final class CTREConfigs6
       config.MagnetSensor.MagnetOffset =
           (Robot.isComp( )) ? (-0.311768 - kQuarterRotation + CompRobotOffset) : (0.1184 - kQuarterRotation);
     else
-      config.MagnetSensor.MagnetOffset = -0.25; // Simulated CANcoder default in rotations
+      config.MagnetSensor.MagnetOffset = -0.25;                   // Simulated CANcoder default in rotations
 
     return config;
   }
@@ -122,7 +131,7 @@ public final class CTREConfigs6
     shooterConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;   // Seconds
     shooterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    // shooterConfig.CurrentLimits.StatorCurrentLimit = 100.0;        // Amps
+    // shooterConfig.CurrentLimits.StatorCurrentLimit = 100.0;       // Amps
     // shooterConfig.CurrentLimits.StatorCurrentLimitEnable = false;
 
     // shooterConfig.Feedback.*
@@ -155,6 +164,15 @@ public final class CTREConfigs6
   /****************************************************************************
    * 
    * Feeder rotary motor - Falcon 500
+   * 
+   * @param min
+   *          minimum angle of rotation
+   * @param max
+   *          maximum angle of rotation (must be greater than min)
+   * @param ccPort
+   *          CANcoder port number
+   * @param gearRatio
+   *          gear box ratio
    */
   public static TalonFXConfiguration feederRotaryFXConfig(double min, double max, int ccPort, double gearRatio)
   {
@@ -170,7 +188,7 @@ public final class CTREConfigs6
     fdRotaryConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;  // Seconds
     fdRotaryConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    fdRotaryConfig.CurrentLimits.StatorCurrentLimit = 150.0;       // Amps
+    fdRotaryConfig.CurrentLimits.StatorCurrentLimit = 150.0;      // Amps
     fdRotaryConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
@@ -188,22 +206,22 @@ public final class CTREConfigs6
     fdRotaryConfig.MotionMagic.MotionMagicJerk = 360.0 / gearRatio;           // Rotations / second ^ 3
 
     // Motor output settings
-    fdRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;  // Percentage
+    fdRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
     fdRotaryConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     fdRotaryConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Open Loop settings
-    // fdRotaryConfig.OpenLoopRamps.*                             // Seconds to ramp
+    // fdRotaryConfig.OpenLoopRamps.*                               // Seconds to ramp
 
     // Slot settings - remote/fused CANcoder affects all feedback constants by the gearRatio
     fdRotaryConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine; // Feedforward: Mechanism is an arm and needs cosine
-    fdRotaryConfig.Slot0.kS = 0.0;                                // Feedforward: Voltage or duty cylce to overcome static friction
+    fdRotaryConfig.Slot0.kS = 0.0;                                  // Feedforward: Voltage or duty cylce to overcome static friction
     fdRotaryConfig.Slot0.kG = -0.50;                                // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward) 
-    fdRotaryConfig.Slot0.kV = 0.1129;                             // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
+    fdRotaryConfig.Slot0.kV = 0.1129;                               // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    fdRotaryConfig.Slot0.kP = 2.4 * gearRatio;                    // Feedback: Voltage or duty cycle per velocity error (velocity modes)
-    fdRotaryConfig.Slot0.kI = 0.0 * gearRatio;                    // Feedback: Voltage or duty cycle per accumulated error
-    fdRotaryConfig.Slot0.kD = 0.0 * gearRatio;                    // Feedback: Voltage or duty cycle per unit of acceleration error (velocity modes)
+    fdRotaryConfig.Slot0.kP = 2.4 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity error (velocity modes)
+    fdRotaryConfig.Slot0.kI = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per accumulated error
+    fdRotaryConfig.Slot0.kD = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per unit of acceleration error (velocity modes)
 
     // Software limit switches
     fdRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;  // Rotations
@@ -228,14 +246,21 @@ public final class CTREConfigs6
     if (Robot.isReal( ))
       config.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (0.059814 - kQuarterRotation) : (-0.2581 - kQuarterRotation);
     else
-      config.MagnetSensor.MagnetOffset = -0.25; // Simulated CANcoder default in rotations
+      config.MagnetSensor.MagnetOffset = -0.25;                   // Simulated CANcoder default in rotations
 
     return config;
   }
 
   /****************************************************************************
    * 
-   * Climber motors (2) - Falcon 500
+   * Climber motors (2 - one for left and right) - Falcon 500
+   * 
+   * @param inverted
+   *          motor inversion request
+   * @param min
+   *          minimum deployment distance
+   * @param max
+   *          maximum deployement distance (must be greater than min)
    */
   public static TalonFXConfiguration climberFXConfig(boolean inverted, double min, double max)
   {

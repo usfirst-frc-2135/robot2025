@@ -5,6 +5,8 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -135,18 +137,13 @@ public class Vision extends SubsystemBase
    * 
    * @param maxAngularRate
    *          max angular rate to scale against
+   * @return desired proportional angular velocity to rotate the chassis
    */
-  public double limelight_aim_proportional(double maxAngularRate)
+  public AngularVelocity aimProportional(AngularVelocity maxAngularRate)
   {
-    double targetingAngularVelocity = LimelightHelpers.getTX(kLLName) * kAimingKp;
+    double proportionalFactor = -LimelightHelpers.getTX(kLLName) * kAimingKp;
 
-    // convert to radians per second for our drive method
-    targetingAngularVelocity *= maxAngularRate;
-
-    // invert since tx is positive when the target is to the right of the crosshair
-    targetingAngularVelocity *= -1.0;
-
-    return targetingAngularVelocity;
+    return maxAngularRate.times(proportionalFactor);
   }
 
   /****************************************************************************
@@ -155,18 +152,13 @@ public class Vision extends SubsystemBase
    * 
    * @param maxSpeed
    *          max speed to scale against
+   * @return desired proportional linear velocity in chassis forward direction
    */
-  public double limelight_range_proportional(double maxSpeed)
+  public LinearVelocity rangeProportional(LinearVelocity maxSpeed)
   {
-    double targetingForwardSpeed = LimelightHelpers.getTY(kLLName) * kDrivingKp;
+    double proportionalFactor = LimelightHelpers.getTY(kLLName) * kDrivingKp;
 
-    // convert to meters per second
-    targetingForwardSpeed *= maxSpeed;
-
-    // invert since ty is positive when the target is above the crosshair
-    targetingForwardSpeed *= -1.0;
-
-    return targetingForwardSpeed;
+    return maxSpeed.times(proportionalFactor);
   }
 
   ///////////////////////// PRIVATE HELPERS ///////////////////////////////

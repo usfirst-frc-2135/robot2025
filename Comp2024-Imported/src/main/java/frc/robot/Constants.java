@@ -96,12 +96,12 @@ public class Constants
     /** Intake roller modes */
     public enum INRollerMode
     {
-      STOP,    // Stop any spinning
-      ACQUIRE, // Acquire a game piece
-      EXPEL,   // Expel a game piece
-      SHOOT,   // put into shooter 
-      HANDOFF, // put into feeder 
-      HOLD     // Maintain existing setting
+      STOP,    // Stop all rotation
+      ACQUIRE, // Speed for acquiring a game piece
+      EXPEL,   // Speed for expelling a game piece
+      SHOOT,   // Speed for putting game piece into shooter 
+      HANDOFF, // Speed for putting game piece into feeder 
+      HOLD     // Maintain existing speed setting
     }
   }
 
@@ -113,10 +113,10 @@ public class Constants
     /** Feeder roller modes */
     public enum FDRollerMode
     {
-      STOP,    // Stop spinning
-      SCORE,   // put into amp 
-      HANDOFF, // handoff into feeder 
-      HOLD     // Maintain existing setting
+      STOP,    // Stop all rotation
+      SCORE,   // Speed for putting game piece into amp 
+      HANDOFF, // Speed for handoff into feeder 
+      HOLD     // Maintain existing speed setting
     }
   }
 

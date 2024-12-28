@@ -428,9 +428,11 @@ public class Climber extends SubsystemBase
    * 
    * Detect Motion Magic finished state
    * 
+   * @param holdPosition
+   *          hold the current position
    * @return true when movement has completed
    */
-  private boolean moveToPositionIsFinished(boolean hold)
+  private boolean moveToPositionIsFinished(boolean holdPosition)
   {
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
     double error = m_targetLength - m_leftLength;
@@ -438,7 +440,7 @@ public class Climber extends SubsystemBase
 
     setMMPosition(m_targetLength);
 
-    if (hold)
+    if (holdPosition)
       return false;
 
     if (m_mmWithinTolerance.calculate(Math.abs(error) < kToleranceInches) || timedOut || hittingHardStop)
@@ -488,7 +490,6 @@ public class Climber extends SubsystemBase
   /****************************************************************************
    * 
    * Move climber down during calibration
-   * 
    */
   private void calibrateExecute( )
   {}
@@ -559,8 +560,10 @@ public class Climber extends SubsystemBase
    * 
    * Set climber motors to a known voltage
    * 
-   * @param volts
-   *          voltage to apply (0.0 is stopped)
+   * @param leftVolts
+   *          voltage to apply to left motor (0.0 is stopped)
+   * @param rightVolts
+   *          voltage to apply to right motor (0.0 is stopped)
    */
   private void setVoltage(Voltage leftVolts, Voltage rightVolts)
   {
@@ -695,18 +698,18 @@ public class Climber extends SubsystemBase
    * 
    * @param position
    *          double supplier that provides the target distance
-   * @param hold
+   * @param holdPosition
    *          boolen to indicate whether the command ever finishes
    * @return continuous command that runs climber motors
    */
-  private Command getMMPositionCommand(DoubleSupplier position, boolean hold)
+  private Command getMMPositionCommand(DoubleSupplier position, boolean holdPosition)
   {
-    return new FunctionalCommand(                                 // Command with all phases declared
-        ( ) -> moveToPositionInit(position.getAsDouble( ), hold), // Init method
-        ( ) -> moveToPositionExecute( ),                          // Execute method
-        interrupted -> moveToPositionEnd( ),                      // End method
-        ( ) -> moveToPositionIsFinished(hold),                    // IsFinished method
-        this                                                      // Subsytem required
+    return new FunctionalCommand(                                         // Command with all phases declared
+        ( ) -> moveToPositionInit(position.getAsDouble( ), holdPosition), // Init method
+        ( ) -> moveToPositionExecute( ),                                  // Execute method
+        interrupted -> moveToPositionEnd( ),                              // End method
+        ( ) -> moveToPositionIsFinished(holdPosition),                    // IsFinished method
+        this                                                              // Subsytem required
     );
   }
 

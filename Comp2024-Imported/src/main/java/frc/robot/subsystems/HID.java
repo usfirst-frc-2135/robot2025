@@ -33,6 +33,11 @@ public class HID extends SubsystemBase
   /****************************************************************************
    * 
    * Constructor
+   * 
+   * @param driver
+   *          driver gamepad to initialize
+   * @param operator
+   *          operator gamepad to initialize
    */
   public HID(GenericHID driver, GenericHID operator)
   {
@@ -115,6 +120,8 @@ public class HID extends SubsystemBase
    * 
    * @param rumbleOn
    *          request rumble on or off
+   * @param duration
+   *          request a time for the rumble to last
    * @param intensity
    *          requested rumble strength
    */
@@ -138,6 +145,8 @@ public class HID extends SubsystemBase
    * 
    * @param rumbleOn
    *          request rumble on or off
+   * @param duration
+   *          request a time for the rumble to last
    * @param intensity
    *          requested rumble strength
    */
@@ -165,6 +174,8 @@ public class HID extends SubsystemBase
    * 
    * @param driverRumble
    *          rumble the driver gamepad
+   * @param duration
+   *          request a time for the rumble to last
    * @param intensity
    *          stength of the rumble [0.0 .. 1.0]
    * @return instant command that rumbles the gamepad
@@ -173,7 +184,7 @@ public class HID extends SubsystemBase
   {
 
     return new InstantCommand(                                        // Command that runs exactly once
-        ( ) -> setHIDRumbleDriver(driverRumble, duration, intensity),  // Method to call
+        ( ) -> setHIDRumbleDriver(driverRumble, duration, intensity), // Method to call
         this                                                          // Command that runs exactly once
     ).withName("HIDRumbleDriver").ignoringDisable(true);
   }
@@ -184,6 +195,8 @@ public class HID extends SubsystemBase
    * 
    * @param operatorRumble
    *          rumble the operator gamepad
+   * @param duration
+   *          request a time for the rumble to last
    * @param intensity
    *          stength of the rumble [0.0 .. 1.0]
    * @return instant command that rumbles the gamepad
@@ -192,7 +205,7 @@ public class HID extends SubsystemBase
   {
 
     return new InstantCommand(                                            // Command that runs exactly once
-        ( ) -> setHIDRumbleOperator(operatorRumble, duration, intensity),  // Method to call
+        ( ) -> setHIDRumbleOperator(operatorRumble, duration, intensity), // Method to call
         this                                                              // Command that runs exactly once
     ).withName("HIDRumbleOperator").ignoringDisable(true);
   }

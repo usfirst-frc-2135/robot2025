@@ -21,7 +21,7 @@ import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 
 /**
- * Auto command that shoots preloaded note and steals notes from centerline
+ * Auto command that shoots preloaded note and scores notes from centerline
  */
 public class AutoPreloadCLine extends SequentialCommandGroup
 {
@@ -37,7 +37,7 @@ public class AutoPreloadCLine extends SequentialCommandGroup
    * 3c - Shoot the note
    * 
    * @param ppPaths
-   *          swerve drivetrain subsystem
+   *          list of auto paths to follow
    * @param drivetrain
    *          swerve drivetrain subsystem
    * @param intake
@@ -56,6 +56,7 @@ public class AutoPreloadCLine extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
+        
         new InstantCommand(()->Robot.timeMarker(getName())),
 
         new LogCommand(getName(), "Drive to scoring pose"),
