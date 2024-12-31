@@ -80,9 +80,9 @@ public final class CTREConfigs6
     inRotaryConfig.Slot0.kG = -0.50;                                // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
     inRotaryConfig.Slot0.kV = 0.1129;                               // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    inRotaryConfig.Slot0.kP = 3.6 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity error (velocity modes)
-    inRotaryConfig.Slot0.kI = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per accumulated error
-    inRotaryConfig.Slot0.kD = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per unit of acceleration error (velocity modes)
+    inRotaryConfig.Slot0.kP = 3.6 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    inRotaryConfig.Slot0.kI = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per accumulated unit
+    inRotaryConfig.Slot0.kD = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // Software limit switches
     inRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;  // Rotations
@@ -152,9 +152,9 @@ public final class CTREConfigs6
     shooterConfig.Slot0.kG = 0.0;                                   // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
     shooterConfig.Slot0.kV = 0.1140;                                // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    shooterConfig.Slot0.kP = 0.25;                                  // Voltage or duty cycle per velocity error (velocity modes)
-    shooterConfig.Slot0.kI = 0.0;                                   // Voltage or duty cycle per accumulated error
-    shooterConfig.Slot0.kD = 0.0;                                   // Voltage or duty cycle per unit of acceleration error (velocity modes)
+    shooterConfig.Slot0.kP = 0.25;                                  // Voltage or duty cycle per velocity unit (velocity modes)
+    shooterConfig.Slot0.kI = 0.0;                                   // Voltage or duty cycle per accumulated unit
+    shooterConfig.Slot0.kD = 0.0;                                   // Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // shooterConfig.SoftwareLimitSwitch.*
 
@@ -219,9 +219,9 @@ public final class CTREConfigs6
     fdRotaryConfig.Slot0.kG = -0.50;                                // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward) 
     fdRotaryConfig.Slot0.kV = 0.1129;                               // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    fdRotaryConfig.Slot0.kP = 2.4 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity error (velocity modes)
-    fdRotaryConfig.Slot0.kI = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per accumulated error
-    fdRotaryConfig.Slot0.kD = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per unit of acceleration error (velocity modes)
+    fdRotaryConfig.Slot0.kP = 2.4 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    fdRotaryConfig.Slot0.kI = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per accumulated unit
+    fdRotaryConfig.Slot0.kD = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // Software limit switches
     fdRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;  // Rotations
@@ -303,9 +303,9 @@ public final class CTREConfigs6
     climberConfig.Slot0.kG = 0.0;                                 // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
     climberConfig.Slot0.kV = 0.1129;                              // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    climberConfig.Slot0.kP = 9.60;                                // Feedback: Voltage or duty cycle per velocity error (velocity modes)
-    climberConfig.Slot0.kI = 0.0;                                 // Feedback: Voltage or duty cycle per accumulated error
-    climberConfig.Slot0.kD = 0.0;                                 // Feedback: Voltage or duty cycle per unit of acceleration error (velocity modes)
+    climberConfig.Slot0.kP = 9.60;                                // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    climberConfig.Slot0.kI = 0.0;                                 // Feedback: Voltage or duty cycle per accumulated unit
+    climberConfig.Slot0.kD = 0.0;                                 // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // Software limit switches
     // climberConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;   // Rotations

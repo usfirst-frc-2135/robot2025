@@ -461,8 +461,9 @@ public class Intake extends SubsystemBase
     if (m_mmWithinTolerance.calculate(Math.abs(error) < kToleranceDegrees) || timedOut)
     {
       if (!m_mmMoveIsFinished)
-        DataLogManager.log(String.format("%s: MM Position move finished - Current degrees: %.1f (error %.1f) - Time: %.3f sec %s",
-            getSubsystem( ), m_currentDegrees, error, m_mmMoveTimer.get( ), (timedOut) ? "- TIMED OUT!" : ""));
+        DataLogManager
+            .log(String.format("%s: MM Position move finished - Current degrees: %.1f (difference %.1f) - Time: %.3f sec %s",
+                getSubsystem( ), m_currentDegrees, error, m_mmMoveTimer.get( ), (timedOut) ? "- Warning: TIMED OUT!" : ""));
 
       m_mmMoveIsFinished = true;
     }

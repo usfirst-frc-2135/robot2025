@@ -111,7 +111,7 @@ public class PhoenixUtil6
     talonFX.setSafetyEnabled(false);
 
     DataLogManager.log(String.format("%s: ID %2d - %15s %8s:  ver: %d.%d.%d.%d is %s!", kClassName, deviceID, name, devType,
-        fwvMajor, fwvMinor, fwvBugfix, fwvBuild, (talonValid) ? "VALID" : "URESPONSIVE"));
+        fwvMajor, fwvMinor, fwvBugfix, fwvBuild, (talonValid) ? "VALID" : "error: UNRESPONSIVE!"));
 
     return talonValid;
   }
@@ -166,7 +166,7 @@ public class PhoenixUtil6
             devType, status.getDescription( )));
 
     DataLogManager.log(String.format("%s: ID %2d - %15s %8s:  ver: %d.%d.%d.%d is %s!", kClassName, deviceID, name, devType,
-        fwvMajor, fwvMinor, fwvBugfix, fwvBuild, (canCoderValid) ? "VALID" : "URESPONSIVE"));
+        fwvMajor, fwvMinor, fwvBugfix, fwvBuild, (canCoderValid) ? "VALID" : "error: UNRESPONSIVE!"));
 
     return canCoderValid;
   }
@@ -225,7 +225,7 @@ public class PhoenixUtil6
           .log(String.format("%s: ID %2d - pigeon2:      setYaw - %s!", kClassName, deviceID, status.getDescription( )));
 
     DataLogManager.log(String.format("%s: ID %2d - pigeon2:      ver: %d.%d.%d.%d is %s!", kClassName, deviceID, fwvMajor,
-        fwvMinor, fwvBugfix, fwvBuild, (pigeon2Valid) ? "VALID" : "URESPONSIVE"));
+        fwvMinor, fwvBugfix, fwvBuild, (pigeon2Valid) ? "VALID" : "error: UNRESPONSIVE!"));
 
     return pigeon2Valid;
   }

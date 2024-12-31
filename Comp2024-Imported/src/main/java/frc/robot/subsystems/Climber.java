@@ -448,8 +448,9 @@ public class Climber extends SubsystemBase
       if (hittingHardStop)
         DataLogManager.log(String.format("%s - hittingHardStop: %s", getSubsystem( ), hittingHardStop));
       if (!m_mmMoveIsFinished)
-        DataLogManager.log(String.format("%s: MM Position move finished - Current inches: %.1f (error %.1f) - Time: %.3f sec %s",
-            getSubsystem( ), m_leftLength, error, m_mmMoveTimer.get( ), (timedOut) ? "- TIMED OUT!" : ""));
+        DataLogManager
+            .log(String.format("%s: MM Position move finished - Current inches: %.1f (difference %.1f) - Time: %.3f sec %s",
+                getSubsystem( ), m_leftLength, error, m_mmMoveTimer.get( ), (timedOut) ? "- Warning: TIMED OUT!" : ""));
 
       m_mmMoveIsFinished = true;
     }

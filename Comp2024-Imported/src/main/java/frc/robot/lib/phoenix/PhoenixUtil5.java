@@ -133,7 +133,7 @@ public class PhoenixUtil5
     }
 
     DataLogManager.log(String.format("%s: ID %2d - %15s %8s:  %s is %s", kClassName, deviceID, name, devType, verStr,
-        (talonSRXValid && initialized) ? "VALID!" : "UNRESPONSIVE!"));
+        (talonSRXValid && initialized) ? "VALID!" : "error: UNRESPONSIVE!"));
 
     return talonSRXValid && initialized;
   }
