@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.FDConsts.FDRollerMode;
 import frc.robot.Constants.INConsts.INRollerMode;
@@ -281,22 +282,22 @@ public class RobotContainer
     //
     //  --- Normal button definitions ---
     //
-    m_driverPad.a( ).whileTrue(m_drivetrain.applyRequest(( ) -> aim       //
-        .withVelocityX(m_vision.rangeProportional(kMaxSpeed))             //
-        .withVelocityY(0)                                    //
-        .withRotationalRate(m_vision.aimProportional(kMaxAngularRate))));
-    m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B")); // drive to stage right
-    m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X")); // drive to stage left
-    m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y")); // drive to stage center
+    // m_driverPad.a( ).whileTrue(m_drivetrain.applyRequest(( ) -> aim       //
+    //     .withVelocityX(m_vision.rangeProportional(kMaxSpeed))             //
+    //     .withVelocityY(0)                                    //
+    //     .withRotationalRate(m_vision.aimProportional(kMaxAngularRate))));
+    // m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B")); // drive to stage right
+    // m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X")); // drive to stage left
+    // m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y")); // drive to stage center
     //
     //  --- SysId button definitions ---
     //
     // Run SysId routines when holding A, B and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    // m_driverPad.a( ).and(m_driverPad.y( )).whileTrue(m_drivetrain.sysIdDynamic(Direction.kForward));
-    // m_driverPad.a( ).and(m_driverPad.x( )).whileTrue(m_drivetrain.sysIdDynamic(Direction.kReverse));
-    // m_driverPad.b( ).and(m_driverPad.y( )).whileTrue(m_drivetrain.sysIdQuasistatic(Direction.kForward));
-    // m_driverPad.b( ).and(m_driverPad.x( )).whileTrue(m_drivetrain.sysIdQuasistatic(Direction.kReverse));
+    m_driverPad.a( ).whileTrue(m_drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    m_driverPad.b( ).whileTrue(m_drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    m_driverPad.x( ).whileTrue(m_drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    m_driverPad.y( ).whileTrue(m_drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
     //
     // Driver - Bumpers, start, back
