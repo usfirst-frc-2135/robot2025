@@ -1,7 +1,7 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.SignalLogger;
+//import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.net.PortForwarder;
@@ -40,7 +40,6 @@ public class Robot extends TimedRobot
     DataLogManager.start( );
     DataLogManager.logConsoleOutput(true);
     DriverStation.startDataLog(DataLogManager.getLog( )); // Logs joystick data
-    SignalLogger.start( );                              // Start CTRE signal logging
     Robot.timeMarker("Robot: start");
 
     // Start the web server for remoote dashboard layout
@@ -91,6 +90,7 @@ public class Robot extends TimedRobot
   @Override
   public void disabledInit( )
   {
+    //SignalLogger.stop( );                              // Start CTRE signal logging
     datalogMatchBanner("disabledInit");
 
     Robot.timeMarker("disabledInit: before init");
@@ -160,6 +160,8 @@ public class Robot extends TimedRobot
   @Override
   public void teleopInit( )
   {
+    //SignalLogger.start( );                              // Start CTRE signal logging
+
     datalogMatchBanner("teleopInit");
 
     // Make sure that the autonomous command stops running when Teleop starts running
