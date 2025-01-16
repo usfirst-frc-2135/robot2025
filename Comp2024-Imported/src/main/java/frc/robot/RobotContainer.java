@@ -122,7 +122,7 @@ public class RobotContainer
   private final Feeder                                m_feeder        = new Feeder( );
   private final Climber                               m_climber       = new Climber( );
 
-  private Command                                     m_autoCommand;  // Selected autonomous command
+  private Command                                    m_autoCommand;  // Selected autonomous command
 
   /**
    * Chooser options for autonomous commands - all starting from poses 1-3
