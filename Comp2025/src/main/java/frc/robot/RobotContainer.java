@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.VIConsts;
 import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 /****************************************************************************
@@ -71,7 +71,7 @@ public class RobotContainer
 
   // These subsystems may use LED or vision and must be created afterward
   private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.createDrivetrain( );
-  private final Climber                               m_climber       = new Climber( );
+  private final Elevator                              m_elevator      = new Elevator( );
 
   private Command                                     m_autoCommand; // Selected autonomous command
 
@@ -167,7 +167,7 @@ public class RobotContainer
 
     // Network tables publisher objects
 
-    SmartDashboard.putData("climber", m_climber);
+    SmartDashboard.putData("Elevator", m_elevator);
 
     SmartDashboard.putData(CommandScheduler.getInstance( ));
   }
@@ -255,16 +255,16 @@ public class RobotContainer
     // Operator - Bumpers, start, back
     //
 
-    m_operatorPad.back( ).toggleOnTrue(m_climber.getJoystickCommand(( ) -> getClimberAxis( ))); // aka View button
+    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( ))); // aka View button
     // aka Menu button
 
     //
     // Operator - POV buttons
     //
-    // m_operatorPad.pov(0).onTrue(new PrepareToClimb(m_climber, m_feeder));
+    // m_operatorPad.pov(0).onTrue(new PrepareToClimb(m_elevator, m_feeder));
     m_operatorPad.pov(90).onTrue(new LogCommand("operPad", "POV 90"));
-    m_operatorPad.pov(180).onTrue(m_climber.getMoveToPositionCommand(m_climber::getClimberClimbed));
-    m_operatorPad.pov(270).onTrue(m_climber.getMoveToPositionCommand(m_climber::getClimberChainLevel));
+    m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorClimbed));
+    m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorChainLevel));
 
     //
     // Operator Left/Right Trigger
@@ -312,11 +312,11 @@ public class RobotContainer
 
     // Default command - Motion Magic hold
 
-    m_climber.setDefaultCommand(m_climber.getHoldPositionCommand(m_climber::getClimberPosition));
+    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getElevatorPosition));
 
     // Default command - manual mode
 
-    m_climber.setDefaultCommand(m_climber.getJoystickCommand(( ) -> getClimberAxis( )));
+    m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
   }
 
   /****************************************************************************
@@ -357,7 +357,7 @@ public class RobotContainer
    * Gamepad joystick axis interfaces
    */
 
-  public double getClimberAxis( )
+  public double getElevatorAxis( )
   {
     return -m_operatorPad.getRightY( );
   }
@@ -368,7 +368,7 @@ public class RobotContainer
    */
   public void initialize( )
   {
-    m_climber.initialize( );
+    m_elevator.initialize( );
   }
 
   /****************************************************************************
@@ -377,7 +377,7 @@ public class RobotContainer
    */
   public void printFaults( )
   {
-    m_climber.printFaults( );
+    m_elevator.printFaults( );
   }
 
   /****************************************************************************
@@ -386,7 +386,7 @@ public class RobotContainer
    */
   public void autoInit( )
   {
-    // CommandScheduler.getInstance( ).schedule(m_climber.getCalibrateCommand( ));
+    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( ));
 
   }
 
@@ -396,7 +396,7 @@ public class RobotContainer
    */
   public void teleopInit( )
   {
-    // CommandScheduler.getInstance( ).schedule(m_climber.getCalibrateCommand( ));
+    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( ));
 
   }
 }

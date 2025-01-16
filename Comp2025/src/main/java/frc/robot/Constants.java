@@ -78,8 +78,8 @@ public class Constants
     public static final int    kCANID_ShooterUpper   = 24;   // Falcon 500
     public static final int    kCANID_ShooterRotary  = 25;   // Falcon 500
 
-    public static final int    kCANID_ClimberL       = 27;   // Falcon 500
-    public static final int    kCANID_ClimberR       = 28;   // Falcon 500
+    public static final int    kCANID_ElevatorL      = 27;   // Falcon 500
+    public static final int    kCANID_ElevatorR      = 28;   // Falcon 500
 
     public static final int    kCANID_CANdle         = 0;
 
@@ -128,7 +128,7 @@ public class Constants
   }
 
   /****************************************************************************
-   * Climber subsystem constants
+   * Elevator subsystem constants
    ****************************************************************************/
   public static final class CLConsts
   {
