@@ -135,7 +135,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand = null;
     }
 
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // Handle any commands that need to be scheduled when entering Teleop mode
     m_robotContainer.autoInit();
