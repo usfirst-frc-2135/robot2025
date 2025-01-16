@@ -24,7 +24,7 @@ public final class CTREConfigs6
 
   /****************************************************************************
    * 
-   * Intake rotary motor - Falcon 500
+   * Intake rotary motor - Kraken X60
    * 
    * @param min
    *          minimum angle of rotation
@@ -116,7 +116,7 @@ public final class CTREConfigs6
 
   /****************************************************************************
    * 
-   * Shooter motors - Falcon 500 (2)
+   * Shooter motors - Kraken X60 (2)
    */
   public static TalonFXConfiguration shooterFXConfig( )
   {
@@ -163,7 +163,7 @@ public final class CTREConfigs6
 
   /****************************************************************************
    * 
-   * Feeder rotary motor - Falcon 500
+   * Feeder rotary motor - Kraken X60
    * 
    * @param min
    *          minimum angle of rotation
@@ -253,7 +253,7 @@ public final class CTREConfigs6
 
   /****************************************************************************
    * 
-   * Elevator motors (2 - one for left and right) - Falcon 500
+   * Elevator motors (2 - one for left and right) - Kraken X60
    * 
    * @param inverted
    *          motor inversion request
