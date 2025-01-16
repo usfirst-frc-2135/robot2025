@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -80,7 +79,6 @@ public class Robot extends TimedRobot
     // subsystem periodic() methods. This must be called from the robot's periodic block in order
     // for anything in the Command-based framework to work.
     //
-    SmartDashboard.putNumber("MatchTime", Timer.getMatchTime());
     CommandScheduler.getInstance( ).run( );
   }
 

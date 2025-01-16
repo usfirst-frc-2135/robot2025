@@ -28,6 +28,19 @@
             }
           },
           {
+            "title": "AutoChooserRun",
+            "x": 768.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Autonomous/AutoChooserRun",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
             "title": "Alerts",
             "x": 1024.0,
             "y": 0.0,
@@ -66,19 +79,6 @@
             }
           },
           {
-            "title": "AutoChooserRun",
-            "x": 768.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/AutoChooserRun",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
             "title": "AutoDelay",
             "x": 768.0,
             "y": 256.0,
@@ -91,22 +91,6 @@
               "data_type": "double",
               "show_submit_button": false
             }
-          },
-          {
-            "title": "MatchTime",
-            "x": 0.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Match Time",
-            "properties": {
-              "topic": "/SmartDashboard/MatchTime",
-              "period": 0.06,
-              "data_type": "double",
-              "time_display_mode": "Minutes and Seconds",
-              "red_start_time": 15,
-              "yellow_start_time": 30
-            }
           }
         ]
       }
@@ -114,7 +98,69 @@
     {
       "name": "Command",
       "grid_layout": {
-        "layouts": [],
+        "layouts": [
+          {
+            "title": "Subsystems",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "HIDDEN"
+            },
+            "children": [
+              {
+                "title": "Intake",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Subsystem",
+                "properties": {
+                  "topic": "/Shuffleboard/Command/Subsystems/Intake",
+                  "period": 0.06
+                }
+              },
+              {
+                "title": "Shooter",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Subsystem",
+                "properties": {
+                  "topic": "/Shuffleboard/Command/Subsystems/Shooter",
+                  "period": 0.06
+                }
+              },
+              {
+                "title": "Feeder",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Subsystem",
+                "properties": {
+                  "topic": "/Shuffleboard/Command/Subsystems/Feeder",
+                  "period": 0.06
+                }
+              },
+              {
+                "title": "Climber",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Subsystem",
+                "properties": {
+                  "topic": "/Shuffleboard/Command/Subsystems/Climber",
+                  "period": 0.06
+                }
+              }
+            ]
+          }
+        ],
         "containers": [
           {
             "title": "AcquireNote",
@@ -124,20 +170,7 @@
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/AcquireNote",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "RetractIntake",
-            "x": 0.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/RetractIntake",
+              "topic": "/Shuffleboard/Command/AcquireNote",
               "period": 0.06,
               "show_type": true
             }
@@ -150,72 +183,7 @@
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/ExpelNote",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "HandoffToFeeder",
-            "x": 256.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/HandoffToFeeder",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "PassNote",
-            "x": 256.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/PassNote",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "ScoreAmp",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/ScoreAmp",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "ScoreSpeaker",
-            "x": 512.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/ScoreSpeaker",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "PrepareToClimb",
-            "x": 768.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/PrepareToClimb",
+              "topic": "/Shuffleboard/Command/ExpelNote",
               "period": 0.06,
               "show_type": true
             }
@@ -228,7 +196,7 @@
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/HIDRumbleDriver",
+              "topic": "/Shuffleboard/Command/HIDRumbleDriver",
               "period": 0.06,
               "show_type": true
             }
@@ -241,21 +209,87 @@
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/HIDRumbleOperator",
+              "topic": "/Shuffleboard/Command/HIDRumbleOperator",
               "period": 0.06,
               "show_type": true
             }
           },
           {
-            "title": "Scheduler",
-            "x": 1024.0,
+            "title": "HandoffToFeeder",
+            "x": 256.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/HandoffToFeeder",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "PassNote",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/PassNote",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "PrepareToClimb",
+            "x": 768.0,
             "y": 0.0,
             "width": 256.0,
-            "height": 384.0,
-            "type": "Scheduler",
+            "height": 128.0,
+            "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/Scheduler",
-              "period": 0.06
+              "topic": "/Shuffleboard/Command/PrepareToClimb",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "RetractIntake",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/RetractIntake",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ScoreAmp",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/ScoreAmp",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ScoreSpeaker",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/ScoreSpeaker",
+              "period": 0.06,
+              "show_type": true
             }
           }
         ]
