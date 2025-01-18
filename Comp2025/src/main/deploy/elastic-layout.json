@@ -1,0 +1,299 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Pose",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 768.0,
+            "height": 384.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/Pose",
+              "period": 0.06,
+              "field_game": "Crescendo",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295
+            }
+          },
+          {
+            "title": "AutoChooserRun",
+            "x": 768.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Autonomous/AutoChooserRun",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "Alerts",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "Alerts",
+            "properties": {
+              "topic": "/SmartDashboard/Alerts",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "AutoMode",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/AutoMode",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "StartPosition",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/StartPosition",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "AutoDelay",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/AutoDelay",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Command",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "Subsystems",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "HIDDEN"
+            },
+            "children": [
+              {
+                "title": "Intake",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Subsystem",
+                "properties": {
+                  "topic": "/Shuffleboard/Command/Subsystems/Intake",
+                  "period": 0.06
+                }
+              },
+              {
+                "title": "Shooter",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Subsystem",
+                "properties": {
+                  "topic": "/Shuffleboard/Command/Subsystems/Shooter",
+                  "period": 0.06
+                }
+              },
+              {
+                "title": "Feeder",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Subsystem",
+                "properties": {
+                  "topic": "/Shuffleboard/Command/Subsystems/Feeder",
+                  "period": 0.06
+                }
+              },
+              {
+                "title": "Climber",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Subsystem",
+                "properties": {
+                  "topic": "/Shuffleboard/Command/Subsystems/Climber",
+                  "period": 0.06
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "title": "AcquireNote",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/AcquireNote",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ExpelNote",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/ExpelNote",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "HIDRumbleDriver",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/HIDRumbleDriver",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "HIDRumbleOperator",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/HIDRumbleOperator",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "HandoffToFeeder",
+            "x": 256.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/HandoffToFeeder",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "PassNote",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/PassNote",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "PrepareToClimb",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/PrepareToClimb",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "RetractIntake",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/RetractIntake",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ScoreAmp",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/ScoreAmp",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ScoreSpeaker",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/Shuffleboard/Command/ScoreSpeaker",
+              "period": 0.06,
+              "show_type": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
