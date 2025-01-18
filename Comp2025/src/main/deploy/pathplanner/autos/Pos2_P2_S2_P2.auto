@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pos2_P2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P2-S2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S2-P2"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "AutoPreloadScore",
+  "choreoAuto": false
+}
