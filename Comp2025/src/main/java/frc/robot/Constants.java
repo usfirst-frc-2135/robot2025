@@ -47,39 +47,39 @@ public class Constants
     public static final String kCANRio               = "rio";
 
     // CANivore CAN IDs - Swerve
-    public static final int    kCANID_DriveLF        = 1;    // Falcon 500
-    public static final int    kCANID_SteerLF        = 2;    // Falcon 500
+    public static final int    kCANID_DriveLF        = 1;    // Kraken X60
+    public static final int    kCANID_SteerLF        = 2;    // Kraken X60
     public static final int    kCANID_CANcoderLF     = 3;    // CANcoder
 
-    public static final int    kCANID_DriveRF        = 4;    //Falcon 500     
-    public static final int    kCANID_SteerRF        = 5;    // Falcon 500
+    public static final int    kCANID_DriveRF        = 4;    //Kraken X60     
+    public static final int    kCANID_SteerRF        = 5;    // Kraken X60
     public static final int    kCANID_CANcoderRF     = 6;    // CANcoder
 
-    public static final int    kCANID_DriveLR        = 7;    //Falcon 500
-    public static final int    kCANID_SteerLR        = 8;    // Falcon 500
+    public static final int    kCANID_DriveLR        = 7;    //Kraken X60
+    public static final int    kCANID_SteerLR        = 8;    // Kraken X60
     public static final int    kCANID_CANcoderLR     = 9;    // CANcoder
 
-    public static final int    kCANID_DriveRR        = 10;   //Falcon 500
-    public static final int    kCANID_SteerRR        = 11;   // Falcon 500
+    public static final int    kCANID_DriveRR        = 10;   //Kraken X60
+    public static final int    kCANID_SteerRR        = 11;   // Kraken X60
     public static final int    kCANID_CANcoderRR     = 12;   // CANcoder
 
     public static final int    kCANID_Pigeon2        = 13;   // Pigeon2 IMU
 
     // RoboRIO CAN IDs
     public static final int    kCANID_IntakeRoller   = 15;   // Talon SRX - 775Pro
-    public static final int    kCANID_IntakeRotary   = 16;   // Falcon 500
+    public static final int    kCANID_IntakeRotary   = 16;   // Kraken X60
     public static final int    kCANID_IntakeCANcoder = 17;   // CANcoder
 
     public static final int    kCANID_FeederRoller   = 19;   // Talon SRX - 775Pro
-    public static final int    kCANID_FeederRotary   = 20;   // Falcon 500
+    public static final int    kCANID_FeederRotary   = 20;   // Kraken X60
     public static final int    kCANID_FeederCANcoder = 21;   // CANcoder
 
-    public static final int    kCANID_ShooterLower   = 23;   // Falcon 500
-    public static final int    kCANID_ShooterUpper   = 24;   // Falcon 500
-    public static final int    kCANID_ShooterRotary  = 25;   // Falcon 500
+    public static final int    kCANID_ShooterLower   = 23;   // Kraken X60
+    public static final int    kCANID_ShooterUpper   = 24;   // Kraken X60
+    public static final int    kCANID_ShooterRotary  = 25;   // Kraken X60
 
-    public static final int    kCANID_ElevatorL      = 27;   // Falcon 500
-    public static final int    kCANID_ElevatorR      = 28;   // Falcon 500
+    public static final int    kCANID_ElevatorLeft   = 27;   // Kraken X60
+    public static final int    kCANID_ElevatorRight  = 28;   // Kraken X60
 
     public static final int    kCANID_CANdle         = 0;
 
