@@ -8,7 +8,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.LogCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.LED;
+// import frc.robot.subsystems.LED;
 
 /**
  * Auto command that can be used for testing new sequences
@@ -30,7 +30,8 @@ public class AutoTest extends SequentialCommandGroup
    * @param led
    *          led subsystem
    */
-  public AutoTest(List<PathPlannerPath> ppPaths, CommandSwerveDrivetrain drivetrain, LED led)
+  // public AutoTest(List<PathPlannerPath> ppPaths, CommandSwerveDrivetrain drivetrain, LED led)
+  public AutoTest(List<PathPlannerPath> ppPaths, CommandSwerveDrivetrain drivetrain)
   {
     setName("AutoTest");
 
