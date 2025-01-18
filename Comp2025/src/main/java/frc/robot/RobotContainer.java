@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VIConsts;
+import frc.robot.autos.AutoTest;
 import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -92,7 +93,7 @@ public class RobotContainer
   // These subsystems may use LED or vision and must be created afterward
   private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.createDrivetrain( );
   private final Elevator                              m_elevator      = new Elevator( );
-
+  // Selected autonomous command
   private Command                                     m_autoCommand;  // Selected autonomous command
 
   /**
@@ -159,13 +160,13 @@ public class RobotContainer
   public RobotContainer( )
   {
     Robot.timeMarker("robotContainer: before DAQ thread");
-
+    // Swerve steer PID for facing swerve request
     facing.HeadingController = new PhoenixPIDController(10.0, 0.0, 0.0);  // Swerve steer PID for facing swerve request
-
+    // Add dashboard widgets for commands
     addDashboardWidgets( );           // Add dashboard widgets for commands
-
+    // Configure game controller buttons
     configureButtonBindings( );       // Configure game controller buttons
-
+    // Initialize subsystem default commands
     initDefaultCommands( );           // Initialize subsystem default commands
 
     Robot.timeMarker("robotContainer: after default commands");
@@ -455,6 +456,7 @@ public class RobotContainer
         break;
       case AUTOTEST :
         // m_autoCommand = new AutoTest(ppPathList, m_drivetrain, m_led);
+        m_autoCommand = new AutoTest(ppPathList, m_drivetrain);
         break;
     }
 
