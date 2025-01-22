@@ -27,9 +27,9 @@ public class RunElevator extends SequentialCommandGroup
 
         // @formatter:off
         
-        new ParallelCommandGroup( 
-          Elevator.getMoveToPositionCommand(elevator::getElevatorCoralL1)
-        )
+        new LogCommand(getName(),"Elevator Running"),
+        elevator.getMoveToPositionCommand(elevator::getElevatorCoralL4)
+        
 
         // @formatter:on
     );

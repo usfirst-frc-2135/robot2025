@@ -130,7 +130,7 @@ public class Constants
   /****************************************************************************
    * Elevator subsystem constants
    ****************************************************************************/
-  public static final class CLConsts
+  public static final class ELConsts
   {
   }
 
