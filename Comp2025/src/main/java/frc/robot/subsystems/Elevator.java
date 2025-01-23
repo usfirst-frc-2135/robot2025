@@ -80,9 +80,15 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightStowed         = 0.0;             // By definition - Elevator full down
   private static final double  kHeightCoralStation   = 0.0;             // By definition - Elevator at coral station
   private static final double  kHeightCoralL1        = 10.0;            // By definition - Elevator at L1 for scoring coral
+<<<<<<< HEAD
   private static final double  kHeightCoralL2        = 17.0;             // By definition - Elevator at L2 for scoring coral
   private static final double  kHeightCoralL3        = 35.0;             // By definition - Elevator at L3 for scoring coral
   private static final double  kHeightCoralL4        = 62.0;            // By definition - Elevator at L4 for scoring coral
+=======
+  private static final double  kHeightCoralL2        = 0.0;             // By definition - Elevator at L2 for scoring coral
+  private static final double  kHeightCoralL3        = 0.0;             // By definition - Elevator at L3 for scoring coral
+  private static final double  kHeightCoralL4        = 20.0;            // By definition - Elevator at L4 for scoring coral
+>>>>>>> parent of c3725c6 (fixing bugs in elevator command)
   private static final double  kHeightAlgaeL23       = 0.0;             // By definition - Elevator at L23 for taking algae
   private static final double  kHeightAlgaeL34       = 0.0;             // By definition - Elevator at L34 for taking algae
   private static final double  kHeightAlgaeNet       = 0.0;             // By definition - Elevator at L34 for scoring algae in net
