@@ -44,6 +44,7 @@ import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Telemetry;
 
 /****************************************************************************
@@ -86,7 +87,7 @@ public class RobotContainer
 
   // The robot's shared subsystems
   // private final HID                                   m_hid           = new HID(m_driverPad.getHID( ), m_operatorPad.getHID( ));
-  // private final LED                                   m_led           = new LED( );
+  private final LED                                   m_led           = new LED( );
   // private final Power                                 m_power         = new Power( );
   // private final Vision                                m_vision        = new Vision( );
 
