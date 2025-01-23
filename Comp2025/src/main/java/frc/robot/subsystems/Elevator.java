@@ -80,7 +80,7 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightStowed         = 0.0;             // By definition - Elevator full down
   private static final double  kHeightCoralStation   = 0.0;             // By definition - Elevator at coral station
   private static final double  kHeightCoralL1        = 10.0;            // By definition - Elevator at L1 for scoring coral
-  private static final double  kHeightCoralL2        = 0.0;             // By definition - Elevator at L2 for scoring coral
+  private static final double  kHeightCoralL2        = 15.0;             // By definition - Elevator at L2 for scoring coral
   private static final double  kHeightCoralL3        = 0.0;             // By definition - Elevator at L3 for scoring coral
   private static final double  kHeightCoralL4        = 20.0;            // By definition - Elevator at L4 for scoring coral
   private static final double  kHeightAlgaeL23       = 0.0;             // By definition - Elevator at L23 for taking algae
@@ -647,6 +647,17 @@ public class Elevator extends SubsystemBase
   public double getElevatorCoralL1( )
   {
     return kHeightCoralL1;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator length for coral L2 scoring state
+   * 
+   * @return elevator coral L2 scoring state length
+   */
+  public double getElevatorCoralL2( )
+  {
+    return kHeightCoralL2;
   }
 
   /****************************************************************************
