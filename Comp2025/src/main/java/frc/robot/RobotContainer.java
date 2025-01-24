@@ -41,7 +41,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.LogCommand;
-import frc.robot.commands.RunElevator;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
@@ -306,7 +305,7 @@ public class RobotContainer
     //
     // Operator - POV buttons
     //
-    m_operatorPad.pov(0).onTrue(new RunElevator(m_elevator));
+    m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL3));
     m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorStowed));
     m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL1));
     m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL4));
@@ -526,6 +525,6 @@ public class RobotContainer
    */
   public void teleopInit( )
   {
-    CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( ));
+    //CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( ));
   }
 }
