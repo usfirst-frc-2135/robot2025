@@ -44,6 +44,7 @@ import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Telemetry;
 
 /****************************************************************************
@@ -86,7 +87,7 @@ public class RobotContainer
 
   // The robot's shared subsystems
   // private final HID                                   m_hid           = new HID(m_driverPad.getHID( ), m_operatorPad.getHID( ));
-  // private final LED                                   m_led           = new LED( );
+  private final LED                                   m_led           = new LED( );
   // private final Power                                 m_power         = new Power( );
   // private final Vision                                m_vision        = new Vision( );
 
@@ -305,10 +306,18 @@ public class RobotContainer
     //
     // Operator - POV buttons
     //
+<<<<<<< HEAD
     m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL3));
     m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorStowed));
     m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL1));
     m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL4));
+=======
+
+    m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL4));
+    m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL1));
+    m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorStowed));
+    m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL2));
+>>>>>>> origin/add_elevator_command
 
     //
     // Operator Left/Right Trigger

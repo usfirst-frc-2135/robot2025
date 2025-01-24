@@ -80,9 +80,11 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightStowed         = 0.0;             // By definition - Elevator full down
   private static final double  kHeightCoralStation   = 0.0;             // By definition - Elevator at coral station
   private static final double  kHeightCoralL1        = 10.0;            // By definition - Elevator at L1 for scoring coral
+
   private static final double  kHeightCoralL2        = 0.0;             // By definition - Elevator at L2 for scoring coral
   private static final double  kHeightCoralL3        = 15.0;             // By definition - Elevator at L3 for scoring coral
   private static final double  kHeightCoralL4        = 20.0;            // By definition - Elevator at L4 for scoring coral
+
   private static final double  kHeightAlgaeL23       = 0.0;             // By definition - Elevator at L23 for taking algae
   private static final double  kHeightAlgaeL34       = 0.0;             // By definition - Elevator at L34 for taking algae
   private static final double  kHeightAlgaeNet       = 0.0;             // By definition - Elevator at L34 for scoring algae in net
@@ -651,6 +653,7 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
+<<<<<<< HEAD
    * Return elevator length for coral L1 scoring state
    * 
    * @return elevator coral L1 scoring state length
@@ -658,10 +661,33 @@ public class Elevator extends SubsystemBase
   public double getElevatorCoralL3( )
   {
     return kHeightCoralL3;
+=======
+   * Return elevator length for coral L2 scoring state
+   * 
+   * @return elevator coral L2 scoring state length
+   */
+  public double getElevatorCoralL2( )
+  {
+    return kHeightCoralL2;
+>>>>>>> origin/add_elevator_command
   }
 
   /****************************************************************************
    * 
+<<<<<<< HEAD
+=======
+   * Return elevator length for coral L3 scoring state
+   * 
+   * @return elevator coral L3 scoring state length
+   */
+  // public double getElevatorCoralL3( )
+  // {
+  //   return kHeightCoralL3;
+  // }
+
+  /****************************************************************************
+   * 
+>>>>>>> origin/add_elevator_command
    * Return elevator length for coral L4 scoring state
    * 
    * @return elevator coral L4 scoring state length
@@ -669,6 +695,61 @@ public class Elevator extends SubsystemBase
   public double getElevatorCoralL4( )
   {
     return kHeightCoralL4;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator length for coral station intake state
+   * 
+   * @return elevator coral station intake state length
+   */
+  public double getkHeightCoralStation( )
+  {
+    return kHeightCoralStation;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator length for Algae L23 scoring state
+   * 
+   * @return elevator Algae L23 scoring length
+   */
+  public double getkHeightAlgaeL23( )
+  {
+    return kHeightAlgaeL23;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator length for Algae L34 scoring state
+   * 
+   * @return elevator Algae L34 scoring length
+   */
+  public double getkHeightAlgaeL34( )
+  {
+    return kHeightAlgaeL34;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator length for Algae Net scoring state
+   * 
+   * @return elevator Algae Net scoring length
+   */
+  public double getkHeightAlgaeLNet( )
+  {
+    return kHeightAlgaeNet;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator length for Algae Processor scoring state
+   * 
+   * @return elevator Algae Processor scoring length
+   */
+  public double getkHeightAlgaeProcessor( )
+  {
+    return kHeightAlgaeProcessor;
   }
 
   ////////////////////////////////////////////////////////////////////////////
