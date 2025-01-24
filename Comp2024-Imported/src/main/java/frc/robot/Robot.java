@@ -93,9 +93,18 @@ public class Robot extends TimedRobot
 
     Robot.timeMarker("disabledInit: before init");
 
+    if (m_autonomousCommand != null)
+    {
+      m_autonomousCommand.cancel( );
+      m_autonomousCommand = null;
+    }
+
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand( );
+
     m_robotContainer.initialize( );
 
     Robot.timeMarker("disabledInit: after init");
+
   }
 
   /**
@@ -125,15 +134,6 @@ public class Robot extends TimedRobot
   public void autonomousInit( )
   {
     datalogMatchBanner("autonomousInit");
-
-    if (m_autonomousCommand != null)
-    {
-      m_autonomousCommand.cancel( );
-      m_autonomousCommand = null;
-    }
-
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand( );
-
     // Handle any commands that need to be scheduled when entering Teleop mode
     m_robotContainer.autoInit( );
 
