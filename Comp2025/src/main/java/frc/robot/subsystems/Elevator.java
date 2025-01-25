@@ -82,7 +82,7 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightCoralL1        = 10.0;            // By definition - Elevator at L1 for scoring coral
 
   private static final double  kHeightCoralL2        = 0.0;             // By definition - Elevator at L2 for scoring coral
-  private static final double  kHeightCoralL3        = 0.0;             // By definition - Elevator at L3 for scoring coral
+  private static final double  kHeightCoralL3        = 15.0;             // By definition - Elevator at L3 for scoring coral
   private static final double  kHeightCoralL4        = 20.0;            // By definition - Elevator at L4 for scoring coral
 
   private static final double  kHeightAlgaeL23       = 0.0;             // By definition - Elevator at L23 for taking algae
@@ -653,25 +653,14 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for coral L2 scoring state
+   * Return elevator length for coral L1 scoring state
    * 
-   * @return elevator coral L2 scoring state length
+   * @return elevator coral L1 scoring state length
    */
   public double getElevatorCoralL2( )
   {
     return kHeightCoralL2;
   }
-
-  /****************************************************************************
-   * 
-   * Return elevator length for coral L3 scoring state
-   * 
-   * @return elevator coral L3 scoring state length
-   */
-  // public double getElevatorCoralL3( )
-  // {
-  //   return kHeightCoralL3;
-  // }
 
   /****************************************************************************
    * 
