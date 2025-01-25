@@ -76,7 +76,7 @@ public class Elevator extends SubsystemBase
   private static final double  kMMDebounceTime       = 0.060;           // Seconds to debounce a final position check
   private static final double  kMMMoveTimeout        = 4.0;             // Seconds allowed for a Motion Magic movement
 
-  // Elevator lengths - Motion Magic config parameters
+  // Elevator lengths - Motion Magic config parameters                  // TODO: define desired elevator heights for 2025
   private static final double  kHeightStowed         = 0.0;             // By definition - Elevator full down
   private static final double  kHeightCoralStation   = 0.0;             // By definition - Elevator at coral station
   private static final double  kHeightCoralL1        = 10.0;            // By definition - Elevator at L1 for scoring coral
