@@ -653,41 +653,17 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-<<<<<<< HEAD
    * Return elevator length for coral L1 scoring state
    * 
    * @return elevator coral L1 scoring state length
    */
-  public double getElevatorCoralL3( )
-  {
-    return kHeightCoralL3;
-=======
-   * Return elevator length for coral L2 scoring state
-   * 
-   * @return elevator coral L2 scoring state length
-   */
   public double getElevatorCoralL2( )
   {
     return kHeightCoralL2;
->>>>>>> origin/add_elevator_command
   }
 
   /****************************************************************************
    * 
-<<<<<<< HEAD
-=======
-   * Return elevator length for coral L3 scoring state
-   * 
-   * @return elevator coral L3 scoring state length
-   */
-  // public double getElevatorCoralL3( )
-  // {
-  //   return kHeightCoralL3;
-  // }
-
-  /****************************************************************************
-   * 
->>>>>>> origin/add_elevator_command
    * Return elevator length for coral L4 scoring state
    * 
    * @return elevator coral L4 scoring state length

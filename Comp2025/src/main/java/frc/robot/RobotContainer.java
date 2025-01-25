@@ -306,18 +306,11 @@ public class RobotContainer
     //
     // Operator - POV buttons
     //
-<<<<<<< HEAD
-    m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL3));
-    m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorStowed));
-    m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL1));
-    m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL4));
-=======
 
     m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL4));
     m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL1));
     m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorStowed));
     m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getElevatorCoralL2));
->>>>>>> origin/add_elevator_command
 
     //
     // Operator Left/Right Trigger
