@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pos1_P1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P1-S1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1-P1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P1-S2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S2-P2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P2-S3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S3-P3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "P3-C3"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "AutoPreloadScore4",
+  "choreoAuto": false
+}
