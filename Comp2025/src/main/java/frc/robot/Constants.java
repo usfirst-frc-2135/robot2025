@@ -80,6 +80,8 @@ public class Constants
 
     public static final int    kCANID_ElevatorLeft   = 27;   // Kraken X60
     public static final int    kCANID_ElevatorRight  = 28;   // Kraken X60
+    public static final int    kRightLimitSwitch     = 0; // REV Magnetic Limit Switch (inaccurate value)
+    public static final int    kLimitSwitch          = 1; // REV Magnetic Limit Switch (inaccurate value)
 
     public static final int    kCANID_CANdle         = 0;
 

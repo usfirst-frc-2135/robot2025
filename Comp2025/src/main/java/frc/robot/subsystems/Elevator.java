@@ -32,6 +32,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -105,6 +106,7 @@ public class Elevator extends SubsystemBase
   // Device objects
   private final TalonFX               m_leftMotor         = new TalonFX(Ports.kCANID_ElevatorLeft);
   private final TalonFX               m_rightMotor        = new TalonFX(Ports.kCANID_ElevatorRight);
+  private final DigitalInput          m_LimitSwitch       = new DigitalInput(Ports.kLimitSwitch);
 
   // Alerts
   private final Alert                 m_leftAlert         =
@@ -463,6 +465,12 @@ public class Elevator extends SubsystemBase
       m_mmMoveIsFinished = true;
     }
 
+    if (!m_LimitSwitch.get( ))
+    {
+      m_leftHeight = 0;
+      setElevatorPosition(0.0);
+    }
+
     return m_mmMoveIsFinished;
   }
 
@@ -653,13 +661,24 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for coral L1 scoring state
+   * Return elevator length for coral L2 scoring state
    * 
-   * @return elevator coral L1 scoring state length
+   * @return elevator coral L2 scoring state length
    */
   public double getElevatorCoralL2( )
   {
     return kHeightCoralL2;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator length for coral L3 scoring state
+   * 
+   * @return elevator coral L3 scoring state length
+   */
+  public double getElevatorCoralL3( )
+  {
+    return kHeightCoralL3;
   }
 
   /****************************************************************************
