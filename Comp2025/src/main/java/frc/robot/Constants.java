@@ -20,7 +20,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class Constants
 {
   // bot serial nums
-  public static final String  kCompSN               = "032B1F7E";
+  public static final String  kCompSN               = "032B1F7E"; // TODO: update for 2025 roboRIO serial numbers
   public static final String  kBetaSN               = "03260A3A";
 
   // Game controller definitions
@@ -35,7 +35,7 @@ public class Constants
   public static final double  kRumbleIntensity      = 0.5;  // 0.0 is low, 1.0 is high
 
   // Phoenix firmware versions expected
-  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0);
+  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0); // TODO: update CTRE version numbers for 2025
   public static final int     kPhoenix6MajorVersion = 24;
 
   /****************************************************************************
@@ -51,15 +51,15 @@ public class Constants
     public static final int    kCANID_SteerLF        = 2;    // Kraken X60
     public static final int    kCANID_CANcoderLF     = 3;    // CANcoder
 
-    public static final int    kCANID_DriveRF        = 4;    //Kraken X60     
+    public static final int    kCANID_DriveRF        = 4;    // Kraken X60     
     public static final int    kCANID_SteerRF        = 5;    // Kraken X60
     public static final int    kCANID_CANcoderRF     = 6;    // CANcoder
 
-    public static final int    kCANID_DriveLR        = 7;    //Kraken X60
+    public static final int    kCANID_DriveLR        = 7;    // Kraken X60
     public static final int    kCANID_SteerLR        = 8;    // Kraken X60
     public static final int    kCANID_CANcoderLR     = 9;    // CANcoder
 
-    public static final int    kCANID_DriveRR        = 10;   //Kraken X60
+    public static final int    kCANID_DriveRR        = 10;   // Kraken X60
     public static final int    kCANID_SteerRR        = 11;   // Kraken X60
     public static final int    kCANID_CANcoderRR     = 12;   // CANcoder
 
@@ -140,7 +140,7 @@ public class Constants
   public static final class VIConsts
   {
     /** Field locations (poses) of AprilTags */
-    public static final List<Pose2d> kAprilTagPoses = Collections.unmodifiableList(List.of(           //
+    public static final List<Pose2d> kAprilTagPoses = Collections.unmodifiableList(List.of(           // TODO: update for 2025 from Field layout and marking diagram
         new Pose2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0)),               // AprilTag ID: 0 (invalid)
         new Pose2d(new Translation2d(15.079472, 0.245872), Rotation2d.fromDegrees(120)),  // AprilTag ID: 1   - Blue source right
         new Pose2d(new Translation2d(16.185134, 0.883666), Rotation2d.fromDegrees(120)),  // AprilTag ID: 2   - Blue source left
@@ -160,12 +160,9 @@ public class Constants
         new Pose2d(new Translation2d(4.641342, 3.713226), Rotation2d.fromDegrees(240))    // AprilTag ID: 16  - Blue stage right
     ));
 
-    /** Destination field poses for the robot when using PathPlanner pathfinding */
+    /** Destination field poses for the robot when using PathPlanner pathfinding */                   // TODO: update to desired 2025 field poses
     public static final Pose2d       kSpeakerPose   = new Pose2d(2.17, 4.49, Rotation2d.fromDegrees(-26));
     public static final Pose2d       kAmpPose       = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
-    public static final Pose2d       kStageCenter   = new Pose2d(5.92, 4.13, Rotation2d.fromDegrees(0));
-    public static final Pose2d       kStageLeft     = new Pose2d(4.3, 5.0, Rotation2d.fromDegrees(120));
-    public static final Pose2d       kStageRight    = new Pose2d(4.3, 3.2, Rotation2d.fromDegrees(-120));
   }
 
   /****************************************************************************
