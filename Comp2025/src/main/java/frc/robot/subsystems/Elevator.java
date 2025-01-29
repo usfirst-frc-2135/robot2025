@@ -465,12 +465,6 @@ public class Elevator extends SubsystemBase
       m_mmMoveIsFinished = true;
     }
 
-    if (!m_LimitSwitch.get( ))
-    {
-      m_leftHeight = 0;
-      setElevatorPosition(0.0);
-    }
-
     return m_mmMoveIsFinished;
   }
 
