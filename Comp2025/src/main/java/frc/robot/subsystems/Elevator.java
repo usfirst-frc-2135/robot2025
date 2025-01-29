@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase
   private static final double  kRolloutRatio         = kDrumDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
   private static final Voltage kCalibrateSpeedVolts  = Volts.of(-1.0);  // Motor voltage during calibration
   private static final Voltage kManualSpeedVolts     = Volts.of(3.0); // Motor voltage during manual operation (joystick)
-  private static final double  kCalibrateStallAmps   = 25.0;            // Motor amps during calibration stall
+  // private static final double  kCalibrateStallAmps   = 25.0;            // Motor amps during calibration stall
   private static final double  kCalibrateStallTime   = 0.100;           // Seconds of stall before calibrating
   private static final double  kCalibrationTimeout   = 3.0;             // Max calibration time
 
@@ -106,7 +106,8 @@ public class Elevator extends SubsystemBase
   // Device objects
   private final TalonFX               m_leftMotor         = new TalonFX(Ports.kCANID_ElevatorLeft);
   private final TalonFX               m_rightMotor        = new TalonFX(Ports.kCANID_ElevatorRight);
-  private final DigitalInput          m_LimitSwitch       = new DigitalInput(Ports.kLimitSwitch);
+  private final DigitalInput          m_leftLimitSwitch   = new DigitalInput(Ports.kLeftLimitSwitch); // Definition for limit switch ports not defined
+  private final DigitalInput          m_rightLimitSwitch  = new DigitalInput(Ports.kRightLimitSwitch);
 
   // Alerts
   private final Alert                 m_leftAlert         =
@@ -239,6 +240,8 @@ public class Elevator extends SubsystemBase
     m_leftHeightPub.set(m_leftHeight);
     m_rightHeightPub.set(m_rightHeight);
     m_targetHeightPub.set(m_targetHeight);
+
+    getCalibrateCommand( );
   }
 
   /****************************************************************************
@@ -389,11 +392,11 @@ public class Elevator extends SubsystemBase
     m_mmMoveTimer.restart( );
     m_mmHardStopCounter = 0;
 
-    if (!(m_leftCalibrated && m_rightCalibrated))
-    {
-      DataLogManager.log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_targetHeight));
-      return;
-    }
+    // if (!(m_leftCalibrated && m_rightCalibrated))
+    // {
+    //   DataLogManager.log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_targetHeight));
+    //   return;
+    // }
 
     if (holdPosition)
       newHeight = m_leftHeight;
@@ -513,8 +516,11 @@ public class Elevator extends SubsystemBase
    */
   private boolean calibrateIsFinished( )
   {
-    boolean leftCalibrated = m_leftStalled.calculate(m_leftStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
-    boolean rightCalibrated = m_rightStalled.calculate(m_rightStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
+    // boolean leftCalibrated = m_leftStalled.calculate(m_leftStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
+    // boolean rightCalibrated = m_rightStalled.calculate(m_rightStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
+
+    boolean leftCalibrated = m_leftStalled.calculate(m_leftLimitSwitch.get( ));
+    boolean rightCalibrated = m_rightStalled.calculate(m_rightLimitSwitch.get( ));
 
     if (leftCalibrated && !m_leftCalibrated)
       DataLogManager.log(String.format("%s: Left stalled %s (right %s)", getSubsystem( ), leftCalibrated, rightCalibrated));
