@@ -7,6 +7,10 @@ Project list:
 
 - Comp2025: Competition code for the 2025 REEFSCAPE season
 
-- TumerXGeneratedComp*: Auto-generated project created for our competition robot
+- TumerXApollo*: Auto-generated project created for our 2024 competition robot
+
+- TumerXComp*: Auto-generated project created for our 2025 competition robot (still TBD)
+
+- TumerXPractice*: Auto-generated project created for our 2025 practice robot
 
 (*) Do not edit these projects directly since they are used only as references
