@@ -4,6 +4,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+// import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -69,7 +70,7 @@ public class Elevator extends SubsystemBase
   private static final double  kRolloutRatio         = kDrumDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
   private static final Voltage kCalibrateSpeedVolts  = Volts.of(-1.0);  // Motor voltage during calibration
   private static final Voltage kManualSpeedVolts     = Volts.of(3.0); // Motor voltage during manual operation (joystick)
-  // private static final double  kCalibrateStallAmps   = 25.0;            // Motor amps during calibration stall
+  private static final double  kCalibrateStallAmps   = 25.0;            // Motor amps during calibration stall
   private static final double  kCalibrateStallTime   = 0.100;           // Seconds of stall before calibrating
   private static final double  kCalibrationTimeout   = 3.0;             // Max calibration time
 
@@ -106,8 +107,7 @@ public class Elevator extends SubsystemBase
   // Device objects
   private final TalonFX               m_leftMotor         = new TalonFX(Ports.kCANID_ElevatorLeft);
   private final TalonFX               m_rightMotor        = new TalonFX(Ports.kCANID_ElevatorRight);
-  private final DigitalInput          m_leftLimitSwitch   = new DigitalInput(Ports.kLeftLimitSwitch); // Definition for limit switch ports not defined
-  private final DigitalInput          m_rightLimitSwitch  = new DigitalInput(Ports.kRightLimitSwitch);
+  private final DigitalInput          m_elevatorDown      = new DigitalInput(Ports.kDIO_ElevatorDown); // Definition for limit switch ports not defined
 
   // Alerts
   private final Alert                 m_leftAlert         =
@@ -241,7 +241,12 @@ public class Elevator extends SubsystemBase
     m_rightHeightPub.set(m_rightHeight);
     m_targetHeightPub.set(m_targetHeight);
 
-    getCalibrateCommand( );
+    boolean elevatorFullDown = m_elevatorDown.get( );
+
+    if (elevatorFullDown)
+    {
+
+    }
   }
 
   /****************************************************************************
@@ -293,7 +298,7 @@ public class Elevator extends SubsystemBase
 
     // Add commands
     SmartDashboard.putData("ClRunStowed", getMoveToPositionCommand(this::getElevatorStowed));
-    SmartDashboard.putData("ClRunCoralL1", getMoveToPositionCommand(this::getElevatorCoralL1));
+    SmartDashboard.putData("ClRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
     SmartDashboard.putData("ClCalibrate", getCalibrateCommand( ));
   }
 
@@ -516,11 +521,8 @@ public class Elevator extends SubsystemBase
    */
   private boolean calibrateIsFinished( )
   {
-    // boolean leftCalibrated = m_leftStalled.calculate(m_leftStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
-    // boolean rightCalibrated = m_rightStalled.calculate(m_rightStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
-
-    boolean leftCalibrated = m_leftStalled.calculate(m_leftLimitSwitch.get( ));
-    boolean rightCalibrated = m_rightStalled.calculate(m_rightLimitSwitch.get( ));
+    boolean leftCalibrated = m_leftStalled.calculate(m_leftStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
+    boolean rightCalibrated = m_rightStalled.calculate(m_rightStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
 
     if (leftCalibrated && !m_leftCalibrated)
       DataLogManager.log(String.format("%s: Left stalled %s (right %s)", getSubsystem( ), leftCalibrated, rightCalibrated));
@@ -654,7 +656,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator coral L1 scoring state length
    */
-  public double getElevatorCoralL1( )
+  public double getHeightCoralL1( )
   {
     return kHeightCoralL1;
   }
@@ -665,7 +667,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator coral L2 scoring state length
    */
-  public double getElevatorCoralL2( )
+  public double getHeightCoralL2( )
   {
     return kHeightCoralL2;
   }
@@ -676,7 +678,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator coral L3 scoring state length
    */
-  public double getElevatorCoralL3( )
+  public double getHeightCoralL3( )
   {
     return kHeightCoralL3;
   }
@@ -687,7 +689,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator coral L4 scoring state length
    */
-  public double getElevatorCoralL4( )
+  public double getHeightCoralL4( )
   {
     return kHeightCoralL4;
   }
@@ -698,7 +700,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator coral station intake state length
    */
-  public double getkHeightCoralStation( )
+  public double getHeightCoralLStation( )
   {
     return kHeightCoralStation;
   }
@@ -709,7 +711,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator Algae L23 scoring length
    */
-  public double getkHeightAlgaeL23( )
+  public double getHeightAlgaeL23( )
   {
     return kHeightAlgaeL23;
   }
@@ -720,7 +722,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator Algae L34 scoring length
    */
-  public double getkHeightAlgaeL34( )
+  public double getHeightAlgaeL34( )
   {
     return kHeightAlgaeL34;
   }
@@ -731,7 +733,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator Algae Net scoring length
    */
-  public double getkHeightAlgaeLNet( )
+  public double getHeightAlgaeLNet( )
   {
     return kHeightAlgaeNet;
   }
@@ -742,7 +744,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator Algae Processor scoring length
    */
-  public double getkHeightAlgaeProcessor( )
+  public double getHeightAlgaeLProcessor( )
   {
     return kHeightAlgaeProcessor;
   }
