@@ -78,7 +78,7 @@ public class Elevator extends SubsystemBase
   private static final double  kMMDebounceTime       = 0.060;           // Seconds to debounce a final position check
   private static final double  kMMMoveTimeout        = 4.0;             // Seconds allowed for a Motion Magic movement
 
-  // Elevator lengths - Motion Magic config parameters                  // TODO: define desired elevator heights for 2025
+  // Elevator heights - Motion Magic config parameters                  // TODO: define desired elevator heights for 2025
   private static final double  kHeightStowed         = 0.0;             // By definition - Elevator full down
   private static final double  kHeightCoralStation   = 0.0;             // By definition - Elevator at coral station
   private static final double  kHeightCoralL1        = 10.0;            // By definition - Elevator at L1 for scoring coral
@@ -92,8 +92,8 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightAlgaeNet       = 0.0;             // By definition - Elevator at L34 for scoring algae in net
   private static final double  kHeightAlgaeProcessor = 0.0;             // By definition - Elevator at scoring algae in processor
 
-  private static final double  kHeightMin            = 0.0;             // Elevator minimum allowable length
-  private static final double  kHeightMax            = 30.0;            // Elevator maximum allowable length (2" beyond high length)
+  private static final double  kHeightMin            = 0.0;             // Elevator minimum allowable height
+  private static final double  kHeightMax            = 30.0;            // Elevator maximum allowable height (2" beyond high height)
 
   /** Elevator manual move parameters */
   private enum ElevatorMode
@@ -135,9 +135,9 @@ public class Elevator extends SubsystemBase
 
   // Declare module variables
   private boolean                     m_elevatorValid;    // Health indicator for Falcon
-  private double                      m_leftHeight        = 0.0; // Current length in inches on left (default) side
-  private double                      m_rightHeight       = 0.0; // Current length in inches on right side
-  private double                      m_targetHeight      = 0.0; // Target length in inches
+  private double                      m_leftHeight        = 0.0; // Current height in inches on left (default) side
+  private double                      m_rightHeight       = 0.0; // Current height in inches on right side
+  private double                      m_targetHeight      = 0.0; // Target height in inches
 
   // Calibration variables
   private Timer                       m_calibrateTimer    = new Timer( );
@@ -314,7 +314,7 @@ public class Elevator extends SubsystemBase
     m_leftCalibrated = false;
     m_rightCalibrated = false;
 
-    m_leftHeight = 0.0; // Allow calibration routine to run for up to this length
+    m_leftHeight = 0.0; // Allow calibration routine to run for up to this height
     m_targetHeight = m_leftHeight;
     DataLogManager.log(String.format("%s: Subsystem initialized! Target Inches: %.1f", getSubsystem( ), m_targetHeight));
   }
@@ -595,7 +595,7 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Set Motion Magic setpoint based on passed length
+   * Set Motion Magic setpoint based on passed height
    * 
    * @param targetInches
    *          distance to move
@@ -641,9 +641,9 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for stowed state
+   * Return elevator height for stowed state
    * 
-   * @return elevator stowed state length
+   * @return elevator stowed state height
    */
   public double getElevatorStowed( )
   {
@@ -652,9 +652,9 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for coral L1 scoring state
+   * Return elevator height for coral L1 scoring state
    * 
-   * @return elevator coral L1 scoring state length
+   * @return elevator coral L1 scoring state height
    */
   public double getHeightCoralL1( )
   {
@@ -663,9 +663,9 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for coral L2 scoring state
+   * Return elevator height for coral L2 scoring state
    * 
-   * @return elevator coral L2 scoring state length
+   * @return elevator coral L2 scoring state height
    */
   public double getHeightCoralL2( )
   {
@@ -674,9 +674,9 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for coral L3 scoring state
+   * Return elevator height for coral L3 scoring state
    * 
-   * @return elevator coral L3 scoring state length
+   * @return elevator coral L3 scoring state height
    */
   public double getHeightCoralL3( )
   {
@@ -685,9 +685,9 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for coral L4 scoring state
+   * Return elevator height for coral L4 scoring state
    * 
-   * @return elevator coral L4 scoring state length
+   * @return elevator coral L4 scoring state height
    */
   public double getHeightCoralL4( )
   {
@@ -696,9 +696,9 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for coral station intake state
+   * Return elevator height for coral station intake state
    * 
-   * @return elevator coral station intake state length
+   * @return elevator coral station intake state height
    */
   public double getHeightCoralLStation( )
   {
@@ -707,9 +707,9 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for Algae L23 scoring state
+   * Return elevator height for Algae L23 scoring state
    * 
-   * @return elevator Algae L23 scoring length
+   * @return elevator Algae L23 scoring height
    */
   public double getHeightAlgaeL23( )
   {
@@ -718,9 +718,9 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for Algae L34 scoring state
+   * Return elevator height for Algae L34 scoring state
    * 
-   * @return elevator Algae L34 scoring length
+   * @return elevator Algae L34 scoring height
    */
   public double getHeightAlgaeL34( )
   {
@@ -729,9 +729,9 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for Algae Net scoring state
+   * Return elevator height for Algae Net scoring state
    * 
-   * @return elevator Algae Net scoring length
+   * @return elevator Algae Net scoring height
    */
   public double getHeightAlgaeLNet( )
   {
@@ -740,9 +740,9 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for Algae Processor scoring state
+   * Return elevator height for Algae Processor scoring state
    * 
-   * @return elevator Algae Processor scoring length
+   * @return elevator Algae Processor scoring height
    */
   public double getHeightAlgaeLProcessor( )
   {
