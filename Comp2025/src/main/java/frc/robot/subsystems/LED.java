@@ -35,49 +35,47 @@ import frc.robot.lib.phoenix.PhoenixUtil5;
  * 
  * LED subsystem to control LED changes and provide command factory
  */
-public class LED extends SubsystemBase
-{
+public class LED extends SubsystemBase {
   // Constants
-  private static final int                 kLEDCount           = 8;
+  private static final int kLEDCount = 8;
 
-  private final Color8Bit                  kWhite              = new Color8Bit(255, 255, 255);
-  private final Color8Bit                  kRed                = new Color8Bit(255, 0, 0);
-  private final Color8Bit                  kOrange             = new Color8Bit(255, 48, 0);
-  private final Color8Bit                  kYellow             = new Color8Bit(255, 255, 0);
-  private final Color8Bit                  kGreen              = new Color8Bit(0, 255, 0);
-  private final Color8Bit                  kBlue               = new Color8Bit(0, 0, 255);
-  private final Color8Bit                  kPurple             = new Color8Bit(128, 0, 128);
-  private final Color8Bit                  kOff                = new Color8Bit(0, 0, 0);
+  private final Color8Bit kWhite = new Color8Bit(255, 255, 255);
+  private final Color8Bit kRed = new Color8Bit(255, 0, 0);
+  private final Color8Bit kOrange = new Color8Bit(255, 48, 0);
+  private final Color8Bit kYellow = new Color8Bit(255, 255, 0);
+  private final Color8Bit kGreen = new Color8Bit(0, 255, 0);
+  private final Color8Bit kBlue = new Color8Bit(0, 0, 255);
+  private final Color8Bit kPurple = new Color8Bit(128, 0, 128);
+  private final Color8Bit kOff = new Color8Bit(0, 0, 0);
 
-  private final int                        kWhiteness          = 0;    // White level for LED strings that support one
-  private final double                     kBrightness         = 0.7;  // Brightness level 0.0 - 1.0
-  private final double                     kSpeed              = 0.5;  // Animation speed 0.0 - 1.0
-  private final int                        kSlot               = 0;
+  private final int kWhiteness = 0; // White level for LED strings that support one
+  private final double kBrightness = 0.7; // Brightness level 0.0 - 1.0
+  private final double kSpeed = 0.5; // Animation speed 0.0 - 1.0
+  private final int kSlot = 0;
 
   // Member objects
-  private final CANdle                     m_candle            = new CANdle(Ports.kCANID_CANdle);
-  private final SendableChooser<COLOR>     m_colorChooser      = new SendableChooser<COLOR>( );
-  private final SendableChooser<ANIMATION> m_animationChooser  = new SendableChooser<ANIMATION>( );
+  private final CANdle m_candle = new CANdle(Ports.kCANID_CANdle);
+  private final SendableChooser<COLOR> m_colorChooser = new SendableChooser<COLOR>();
+  private final SendableChooser<ANIMATION> m_animationChooser = new SendableChooser<ANIMATION>();
 
-  private Color8Bit                        m_color             = kOff;
-  private Animation                        m_animation         = null;
-  private Color8Bit                        m_previousColor     = kOff;
-  private Animation                        m_previousAnimation = null;
+  private Color8Bit m_color = kOff;
+  private Animation m_animation = null;
+  private Color8Bit m_previousColor = kOff;
+  private Animation m_previousAnimation = null;
 
   /****************************************************************************
    * 
    * Constructor
    */
-  public LED( )
-  {
+  public LED() {
     setName("LED");
     setSubsystem("LED");
 
     m_candle.configBrightnessScalar(kBrightness);
     m_candle.clearAnimation(kSlot);
 
-    initDashboard( );
-    initialize( );
+    initDashboard();
+    initialize();
   }
 
   /****************************************************************************
@@ -85,18 +83,17 @@ public class LED extends SubsystemBase
    * Periodic actions that run every scheduler loop time (20 msec)
    */
   @Override
-  public void periodic( )
-  {
+  public void periodic() {
     // This method will be called once per scheduler run
   }
 
   /****************************************************************************
    * 
-   * Periodic actions that run every scheduler loop time (20 msec) during simulation
+   * Periodic actions that run every scheduler loop time (20 msec) during
+   * simulation
    */
   @Override
-  public void simulationPeriodic( )
-  {
+  public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
   }
 
@@ -104,8 +101,7 @@ public class LED extends SubsystemBase
    * 
    * Initialize dashboard widgets
    */
-  private void initDashboard( )
-  {
+  private void initDashboard() {
     // Initialize dashboard widgets
 
     // Add options for colors in Dashboard
@@ -144,9 +140,8 @@ public class LED extends SubsystemBase
    * 
    * Initialize subsystem during robot mode changes
    */
-  public void initialize( )
-  {
-    DataLogManager.log(String.format("%s: Subsystem initialized!", getSubsystem( )));
+  public void initialize() {
+    DataLogManager.log(String.format("%s: Subsystem initialized!", getSubsystem()));
     setLEDs(COLOR.OFF, ANIMATION.CLEARALL);
   }
 
@@ -154,10 +149,9 @@ public class LED extends SubsystemBase
    * 
    * Write out hardware faults and reset sticky faults
    */
-  public void printFaults( )
-  {
-    PhoenixUtil5.getInstance( ).candlePrintFaults(m_candle, "candle");
-    m_candle.clearStickyFaults( );
+  public void printFaults() {
+    PhoenixUtil5.getInstance().candlePrintFaults(m_candle, "candle");
+    m_candle.clearStickyFaults();
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -169,99 +163,93 @@ public class LED extends SubsystemBase
    * Set LEDs based on the color and animation requested
    * 
    * @param color
-   *          requested color
+   *                  requested color
    * @param animation
-   *          requested animation
+   *                  requested animation
    */
-  private void setLEDs(COLOR color, ANIMATION animation)
-  {
+  private void setLEDs(COLOR color, ANIMATION animation) {
     if (color == COLOR.DASHBOARD)
-      color = m_colorChooser.getSelected( );
+      color = m_colorChooser.getSelected();
 
     if (animation == ANIMATION.DASHBOARD)
-      animation = m_animationChooser.getSelected( );
+      animation = m_animationChooser.getSelected();
 
-    switch (color)
-    {
-      default :
-      case OFF :
+    switch (color) {
+      default:
+      case OFF:
         m_color = kOff;
         break;
-      case WHITE :
+      case WHITE:
         m_color = kWhite;
         break;
-      case RED :
+      case RED:
         m_color = kRed;
         break;
-      case ORANGE :
+      case ORANGE:
         m_color = kOrange;
         break;
-      case YELLOW :
+      case YELLOW:
         m_color = kYellow;
         break;
-      case GREEN :
+      case GREEN:
         m_color = kGreen;
         break;
-      case BLUE :
+      case BLUE:
         m_color = kBlue;
         break;
-      case PURPLE :
+      case PURPLE:
         m_color = kPurple;
         break;
     }
 
-    switch (animation)
-    {
-      default :
-      case CLEARALL :
+    switch (animation) {
+      default:
+      case CLEARALL:
         m_animation = null;
         break;
-      case COLORFLOW :
-        m_animation =
-            new ColorFlowAnimation(m_color.red, m_color.green, m_color.blue, kWhiteness, kSpeed, kLEDCount, Direction.Forward);
+      case COLORFLOW:
+        m_animation = new ColorFlowAnimation(m_color.red, m_color.green, m_color.blue, kWhiteness, kSpeed, kLEDCount,
+            Direction.Forward);
         break;
-      case FIRE :
+      case FIRE:
         m_animation = new FireAnimation(kBrightness, kSpeed, kLEDCount, 0.7, 0.5);
         break;
-      case LARSON :
-        m_animation =
-            new LarsonAnimation(m_color.red, m_color.green, m_color.blue, kWhiteness, kSpeed, kLEDCount, BounceMode.Front, 3);
+      case LARSON:
+        m_animation = new LarsonAnimation(m_color.red, m_color.green, m_color.blue, kWhiteness, kSpeed, kLEDCount,
+            BounceMode.Front, 3);
         break;
-      case RAINBOW :
+      case RAINBOW:
         m_animation = new RainbowAnimation(kBrightness, kSpeed, kLEDCount);
         break;
-      case RGBFADE :
+      case RGBFADE:
         m_animation = new RgbFadeAnimation(kBrightness, kSpeed, kLEDCount);
         break;
-      case SINGLEFADE :
+      case SINGLEFADE:
         m_animation = new SingleFadeAnimation(m_color.red, m_color.green, m_color.blue, kWhiteness, kSpeed, kLEDCount);
         break;
-      case STROBE :
+      case STROBE:
         m_animation = new StrobeAnimation(m_color.red, m_color.green, m_color.blue, kWhiteness, kSpeed, kLEDCount);
         break;
-      case TWINKLE :
+      case TWINKLE:
         m_animation = new TwinkleAnimation(m_color.red, m_color.green, m_color.blue, kWhiteness, kSpeed, kLEDCount,
             TwinklePercent.Percent64);
         break;
-      case TWINKLEOFF :
+      case TWINKLEOFF:
         m_animation = new TwinkleOffAnimation(m_color.red, m_color.green, m_color.blue, kWhiteness, kSpeed, kLEDCount,
             TwinkleOffPercent.Percent100);
         break;
     }
 
-    if (m_color == m_previousColor && m_animation == m_previousAnimation)
-    {
-      DataLogManager.log(String.format("%s: Color and animation already active - %s, %s", getSubsystem( ), color, animation));
+    if (m_color == m_previousColor && m_animation == m_previousAnimation) {
+      DataLogManager
+          .log(String.format("%s: Color and animation already active - %s, %s", getSubsystem(), color, animation));
       return;
     }
 
-    DataLogManager.log(String.format("%s: Color is now %s, %s", getSubsystem( ), color, animation));
-    if (m_animation != null)
-    {
+    DataLogManager.log(String.format("%s: Color is now %s, %s", getSubsystem(), color, animation));
+    if (m_animation != null) {
       m_candle.animate(m_animation, kSlot);
-    }
-    else
-    {
+    } else {
       m_candle.clearAnimation(kSlot);
       m_candle.setLEDs(m_color.red, m_color.green, m_color.blue, kWhiteness, 0, kLEDCount);
     }
@@ -279,18 +267,17 @@ public class LED extends SubsystemBase
    * Create LED set command
    * 
    * @param color
-   *          LED color to display
+   *                  LED color to display
    * @param animation
-   *          LED animation pattern to use
+   *                  LED animation pattern to use
    * @return instant command that changes LEDs
    */
-  public Command getLEDCommand(COLOR color, ANIMATION animation)
-  {
-    return new InstantCommand(            // Command that runs exactly once
-        ( ) -> setLEDs(color, animation), // Method to call
-        this                              // Subsystem requirement
-    )                                     //
-        .withName("LEDSet")          //
+  public Command getLEDCommand(COLOR color, ANIMATION animation) {
+    return new InstantCommand( // Command that runs exactly once
+        () -> setLEDs(color, animation), // Method to call
+        this // Subsystem requirement
+    ) //
+        .withName("LEDSet") //
         .ignoringDisable(true);
   }
 
