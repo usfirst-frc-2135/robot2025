@@ -63,10 +63,10 @@ public class Elevator extends SubsystemBase
 {
   // Constants
   private static final String  kSubsystemName        = "Elevator";
-  private static final double  kGearRatio            = 16.0; // Gear reduction
-  private static final double  kElevatorHeightMeters = 0.5; // Simulation
+  private static final double  kGearRatio            = 9.710; // Gear reduction
+  private static final double  kElevatorHeightMeters = Units.inchesToMeters(29.6875); // Simulation
   private static final double  kCarriageMassKg       = 2.0; // Simulation
-  private static final double  kDrumDiameterInches   = 1.375; // Drum diameter in inches
+  private static final double  kDrumDiameterInches   = 1.888; // Drum diameter in inches
   private static final double  kDrumRadiusMeters     = Units.inchesToMeters(kDrumDiameterInches) / 2;
   private static final double  kRolloutRatio         = kDrumDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
   private static final Voltage kCalibrateSpeedVolts  = Volts.of(-1.0); // Motor voltage during calibration
@@ -77,7 +77,7 @@ public class Elevator extends SubsystemBase
 
   private static final double  kToleranceInches      = 0.5; // Elevator PID tolerance in inches
   private static final double  kMMDebounceTime       = 0.060; // Seconds to debounce a final position check
-  private static final double  kMMMoveTimeout        = 4.0; // Seconds allowed for a Motion Magic movement
+  private static final double  kMMMoveTimeout        = 1.5; // Seconds allowed for a Motion Magic movement
 
   // Elevator heights - Motion Magic config parameters // TODO: define desired
   // elevator heights for 2025
@@ -95,7 +95,7 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightAlgaeProcessor = 0.0; // By definition - Elevator at scoring algae in processor
 
   private static final double  kHeightMin            = 0.0; // Elevator minimum allowable height
-  private static final double  kHeightMax            = 30.0; // Elevator maximum allowable height (2" beyond high height)
+  private static final double  kHeightMax            = 29.6875; // Elevator maximum allowable height (2" beyond high height)
 
   /** Elevator manual move parameters */
   private enum ElevatorMode
