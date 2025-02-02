@@ -83,9 +83,9 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightCoralStation   = 0.0;             // By definition - Elevator at coral station
   private static final double  kHeightCoralL1        = 10.0;            // By definition - Elevator at L1 for scoring coral
 
-  private static final double  kHeightCoralL2        = 0.0;             // By definition - Elevator at L2 for scoring coral
-  private static final double  kHeightCoralL3        = 15.0;             // By definition - Elevator at L3 for scoring coral
-  private static final double  kHeightCoralL4        = 20.0;            // By definition - Elevator at L4 for scoring coral
+  private static final double  kHeightCoralL2        = 15.0;             // By definition - Elevator at L2 for scoring coral
+  private static final double  kHeightCoralL3        = 20.0;             // By definition - Elevator at L3 for scoring coral
+  private static final double  kHeightCoralL4        = 25.0;            // By definition - Elevator at L4 for scoring coral
 
   private static final double  kHeightAlgaeL23       = 0.0;             // By definition - Elevator at L23 for taking algae
   private static final double  kHeightAlgaeL34       = 0.0;             // By definition - Elevator at L34 for taking algae
@@ -241,12 +241,6 @@ public class Elevator extends SubsystemBase
     m_rightHeightPub.set(m_rightHeight);
     m_targetHeightPub.set(m_targetHeight);
 
-    boolean elevatorFullDown = m_elevatorDown.get( );
-
-    if (elevatorFullDown)
-    {
-
-    }
   }
 
   /****************************************************************************
@@ -297,9 +291,12 @@ public class Elevator extends SubsystemBase
     SmartDashboard.putData(kSubsystemName + "Mech", m_elevatorMech);
 
     // Add commands
-    SmartDashboard.putData("ClRunStowed", getMoveToPositionCommand(this::getElevatorStowed));
-    SmartDashboard.putData("ClRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
-    SmartDashboard.putData("ClCalibrate", getCalibrateCommand( ));
+    SmartDashboard.putData("ElRunStowed", getMoveToPositionCommand(this::getHeightStowed));
+    SmartDashboard.putData("ElRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
+    SmartDashboard.putData("ElRunCoralL2", getMoveToPositionCommand(this::getHeightCoralL2));
+    SmartDashboard.putData("ElRunCoralL3", getMoveToPositionCommand(this::getHeightCoralL3));
+    SmartDashboard.putData("ElRunCoralL4", getMoveToPositionCommand(this::getHeightCoralL4));
+    SmartDashboard.putData("ElCalibrate", getCalibrateCommand( ));
   }
 
   // Put methods for controlling this subsystem here. Call these from Commands.
@@ -397,11 +394,11 @@ public class Elevator extends SubsystemBase
     m_mmMoveTimer.restart( );
     m_mmHardStopCounter = 0;
 
-    // if (!(m_leftCalibrated && m_rightCalibrated))
-    // {
-    //   DataLogManager.log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_targetHeight));
-    //   return;
-    // }
+    if (!(m_leftCalibrated && m_rightCalibrated))
+    {
+      DataLogManager.log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_targetHeight));
+      return;
+    }
 
     if (holdPosition)
       newHeight = m_leftHeight;
@@ -645,7 +642,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator stowed state height
    */
-  public double getElevatorStowed( )
+  public double getHeightStowed( )
   {
     return kHeightStowed;
   }
