@@ -243,7 +243,7 @@ public class Elevator extends SubsystemBase
 
     // boolean elevatorFullDown = m_elevatorDown.get( );
 
-    if (!m_elevatorDown.get( ) && !m_elevatorCalibrated && DriverStation.isDisabled())
+    if (!m_elevatorDown.get( ) && !m_elevatorCalibrated && DriverStation.isDisabled( ))
     {
       DataLogManager.log(String.format("%s: Subsystem calibrated! Height Inches: %.1f", getSubsystem( ), m_leftHeight));
       setElevatorPosition(0);
@@ -303,7 +303,6 @@ public class Elevator extends SubsystemBase
     // Add commands
     SmartDashboard.putData("ClRunStowed", getMoveToPositionCommand(this::getElevatorStowed));
     SmartDashboard.putData("ClRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
-    SmartDashboard.putData("ClCalibrate", getCalibrateCommand( ));
   }
 
   // Put methods for controlling this subsystem here. Call these from Commands.
@@ -400,12 +399,11 @@ public class Elevator extends SubsystemBase
     m_mmMoveTimer.restart( );
     m_mmHardStopCounter = 0;
 
-    // if (!( m_elevatorCalibrated))
-    // {
-    // DataLogManager.log(String.format("%s: MM Position move target %.1f in - NOT
-    // CALIBRATED!", getSubsystem( ), m_targetHeight));
-    // return;
-    // }
+    if (!(m_elevatorCalibrated))
+    {
+      DataLogManager.log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_targetHeight));
+      return;
+    }
 
     if (holdPosition)
       newHeight = m_leftHeight;
