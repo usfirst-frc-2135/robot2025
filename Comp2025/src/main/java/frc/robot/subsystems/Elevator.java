@@ -301,7 +301,7 @@ public class Elevator extends SubsystemBase
     SmartDashboard.putData(kSubsystemName + "Mech", m_elevatorMech);
 
     // Add commands
-    SmartDashboard.putData("ClRunStowed", getMoveToPositionCommand(this::getElevatorStowed));
+    SmartDashboard.putData("ClRunStowed", getMoveToPositionCommand(this::getHeightStowed));
     SmartDashboard.putData("ClRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
   }
 
@@ -643,7 +643,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator stowed state height
    */
-  public double getElevatorStowed( )
+  public double getHeightStowed( )
   {
     return kHeightStowed;
   }
