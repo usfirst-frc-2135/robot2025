@@ -98,6 +98,18 @@ public class Wrist extends SubsystemBase
   private static final double       kRotaryAngleHandoff   = Robot.isComp( ) ? -124.7 : -124.7;  //
   private static final double       kRotaryAngleDeployed  = Robot.isComp( ) ? 24.9 : 27.3;      //
 
+  private static final double       kRotaryStowed         = 0;
+  private static final double       kRotaryCoralL1        = 0;
+
+  private static final double       kRotaryCoralL23       = 0;
+  private static final double       kRotaryCoralL4        = 0;
+  private static final double       kRotaryCoralStation   = 0;
+
+  private static final double       kRotaryAlgaeL23       = 0;
+  private static final double       kRotaryAlgaeL34       = 0;
+  private static final double       kRotaryAlgaeProcessor = 0;
+  private static final double       kRotaryAlgaeNet       = 0;
+
   private static final double       kRotaryAngleMin       = kRotaryAngleRetracted - 3.0;
   private static final double       kRotaryAngleMax       = kRotaryAngleDeployed + 3.0;
 
@@ -296,7 +308,14 @@ public class Wrist extends SubsystemBase
     SmartDashboard.putData("INRotaryMech", m_rotaryMech);
 
     // Add commands
-    // SmartDashboard.putData("InRollStop", getMoveToPositionCommand(INRollerMode.STOP, this::getCurrentPosition));
+    SmartDashboard.putData("InRollStop", getMoveToPositionCommand(INRollerMode.STOP, this::getCurrentPosition));
+    SmartDashboard.putData("InRollAcquire", getMoveToPositionCommand(INRollerMode.ACQUIRE, this::getCurrentPosition));
+    SmartDashboard.putData("InRollExpel", getMoveToPositionCommand(INRollerMode.EXPEL, this::getCurrentPosition));
+    SmartDashboard.putData("InRollShoot", getMoveToPositionCommand(INRollerMode.SHOOT, this::getCurrentPosition));
+    SmartDashboard.putData("InRollHandoff", getMoveToPositionCommand(INRollerMode.HANDOFF, this::getCurrentPosition));
+    SmartDashboard.putData("InRollHold", getMoveToPositionCommand(INRollerMode.HOLD, this::getCurrentPosition));
+
+    SmartDashboard.putData("InRotRetract", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeRetracted));
 
   }
 
@@ -480,7 +499,36 @@ public class Wrist extends SubsystemBase
    */
   private void setRollerMode(INRollerMode mode)
   {
+    double output = 0.0;
 
+    if (mode == INRollerMode.HOLD)
+    {
+      DataLogManager.log(String.format("%s: Roller mode is unchanged - %s (%.3f)", getSubsystem( ), mode, m_rollerMotor.get( )));
+    }
+    else
+    {
+      switch (mode)
+      {
+        default :
+          DataLogManager.log(String.format("%s: Roller mode is invalid: %s", getSubsystem( ), mode));
+        case STOP :
+          output = (m_noteDetected) ? kRollerSpeedHold : 0.0;
+          break;
+        case ACQUIRE :
+          output = kRollerSpeedAcquire;
+          break;
+        case EXPEL :
+          output = kRollerSpeedExpel;
+          break;
+        case SHOOT :
+          output = kRollerSpeedToShooter;
+          break;
+        case HANDOFF :
+          output = kRollerSpeedToFeeder;
+      }
+      DataLogManager.log(String.format("%s: Roller mode is now - %s", getSubsystem( ), mode));
+      m_rollerMotor.set(output);
+    }
   }
 
   /****************************************************************************
@@ -541,6 +589,105 @@ public class Wrist extends SubsystemBase
   public double getWristDeployed( )
   {
     return kRotaryAngleDeployed;
+  }
+
+  /****************************************************************************
+   * 
+   * Return wrist angle for stowed state
+   * 
+   * @return deployed state angle
+   */
+  public double getWristStowed( )
+  {
+    return kRotaryStowed;
+  }
+
+  /****************************************************************************
+   * 
+   * Return wrist angle for coral level 1 state
+   * 
+   * @return deployed state angle
+   */
+  public double getWristCoralL1( )
+  {
+    return kRotaryCoralL1;
+  }
+
+  /****************************************************************************
+   * 
+   * Return wrist angle for coral level 2 and 3 state
+   * 
+   * @return deployed state angle
+   */
+  public double getWristCoralL23( )
+  {
+    return kRotaryCoralL23;
+  }
+
+  /****************************************************************************
+   * 
+   * Return wrist angle for coral level 4 state
+   * 
+   * @return deployed state angle
+   */
+  public double getWristCoralL4( )
+  {
+    return kRotaryCoralL4;
+  }
+
+  /****************************************************************************
+   * 
+   * Return wrist angle for coral station state
+   * 
+   * @return deployed state angle
+   */
+  public double getWristCoralStation( )
+  {
+    return kRotaryCoralStation;
+  }
+
+  /****************************************************************************
+   * 
+   * Return wrist angle for algae level 23 state
+   * 
+   * @return deployed state angle
+   */
+  public double getWristAlgaeL23( )
+  {
+    return kRotaryAlgaeL23;
+  }
+
+  /****************************************************************************
+   * 
+   * Return wrist angle for algae level 34 state
+   * 
+   * @return deployed state angle
+   */
+  public double getWristAlgaeL34( )
+  {
+    return kRotaryAlgaeL34;
+  }
+
+  /****************************************************************************
+   * 
+   * Return wrist angle for algae processor state
+   * 
+   * @return deployed state angle
+   */
+  public double getWristAlgaeProcessor( )
+  {
+    return kRotaryAlgaeProcessor;
+  }
+
+  /****************************************************************************
+   * 
+   * Return wrist angle for algae net state
+   * 
+   * @return deployed state angle
+   */
+  public double getWristAlgaeNet( )
+  {
+    return kRotaryAlgaeNet;
   }
 
   ////////////////////////////////////////////////////////////////////////////
