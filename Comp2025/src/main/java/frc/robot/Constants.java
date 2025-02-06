@@ -84,7 +84,7 @@ public class Constants
     public static final int    kCANID_CANdle         = 0;
 
     // Digital I/Os
-    public static final int    kDIO_ElevatorDown     = 0; // REV Magnetic Limit Switch (inaccurate value)
+    public static final int    kDIO0_ElevatorDown    = 0;    // REV Magnetic Limit Switch
   }
 
   /****************************************************************************

@@ -108,7 +108,7 @@ public class Elevator extends SubsystemBase
   // Device objects
   private final TalonFX               m_leftMotor         = new TalonFX(Ports.kCANID_ElevatorLeft);
   private final TalonFX               m_rightMotor        = new TalonFX(Ports.kCANID_ElevatorRight);
-  private final DigitalInput          m_elevatorDown      = new DigitalInput(Ports.kDIO_ElevatorDown); // Definition for limit switch
+  private final DigitalInput          m_elevatorDown      = new DigitalInput(Ports.kDIO0_ElevatorDown); // Definition for limit switch
   // ports not defined
 
   // Alerts
@@ -136,7 +136,7 @@ public class Elevator extends SubsystemBase
   private final StatusSignal<Current> m_rightStatorCur;   // Default 4Hz (250ms)
 
   // Declare module variables
-  private boolean                     m_elevatorValid;    // Health indicator for Falcon
+  private boolean                     m_motorsValid;      // Health indicator for Kraken motors
   private double                      m_leftHeight        = 0.0; // Current height in inches on left (default) side
   private double                      m_rightHeight       = 0.0; // Current height in inches on right side
   private double                      m_targetHeight      = 0.0; // Target height in inches
@@ -179,7 +179,7 @@ public class Elevator extends SubsystemBase
         CTREConfigs6.elevatorFXConfig(true, Units.degreesToRotations(kHeightMin), Units.degreesToRotations(kHeightMax)));
     boolean rightValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rightMotor, kSubsystemName + "Right",
         CTREConfigs6.elevatorFXConfig(false, Units.degreesToRotations(kHeightMin), Units.degreesToRotations(kHeightMax)));
-    m_elevatorValid = leftValid && rightValid;
+    m_motorsValid = leftValid && rightValid;
 
     m_leftAlert.set(!leftValid);
     m_rightAlert.set(!rightValid);
@@ -193,7 +193,7 @@ public class Elevator extends SubsystemBase
     m_rightStatorCur = m_rightMotor.getStatorCurrent( );
 
     // Initialize the elevator status signals
-    if (m_elevatorValid)
+    if (m_motorsValid)
     {
       setElevatorPosition(m_leftHeight);
 
@@ -225,7 +225,7 @@ public class Elevator extends SubsystemBase
   {
     // This method will be called once per scheduler run
 
-    if (m_elevatorValid)
+    if (m_motorsValid)
     {
       BaseStatusSignal.refreshAll(m_leftPosition, m_rightPosition);
       m_leftHeight = Conversions.rotationsToWinchInches(m_leftPosition.getValue( ).in(Rotations), kRolloutRatio);
@@ -241,7 +241,7 @@ public class Elevator extends SubsystemBase
     m_targetHeightPub.set(m_targetHeight);
 
     // zero elevator when fully down with limit switch
-    if (!m_elevatorDown.get( ) && !m_calibrated && DriverStation.isDisabled( ))
+    if (DriverStation.isDisabled( ) && !m_calibrated && !m_elevatorDown.get( ))
     {
       DataLogManager.log(String.format("%s: Subsystem calibrated! Height Inches: %.1f", getSubsystem( ), m_leftHeight));
       setElevatorPosition(0);
@@ -288,7 +288,7 @@ public class Elevator extends SubsystemBase
     NetworkTable table = inst.getTable("elevator");
 
     // Initialize network tables publishers
-    m_calibratedPub = table.getBooleanTopic(" elevatorCalibrated d").publish( );
+    m_calibratedPub = table.getBooleanTopic(" elevatorCalibrated").publish( );
     m_leftHeightPub = table.getDoubleTopic("leftInches").publish( );
     m_rightHeightPub = table.getDoubleTopic("rightInches").publish( );
     m_targetHeightPub = table.getDoubleTopic("targetInches").publish( );
@@ -296,8 +296,15 @@ public class Elevator extends SubsystemBase
     SmartDashboard.putData(kSubsystemName + "Mech", m_elevatorMech);
 
     // Add commands
-    SmartDashboard.putData("ClRunStowed", getMoveToPositionCommand(this::getHeightStowed));
-    SmartDashboard.putData("ClRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
+    SmartDashboard.putData("ElRunStowed", getMoveToPositionCommand(this::getHeightStowed));
+    SmartDashboard.putData("ElRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
+    SmartDashboard.putData("ElRunCoralL2", getMoveToPositionCommand(this::getHeightCoralL2));
+    SmartDashboard.putData("ElRunCoralL3", getMoveToPositionCommand(this::getHeightCoralL3));
+    SmartDashboard.putData("ElRunCoralL4", getMoveToPositionCommand(this::getHeightCoralL4));
+    SmartDashboard.putData("ElRunAlgae23", getMoveToPositionCommand(this::getHeightAlgaeL23));
+    SmartDashboard.putData("ElRunAlgae34", getMoveToPositionCommand(this::getHeightAlgaeL34));
+    SmartDashboard.putData("ElRunNet", getMoveToPositionCommand(this::getHeightAlgaeNet));
+    SmartDashboard.putData("ElRunProcessor", getMoveToPositionCommand(this::getHeightAlgaeLProcessor));
   }
 
   // Put methods for controlling this subsystem here. Call these from Commands.
@@ -322,7 +329,7 @@ public class Elevator extends SubsystemBase
    */
   public void printFaults( )
   {
-    if (m_elevatorValid)
+    if (m_motorsValid)
     {
       PhoenixUtil6.getInstance( ).talonFXPrintFaults(m_leftMotor, "ElevatorLeft");
       PhoenixUtil6.getInstance( ).talonFXPrintFaults(m_rightMotor, "ElevatorRight");
@@ -331,7 +338,7 @@ public class Elevator extends SubsystemBase
     }
     else
     {
-      DataLogManager.log(String.format("%s: m_elevatorValid is FALSE!", getSubsystem( )));
+      DataLogManager.log(String.format("%s: m_motorsValid is FALSE!", getSubsystem( )));
     }
   }
 
@@ -517,12 +524,12 @@ public class Elevator extends SubsystemBase
    */
   private boolean calibrateIsFinished( )
   {
-    boolean elevatorCalibrated = m_leftStalled.calculate(m_leftStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
+    boolean calibrated = m_leftStalled.calculate(m_leftStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
 
-    if (elevatorCalibrated && !m_calibrated)
-      DataLogManager.log(String.format("%s: Left stalled %s (right %s)", getSubsystem( ), elevatorCalibrated));
+    if (calibrated && !m_calibrated)
+      DataLogManager.log(String.format("%s: Left stalled %s (right %s)", getSubsystem( ), calibrated));
 
-    m_calibrated = elevatorCalibrated;
+    m_calibrated = calibrated;
 
     setVoltage((m_calibrated) ? Volts.of(0.0) : kCalibrateSpeedVolts, (m_calibrated) ? Volts.of(0.0) : kCalibrateSpeedVolts);
 
@@ -558,7 +565,7 @@ public class Elevator extends SubsystemBase
   private void setElevatorPosition(double inches)
   {
     m_leftHeight = inches;
-    if (m_elevatorValid)
+    if (m_motorsValid)
     {
       double rotations = Conversions.inchesToWinchRotations(inches, kRolloutRatio);
       m_leftMotor.setPosition(rotations);
@@ -577,7 +584,7 @@ public class Elevator extends SubsystemBase
    */
   private void setVoltage(Voltage leftVolts, Voltage rightVolts)
   {
-    if (m_elevatorValid)
+    if (m_motorsValid)
     {
       m_leftMotor.setControl(m_requestVolts.withOutput(leftVolts));
       m_rightMotor.setControl(m_requestVolts.withOutput(rightVolts));
@@ -593,7 +600,7 @@ public class Elevator extends SubsystemBase
    */
   private void setMMPosition(double targetInches)
   {
-    if (m_elevatorValid)
+    if (m_motorsValid)
     {
       // y = mx + b, where 0 degrees is 0.0 elevator and 90 degrees is 1/4 winch turn (the elevator constant)
       double position = Conversions.inchesToWinchRotations(targetInches, kRolloutRatio);
@@ -621,7 +628,7 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return current cliimber position
+   * Return current elevator position
    * 
    * @return current elevator position in inches
    */
@@ -724,7 +731,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return elevator Algae Net scoring height
    */
-  public double getHeightAlgaeLNet( )
+  public double getHeightAlgaeNet( )
   {
     return kHeightAlgaeNet;
   }
