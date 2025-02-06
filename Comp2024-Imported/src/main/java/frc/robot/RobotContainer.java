@@ -203,7 +203,7 @@ public class RobotContainer
   {
     Robot.timeMarker("robotContainer: before DAQ thread");
 
-    facing.HeadingController = new PhoenixPIDController(10.0, 0.0, 0.0);  // Swerve steer PID for facing swerve request
+    facing.HeadingController = new PhoenixPIDController(0.001293, 0.0, 0.0);  // Swerve steer PID for facing swerve request
 
     addDashboardWidgets( );           // Add dashboard widgets for commands
 
