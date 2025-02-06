@@ -149,15 +149,15 @@ public class Elevator extends SubsystemBase
 
   // Manual mode config parameters
   private VoltageOut                  m_requestVolts      = new VoltageOut(Volts.of(0));
-  private ElevatorMode                m_mode              = ElevatorMode.INIT; // Manual movement mode with joysticks
+  private ElevatorMode                m_mode              = ElevatorMode.INIT;      // Manual movement mode with joysticks
 
   // Motion Magic mode config parameters
   private MotionMagicVoltage          m_mmRequestVolts    = new MotionMagicVoltage(0).withSlot(0);
   private Debouncer                   m_mmWithinTolerance = new Debouncer(kMMDebounceTime, DebounceType.kRising);
-  private Timer                       m_mmMoveTimer       = new Timer( ); // Movement timer
-  private Voltage                     m_mmArbFeedForward  = Volts.of(0); // Arbitrary feedforward added to counteract gravity
+  private Timer                       m_mmMoveTimer       = new Timer( );           // Movement timer
+  private Voltage                     m_mmArbFeedForward  = Volts.of(0);  // Arbitrary feedforward added to counteract gravity
   private int                         m_mmHardStopCounter = 0;
-  private boolean                     m_mmMoveIsFinished  = true; // Movement has completed (within tolerance)
+  private boolean                     m_mmMoveIsFinished  = true;                   // Movement has completed (within tolerance)
 
   // Network tables publisher objects
   private BooleanPublisher            m_calibratedPub;
@@ -595,8 +595,7 @@ public class Elevator extends SubsystemBase
   {
     if (m_elevatorValid)
     {
-      // y = mx + b, where 0 degrees is 0.0 elevator and 90 degrees is 1/4 winch turn
-      // (the elevator constant)
+      // y = mx + b, where 0 degrees is 0.0 elevator and 90 degrees is 1/4 winch turn (the elevator constant)
       double position = Conversions.inchesToWinchRotations(targetInches, kRolloutRatio);
       m_leftMotor.setControl(m_mmRequestVolts.withPosition(position).withFeedForward(m_mmArbFeedForward));
       m_rightMotor.setControl(m_mmRequestVolts.withPosition(position).withFeedForward(m_mmArbFeedForward));
@@ -758,8 +757,8 @@ public class Elevator extends SubsystemBase
         ( ) -> calibrateExecute( ),     // Execute method
         interrupted -> calibrateEnd( ), // End method
         ( ) -> calibrateIsFinished( ),  // IsFinished method
-        this // Subsytem required
-    ) //
+        this                            // Subsytem required
+    )                                   //
         .withName(kSubsystemName + "Calibrate");
   }
 
@@ -776,7 +775,7 @@ public class Elevator extends SubsystemBase
     return new RunCommand(              // Command that runs continuously
         ( ) -> moveWithJoystick(axis),  // Lambda method to call
         this                            // Subsystem required
-    ) //
+    )                                   //
         .withName(kSubsystemName + "MoveWithJoystick");
   }
 
