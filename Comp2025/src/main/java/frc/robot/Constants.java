@@ -90,10 +90,10 @@ public class Constants
   /****************************************************************************
    * Wrist subsystem constants
    ****************************************************************************/
-  public static final class INConsts
+  public static final class WRConsts
   {
     /** Wrist roller modes */
-    public enum INRollerMode
+    public enum WRRollerMode
     {
       STOP,    // Stop all rotation
       ACQUIRE, // Speed for acquiring a game piece
