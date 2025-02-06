@@ -49,7 +49,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.INConsts.INRollerMode;
+import frc.robot.Constants.WRConsts.WRRollerMode;
 import frc.robot.Constants.Ports;
 import frc.robot.Robot;
 import frc.robot.lib.math.Conversions;
@@ -305,7 +305,7 @@ public class Wrist extends SubsystemBase
     m_noteDetectedPub = table.getBooleanTopic("noteDetected").publish( );
     m_targetDegreesPub = table.getDoubleTopic("targetDegrees").publish( );
 
-    SmartDashboard.putData("INRotaryMech", m_rotaryMech);
+    SmartDashboard.putData("WRRotaryMech", m_rotaryMech);
 
     // Add commands
     SmartDashboard.putData("InRollStop", getMoveToPositionCommand(INRollerMode.STOP, this::getCurrentPosition));
@@ -327,7 +327,7 @@ public class Wrist extends SubsystemBase
    */
   public void initialize( )
   {
-    setRollerMode(INRollerMode.STOP);
+    setRollerMode(WRRollerMode.STOP);
     setRotaryStopped( );
 
     m_targetDegrees = m_currentDegrees;
@@ -405,7 +405,7 @@ public class Wrist extends SubsystemBase
    * @param holdPosition
    *          hold previous position if true
    */
-  public void moveToPositionInit(INRollerMode mode, double newAngle, boolean holdPosition)
+  public void moveToPositionInit(WRRollerMode mode, double newAngle, boolean holdPosition)
   {
     setRollerMode(mode);
     m_mmMoveTimer.restart( );
@@ -497,7 +497,7 @@ public class Wrist extends SubsystemBase
    * @param mode
    *          requested speed
    */
-  private void setRollerMode(INRollerMode mode)
+  private void setRollerMode(WRRollerMode mode)
   {
     double output = 0.0;
 
@@ -723,7 +723,7 @@ public class Wrist extends SubsystemBase
    *          boolen to indicate whether the command ever finishes
    * @return continuous command that runs climber motors
    */
-  private Command getMMPositionCommand(INRollerMode mode, DoubleSupplier position, boolean holdPosition)
+  private Command getMMPositionCommand(WRRollerMode mode, DoubleSupplier position, boolean holdPosition)
   {
     return new FunctionalCommand(                                               // Command with all phases declared
         ( ) -> moveToPositionInit(mode, position.getAsDouble( ), holdPosition), // Init method
@@ -744,7 +744,7 @@ public class Wrist extends SubsystemBase
    *          double supplier that provides the target distance value
    * @return continuous command that runs climber motors
    */
-  public Command getMoveToPositionCommand(INRollerMode mode, DoubleSupplier position)
+  public Command getMoveToPositionCommand(WRRollerMode mode, DoubleSupplier position)
   {
     return getMMPositionCommand(mode, position, false).withName(kSubsystemName + "MMMoveToPosition");
   }
@@ -759,7 +759,7 @@ public class Wrist extends SubsystemBase
    *          double supplier that provides the target distance value
    * @return continuous command that runs climber motors
    */
-  public Command getHoldPositionCommand(INRollerMode mode, DoubleSupplier position)
+  public Command getHoldPositionCommand(WRRollerMode mode, DoubleSupplier position)
   {
     return getMMPositionCommand(mode, position, true).withName(kSubsystemName + "MMHoldPosition");
   }
