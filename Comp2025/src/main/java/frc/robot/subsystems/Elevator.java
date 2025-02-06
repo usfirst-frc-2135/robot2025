@@ -4,6 +4,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+// import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -32,6 +33,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -76,20 +78,22 @@ public class Elevator extends SubsystemBase
   private static final double  kMMDebounceTime       = 0.060;           // Seconds to debounce a final position check
   private static final double  kMMMoveTimeout        = 4.0;             // Seconds allowed for a Motion Magic movement
 
-  // Elevator lengths - Motion Magic config parameters
+  // Elevator heights - Motion Magic config parameters                  // TODO: define desired elevator heights for 2025
   private static final double  kHeightStowed         = 0.0;             // By definition - Elevator full down
   private static final double  kHeightCoralStation   = 0.0;             // By definition - Elevator at coral station
   private static final double  kHeightCoralL1        = 10.0;            // By definition - Elevator at L1 for scoring coral
-  private static final double  kHeightCoralL2        = 0.0;             // By definition - Elevator at L2 for scoring coral
-  private static final double  kHeightCoralL3        = 0.0;             // By definition - Elevator at L3 for scoring coral
-  private static final double  kHeightCoralL4        = 20.0;            // By definition - Elevator at L4 for scoring coral
+
+  private static final double  kHeightCoralL2        = 15.0;             // By definition - Elevator at L2 for scoring coral
+  private static final double  kHeightCoralL3        = 20.0;             // By definition - Elevator at L3 for scoring coral
+  private static final double  kHeightCoralL4        = 25.0;            // By definition - Elevator at L4 for scoring coral
+
   private static final double  kHeightAlgaeL23       = 0.0;             // By definition - Elevator at L23 for taking algae
   private static final double  kHeightAlgaeL34       = 0.0;             // By definition - Elevator at L34 for taking algae
   private static final double  kHeightAlgaeNet       = 0.0;             // By definition - Elevator at L34 for scoring algae in net
   private static final double  kHeightAlgaeProcessor = 0.0;             // By definition - Elevator at scoring algae in processor
 
-  private static final double  kHeightMin            = 0.0;             // Elevator minimum allowable length
-  private static final double  kHeightMax            = 30.0;            // Elevator maximum allowable length (2" beyond high length)
+  private static final double  kHeightMin            = 0.0;             // Elevator minimum allowable height
+  private static final double  kHeightMax            = 30.0;            // Elevator maximum allowable height (2" beyond high height)
 
   /** Elevator manual move parameters */
   private enum ElevatorMode
@@ -103,6 +107,7 @@ public class Elevator extends SubsystemBase
   // Device objects
   private final TalonFX               m_leftMotor         = new TalonFX(Ports.kCANID_ElevatorLeft);
   private final TalonFX               m_rightMotor        = new TalonFX(Ports.kCANID_ElevatorRight);
+  private final DigitalInput          m_elevatorDown      = new DigitalInput(Ports.kDIO_ElevatorDown); // Definition for limit switch ports not defined
 
   // Alerts
   private final Alert                 m_leftAlert         =
@@ -130,9 +135,9 @@ public class Elevator extends SubsystemBase
 
   // Declare module variables
   private boolean                     m_elevatorValid;    // Health indicator for Falcon
-  private double                      m_leftHeight        = 0.0; // Current length in inches on left (default) side
-  private double                      m_rightHeight       = 0.0; // Current length in inches on right side
-  private double                      m_targetHeight      = 0.0; // Target length in inches
+  private double                      m_leftHeight        = 0.0; // Current height in inches on left (default) side
+  private double                      m_rightHeight       = 0.0; // Current height in inches on right side
+  private double                      m_targetHeight      = 0.0; // Target height in inches
 
   // Calibration variables
   private Timer                       m_calibrateTimer    = new Timer( );
@@ -235,6 +240,7 @@ public class Elevator extends SubsystemBase
     m_leftHeightPub.set(m_leftHeight);
     m_rightHeightPub.set(m_rightHeight);
     m_targetHeightPub.set(m_targetHeight);
+
   }
 
   /****************************************************************************
@@ -285,9 +291,12 @@ public class Elevator extends SubsystemBase
     SmartDashboard.putData(kSubsystemName + "Mech", m_elevatorMech);
 
     // Add commands
-    SmartDashboard.putData("ClRunStowed", getMoveToPositionCommand(this::getElevatorStowed));
-    SmartDashboard.putData("ClRunCoralL1", getMoveToPositionCommand(this::getElevatorCoralL1));
-    SmartDashboard.putData("ClCalibrate", getCalibrateCommand( ));
+    SmartDashboard.putData("ElRunStowed", getMoveToPositionCommand(this::getHeightStowed));
+    SmartDashboard.putData("ElRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
+    SmartDashboard.putData("ElRunCoralL2", getMoveToPositionCommand(this::getHeightCoralL2));
+    SmartDashboard.putData("ElRunCoralL3", getMoveToPositionCommand(this::getHeightCoralL3));
+    SmartDashboard.putData("ElRunCoralL4", getMoveToPositionCommand(this::getHeightCoralL4));
+    SmartDashboard.putData("ElCalibrate", getCalibrateCommand( ));
   }
 
   // Put methods for controlling this subsystem here. Call these from Commands.
@@ -302,7 +311,7 @@ public class Elevator extends SubsystemBase
     m_leftCalibrated = false;
     m_rightCalibrated = false;
 
-    m_leftHeight = 0.0; // Allow calibration routine to run for up to this length
+    m_leftHeight = 0.0; // Allow calibration routine to run for up to this height
     m_targetHeight = m_leftHeight;
     DataLogManager.log(String.format("%s: Subsystem initialized! Target Inches: %.1f", getSubsystem( ), m_targetHeight));
   }
@@ -583,7 +592,7 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Set Motion Magic setpoint based on passed length
+   * Set Motion Magic setpoint based on passed height
    * 
    * @param targetInches
    *          distance to move
@@ -629,35 +638,112 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return elevator length for stowed state
+   * Return elevator height for stowed state
    * 
-   * @return elevator stowed state length
+   * @return elevator stowed state height
    */
-  public double getElevatorStowed( )
+  public double getHeightStowed( )
   {
     return kHeightStowed;
   }
 
   /****************************************************************************
    * 
-   * Return elevator length for coral L1 scoring state
+   * Return elevator height for coral L1 scoring state
    * 
-   * @return elevator coral L1 scoring state length
+   * @return elevator coral L1 scoring state height
    */
-  public double getElevatorCoralL1( )
+  public double getHeightCoralL1( )
   {
     return kHeightCoralL1;
   }
 
   /****************************************************************************
    * 
-   * Return elevator length for coral L4 scoring state
+   * Return elevator height for coral L2 scoring state
    * 
-   * @return elevator coral L4 scoring state length
+   * @return elevator coral L2 scoring state height
    */
-  public double getElevatorCoralL4( )
+  public double getHeightCoralL2( )
+  {
+    return kHeightCoralL2;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator height for coral L3 scoring state
+   * 
+   * @return elevator coral L3 scoring state height
+   */
+  public double getHeightCoralL3( )
+  {
+    return kHeightCoralL3;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator height for coral L4 scoring state
+   * 
+   * @return elevator coral L4 scoring state height
+   */
+  public double getHeightCoralL4( )
   {
     return kHeightCoralL4;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator height for coral station intake state
+   * 
+   * @return elevator coral station intake state height
+   */
+  public double getHeightCoralLStation( )
+  {
+    return kHeightCoralStation;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator height for Algae L23 scoring state
+   * 
+   * @return elevator Algae L23 scoring height
+   */
+  public double getHeightAlgaeL23( )
+  {
+    return kHeightAlgaeL23;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator height for Algae L34 scoring state
+   * 
+   * @return elevator Algae L34 scoring height
+   */
+  public double getHeightAlgaeL34( )
+  {
+    return kHeightAlgaeL34;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator height for Algae Net scoring state
+   * 
+   * @return elevator Algae Net scoring height
+   */
+  public double getHeightAlgaeLNet( )
+  {
+    return kHeightAlgaeNet;
+  }
+
+  /****************************************************************************
+   * 
+   * Return elevator height for Algae Processor scoring state
+   * 
+   * @return elevator Algae Processor scoring height
+   */
+  public double getHeightAlgaeLProcessor( )
+  {
+    return kHeightAlgaeProcessor;
   }
 
   ////////////////////////////////////////////////////////////////////////////
