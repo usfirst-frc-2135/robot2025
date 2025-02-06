@@ -49,9 +49,9 @@ public class LED extends SubsystemBase
   private final Color8Bit                  kPurple             = new Color8Bit(128, 0, 128);
   private final Color8Bit                  kOff                = new Color8Bit(0, 0, 0);
 
-  private final int                        kWhiteness          = 0; // White level for LED strings that support one
-  private final double                     kBrightness         = 0.7; // Brightness level 0.0 - 1.0
-  private final double                     kSpeed              = 0.5; // Animation speed 0.0 - 1.0
+  private final int                        kWhiteness          = 0;    // White level for LED strings that support one
+  private final double                     kBrightness         = 0.7;  // Brightness level 0.0 - 1.0
+  private final double                     kSpeed              = 0.5;  // Animation speed 0.0 - 1.0
   private final int                        kSlot               = 0;
 
   // Member objects
@@ -92,8 +92,7 @@ public class LED extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Periodic actions that run every scheduler loop time (20 msec) during
-   * simulation
+   * Periodic actions that run every scheduler loop time (20 msec) during simulation
    */
   @Override
   public void simulationPeriodic( )
@@ -287,11 +286,11 @@ public class LED extends SubsystemBase
    */
   public Command getLEDCommand(COLOR color, ANIMATION animation)
   {
-    return new InstantCommand( // Command that runs exactly once
+    return new InstantCommand(            // Command that runs exactly once
         ( ) -> setLEDs(color, animation), // Method to call
-        this // Subsystem requirement
-    ) //
-        .withName("LEDSet") //
+        this                              // Subsystem requirement
+    )                                     //
+        .withName("LEDSet")          //
         .ignoringDisable(true);
   }
 
