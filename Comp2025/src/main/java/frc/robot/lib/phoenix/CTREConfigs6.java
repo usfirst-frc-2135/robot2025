@@ -277,7 +277,7 @@ public final class CTREConfigs6
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     elevatorConfig.CurrentLimits.StatorCurrentLimit = 800.0;        // Amps
-    elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = false;
 
     // Feedback settings
     // elevatorConfig.Feedback.*
