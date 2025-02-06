@@ -1,5 +1,5 @@
 //
-// Intake Subystem - takes in Notes and delivers them to the other subsystems
+// Wrist Subystem - takes in Notes and delivers them to the other subsystems
 //
 package frc.robot.subsystems;
 
@@ -34,7 +34,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -54,19 +53,15 @@ import frc.robot.Constants.INConsts.INRollerMode;
 import frc.robot.Constants.Ports;
 import frc.robot.Robot;
 import frc.robot.lib.math.Conversions;
-import frc.robot.lib.phoenix.CTREConfigs5;
-import frc.robot.lib.phoenix.CTREConfigs6;
-import frc.robot.lib.phoenix.PhoenixUtil5;
-import frc.robot.lib.phoenix.PhoenixUtil6;
 
 /****************************************************************************
  * 
- * Intake subsystem to control the intake roller and rotary mechanism and provide command factories
+ * Wrist subsystem to control the wrist roller and rotary mechanism and provide command factories
  */
 public class Wrist extends SubsystemBase
 {
   // Constants
-  private static final String  kSubsystemName        = "Intake";
+  private static final String  kSubsystemName        = "Wrist";
   private static final boolean kRollerMotorInvert    = false;     // Motor direction for positive input
 
   private static final double  kRollerSpeedAcquire   = 0.5;
@@ -107,9 +102,9 @@ public class Wrist extends SubsystemBase
   private static final double       kRotaryAngleMax       = kRotaryAngleDeployed + 3.0;
 
   // Device objects
-  private final WPI_TalonSRX        m_rollerMotor         = new WPI_TalonSRX(Ports.kCANID_IntakeRoller);
-  private final TalonFX             m_rotaryMotor         = new TalonFX(Ports.kCANID_IntakeRotary);
-  private final CANcoder            m_CANcoder            = new CANcoder(Ports.kCANID_IntakeCANcoder);
+  private final WPI_TalonSRX        m_rollerMotor         = new WPI_TalonSRX(Ports.kCANID_WristRoller);
+  private final TalonFX             m_rotaryMotor         = new TalonFX(Ports.kCANID_WristRotary);
+  private final CANcoder            m_CANcoder            = new CANcoder(Ports.kCANID_WristCANcoder);
   // private final DigitalInput        m_noteInIntake        = new DigitalInput(Ports.kDIO0_NoteInIntake);
 
   // Alerts
@@ -177,18 +172,18 @@ public class Wrist extends SubsystemBase
     setName(kSubsystemName);
     setSubsystem(kSubsystemName);
 
-    // Roller motor init
-    m_rollerValid = PhoenixUtil5.getInstance( ).talonSRXInitialize(m_rollerMotor, kSubsystemName + "Roller",
-        CTREConfigs5.intakeRollerConfig( ));
-    m_rollerMotor.setInverted(kRollerMotorInvert);
-    PhoenixUtil5.getInstance( ).talonSRXCheckError(m_rollerMotor, "setInverted");
+    // // Roller motor init
+    // m_rollerValid = PhoenixUtil5.getInstance( ).talonSRXInitialize(m_rollerMotor, kSubsystemName + "Roller",
+    //     CTREConfigs5.intakeRollerConfig( ));
+    // m_rollerMotor.setInverted(kRollerMotorInvert);
+    // PhoenixUtil5.getInstance( ).talonSRXCheckError(m_rollerMotor, "setInverted");
 
-    // Initialize rotary motor and CANcoder objects
-    m_rotaryValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rotaryMotor, kSubsystemName + "Rotary",
-        CTREConfigs6.intakeRotaryFXConfig(Units.degreesToRotations(kRotaryAngleMin), Units.degreesToRotations(kRotaryAngleMax),
-            Ports.kCANID_IntakeCANcoder, kRotaryGearRatio));
-    m_canCoderValid = PhoenixUtil6.getInstance( ).canCoderInitialize6(m_CANcoder, kSubsystemName + "Rotary",
-        CTREConfigs6.intakeRotaryCancoderConfig( ));
+    // // Initialize rotary motor and CANcoder objects
+    // m_rotaryValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rotaryMotor, kSubsystemName + "Rotary",
+    //     CTREConfigs6.intakeRotaryFXConfig(Units.degreesToRotations(kRotaryAngleMin), Units.degreesToRotations(kRotaryAngleMax),
+    //         Ports.kCANID_WristCANcoder, kRotaryGearRatio));
+    // m_canCoderValid = PhoenixUtil6.getInstance( ).canCoderInitialize6(m_CANcoder, kSubsystemName + "Rotary",
+    //     CTREConfigs6.intakeRotaryCancoderConfig( ));
 
     m_rollerAlert.set(!m_rollerValid);
     m_rotaryAlert.set(!m_rotaryValid);
@@ -239,14 +234,14 @@ public class Wrist extends SubsystemBase
     m_ccDegrees = Units.rotationsToDegrees((m_canCoderValid) ? m_ccPosition.getValue( ).in(Rotations) : 0.0);
     // m_noteDetected = m_noteDebouncer.calculate(m_noteInIntake.get( ));
 
-    // Update network table publishers
-    m_rollSpeedPub.set(m_rollerMotor.get( ));
-    m_rollSupCurPub.set(m_rollerMotor.getSupplyCurrent( ));
+    // // Update network table publishers
+    // m_rollSpeedPub.set(m_rollerMotor.get( ));
+    // m_rollSupCurPub.set(m_rollerMotor.getSupplyCurrent( ));
 
-    m_ccDegreesPub.set(m_ccDegrees);
-    m_rotDegreesPub.set(m_currentDegrees);
-    m_targetDegreesPub.set(m_targetDegrees);
-    m_noteDetectedPub.set(m_noteDetected);
+    // m_ccDegreesPub.set(m_ccDegrees);
+    // m_rotDegreesPub.set(m_currentDegrees);
+    // m_targetDegreesPub.set(m_targetDegrees);
+    // m_noteDetectedPub.set(m_noteDetected);
   }
 
   /****************************************************************************
@@ -287,7 +282,7 @@ public class Wrist extends SubsystemBase
   {
     // Get the default instance of NetworkTables that was created automatically when the robot program starts
     NetworkTableInstance inst = NetworkTableInstance.getDefault( );
-    NetworkTable table = inst.getTable("intake");
+    NetworkTable table = inst.getTable("wrist");
 
     // Initialize network tables publishers
     m_rollSpeedPub = table.getDoubleTopic("rollSpeed").publish( );
@@ -296,21 +291,13 @@ public class Wrist extends SubsystemBase
     m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
     m_rotDegreesPub = table.getDoubleTopic("rotDegrees").publish( );
     m_noteDetectedPub = table.getBooleanTopic("noteDetected").publish( );
-    m_targetDegreesPub = table.getDoubleTopic("taregetDegrees").publish( );
+    m_targetDegreesPub = table.getDoubleTopic("targetDegrees").publish( );
 
     SmartDashboard.putData("INRotaryMech", m_rotaryMech);
 
     // Add commands
-    SmartDashboard.putData("InRollStop", getMoveToPositionCommand(INRollerMode.STOP, this::getCurrentPosition));
-    SmartDashboard.putData("InRollAcquire", getMoveToPositionCommand(INRollerMode.ACQUIRE, this::getCurrentPosition));
-    SmartDashboard.putData("InRollExpel", getMoveToPositionCommand(INRollerMode.EXPEL, this::getCurrentPosition));
-    SmartDashboard.putData("InRollShoot", getMoveToPositionCommand(INRollerMode.SHOOT, this::getCurrentPosition));
-    SmartDashboard.putData("InRollHandoff", getMoveToPositionCommand(INRollerMode.HANDOFF, this::getCurrentPosition));
-    SmartDashboard.putData("InRollHold", getMoveToPositionCommand(INRollerMode.HOLD, this::getCurrentPosition));
+    // SmartDashboard.putData("InRollStop", getMoveToPositionCommand(INRollerMode.STOP, this::getCurrentPosition));
 
-    SmartDashboard.putData("InRotDeploy", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeDeployed));
-    SmartDashboard.putData("InRotRetract", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeRetracted));
-    SmartDashboard.putData("InRotHandoff", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeHandoff));
   }
 
   // Put methods for controlling this subsystem here. Call these from Commands.
@@ -334,13 +321,13 @@ public class Wrist extends SubsystemBase
    */
   public void printFaults( )
   {
-    PhoenixUtil5.getInstance( ).talonSRXPrintFaults(m_rollerMotor, kSubsystemName + "Roller");
-    PhoenixUtil6.getInstance( ).talonFXPrintFaults(m_rotaryMotor, kSubsystemName + "Rotary");
-    PhoenixUtil6.getInstance( ).cancoderPrintFaults(m_CANcoder, kSubsystemName + "CANcoder");
+    // PhoenixUtil5.getInstance( ).talonSRXPrintFaults(m_rollerMotor, kSubsystemName + "Roller");
+    // PhoenixUtil6.getInstance( ).talonFXPrintFaults(m_rotaryMotor, kSubsystemName + "Rotary");
+    // PhoenixUtil6.getInstance( ).cancoderPrintFaults(m_CANcoder, kSubsystemName + "CANcoder");
 
-    m_rollerMotor.clearStickyFaults( );
-    m_rotaryMotor.clearStickyFaults( );
-    m_CANcoder.clearStickyFaults( );
+    // m_rollerMotor.clearStickyFaults( );
+    // m_rotaryMotor.clearStickyFaults( );
+    // m_CANcoder.clearStickyFaults( );
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -493,36 +480,7 @@ public class Wrist extends SubsystemBase
    */
   private void setRollerMode(INRollerMode mode)
   {
-    double output = 0.0;
 
-    if (mode == INRollerMode.HOLD)
-    {
-      DataLogManager.log(String.format("%s: Roller mode is unchanged - %s (%.3f)", getSubsystem( ), mode, m_rollerMotor.get( )));
-    }
-    else
-    {
-      switch (mode)
-      {
-        default :
-          DataLogManager.log(String.format("%s: Roller mode is invalid: %s", getSubsystem( ), mode));
-        case STOP :
-          output = (m_noteDetected) ? kRollerSpeedHold : 0.0;
-          break;
-        case ACQUIRE :
-          output = kRollerSpeedAcquire;
-          break;
-        case EXPEL :
-          output = kRollerSpeedExpel;
-          break;
-        case SHOOT :
-          output = kRollerSpeedToShooter;
-          break;
-        case HANDOFF :
-          output = kRollerSpeedToFeeder;
-      }
-      DataLogManager.log(String.format("%s: Roller mode is now - %s", getSubsystem( ), mode));
-      m_rollerMotor.set(output);
-    }
   }
 
   /****************************************************************************
@@ -565,7 +523,7 @@ public class Wrist extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return intake angle for retracted state
+   * Return wrist angle for retracted state
    * 
    * @return retracted state angle
    */
@@ -576,35 +534,13 @@ public class Wrist extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return intake angle for handoff state
-   * 
-   * @return handoff state angle
-   */
-  public double getIntakeHandoff( )
-  {
-    return kRotaryAngleHandoff;
-  }
-
-  /****************************************************************************
-   * 
-   * Return intake angle for deployed state
+   * Return wrist angle for deployed state
    * 
    * @return deployed state angle
    */
-  public double getIntakeDeployed( )
+  public double getWristDeployed( )
   {
     return kRotaryAngleDeployed;
-  }
-
-  /****************************************************************************
-   * 
-   * Return note sensor state
-   * 
-   * @return true if note detected
-   */
-  public boolean isNoteDetected( )
-  {
-    return m_noteDetected;
   }
 
   ////////////////////////////////////////////////////////////////////////////

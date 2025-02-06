@@ -44,6 +44,7 @@ import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Telemetry;
 
@@ -94,6 +95,7 @@ public class RobotContainer
   // These subsystems may use LED or vision and must be created afterward
   private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.createDrivetrain( );
   private final Elevator                              m_elevator      = new Elevator( );
+  private final Wrist                                 m_wrist         = new Wrist( );
   // Selected autonomous command
   private Command                                     m_autoCommand;  // Selected autonomous command
 
@@ -210,6 +212,7 @@ public class RobotContainer
     // Network tables publisher objects
 
     SmartDashboard.putData("elevator", m_elevator);
+    SmartDashboard.putData("wrist", m_wrist);
 
     SmartDashboard.putData(CommandScheduler.getInstance( ));
   }
@@ -497,6 +500,7 @@ public class RobotContainer
     // m_vision.initialize( );
 
     m_elevator.initialize( );
+    m_wrist.initialize( );
   }
 
   /****************************************************************************
@@ -509,6 +513,7 @@ public class RobotContainer
     // m_power.printFaults( );
 
     m_elevator.printFaults( );
+    m_wrist.printFaults( );
   }
 
   /****************************************************************************

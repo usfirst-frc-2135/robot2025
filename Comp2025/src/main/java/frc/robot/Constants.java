@@ -66,9 +66,9 @@ public class Constants
     public static final int    kCANID_Pigeon2        = 13;   // Pigeon2 IMU
 
     // RoboRIO CAN IDs
-    public static final int    kCANID_IntakeRoller   = 15;   // Talon SRX - 775Pro
-    public static final int    kCANID_IntakeRotary   = 16;   // Kraken X60
-    public static final int    kCANID_IntakeCANcoder = 17;   // CANcoder
+    public static final int    kCANID_WristRoller    = 15;   // Talon SRX - 775Pro
+    public static final int    kCANID_WristRotary    = 16;   // Kraken X60
+    public static final int    kCANID_WristCANcoder  = 17;   // CANcoder
 
     public static final int    kCANID_FeederRoller   = 19;   // Talon SRX - 775Pro
     public static final int    kCANID_FeederRotary   = 20;   // Kraken X60
@@ -88,11 +88,11 @@ public class Constants
   }
 
   /****************************************************************************
-   * Intake subsystem constants
+   * Wrist subsystem constants
    ****************************************************************************/
   public static final class INConsts
   {
-    /** Intake roller modes */
+    /** Wrist roller modes */
     public enum INRollerMode
     {
       STOP,    // Stop all rotation
