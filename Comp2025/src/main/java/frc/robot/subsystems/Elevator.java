@@ -240,8 +240,7 @@ public class Elevator extends SubsystemBase
     m_rightHeightPub.set(m_rightHeight);
     m_targetHeightPub.set(m_targetHeight);
 
-    // boolean elevatorFullDown = m_elevatorDown.get( );
-
+    // zero elevator when fully down with limit switch
     if (!m_elevatorDown.get( ) && !m_elevatorCalibrated && DriverStation.isDisabled( ))
     {
       DataLogManager.log(String.format("%s: Subsystem calibrated! Height Inches: %.1f", getSubsystem( ), m_leftHeight));
