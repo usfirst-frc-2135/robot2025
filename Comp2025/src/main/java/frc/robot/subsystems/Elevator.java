@@ -144,7 +144,8 @@ public class Elevator extends SubsystemBase
   private Timer                       m_calibrateTimer    = new Timer( );
   private Debouncer                   m_leftStalled       = new Debouncer(kCalibrateStallTime, DebounceType.kRising);
   private Debouncer                   m_rightStalled      = new Debouncer(kCalibrateStallTime, DebounceType.kRising);
-  private boolean                     m_calibrated        = false;
+  private boolean                     m_leftCalibrated    = false;
+  private boolean                     m_rightCalibrated   = false;
 
   // Manual mode config parameters
   private VoltageOut                  m_requestVolts      = new VoltageOut(Volts.of(0));
@@ -159,7 +160,8 @@ public class Elevator extends SubsystemBase
   private boolean                     m_mmMoveIsFinished  = true;                   // Movement has completed (within tolerance)
 
   // Network tables publisher objects
-  private BooleanPublisher            m_calibratedPub;
+  private BooleanPublisher            m_leftCalibratedPub;
+  private BooleanPublisher            m_rightCalibratedPub;
   private DoublePublisher             m_leftHeightPub;
   private DoublePublisher             m_rightHeightPub;
   private DoublePublisher             m_targetHeightPub;
@@ -234,17 +236,18 @@ public class Elevator extends SubsystemBase
     }
 
     // Update network table publishers
-    m_calibratedPub.set((m_calibrated));
+    m_leftCalibratedPub.set((m_leftCalibrated));
+    m_rightCalibratedPub.set((m_rightCalibrated));
     m_leftHeightPub.set(m_leftHeight);
     m_rightHeightPub.set(m_rightHeight);
     m_targetHeightPub.set(m_targetHeight);
 
     // zero elevator when fully down with limit switch
-    if (DriverStation.isDisabled( ) && !m_calibrated && !m_elevatorDown.get( ))
+    if (DriverStation.isDisabled( ) && !m_leftCalibrated && !m_elevatorDown.get( ))
     {
       DataLogManager.log(String.format("%s: Subsystem calibrated! Height Inches: %.1f", getSubsystem( ), m_leftHeight));
       setElevatorPosition(0);
-      m_calibrated = true;
+      m_leftCalibrated = true;
     }
   }
 
@@ -287,7 +290,8 @@ public class Elevator extends SubsystemBase
     NetworkTable table = inst.getTable("elevator");
 
     // Initialize network tables publishers
-    m_calibratedPub = table.getBooleanTopic(" elevatorCalibrated").publish( );
+    m_leftCalibratedPub = table.getBooleanTopic("leftCalibrated").publish( );
+    m_rightCalibratedPub = table.getBooleanTopic("rightCalibrated").publish( );
     m_leftHeightPub = table.getDoubleTopic("leftInches").publish( );
     m_rightHeightPub = table.getDoubleTopic("rightInches").publish( );
     m_targetHeightPub = table.getDoubleTopic("targetInches").publish( );
@@ -315,7 +319,8 @@ public class Elevator extends SubsystemBase
   public void initialize( )
   {
     setVoltage(Volts.of(0.0), Volts.of(0.0));
-    m_calibrated = false;
+    m_leftCalibrated = false;
+    m_rightCalibrated = false;
 
     m_leftHeight = 0.0; // Allow calibration routine to run for up to this height
     m_targetHeight = m_leftHeight;
@@ -400,7 +405,7 @@ public class Elevator extends SubsystemBase
     m_mmMoveTimer.restart( );
     m_mmHardStopCounter = 0;
 
-    if (!(m_calibrated))
+    if (!(m_leftCalibrated && m_rightCalibrated))
     {
       DataLogManager.log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_targetHeight));
       return;
@@ -501,7 +506,8 @@ public class Elevator extends SubsystemBase
     // Reset the calibration state, time, debounce filters, and motor setting
     DataLogManager.log(String.format("%s: Start up (%s, %s)", getSubsystem( ), kCalibrateSpeedVolts.toString( ),
         kCalibrateSpeedVolts.toString( )));
-    m_calibrated = false;
+    m_leftCalibrated = false;
+    m_rightCalibrated = false;
     m_calibrateTimer.restart( );
     m_leftStalled.calculate(false);
     m_rightStalled.calculate(false);
@@ -523,16 +529,21 @@ public class Elevator extends SubsystemBase
    */
   private boolean calibrateIsFinished( )
   {
-    boolean calibrated = m_leftStalled.calculate(m_leftStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
+    boolean leftCalibrated = m_leftStalled.calculate(m_leftStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
+    boolean rightCalibrated = m_rightStalled.calculate(m_rightStatorCur.getValue( ).in(Amps) > kCalibrateStallAmps);
 
-    if (calibrated && !m_calibrated)
-      DataLogManager.log(String.format("%s: Left stalled %s (right %s)", getSubsystem( ), calibrated));
+    if (leftCalibrated && !m_leftCalibrated)
+      DataLogManager.log(String.format("%s: Left stalled %s (right %s)", getSubsystem( ), leftCalibrated, rightCalibrated));
+    if (rightCalibrated && !m_rightCalibrated)
+      DataLogManager.log(String.format("%s: Right stalled %s (left %s)", getSubsystem( ), rightCalibrated, leftCalibrated));
 
-    m_calibrated = calibrated;
+    m_leftCalibrated = leftCalibrated;
+    m_rightCalibrated = rightCalibrated;
 
-    setVoltage((m_calibrated) ? Volts.of(0.0) : kCalibrateSpeedVolts, (m_calibrated) ? Volts.of(0.0) : kCalibrateSpeedVolts);
+    setVoltage((m_leftCalibrated) ? Volts.of(0.0) : kCalibrateSpeedVolts,
+        (m_rightCalibrated) ? Volts.of(0.0) : kCalibrateSpeedVolts);
 
-    return (m_calibrated) || m_calibrateTimer.hasElapsed(kCalibrationTimeout);
+    return (m_leftCalibrated && m_rightCalibrated) || m_calibrateTimer.hasElapsed(kCalibrationTimeout);
   }
 
   /****************************************************************************
@@ -546,7 +557,8 @@ public class Elevator extends SubsystemBase
     setElevatorPosition(0.0);
     setVoltage(Volts.of(0.0), Volts.of(0.0));
     m_targetHeight = m_leftHeight;
-    m_calibrated = true;
+    m_leftCalibrated = true;
+    m_rightCalibrated = true;
 
   }
 
