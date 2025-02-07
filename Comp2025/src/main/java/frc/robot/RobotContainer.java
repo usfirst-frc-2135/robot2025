@@ -360,7 +360,7 @@ public class RobotContainer
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getElevatorPosition));
 
     // Default command - manual mode
-    // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
+    m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
   }
 
   /****************************************************************************
