@@ -517,7 +517,7 @@ public class RobotContainer
    */
   public void autoInit( )
   {
-    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( ));
+    CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( ));
 
   }
 
@@ -527,6 +527,6 @@ public class RobotContainer
    */
   public void teleopInit( )
   {
-    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( ));
+    CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( ));
   }
 }
