@@ -1,5 +1,5 @@
 //
-// Wrist Subystem - takes in Notes and delivers them to the other subsystems
+// Wrist Subystem - takes in Coral and Algae and delivers them to Reef, Net, and Processor
 //
 package frc.robot.subsystems;
 
@@ -87,7 +87,7 @@ public class Wrist extends SubsystemBase
   private static final double       kToleranceDegrees     = 3.0;      // PID tolerance in degrees
   private static final double       kMMDebounceTime       = 0.060;    // Seconds to debounce a final position check
   private static final double       kMMMoveTimeout        = 1.0;      // Seconds allowed for a Motion Magic movement
-  private static final double       kNoteDebounceTime     = 0.045;    // Seconds to debounce detected note sensor
+  private static final double       kAlgaeDebounceTime    = 0.045;    // Seconds to debounce detected algae sensor
 
   // Rotary angles - Motion Magic move parameters
   //    Measured hardstops and pre-defined positions:
@@ -117,7 +117,7 @@ public class Wrist extends SubsystemBase
   private final WPI_TalonSRX        m_rollerMotor         = new WPI_TalonSRX(Ports.kCANID_WristRoller);
   private final TalonFX             m_rotaryMotor         = new TalonFX(Ports.kCANID_WristRotary);
   private final CANcoder            m_CANcoder            = new CANcoder(Ports.kCANID_WristCANcoder);
-  // private final DigitalInput        m_noteInIntake        = new DigitalInput(Ports.kDIO0_NoteInIntake);
+  // private final DigitalInput        m_algaeInIntake        = new DigitalInput(Ports.kDIO0_AlgaeInIntake);
 
   // Alerts
   private final Alert               m_rollerAlert         =
@@ -146,8 +146,8 @@ public class Wrist extends SubsystemBase
 
   // Roller variables
   private boolean                   m_rollerValid;        // Health indicator for motor 
-  private Debouncer                 m_noteDebouncer       = new Debouncer(kNoteDebounceTime, DebounceType.kBoth);
-  private boolean                   m_noteDetected;       // Detection state of note in rollers
+  private Debouncer                 m_algaeDebouncer      = new Debouncer(kAlgaeDebounceTime, DebounceType.kBoth);
+  private boolean                   m_algaeDetected;       // Detection state of algar in rollers
 
   // Rotary variables
   private boolean                   m_rotaryValid;                // Health indicator for motor 
@@ -173,7 +173,7 @@ public class Wrist extends SubsystemBase
 
   private DoublePublisher           m_ccDegreesPub;
   private DoublePublisher           m_targetDegreesPub;
-  private BooleanPublisher          m_noteDetectedPub;
+  private BooleanPublisher          m_algaeDetectedPub;
 
   /****************************************************************************
    * 
@@ -205,7 +205,7 @@ public class Wrist extends SubsystemBase
     m_rotaryPosition = m_rotaryMotor.getPosition( );
     m_ccPosition = m_CANcoder.getAbsolutePosition( );
 
-    // Initialize the climber status signals
+    // Initialize the elevator status signals
     Double ccRotations = (m_canCoderValid) ? m_ccPosition.refresh( ).getValue( ).in(Rotations) : 0.0;
     m_currentDegrees = Units.rotationsToDegrees(ccRotations);
     DataLogManager.log(String.format("%s: CANcoder initial degrees %.1f", getSubsystem( ), m_currentDegrees));
@@ -244,16 +244,16 @@ public class Wrist extends SubsystemBase
     BaseStatusSignal.refreshAll(m_rotaryPosition, m_ccPosition);
     m_currentDegrees = Units.rotationsToDegrees((m_rotaryValid) ? m_rotaryPosition.getValue( ).in(Rotations) : 0.0);
     m_ccDegrees = Units.rotationsToDegrees((m_canCoderValid) ? m_ccPosition.getValue( ).in(Rotations) : 0.0);
-    // m_noteDetected = m_noteDebouncer.calculate(m_noteInIntake.get( ));
+    // m_algaeDetected = m_algaeDebouncer.calculate(m_algaeInIntake.get( ));
 
     // // Update network table publishers
-    // m_rollSpeedPub.set(m_rollerMotor.get( ));
-    // m_rollSupCurPub.set(m_rollerMotor.getSupplyCurrent( ));
+    m_rollSpeedPub.set(m_rollerMotor.get( ));
+    m_rollSupCurPub.set(m_rollerMotor.getSupplyCurrent( ));
 
-    // m_ccDegreesPub.set(m_ccDegrees);
-    // m_rotDegreesPub.set(m_currentDegrees);
-    // m_targetDegreesPub.set(m_targetDegrees);
-    // m_noteDetectedPub.set(m_noteDetected);
+    m_ccDegreesPub.set(m_ccDegrees);
+    m_rotDegreesPub.set(m_currentDegrees);
+    m_targetDegreesPub.set(m_targetDegrees);
+    m_algaeDetectedPub.set(m_algaeDetected);
   }
 
   /****************************************************************************
@@ -302,20 +302,20 @@ public class Wrist extends SubsystemBase
 
     m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
     m_rotDegreesPub = table.getDoubleTopic("rotDegrees").publish( );
-    m_noteDetectedPub = table.getBooleanTopic("noteDetected").publish( );
+    m_algaeDetectedPub = table.getBooleanTopic("algaeDetected").publish( );
     m_targetDegreesPub = table.getDoubleTopic("targetDegrees").publish( );
 
     SmartDashboard.putData("WRRotaryMech", m_rotaryMech);
 
     // Add commands
-    SmartDashboard.putData("InRollStop", getMoveToPositionCommand(INRollerMode.STOP, this::getCurrentPosition));
-    SmartDashboard.putData("InRollAcquire", getMoveToPositionCommand(INRollerMode.ACQUIRE, this::getCurrentPosition));
-    SmartDashboard.putData("InRollExpel", getMoveToPositionCommand(INRollerMode.EXPEL, this::getCurrentPosition));
-    SmartDashboard.putData("InRollShoot", getMoveToPositionCommand(INRollerMode.SHOOT, this::getCurrentPosition));
-    SmartDashboard.putData("InRollHandoff", getMoveToPositionCommand(INRollerMode.HANDOFF, this::getCurrentPosition));
-    SmartDashboard.putData("InRollHold", getMoveToPositionCommand(INRollerMode.HOLD, this::getCurrentPosition));
+    SmartDashboard.putData("InRollStop", getMoveToPositionCommand(WRRollerMode.STOP, this::getCurrentPosition));
+    SmartDashboard.putData("InRollAcquire", getMoveToPositionCommand(WRRollerMode.ACQUIRE, this::getCurrentPosition));
+    SmartDashboard.putData("InRollExpel", getMoveToPositionCommand(WRRollerMode.EXPEL, this::getCurrentPosition));
+    SmartDashboard.putData("InRollShoot", getMoveToPositionCommand(WRRollerMode.SHOOT, this::getCurrentPosition));
+    SmartDashboard.putData("InRollHandoff", getMoveToPositionCommand(WRRollerMode.HANDOFF, this::getCurrentPosition));
+    SmartDashboard.putData("InRollHold", getMoveToPositionCommand(WRRollerMode.HOLD, this::getCurrentPosition));
 
-    SmartDashboard.putData("InRotRetract", getMoveToPositionCommand(INRollerMode.HOLD, this::getIntakeRetracted));
+    SmartDashboard.putData("InRotRetract", getMoveToPositionCommand(WRRollerMode.HOLD, this::getIntakeRetracted));
 
   }
 
@@ -501,7 +501,7 @@ public class Wrist extends SubsystemBase
   {
     double output = 0.0;
 
-    if (mode == INRollerMode.HOLD)
+    if (mode == WRRollerMode.HOLD)
     {
       DataLogManager.log(String.format("%s: Roller mode is unchanged - %s (%.3f)", getSubsystem( ), mode, m_rollerMotor.get( )));
     }
@@ -512,7 +512,7 @@ public class Wrist extends SubsystemBase
         default :
           DataLogManager.log(String.format("%s: Roller mode is invalid: %s", getSubsystem( ), mode));
         case STOP :
-          output = (m_noteDetected) ? kRollerSpeedHold : 0.0;
+          output = (m_algaeDetected) ? kRollerSpeedHold : 0.0;
           break;
         case ACQUIRE :
           output = kRollerSpeedAcquire;
