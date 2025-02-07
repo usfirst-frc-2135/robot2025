@@ -356,11 +356,13 @@ public class RobotContainer
 
     m_drivetrain.registerTelemetry(logger::telemeterize);
 
+    // TODO: Only one default command can be active per subsystem--use the manual modes during bring-up
+
     // Default command - Motion Magic hold
-    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getElevatorPosition));
+    // m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getPosition));
 
     // Default command - manual mode
-    // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
+    m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
   }
 
   /****************************************************************************
@@ -517,7 +519,7 @@ public class RobotContainer
    */
   public void autoInit( )
   {
-    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( ));
+    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( )); TODO: Decide whether to use this calibration command
 
   }
 
@@ -527,6 +529,6 @@ public class RobotContainer
    */
   public void teleopInit( )
   {
-    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( ));
+    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( )); TODO: Decide whether to use this calibration command
   }
 }
