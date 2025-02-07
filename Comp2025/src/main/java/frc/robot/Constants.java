@@ -36,55 +36,49 @@ public class Constants
 
   // Phoenix firmware versions expected
   public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0); // TODO: update CTRE version numbers for 2025
-  public static final int     kPhoenix6MajorVersion = 24;
+  public static final int     kPhoenix6MajorVersion = 25;
 
   /****************************************************************************
    * CAN IDs and PWM IDs
    ****************************************************************************/
   public static final class Ports
   {
-    public static final String kCANCarnivore         = "canivore1";
-    public static final String kCANRio               = "rio";
+    public static final String kCANCarnivore        = "canivore1";
+    public static final String kCANRio              = "rio";
 
     // CANivore CAN IDs - Swerve
-    public static final int    kCANID_DriveLF        = 1;    // Kraken X60
-    public static final int    kCANID_SteerLF        = 2;    // Kraken X60
-    public static final int    kCANID_CANcoderLF     = 3;    // CANcoder
+    public static final int    kCANID_DriveLF       = 1;    // Kraken X60
+    public static final int    kCANID_SteerLF       = 2;    // Kraken X60
+    public static final int    kCANID_CANcoderLF    = 3;    // CANcoder
 
-    public static final int    kCANID_DriveRF        = 4;    // Kraken X60     
-    public static final int    kCANID_SteerRF        = 5;    // Kraken X60
-    public static final int    kCANID_CANcoderRF     = 6;    // CANcoder
+    public static final int    kCANID_DriveRF       = 4;    // Kraken X60     
+    public static final int    kCANID_SteerRF       = 5;    // Kraken X60
+    public static final int    kCANID_CANcoderRF    = 6;    // CANcoder
 
-    public static final int    kCANID_DriveLR        = 7;    // Kraken X60
-    public static final int    kCANID_SteerLR        = 8;    // Kraken X60
-    public static final int    kCANID_CANcoderLR     = 9;    // CANcoder
+    public static final int    kCANID_DriveLR       = 7;    // Kraken X60
+    public static final int    kCANID_SteerLR       = 8;    // Kraken X60
+    public static final int    kCANID_CANcoderLR    = 9;    // CANcoder
 
-    public static final int    kCANID_DriveRR        = 10;   // Kraken X60
-    public static final int    kCANID_SteerRR        = 11;   // Kraken X60
-    public static final int    kCANID_CANcoderRR     = 12;   // CANcoder
+    public static final int    kCANID_DriveRR       = 10;   // Kraken X60
+    public static final int    kCANID_SteerRR       = 11;   // Kraken X60
+    public static final int    kCANID_CANcoderRR    = 12;   // CANcoder
 
-    public static final int    kCANID_Pigeon2        = 13;   // Pigeon2 IMU
+    public static final int    kCANID_Pigeon2       = 13;   // Pigeon2 IMU
 
     // RoboRIO CAN IDs
-    public static final int    kCANID_IntakeRoller   = 15;   // Talon SRX - 775Pro
-    public static final int    kCANID_IntakeRotary   = 16;   // Kraken X60
-    public static final int    kCANID_IntakeCANcoder = 17;   // CANcoder
+    public static final int    kCANID_ElevatorLeft  = 15;   // Kraken X60
+    public static final int    kCANID_ElevatorRight = 16;   // Kraken X60
 
-    public static final int    kCANID_FeederRoller   = 19;   // Talon SRX - 775Pro
-    public static final int    kCANID_FeederRotary   = 20;   // Kraken X60
-    public static final int    kCANID_FeederCANcoder = 21;   // CANcoder
+    public static final int    kCANID_WristRotary   = 17;   // Kraken X60
+    public static final int    kCANID_WristCANcoder = 18;   // CANcoder
 
-    public static final int    kCANID_ShooterLower   = 23;   // Kraken X60
-    public static final int    kCANID_ShooterUpper   = 24;   // Kraken X60
-    public static final int    kCANID_ShooterRotary  = 25;   // Kraken X60
+    public static final int    kCANID_Manipulator   = 19;   // Kraken X60
+    public static final int    kCANID_CoralDetector = 20;   // CANrange
 
-    public static final int    kCANID_ElevatorLeft   = 27;   // Kraken X60
-    public static final int    kCANID_ElevatorRight  = 28;   // Kraken X60
-
-    public static final int    kCANID_CANdle         = 0;
+    public static final int    kCANID_CANdle        = 0;
 
     // Digital I/Os
-    public static final int    kDIO_ElevatorDown     = 0; // REV Magnetic Limit Switch (inaccurate value)
+    public static final int    kDIO0_ElevatorDown   = 0;    // REV Magnetic Limit Switch
   }
 
   /****************************************************************************
