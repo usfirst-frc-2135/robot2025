@@ -70,9 +70,9 @@ public class Wrist extends SubsystemBase
   private static final double  kRollerSpeedToFeeder  = -0.4;
   private static final double  kRollerSpeedHold      = 0.1;
 
-  private static final double  kRotaryGearRatio      = 30.83;
-  private static final double  kRotaryLengthMeters   = 0.3;       // Simulation
-  private static final double  kRotaryWeightKg       = 4.0;       // Simulation
+  private static final double  kRotaryGearRatio      = 49.23;
+  private static final double  kRotaryLengthMeters   = Units.inchesToMeters(15);       // Simulation
+  private static final double  kRotaryWeightKg       = 9.07;       // Simulation
   private static final Voltage kRotaryManualVolts    = Volts.of(3.5);       // Motor voltage during manual operation (joystick)
 
   /** Rotary manual move parameters */
