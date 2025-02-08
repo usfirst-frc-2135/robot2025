@@ -10,7 +10,9 @@
     "FromP3",
     "FromP4",
     "FromSpike",
-    "FromStartPose"
+    "FromStart",
+    "FromStart1",
+    "LeaveStart"
   ],
   "autoFolders": [
     "AutoLeave",
@@ -20,7 +22,8 @@
     "AutoPreloadScore4",
     "AutoPreloadSteal",
     "AutoStop",
-    "AutoTest"
+    "AutoTest",
+    "NewAutoLeave"
   ],
   "defaultMaxVel": 3.83,
   "defaultMaxAccel": 3.5,
