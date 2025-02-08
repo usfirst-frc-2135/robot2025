@@ -45,7 +45,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "FromStartPose",
+  "folder": "FromP2",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

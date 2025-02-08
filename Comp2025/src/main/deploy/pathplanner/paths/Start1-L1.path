@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.059999999999999,
-        "y": 6.04
+        "x": 7.33482824427481,
+        "y": 5.984303435114503
       },
       "isLocked": false,
       "linkedName": "Leave1"
@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 5.06,
-        "y": 6.039999999999999
+        "y": 6.04
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "LeaveStart",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

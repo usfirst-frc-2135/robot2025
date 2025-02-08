@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VIConsts;
+import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
@@ -450,7 +451,7 @@ public class RobotContainer
         m_autoCommand = m_drivetrain.applyRequest(( ) -> idle);
         break;
       case AUTOLEAVE :
-        // m_autoCommand = new AutoLeave(ppPathList, m_drivetrain, m_led);
+        m_autoCommand = new AutoLeave(ppPathList, m_drivetrain, m_led);
         break;
       case AUTOPRELOADSCORE :
         // m_autoCommand = new AutoPreloadScore(ppPathList, m_drivetrain, m_intake, m_shooter, m_led, m_hid);
