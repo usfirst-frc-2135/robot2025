@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
-// import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -44,6 +45,7 @@ import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Telemetry;
 
@@ -86,7 +88,7 @@ public class RobotContainer
   private final Telemetry                             logger          = new Telemetry(kMaxSpeed.in(MetersPerSecond));
 
   // The robot's shared subsystems
-  // private final HID                                   m_hid           = new HID(m_driverPad.getHID( ), m_operatorPad.getHID( ));
+  private final HID                                   m_hid           = new HID(m_driverPad.getHID( ), m_operatorPad.getHID( ));
   private final LED                                   m_led           = new LED( );
   // private final Power                                 m_power         = new Power( );
   // private final Vision                                m_vision        = new Vision( );
@@ -201,11 +203,11 @@ public class RobotContainer
     // Command tab
     // SmartDashboard.putData("PrepareToClimb", new PrepareToClimb(m_climber, m_feeder));
 
-    // Time duration = Seconds.of(1.0);
-    // SmartDashboard.putData("HIDRumbleDriver",
-    //     m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
-    // SmartDashboard.putData("HIDRumbleOperator",
-    //     m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+    Time duration = Seconds.of(1.0);
+    SmartDashboard.putData("HIDRumbleDriver",
+        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+    SmartDashboard.putData("HIDRumbleOperator",
+        m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
 
     // Network tables publisher objects
 
