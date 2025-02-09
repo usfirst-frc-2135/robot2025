@@ -21,74 +21,78 @@ import edu.wpi.first.math.geometry.Translation2d;
  * wherever the
  * constants are needed, to reduce verbosity.
  */
-public class Constants {
+public class Constants
+{
   // bot serial nums
-  public static final String kCompSN = "03260A3A";
-  public static final String kBetaSN = "03238074";
+  public static final String  kCompSN               = "03260A3A";
+  public static final String  kBetaSN               = "03238074";
 
   // Game controller definitions
-  public static final int kDriverPadPort = 0;
-  public static final int kOperatorPadPort = 1;
+  public static final int     kDriverPadPort        = 0;
+  public static final int     kOperatorPadPort      = 1;
 
-  public static final double kStickDeadband = 0.15;
-  public static final double kTriggerThreshold = 0.25;
+  public static final double  kStickDeadband        = 0.15;
+  public static final double  kTriggerThreshold     = 0.25;
 
-  public static final boolean kRumbleOn = true;
-  public static final boolean kRumbleOff = false;
-  public static final double kRumbleIntensity = 0.5; // 0.0 is low, 1.0 is high
+  public static final boolean kRumbleOn             = true;
+  public static final boolean kRumbleOff            = false;
+  public static final double  kRumbleIntensity      = 0.5; // 0.0 is low, 1.0 is high
 
   // Phoenix firmware versions expected
-  public static final int kPhoenix5MajorVersion = ((22 * 256) + 0); // TODO: update CTRE version numbers for 2025
-  public static final int kPhoenix6MajorVersion = 24;
+  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0); // TODO: update CTRE version numbers for 2025
+  public static final int     kPhoenix6MajorVersion = 24;
 
   /****************************************************************************
    * CAN IDs and PWM IDs
    ****************************************************************************/
-  public static final class Ports {
-    public static final String kCANCarnivore = "canivore1";
-    public static final String kCANRio = "rio";
+  public static final class Ports
+  {
+    public static final String kCANCarnivore        = "canivore1";
+    public static final String kCANRio              = "rio";
 
     // CANivore CAN IDs - Swerve
-    public static final int kCANID_DriveLF = 1; // Kraken X60
-    public static final int kCANID_SteerLF = 2; // Kraken X60
-    public static final int kCANID_CANcoderLF = 3; // CANcoder
+    public static final int    kCANID_DriveLF       = 1; // Kraken X60
+    public static final int    kCANID_SteerLF       = 2; // Kraken X60
+    public static final int    kCANID_CANcoderLF    = 3; // CANcoder
 
-    public static final int kCANID_DriveRF = 4; // Kraken X60
-    public static final int kCANID_SteerRF = 5; // Kraken X60
-    public static final int kCANID_CANcoderRF = 6; // CANcoder
+    public static final int    kCANID_DriveRF       = 4; // Kraken X60
+    public static final int    kCANID_SteerRF       = 5; // Kraken X60
+    public static final int    kCANID_CANcoderRF    = 6; // CANcoder
 
-    public static final int kCANID_DriveLR = 7; // Kraken X60
-    public static final int kCANID_SteerLR = 8; // Kraken X60
-    public static final int kCANID_CANcoderLR = 9; // CANcoder
+    public static final int    kCANID_DriveLR       = 7; // Kraken X60
+    public static final int    kCANID_SteerLR       = 8; // Kraken X60
+    public static final int    kCANID_CANcoderLR    = 9; // CANcoder
 
-    public static final int kCANID_DriveRR = 10; // Kraken X60
-    public static final int kCANID_SteerRR = 11; // Kraken X60
-    public static final int kCANID_CANcoderRR = 12; // CANcoder
+    public static final int    kCANID_DriveRR       = 10; // Kraken X60
+    public static final int    kCANID_SteerRR       = 11; // Kraken X60
+    public static final int    kCANID_CANcoderRR    = 12; // CANcoder
 
-    public static final int kCANID_Pigeon2 = 13; // Pigeon2 IMU
+    public static final int    kCANID_Pigeon2       = 13; // Pigeon2 IMU
 
     // RoboRIO CAN IDs
-    public static final int kCANID_ElevatorLeft = 15; // Kraken X60
-    public static final int kCANID_ElevatorRight = 16; // Kraken X60
+    public static final int    kCANID_ElevatorLeft  = 15; // Kraken X60
+    public static final int    kCANID_ElevatorRight = 16; // Kraken X60
 
-    public static final int kCANID_WristRotary = 17; // Kraken X60
-    public static final int kCANID_WristCANcoder = 18; // CANcoder
+    public static final int    kCANID_WristRotary   = 17; // Kraken X60
+    public static final int    kCANID_WristCANcoder = 18; // CANcoder
 
-    public static final int kCANID_Manipulator = 19; // Kraken X60
-    public static final int kCANID_CoralDetector = 20; // CANrange
+    public static final int    kCANID_Manipulator   = 19; // Kraken X60
+    public static final int    kCANID_CoralDetector = 20; // CANrange
 
-    public static final int kCANID_CANdle = 0;
+    public static final int    kCANID_CANdle        = 0;
 
     // Digital I/Os
-    public static final int kDIO0_ElevatorDown = 0; // REV Magnetic Limit Switch
+    public static final int    kDIO0_ElevatorDown   = 0; // REV Magnetic Limit Switch
   }
 
   /****************************************************************************
    * Intake subsystem constants
    ****************************************************************************/
-  public static final class INConsts {
+  public static final class INConsts
+  {
     /** Intake roller modes */
-    public enum INRollerMode {
+    public enum INRollerMode
+    {
       STOP, // Stop all rotation
       ACQUIRE, // Speed for acquiring a game piece
       EXPEL, // Speed for expelling a game piece
@@ -101,9 +105,11 @@ public class Constants {
   /****************************************************************************
    * Feeder subsystem constants
    ****************************************************************************/
-  public static final class FDConsts {
+  public static final class FDConsts
+  {
     /** Feeder roller modes */
-    public enum FDRollerMode {
+    public enum FDRollerMode
+    {
       STOP, // Stop all rotation
       SCORE, // Speed for putting game piece into amp
       HANDOFF, // Speed for handoff into feeder
@@ -114,68 +120,73 @@ public class Constants {
   /****************************************************************************
    * Shooter subsystem constants
    ****************************************************************************/
-  public static final class SHConsts {
+  public static final class SHConsts
+  {
   }
 
   /****************************************************************************
    * Elevator subsystem constants
    ****************************************************************************/
-  public static final class ELConsts {
+  public static final class ELConsts
+  {
   }
 
   /****************************************************************************
    * Vision (Limelight) constants
    ****************************************************************************/
-  public static final class VIConsts {
+  public static final class VIConsts
+  {
     /** Field locations (poses) of AprilTags */
     public static final List<Pose2d> kAprilTagPoses = Collections.unmodifiableList(List.of( // TODO: update for 2025
-                                                                                            // from Field layout and
-                                                                                            // marking diagram
+        // from Field layout and
+        // marking diagram
         new Pose2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0)), // AprilTag ID: 0 (invalid)
         new Pose2d(new Translation2d(15.079472, 0.245872), Rotation2d.fromDegrees(120)), // AprilTag ID: 1 - Blue source
-                                                                                         // right
+        // right
         new Pose2d(new Translation2d(16.185134, 0.883666), Rotation2d.fromDegrees(120)), // AprilTag ID: 2 - Blue source
-                                                                                         // left
+        // left
         new Pose2d(new Translation2d(16.579342, 4.982718), Rotation2d.fromDegrees(180)), // AprilTag ID: 3 - Red speaker
-                                                                                         // right
+        // right
         new Pose2d(new Translation2d(16.579342, 5.547868), Rotation2d.fromDegrees(180)), // AprilTag ID: 4 - Red speaker
-                                                                                         // center
+        // center
         new Pose2d(new Translation2d(14.700758, 8.2042), Rotation2d.fromDegrees(270)), // AprilTag ID: 5 - Red amp
         new Pose2d(new Translation2d(1.8415, 8.20426), Rotation2d.fromDegrees(270)), // AprilTag ID: 6 - Blue amp
         new Pose2d(new Translation2d(-0.0381, 5.547868), Rotation2d.fromDegrees(0)), // AprilTag ID: 7 - Blue speaker
-                                                                                     // center
+        // center
         new Pose2d(new Translation2d(-0.0381, 4.982718), Rotation2d.fromDegrees(0)), // AprilTag ID: 8 - Blue speker
-                                                                                     // left
+        // left
         new Pose2d(new Translation2d(0.356108, 0.883666), Rotation2d.fromDegrees(60)), // AprilTag ID: 9 - Red source
-                                                                                       // right
+        // right
         new Pose2d(new Translation2d(1.461516, 0.245872), Rotation2d.fromDegrees(60)), // AprilTag ID: 10 - Red source
-                                                                                       // left
+        // left
         new Pose2d(new Translation2d(11.904726, 3.713226), Rotation2d.fromDegrees(300)), // AprilTag ID: 11 - Red stage
-                                                                                         // left
+        // left
         new Pose2d(new Translation2d(11.904726, 4.49834), Rotation2d.fromDegrees(60)), // AprilTag ID: 12 - Red stage
-                                                                                       // right
+        // right
         new Pose2d(new Translation2d(11.220196, 4.105148), Rotation2d.fromDegrees(180)), // AprilTag ID: 13 - Red stage
-                                                                                         // center
+        // center
         new Pose2d(new Translation2d(5.320792, 4.105148), Rotation2d.fromDegrees(0)), // AprilTag ID: 14 - Blue stage
-                                                                                      // center
+        // center
         new Pose2d(new Translation2d(4.641342, 4.49834), Rotation2d.fromDegrees(120)), // AprilTag ID: 15 - Blue stage
-                                                                                       // left
+        // left
         new Pose2d(new Translation2d(4.641342, 3.713226), Rotation2d.fromDegrees(240)) // AprilTag ID: 16 - Blue stage
-                                                                                       // right
+                                                                                      // right
     ));
 
     /** Destination field poses for the robot when using PathPlanner pathfinding */ // TODO: update to desired 2025
-                                                                                    // field poses
-    public static final Pose2d kSpeakerPose = new Pose2d(2.17, 4.49, Rotation2d.fromDegrees(-26));
-    public static final Pose2d kAmpPose = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
+                                                                                   // field poses
+    public static final Pose2d       kSpeakerPose   = new Pose2d(2.17, 4.49, Rotation2d.fromDegrees(-26));
+    public static final Pose2d       kAmpPose       = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
   }
 
   /****************************************************************************
    * LED (CANdle) subsystem constants
    ****************************************************************************/
-  public static final class LEDConsts {
+  public static final class LEDConsts
+  {
     /** LED color to be used */
-    public enum COLOR {
+    public enum COLOR
+    {
       OFF, // CANdle off
       WHITE, // CANdle white
       RED, // CANdle red
@@ -188,7 +199,8 @@ public class Constants {
     }
 
     /** LED animation to be used */
-    public enum ANIMATION {
+    public enum ANIMATION
+    {
       COLORFLOW, // Single color flow through string
       FIRE, // Fire pattern from one end of string
       LARSON, // Ping-pong pattern bouncing between string ends
