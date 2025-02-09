@@ -230,7 +230,8 @@ public class RobotContainer
     //
     //  --- Normal button definitions ---
     //
-    m_driverPad.a( ).onTrue(new LogCommand("driverPad", "B"));
+
+    m_driverPad.a( ).onTrue(new LogCommand("driverPad", "A"));
     m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B"));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
