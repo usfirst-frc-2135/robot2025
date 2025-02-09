@@ -20,8 +20,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class Constants
 {
   // bot serial nums
-  public static final String  kCompSN               = "032B1F7E"; // TODO: update for 2025 roboRIO serial numbers
-  public static final String  kBetaSN               = "03260A3A";
+  public static final String  kCompSN               = "03260A3A"; // TODO: update for 2025 roboRIO serial numbers
+  public static final String  kBetaSN               = "03238074";
 
   // Game controller definitions
   public static final int     kDriverPadPort        = 0;
