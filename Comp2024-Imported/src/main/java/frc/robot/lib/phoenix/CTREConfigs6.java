@@ -277,7 +277,7 @@ public final class CTREConfigs6
     climberConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     climberConfig.CurrentLimits.StatorCurrentLimit = 800.0;        // Amps
-    climberConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    climberConfig.CurrentLimits.StatorCurrentLimitEnable = false;
 
     // Feedback settings
     // climberConfig.Feedback.*

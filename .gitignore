@@ -182,3 +182,7 @@ ctre_sim/
 # clangd
 /.cache
 compile_commands.json
+
+Comp2024-Imported/simgui-ds.json
+
+Comp2025/simgui-ds.json
