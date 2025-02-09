@@ -213,7 +213,7 @@ public class Elevator extends SubsystemBase
     DataLogManager.log(String.format("%s: Initial position %.1f inches", getSubsystem( ), m_leftHeight));
 
     // Simulation object initialization
-    m_elevatorSim.Orientation = ChassisReference.CounterClockwise_Positive;
+    m_elevatorSim.Orientation = ChassisReference.Clockwise_Positive;
 
     initDashboard( );
     initialize( );
