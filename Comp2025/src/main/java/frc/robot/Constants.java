@@ -40,7 +40,7 @@ public class Constants
 
   // Phoenix firmware versions expected
   public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0); // TODO: update CTRE version numbers for 2025
-  public static final int     kPhoenix6MajorVersion = 24;
+  public static final int     kPhoenix6MajorVersion = 25;
 
   /****************************************************************************
    * CAN IDs and PWM IDs

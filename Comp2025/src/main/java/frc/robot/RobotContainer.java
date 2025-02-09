@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
-// import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -44,8 +45,11 @@ import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Power;
 import frc.robot.subsystems.Telemetry;
+import frc.robot.subsystems.Vision;
 
 /****************************************************************************
  * 
@@ -64,6 +68,9 @@ public class RobotContainer
 
   private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
   private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(3.0 * Math.PI); // Max 1.5 rot per second
+  private static final double                         kHeadingKp      = 10.0;
+  private static final double                         kHeadingKi      = 0.0;
+  private static final double                         kHeadingKd      = 0.0;
 
   // Setting up bindings for necessary control of the swerve drive platform
   private final SwerveRequest.FieldCentric            drive           = new SwerveRequest.FieldCentric( ) //
@@ -86,10 +93,10 @@ public class RobotContainer
   private final Telemetry                             logger          = new Telemetry(kMaxSpeed.in(MetersPerSecond));
 
   // The robot's shared subsystems
-  // private final HID                                   m_hid           = new HID(m_driverPad.getHID( ), m_operatorPad.getHID( ));
+  private final HID                                   m_hid           = new HID(m_driverPad.getHID( ), m_operatorPad.getHID( ));
   private final LED                                   m_led           = new LED( );
-  // private final Power                                 m_power         = new Power( );
-  // private final Vision                                m_vision        = new Vision( );
+  private final Power                                 m_power         = new Power( );
+  private final Vision                                m_vision        = new Vision( );
 
   // These subsystems may use LED or vision and must be created afterward
   private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.createDrivetrain( );
@@ -104,8 +111,8 @@ public class RobotContainer
   {
     AUTOSTOP,         // AutoStop - sit still, do nothing
     AUTOLEAVE,        // Leave starting zone avoiding spikes
-    AUTOPRELOADSCORE, // Score preload at waypoints P1-P3 and score another from nearest spike
-    AUTOSCORE4,       // Score preload at waypoints P1-P3 and all spike notes at S1-S3
+    AUTOPRELOADSCORE, // Score preload at a branch
+    AUTOSCORE4,       // Score preload at a branch and score 3 more
     AUTOTEST          // Run a selected test auto
   }
 
@@ -162,7 +169,7 @@ public class RobotContainer
   {
     Robot.timeMarker("robotContainer: before DAQ thread");
     // Swerve steer PID for facing swerve request
-    facing.HeadingController = new PhoenixPIDController(10.0, 0.0, 0.0);  // Swerve steer PID for facing swerve request
+    facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);  // Swerve steer PID for facing swerve request
     // Add dashboard widgets for commands
     addDashboardWidgets( );           // Add dashboard widgets for commands
     // Configure game controller buttons
@@ -201,14 +208,13 @@ public class RobotContainer
     // Command tab
     // SmartDashboard.putData("PrepareToClimb", new PrepareToClimb(m_climber, m_feeder));
 
-    // Time duration = Seconds.of(1.0);
-    // SmartDashboard.putData("HIDRumbleDriver",
-    //     m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
-    // SmartDashboard.putData("HIDRumbleOperator",
-    //     m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+    Time duration = Seconds.of(1.0);
+    SmartDashboard.putData("HIDRumbleDriver",
+        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+    SmartDashboard.putData("HIDRumbleOperator",
+        m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
 
     // Network tables publisher objects
-
     SmartDashboard.putData("elevator", m_elevator);
 
     SmartDashboard.putData(CommandScheduler.getInstance( ));
@@ -226,22 +232,10 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
-    //  --- Normal button definitions ---
-    //
-
     m_driverPad.a( ).onTrue(new LogCommand("driverPad", "A"));
     m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B"));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
-    //
-    //  --- SysId button definitions ---
-    //
-    // Run SysId routines when holding A, B and X/Y.
-    // Note that each routine should be run exactly once in a single log.
-    // m_driverPad.a( ).and(m_driverPad.y( )).whileTrue(m_drivetrain.sysIdDynamic(Direction.kForward));
-    // m_driverPad.a( ).and(m_driverPad.x( )).whileTrue(m_drivetrain.sysIdDynamic(Direction.kReverse));
-    // m_driverPad.b( ).and(m_driverPad.y( )).whileTrue(m_drivetrain.sysIdQuasistatic(Direction.kForward));
-    // m_driverPad.b( ).and(m_driverPad.x( )).whileTrue(m_drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     //
     // Driver - Bumpers, start, back
@@ -301,12 +295,11 @@ public class RobotContainer
     m_operatorPad.leftBumper( ).onTrue(new LogCommand("operPad", "left bumper"));
     m_operatorPad.rightBumper( ).onTrue(new LogCommand("operPad", "right bumper"));
     m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));                  // aka View button
-    // m_operatorPad.start( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));  // aka Menu button
+    m_operatorPad.start( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));  // aka Menu button
 
     //
     // Operator - POV buttons
     //
-
     m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL4));
     m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL1));
     m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightStowed));
@@ -494,9 +487,9 @@ public class RobotContainer
    */
   public void initialize( )
   {
-    // m_led.initialize( );
-    // m_power.initialize( );
-    // m_vision.initialize( );
+    m_led.initialize( );
+    m_power.initialize( );
+    m_vision.initialize( );
 
     m_elevator.initialize( );
   }
@@ -507,8 +500,8 @@ public class RobotContainer
    */
   public void printFaults( )
   {
-    // m_led.printFaults( );
-    // m_power.printFaults( );
+    m_led.printFaults( );
+    m_power.printFaults( );
 
     m_elevator.printFaults( );
   }
