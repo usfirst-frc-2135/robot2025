@@ -23,11 +23,12 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot
 {
-  private static final boolean m_isComp         = detectRobot( );         // Detect which robot is in use
-  private final RobotContainer m_robotContainer = new RobotContainer( );  // Create that robot
-  private Command              m_autonomousCommand;
-  private boolean              m_faultsCleared  = false;
-  private static double        m_timeMark       = Timer.getFPGATimestamp( );
+  private static final boolean m_isComp          = detectRobot( );         // Detect which robot is in use
+  private final RobotContainer m_robotContainer  = new RobotContainer( );  // Create that robot
+  private static double        m_timeMark        = Timer.getFPGATimestamp( );
+  private static Command       m_autonomousCommand;
+  private static boolean       m_loadAutoCommand = false;
+  private boolean              m_faultsCleared   = false;
 
   /****************************************************************************
    * 
@@ -93,7 +94,11 @@ public class Robot extends TimedRobot
 
     Robot.timeMarker("disabledInit: before init");
 
+    cancelOldAutonomousCommand( );
+
     m_robotContainer.initialize( );
+
+    m_loadAutoCommand = true;
 
     Robot.timeMarker("disabledInit: after init");
   }
@@ -104,6 +109,12 @@ public class Robot extends TimedRobot
   @Override
   public void disabledPeriodic( )
   {
+    if (m_loadAutoCommand)
+    {
+      m_autonomousCommand = m_robotContainer.getAutonomousCommand( );
+      m_loadAutoCommand = false;  // Load only once per request
+    }
+
     // If RoboRIO User button is pressed, dump all CAN faults
     if (RobotController.getUserButton( ))
     {
@@ -126,13 +137,7 @@ public class Robot extends TimedRobot
   {
     datalogMatchBanner("autonomousInit");
 
-    if (m_autonomousCommand != null)
-    {
-      m_autonomousCommand.cancel( );
-      m_autonomousCommand = null;
-    }
-
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand( );
+    cancelOldAutonomousCommand( );
 
     // Handle any commands that need to be scheduled when entering Teleop mode
     m_robotContainer.autoInit( );
@@ -161,11 +166,7 @@ public class Robot extends TimedRobot
     datalogMatchBanner("teleopInit");
 
     // Make sure that the autonomous command stops running when Teleop starts running
-    if (m_autonomousCommand != null)
-    {
-      m_autonomousCommand.cancel( );
-      m_autonomousCommand = null;
-    }
+    cancelOldAutonomousCommand( );
 
     // Handle any commands that need to be scheduled when entering Teleop mode
     m_robotContainer.teleopInit( );
@@ -243,6 +244,30 @@ public class Robot extends TimedRobot
     DataLogManager.log(String.format("robotContainer: Detected the %s robot (RoboRIO)!", robotName));
 
     return isComp;
+  }
+
+  /****************************************************************************
+   * 
+   * Called when a new auto should be reloaded - either because of dashboard change or cancelled
+   * command
+   */
+  public static void reloadAutomousCommand(String optionName)
+  {
+    DataLogManager.log(String.format("Auto change! - %s", optionName));
+    m_loadAutoCommand = true;
+  }
+
+  /****************************************************************************
+   * 
+   * Clean up any old running commands when switch robot modes (auto -> disabled in particular)
+   */
+  public void cancelOldAutonomousCommand( )
+  {
+    if (m_autonomousCommand != null && m_autonomousCommand.isScheduled( ))
+    {
+      m_autonomousCommand.cancel( );
+      m_autonomousCommand = null;
+    }
   }
 
   /****************************************************************************
