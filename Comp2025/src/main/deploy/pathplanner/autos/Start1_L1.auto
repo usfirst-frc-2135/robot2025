@@ -7,19 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pos3_P4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "P4-L5"
+            "pathName": "Start1-L1"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "AutoPreloadLeave",
+  "folder": "AutoLeave",
   "choreoAuto": false
 }
