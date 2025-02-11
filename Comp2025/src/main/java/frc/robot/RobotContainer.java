@@ -141,9 +141,9 @@ public class RobotContainer
    *          the auto filename associated with the key
    */
   private final HashMap<String, String> autoMap        = new HashMap<>(Map.ofEntries( //
-      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE1.toString( ), "Pos1_Stop"),
-      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE2.toString( ), "Pos2_Stop"),
-      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE3.toString( ), "Pos3_Stop"),
+      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE1.toString( ), "Start1_Stop"),
+      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE2.toString( ), "Start2_Stop"),
+      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE3.toString( ), "Start3_Stop"),
 
       Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE1.toString( ), "Start1_L1"),
       Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE2.toString( ), "Start2_L2"),
@@ -157,9 +157,9 @@ public class RobotContainer
       Map.entry(AutoChooser.AUTOSCORE4.toString( ) + StartPose.POSE2.toString( ), "Pos2_P1_S1_P1_S2_P2_S3_P3"),
       Map.entry(AutoChooser.AUTOSCORE4.toString( ) + StartPose.POSE3.toString( ), "Pos3_P3_S3_P3_S2_P2_S1_P1"),
 
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE1.toString( ), "Pos1_Test1"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE2.toString( ), "Pos2_Test2"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE3.toString( ), "Pos3_Test3") //
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE1.toString( ), "Start1_Test1"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE2.toString( ), "Start2_Test2"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE3.toString( ), "Start3_Test3") //
   ));
 
   /****************************************************************************

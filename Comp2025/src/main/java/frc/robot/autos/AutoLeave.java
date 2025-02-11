@@ -15,36 +15,36 @@ import frc.robot.subsystems.LED;
  */
 public class AutoLeave extends SequentialCommandGroup
 {
-    /**
-     * Autonomous command to:
-     * 1 - Leave the starting zone while avoiding spike notes
-     * 
-     * @param ppAuto
-     *            list of auto paths to follow
-     * @param drivetrain
-     *            swerve drivetrain subsystem
-     * @param led
-     *            led subsystem
-     */
-    public AutoLeave(List<PathPlannerPath> ppAuto, CommandSwerveDrivetrain drivetrain, LED led)
-    {
-        setName("AutoLeave");
+  /**
+   * Autonomous command to:
+   * 1 - Leave the starting zone while avoiding spike notes
+   * 
+   * @param ppAuto
+   *          list of auto paths to follow
+   * @param drivetrain
+   *          swerve drivetrain subsystem
+   * @param led
+   *          led subsystem
+   */
+  public AutoLeave(List<PathPlannerPath> ppAuto, CommandSwerveDrivetrain drivetrain, LED led)
+  {
+    setName("AutoLeave");
 
-        addCommands(
-                // Add Commands here:
+    addCommands(
+        // Add Commands here:
 
-                // @formatter:off
+        // @formatter:off
 
         new LogCommand(getName(), "Leave zone"),
         drivetrain.getPathCommand(ppAuto.get(0))
         
         // @formatter:on
-        );
-    }
+    );
+  }
 
-    @Override
-    public boolean runsWhenDisabled( )
-    {
-        return false;
-    }
+  @Override
+  public boolean runsWhenDisabled( )
+  {
+    return false;
+  }
 }

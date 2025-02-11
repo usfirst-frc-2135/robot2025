@@ -3,26 +3,12 @@
   "robotLength": 0.876,
   "holonomicMode": true,
   "pathFolders": [
-    "FromCenterline",
-    "FromP0",
-    "FromP1",
-    "FromP2",
-    "FromP3",
-    "FromP4",
-    "FromSpike",
-    "FromStart",
-    "LeaveStart"
+    "FromStart"
   ],
   "autoFolders": [
     "AutoLeave",
-    "AutoPreloadCenterline",
-    "AutoPreloadLeave",
-    "AutoPreloadScore",
-    "AutoPreloadScore4",
-    "AutoPreloadSteal",
     "AutoStop",
-    "AutoTest",
-    "NewAutoLeave"
+    "AutoTest"
   ],
   "defaultMaxVel": 3.83,
   "defaultMaxAccel": 3.5,
@@ -32,11 +18,11 @@
   "robotMass": 63.6,
   "robotMOI": 6.883,
   "robotTrackwidth": 0.577,
-  "driveWheelRadius": 0.051,
+  "driveWheelRadius": 0.0508,
   "driveGearing": 6.746,
-  "maxDriveSpeed": 4.063,
-  "driveMotorType": "falcon500FOC",
-  "driveCurrentLimit": 70.0,
+  "maxDriveSpeed": 3.886,
+  "driveMotorType": "krakenX60FOC",
+  "driveCurrentLimit": 120.0,
   "wheelCOF": 1.01,
   "flModuleX": 0.288,
   "flModuleY": 0.288,
@@ -48,7 +34,5 @@
   "brModuleY": -0.288,
   "bumperOffsetX": 0.0,
   "bumperOffsetY": 0.0,
-  "robotFeatures": [
-    "{\"name\":\"Rectangle\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.52,\"y\":0.0},\"size\":{\"width\":0.5,\"length\":0.2},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}"
-  ]
+  "robotFeatures": []
 }

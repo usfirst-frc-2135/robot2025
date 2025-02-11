@@ -12,7 +12,7 @@
         "y": 5.984303435114503
       },
       "isLocked": false,
-      "linkedName": "Leave1"
+      "linkedName": "L1"
     },
     {
       "anchor": {
@@ -45,7 +45,7 @@
     "rotation": 180.0
   },
   "reversed": false,
-  "folder": "LeaveStart",
+  "folder": "FromStart",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0
