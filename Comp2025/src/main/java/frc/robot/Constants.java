@@ -20,8 +20,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class Constants
 {
   // bot serial nums
-  public static final String  kCompSN               = "032B1F7E"; // TODO: update for 2025 roboRIO serial numbers
-  public static final String  kBetaSN               = "03260A3A";
+  public static final String  kCompSN               = "03260A3A"; // TODO: update for 2025 roboRIO serial numbers
+  public static final String  kBetaSN               = "03238074";
 
   // Game controller definitions
   public static final int     kDriverPadPort        = 0;
@@ -36,7 +36,7 @@ public class Constants
 
   // Phoenix firmware versions expected
   public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0); // TODO: update CTRE version numbers for 2025
-  public static final int     kPhoenix6MajorVersion = 24;
+  public static final int     kPhoenix6MajorVersion = 25;
 
   /****************************************************************************
    * CAN IDs and PWM IDs
@@ -69,55 +69,17 @@ public class Constants
     public static final int    kCANID_ElevatorLeft  = 15;   // Kraken X60
     public static final int    kCANID_ElevatorRight = 16;   // Kraken X60
 
-    public static final int    kCANID_WristRotary   = 17;   // Kraken X60
-    public static final int    kCANID_WristCANcoder = 18;   // CANcoder
+    public static final int    kCANID_WristRotary   = 18;   // Kraken X60 (Manipulator)
+    public static final int    kCANID_WristCANcoder = 19;   // CANcoder   (Manipulator)
 
-    public static final int    kCANID_Manipulator   = 19;   // Kraken X60
-    public static final int    kCANID_CoralDetector = 20;   // CANrange
+    public static final int    kCANID_ClawRoller    = 21;   // Kraken X60 (Manipulator)
+    public static final int    kCANID_CoralDetector = 22;   // CANrange   (Manipulator)
 
     public static final int    kCANID_CANdle        = 0;
 
     // Digital I/Os
     public static final int    kDIO0_ElevatorDown   = 0;    // REV Magnetic Limit Switch
-  }
-
-  /****************************************************************************
-   * Intake subsystem constants
-   ****************************************************************************/
-  public static final class INConsts
-  {
-    /** Intake roller modes */
-    public enum INRollerMode
-    {
-      STOP,    // Stop all rotation
-      ACQUIRE, // Speed for acquiring a game piece
-      EXPEL,   // Speed for expelling a game piece
-      SHOOT,   // Speed for putting game piece into shooter 
-      HANDOFF, // Speed for putting game piece into feeder 
-      HOLD     // Maintain existing speed setting
-    }
-  }
-
-  /****************************************************************************
-   * Feeder subsystem constants
-   ****************************************************************************/
-  public static final class FDConsts
-  {
-    /** Feeder roller modes */
-    public enum FDRollerMode
-    {
-      STOP,    // Stop all rotation
-      SCORE,   // Speed for putting game piece into amp 
-      HANDOFF, // Speed for handoff into feeder 
-      HOLD     // Maintain existing speed setting
-    }
-  }
-
-  /****************************************************************************
-   * Shooter subsystem constants
-   ****************************************************************************/
-  public static final class SHConsts
-  {
+    public static final int    kDIO1_AlgaeInClaw    = 1;    // REV Magnetic Limit Switch
   }
 
   /****************************************************************************
@@ -125,6 +87,23 @@ public class Constants
    ****************************************************************************/
   public static final class ELConsts
   {
+  }
+
+  /****************************************************************************
+   * Manipulator subsystem constants
+   ****************************************************************************/
+  public static final class CRConsts
+  {
+    /** Manipulator claw roller modes */
+    public enum ClawMode
+    {
+      STOP,       // Stop all rotation
+      ACQUIRE,    // Speed for acquiring a game piece
+      EXPEL,      // Speed for expelling a game piece
+      SHOOT,      // Speed for shooting a game piece
+      PROCESSOR,  // Speed for putting game piece into processor 
+      HOLD        // Maintain existing speed setting
+    }
   }
 
   /****************************************************************************

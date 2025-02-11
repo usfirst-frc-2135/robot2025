@@ -1,5 +1,5 @@
 //
-// Elevator Subystem - lifts the robot to hang onto the chain
+// Elevator Subystem - lifts the game pieces to score and robot to hang onto the cage
 //
 package frc.robot.subsystems;
 
@@ -178,10 +178,10 @@ public class Elevator extends SubsystemBase
 
     // Initialize motor objects
     boolean leftValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_leftMotor, kSubsystemName + "Left",
-        CTREConfigs6.elevatorFXConfig(false, Conversions.inchesToWinchRotations(kHeightInchesMin, kRolloutRatio),
+        CTREConfigs6.elevatorFXConfig(true, Conversions.inchesToWinchRotations(kHeightInchesMin, kRolloutRatio),
             Conversions.inchesToWinchRotations(kHeightInchesMax, kRolloutRatio)));
     boolean rightValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rightMotor, kSubsystemName + "Right",
-        CTREConfigs6.elevatorFXConfig(true, Conversions.inchesToWinchRotations(kHeightInchesMin, kRolloutRatio),
+        CTREConfigs6.elevatorFXConfig(false, Conversions.inchesToWinchRotations(kHeightInchesMin, kRolloutRatio),
             Conversions.inchesToWinchRotations(kHeightInchesMax, kRolloutRatio)));
     m_motorsValid = leftValid && rightValid;
 
