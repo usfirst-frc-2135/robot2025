@@ -1,5 +1,5 @@
 //
-// Elevator Subystem - lifts the robot to hang onto the chain
+// Elevator Subystem - lifts the game pieces to score and robot to hang onto the cage
 //
 package frc.robot.subsystems;
 

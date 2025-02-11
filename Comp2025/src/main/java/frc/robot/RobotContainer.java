@@ -45,6 +45,7 @@ import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Power;
@@ -101,6 +102,7 @@ public class RobotContainer
   // These subsystems may use LED or vision and must be created afterward
   private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.createDrivetrain( );
   private final Elevator                              m_elevator      = new Elevator( );
+  private final Manipulator                           m_manipulator   = new Manipulator( );
   // Selected autonomous command
   private Command                                     m_autoCommand;  // Selected autonomous command
 
@@ -216,6 +218,7 @@ public class RobotContainer
 
     // Network tables publisher objects
     SmartDashboard.putData("elevator", m_elevator);
+    SmartDashboard.putData("manipulator", m_manipulator);
 
     SmartDashboard.putData(CommandScheduler.getInstance( ));
   }
@@ -353,9 +356,11 @@ public class RobotContainer
 
     // Default command - Motion Magic hold
     // m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getPosition));
+    // m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(m_manipulator::getPosition));
 
     // Default command - manual mode
     m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
+    m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
 
   /****************************************************************************
@@ -446,10 +451,10 @@ public class RobotContainer
         // m_autoCommand = new AutoLeave(ppPathList, m_drivetrain, m_led);
         break;
       case AUTOPRELOADSCORE :
-        // m_autoCommand = new AutoPreloadScore(ppPathList, m_drivetrain, m_intake, m_shooter, m_led, m_hid);
+        // m_autoCommand = new AutoPreloadScore(ppPathList, m_drivetrain, m_manipulator, m_shooter, m_led, m_hid);
         break;
       case AUTOSCORE4 :
-        // m_autoCommand = new AutoScore4(ppPathList, m_drivetrain, m_intake, m_shooter, m_led, m_hid);
+        // m_autoCommand = new AutoScore4(ppPathList, m_drivetrain, m_manipulator, m_shooter, m_led, m_hid);
         break;
       case AUTOTEST :
         // m_autoCommand = new AutoTest(ppPathList, m_drivetrain, m_led);
@@ -483,6 +488,16 @@ public class RobotContainer
 
   /****************************************************************************
    * 
+   * Gamepad joystick axis interfaces
+   */
+
+  public double getWristAxis( )
+  {
+    return -m_operatorPad.getLeftY( );
+  }
+
+  /****************************************************************************
+   * 
    * Called by disabledInit - place subsystem initializations here
    */
   public void initialize( )
@@ -492,6 +507,7 @@ public class RobotContainer
     m_vision.initialize( );
 
     m_elevator.initialize( );
+    m_manipulator.initialize( );
   }
 
   /****************************************************************************
@@ -504,6 +520,7 @@ public class RobotContainer
     m_power.printFaults( );
 
     m_elevator.printFaults( );
+    m_manipulator.printFaults( );
   }
 
   /****************************************************************************
