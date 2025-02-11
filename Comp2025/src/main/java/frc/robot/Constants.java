@@ -69,55 +69,17 @@ public class Constants
     public static final int    kCANID_ElevatorLeft  = 15;   // Kraken X60
     public static final int    kCANID_ElevatorRight = 16;   // Kraken X60
 
-    public static final int    kCANID_WristRotary   = 17;   // Kraken X60
-    public static final int    kCANID_WristCANcoder = 18;   // CANcoder
+    public static final int    kCANID_WristRotary   = 18;   // Kraken X60 (Manipulator)
+    public static final int    kCANID_WristCANcoder = 19;   // CANcoder   (Manipulator)
 
-    public static final int    kCANID_Manipulator   = 19;   // Kraken X60
-    public static final int    kCANID_CoralDetector = 20;   // CANrange
+    public static final int    kCANID_ClawRoller    = 21;   // Kraken X60 (Manipulator)
+    public static final int    kCANID_CoralDetector = 22;   // CANrange   (Manipulator)
 
     public static final int    kCANID_CANdle        = 0;
 
     // Digital I/Os
     public static final int    kDIO0_ElevatorDown   = 0;    // REV Magnetic Limit Switch
-  }
-
-  /****************************************************************************
-   * Wrist subsystem constants
-   ****************************************************************************/
-  public static final class WRConsts
-  {
-    /** Wrist roller modes */
-    public enum WRRollerMode
-    {
-      STOP,    // Stop all rotation
-      ACQUIRE, // Speed for acquiring a game piece
-      EXPEL,   // Speed for expelling a game piece
-      SHOOT,   // Speed for putting game piece into shooter 
-      HANDOFF, // Speed for putting game piece into feeder 
-      HOLD     // Maintain existing speed setting
-    }
-  }
-
-  /****************************************************************************
-   * Feeder subsystem constants
-   ****************************************************************************/
-  public static final class FDConsts
-  {
-    /** Feeder roller modes */
-    public enum FDRollerMode
-    {
-      STOP,    // Stop all rotation
-      SCORE,   // Speed for putting game piece into amp 
-      HANDOFF, // Speed for handoff into feeder 
-      HOLD     // Maintain existing speed setting
-    }
-  }
-
-  /****************************************************************************
-   * Shooter subsystem constants
-   ****************************************************************************/
-  public static final class SHConsts
-  {
+    public static final int    kDIO1_AlgaeInClaw    = 1;    // REV Magnetic Limit Switch
   }
 
   /****************************************************************************
@@ -125,6 +87,23 @@ public class Constants
    ****************************************************************************/
   public static final class ELConsts
   {
+  }
+
+  /****************************************************************************
+   * Manipulator subsystem constants
+   ****************************************************************************/
+  public static final class CRConsts
+  {
+    /** Manipulator claw roller modes */
+    public enum ClawMode
+    {
+      STOP,       // Stop all rotation
+      ACQUIRE,    // Speed for acquiring a game piece
+      EXPEL,      // Speed for expelling a game piece
+      SHOOT,      // Speed for shooting a game piece
+      PROCESSOR,  // Speed for putting game piece into processor 
+      HOLD        // Maintain existing speed setting
+    }
   }
 
   /****************************************************************************

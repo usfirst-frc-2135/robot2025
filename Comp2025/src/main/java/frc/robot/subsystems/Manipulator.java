@@ -1,5 +1,9 @@
 //
-// Wrist Subystem - takes in Coral and Algae and delivers them to Reef, Net, and Processor
+// Manipulator Subystem - takes in Coral and Algae and delivers them to Reef, Net, and Processor
+//
+// The manipulator is composed of two motorized mechanisms: wrist rotary joint and a claw roller.
+// The wrist rotary joint uses an external CANcoder for measuring rotation.
+// The claw roller has a limit switch to detect coral and algae
 //
 package frc.robot.subsystems;
 
@@ -8,7 +12,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -34,6 +37,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -49,127 +53,127 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.WRConsts.WRRollerMode;
 import frc.robot.Constants.Ports;
+import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Robot;
 import frc.robot.lib.math.Conversions;
+import frc.robot.lib.phoenix.CTREConfigs6;
+import frc.robot.lib.phoenix.PhoenixUtil6;
 
 /****************************************************************************
  * 
- * Wrist subsystem to control the wrist roller and rotary mechanism and provide command factories
+ * Manipulator subsystem to control the wrist rotary and claw roller mechanisms and provide command
+ * factories
  */
-public class Wrist extends SubsystemBase
+public class Manipulator extends SubsystemBase
 {
   // Constants
-  private static final String  kSubsystemName        = "Wrist";
-  private static final boolean kRollerMotorInvert    = false;     // Motor direction for positive input
+  private static final String  kSubsystemName        = "Manipulator";
 
-  private static final double  kRollerSpeedAcquire   = 0.5;
-  private static final double  kRollerSpeedExpel     = -0.4;
-  private static final double  kRollerSpeedToShooter = -1.0;
-  private static final double  kRollerSpeedToFeeder  = -0.4;
-  private static final double  kRollerSpeedHold      = 0.1;
+  private static final double  kClawSpeedAcquire     = 0.5;
+  private static final double  kClawSpeedExpel       = -0.4;
+  private static final double  kClawSpeedToShoot     = -1.0;
+  private static final double  kClawSpeedToProcessor = -0.4;
+  private static final double  kClawSpeedHold        = 0.1;
 
-  private static final double  kRotaryGearRatio      = 49.23;
-  private static final double  kRotaryLengthMeters   = Units.inchesToMeters(15);       // Simulation
-  private static final double  kRotaryWeightKg       = 9.07;       // Simulation
-  private static final Voltage kRotaryManualVolts    = Volts.of(3.5);       // Motor voltage during manual operation (joystick)
+  private static final double  kWristGearRatio       = 49.23;
+  private static final double  kWristLengthMeters    = Units.inchesToMeters(15); // Simulation
+  private static final double  kWristWeightKg        = Units.lbsToKilograms(20.0);  // Simulation
+  private static final Voltage kWristManualVolts     = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
 
-  /** Rotary manual move parameters */
-  private enum RotaryMode
+  /** Wrist rotary motor manual move parameters */
+  private enum WristMode
   {
     INIT,    // Initialize rotary
-    INBOARD, // Rotary moving into the robot
-    STOPPED, // Rotary stop and hold position
-    OUTBOARD // Rotary moving out of the robot
+    INBOARD, // Wrist moving into the robot
+    STOPPED, // Wrist stop and hold position
+    OUTBOARD // Wrist moving out of the robot
   }
 
-  private static final double       kToleranceDegrees     = 3.0;      // PID tolerance in degrees
-  private static final double       kMMDebounceTime       = 0.060;    // Seconds to debounce a final position check
-  private static final double       kMMMoveTimeout        = 1.0;      // Seconds allowed for a Motion Magic movement
-  private static final double       kAlgaeDebounceTime    = 0.045;    // Seconds to debounce detected algae sensor
+  private static final double       kToleranceDegrees         = 3.0;      // PID tolerance in degrees
+  private static final double       kMMDebounceTime           = 0.060;    // Seconds to debounce a final position check
+  private static final double       kMMMoveTimeout            = 1.0;      // Seconds allowed for a Motion Magic movement
+  private static final double       kAlgaeDebounceTime        = 0.045;    // Seconds to debounce detected algae sensor
 
-  // Rotary angles - Motion Magic move parameters
+  // Wrist rotary angles - Motion Magic move parameters - TODO: Update for 2025 Reefscape needs
   //    Measured hardstops and pre-defined positions:
-  //               hstop  retracted   handoff   deployed  hstop
+  //               hstop  retracted   processor deployed  hstop
   //      Comp     -177.3  -176.3     -124.7    24.9      25.8
   //      Practice -177.8  -176.8     -124.7    27.3      27.4
-  private static final double       kRotaryAngleRetracted = Robot.isComp( ) ? -176.3 : -176.8;  // One degree from hardstops
-  private static final double       kRotaryAngleHandoff   = Robot.isComp( ) ? -124.7 : -124.7;  //
-  private static final double       kRotaryAngleDeployed  = Robot.isComp( ) ? 24.9 : 27.3;      //
+  private static final double       kWristAngleRetracted      = Robot.isComp( ) ? -176.3 : -176.8;  // One degree from hardstops
+  private static final double       kWristAngleDeployed       = Robot.isComp( ) ? 24.9 : 27.3;      //
 
-  private static final double       kRotaryStowed         = 0;
-  private static final double       kRotaryCoralL1        = 0;
+  private static final double       kWristAngleStowed         = 0;
+  private static final double       kWristAngleCoralL1        = 0;
+  private static final double       kWristAngleCoralL23       = 0;
+  private static final double       kWristAngleCoralL4        = 0;
+  private static final double       kWristAngleCoralStation   = 0;
 
-  private static final double       kRotaryCoralL23       = 0;
-  private static final double       kRotaryCoralL4        = 0;
-  private static final double       kRotaryCoralStation   = 0;
+  private static final double       kWristAngleAlgaeL23       = 0;
+  private static final double       kWristAngleAlgaeL34       = 0;
+  private static final double       kWristAngleAlgaeProcessor = 0;
+  private static final double       kWristAngleAlgaeNet       = 0;
 
-  private static final double       kRotaryAlgaeL23       = 0;
-  private static final double       kRotaryAlgaeL34       = 0;
-  private static final double       kRotaryAlgaeProcessor = 0;
-  private static final double       kRotaryAlgaeNet       = 0;
-
-  private static final double       kRotaryAngleMin       = kRotaryAngleRetracted - 3.0;
-  private static final double       kRotaryAngleMax       = kRotaryAngleDeployed + 3.0;
+  private static final double       kWristAngleMin            = kWristAngleRetracted;
+  private static final double       kWristAngleMax            = kWristAngleDeployed;
 
   // Device objects
-  private final WPI_TalonSRX        m_rollerMotor         = new WPI_TalonSRX(Ports.kCANID_WristRoller);
-  private final TalonFX             m_rotaryMotor         = new TalonFX(Ports.kCANID_WristRotary);
-  private final CANcoder            m_CANcoder            = new CANcoder(Ports.kCANID_WristCANcoder);
-  // private final DigitalInput        m_algaeInIntake        = new DigitalInput(Ports.kDIO0_AlgaeInIntake);
+  private final TalonFX             m_wristMotor              = new TalonFX(Ports.kCANID_WristRotary);
+  private final CANcoder            m_wristCANcoder           = new CANcoder(Ports.kCANID_WristCANcoder);
+  private final TalonFX             m_clawMotor               = new TalonFX(Ports.kCANID_ClawRoller);
+  private final DigitalInput        m_algaeInClaw             = new DigitalInput(Ports.kDIO1_AlgaeInClaw);
 
   // Alerts
-  private final Alert               m_rollerAlert         =
-      new Alert(String.format("%s: Roller motor init failed!", getSubsystem( )), AlertType.kError);
-  private final Alert               m_rotaryAlert         =
-      new Alert(String.format("%s: Rotary motor init failed!", getSubsystem( )), AlertType.kError);
-  private final Alert               m_canCoderAlert       =
+  private final Alert               m_rotaryAlert             =
+      new Alert(String.format("%s: Wrist motor init failed!", getSubsystem( )), AlertType.kError);
+  private final Alert               m_canCoderAlert           =
       new Alert(String.format("%s: CANcoder init failed!", getSubsystem( )), AlertType.kError);
+  private final Alert               m_clawAlert               =
+      new Alert(String.format("%s: Claw motor init failed!", getSubsystem( )), AlertType.kError);
 
   // Simulation objects
-  private final TalonFXSimState     m_rotarySim           = m_rotaryMotor.getSimState( );
-  private final CANcoderSimState    m_CANcoderSim         = m_CANcoder.getSimState( );
-  private final SingleJointedArmSim m_armSim              = new SingleJointedArmSim(DCMotor.getFalcon500(1), kRotaryGearRatio,
-      SingleJointedArmSim.estimateMOI(kRotaryLengthMeters, kRotaryWeightKg), kRotaryLengthMeters, -Math.PI, Math.PI, false, 0.0);
+  private final TalonFXSimState     m_wristMotorSim           = m_wristMotor.getSimState( );
+  private final CANcoderSimState    m_wristCANcoderSim        = m_wristCANcoder.getSimState( );
+  private final SingleJointedArmSim m_armSim                  = new SingleJointedArmSim(DCMotor.getFalcon500(1), kWristGearRatio,
+      SingleJointedArmSim.estimateMOI(kWristLengthMeters, kWristWeightKg), kWristLengthMeters, -Math.PI, Math.PI, false, 0.0);
 
   // Mechanism2d
-  private final Mechanism2d         m_rotaryMech          = new Mechanism2d(1.0, 1.0);
-  private final MechanismLigament2d m_mechLigament        = m_rotaryMech.getRoot("Rotary", 0.5, 0.5)
+  private final Mechanism2d         m_wristRotaryMech         = new Mechanism2d(1.0, 1.0);
+  private final MechanismLigament2d m_mechLigament            = m_wristRotaryMech.getRoot("Wrist", 0.5, 0.5)
       .append(new MechanismLigament2d(kSubsystemName, 0.5, 0.0, 6, new Color8Bit(Color.kPurple)));
 
   // Status signals
-  private final StatusSignal<Angle> m_rotaryPosition;  // Default 50Hz (20ms)
-  private final StatusSignal<Angle> m_ccPosition;      // Default 100Hz (10ms)
+  private final StatusSignal<Angle> m_wristMotorPosition; // Default 50Hz (20ms)
+  private final StatusSignal<Angle> m_ccPosition;         // Default 100Hz (10ms)
 
   // Declare module variables
 
-  // Roller variables
-  private boolean                   m_rollerValid;        // Health indicator for motor 
-  private Debouncer                 m_algaeDebouncer      = new Debouncer(kAlgaeDebounceTime, DebounceType.kBoth);
-  private boolean                   m_algaeDetected;       // Detection state of algar in rollers
+  // Claw variables
+  private boolean                   m_clawMotorValid;                 // Health indicator for motor 
+  private Debouncer                 m_algaeDebouncer          = new Debouncer(kAlgaeDebounceTime, DebounceType.kBoth);
+  private boolean                   m_algaeDetected;                  // Detection state of algae in claws
 
-  // Rotary variables
-  private boolean                   m_rotaryValid;                // Health indicator for motor 
-  private boolean                   m_canCoderValid;              // Health indicator for CANcoder 
-  private double                    m_currentDegrees      = 0.0;  // Current angle in degrees
-  private double                    m_targetDegrees       = 0.0;  // Target angle in degrees
-  private double                    m_ccDegrees           = 0.0;  // CANcoder angle in degrees
+  // Wrist variables
+  private boolean                   m_wristMotorValid;                // Health indicator for motor 
+  private boolean                   m_canCoderValid;                  // Health indicator for CANcoder 
+  private double                    m_currentDegrees          = 0.0;  // Current angle in degrees
+  private double                    m_targetDegrees           = 0.0;  // Target angle in degrees
+  private double                    m_ccDegrees               = 0.0;  // CANcoder angle in degrees
 
   // Manual mode config parameters
-  private VoltageOut                m_requestVolts        = new VoltageOut(Volts.of(0));
-  private RotaryMode                m_rotaryMode          = RotaryMode.INIT;    // Manual movement mode with joysticks
+  private VoltageOut                m_requestVolts            = new VoltageOut(Volts.of(0));
+  private WristMode                 m_wristMode               = WristMode.INIT;   // Manual movement mode with joysticks
 
   // Motion Magic config parameters
-  private MotionMagicVoltage        m_mmRequestVolts      = new MotionMagicVoltage(0).withSlot(0);
-  private Debouncer                 m_mmWithinTolerance   = new Debouncer(kMMDebounceTime, DebounceType.kRising);
-  private Timer                     m_mmMoveTimer         = new Timer( );       // Movement timer
+  private MotionMagicVoltage        m_mmRequestVolts          = new MotionMagicVoltage(0).withSlot(0);
+  private Debouncer                 m_mmWithinTolerance       = new Debouncer(kMMDebounceTime, DebounceType.kRising);
+  private Timer                     m_mmMoveTimer             = new Timer( );     // Movement timer
   private boolean                   m_mmMoveIsFinished;           // Movement has completed (within tolerance)
 
   // Network tables publisher objects
-  private DoublePublisher           m_rollSpeedPub;
-  private DoublePublisher           m_rollSupCurPub;
-  private DoublePublisher           m_rotDegreesPub;
+  private DoublePublisher           m_clawSpeedPub;
+  private DoublePublisher           m_clawSupCurPub;
+  private DoublePublisher           m_wristDegreePub;
 
   private DoublePublisher           m_ccDegreesPub;
   private DoublePublisher           m_targetDegreesPub;
@@ -179,54 +183,52 @@ public class Wrist extends SubsystemBase
    * 
    * Constructor
    */
-  public Wrist( )
+  public Manipulator( )
   {
     setName(kSubsystemName);
     setSubsystem(kSubsystemName);
 
-    // // Roller motor init
-    // m_rollerValid = PhoenixUtil5.getInstance( ).talonSRXInitialize(m_rollerMotor, kSubsystemName + "Roller",
-    //     CTREConfigs5.intakeRollerConfig( ));
-    // m_rollerMotor.setInverted(kRollerMotorInvert);
-    // PhoenixUtil5.getInstance( ).talonSRXCheckError(m_rollerMotor, "setInverted");
+    // Claw motor init
+    m_clawMotorValid =
+        PhoenixUtil6.getInstance( ).talonFXInitialize6(m_clawMotor, kSubsystemName + "Claw", CTREConfigs6.clawRollerFXConfig( ));
 
     // // Initialize rotary motor and CANcoder objects
-    // m_rotaryValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rotaryMotor, kSubsystemName + "Rotary",
-    //     CTREConfigs6.intakeRotaryFXConfig(Units.degreesToRotations(kRotaryAngleMin), Units.degreesToRotations(kRotaryAngleMax),
-    //         Ports.kCANID_WristCANcoder, kRotaryGearRatio));
-    // m_canCoderValid = PhoenixUtil6.getInstance( ).canCoderInitialize6(m_CANcoder, kSubsystemName + "Rotary",
-    //     CTREConfigs6.intakeRotaryCancoderConfig( ));
+    m_wristMotorValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_wristMotor, kSubsystemName + "Wrist",
+        CTREConfigs6.wristRotaryFXConfig(Units.degreesToRotations(kWristAngleMin), Units.degreesToRotations(kWristAngleMax),
+            Ports.kCANID_WristCANcoder, kWristGearRatio));
+    m_canCoderValid = PhoenixUtil6.getInstance( ).canCoderInitialize6(m_wristCANcoder, kSubsystemName + "Wrist",
+        CTREConfigs6.wristRotaryCANcoderConfig( ));
 
-    m_rollerAlert.set(!m_rollerValid);
-    m_rotaryAlert.set(!m_rotaryValid);
+    m_clawAlert.set(!m_clawMotorValid);
+    m_rotaryAlert.set(!m_wristMotorValid);
     m_canCoderAlert.set(!m_canCoderValid);
 
     // Initialize status signal objects
-    m_rotaryPosition = m_rotaryMotor.getPosition( );
-    m_ccPosition = m_CANcoder.getAbsolutePosition( );
+    m_wristMotorPosition = m_wristMotor.getPosition( );
+    m_ccPosition = m_wristCANcoder.getAbsolutePosition( );
 
     // Initialize the elevator status signals
     Double ccRotations = (m_canCoderValid) ? m_ccPosition.refresh( ).getValue( ).in(Rotations) : 0.0;
     m_currentDegrees = Units.rotationsToDegrees(ccRotations);
     DataLogManager.log(String.format("%s: CANcoder initial degrees %.1f", getSubsystem( ), m_currentDegrees));
-    if (m_rotaryValid)
-      m_rotaryMotor.setPosition(ccRotations);
+    if (m_wristMotorValid)
+      m_wristMotor.setPosition(ccRotations);
 
     // Simulation object initialization
-    m_rotarySim.Orientation = ChassisReference.CounterClockwise_Positive;
-    m_CANcoderSim.Orientation = ChassisReference.Clockwise_Positive;
+    m_wristMotorSim.Orientation = ChassisReference.CounterClockwise_Positive;
+    m_wristCANcoderSim.Orientation = ChassisReference.Clockwise_Positive;
 
     // Status signals
-    m_rotaryPosition.setUpdateFrequency(50);
+    m_wristMotorPosition.setUpdateFrequency(50);
 
-    StatusSignal<Current> m_rotarySupplyCur = m_rotaryMotor.getSupplyCurrent( ); // Default 4Hz (250ms)
-    StatusSignal<Current> m_rotaryStatorCur = m_rotaryMotor.getStatorCurrent( ); // Default 4Hz (250ms)
-    BaseStatusSignal.setUpdateFrequencyForAll(10, m_rotarySupplyCur, m_rotaryStatorCur);
+    StatusSignal<Current> m_wristSupplyCur = m_wristMotor.getSupplyCurrent( ); // Default 4Hz (250ms)
+    StatusSignal<Current> m_wristStatorCur = m_wristMotor.getStatorCurrent( ); // Default 4Hz (250ms)
+    BaseStatusSignal.setUpdateFrequencyForAll(10, m_wristSupplyCur, m_wristStatorCur);
 
-    DataLogManager.log(
-        String.format("%s: Update (Hz) rotaryPosition: %.1f rotarySupplyCur: %.1f rotaryStatorCur: %.1f canCoderPosition: %.1f",
-            getSubsystem( ), m_rotaryPosition.getAppliedUpdateFrequency( ), m_rotarySupplyCur.getAppliedUpdateFrequency( ),
-            m_rotaryStatorCur.getAppliedUpdateFrequency( ), m_ccPosition.getAppliedUpdateFrequency( )));
+    DataLogManager
+        .log(String.format("%s: Update (Hz) wristPosition: %.1f wristSupplyCur: %.1f wristStatorCur: %.1f canCoderPosition: %.1f",
+            getSubsystem( ), m_wristMotorPosition.getAppliedUpdateFrequency( ), m_wristSupplyCur.getAppliedUpdateFrequency( ),
+            m_wristStatorCur.getAppliedUpdateFrequency( ), m_ccPosition.getAppliedUpdateFrequency( )));
 
     initDashboard( );
     initialize( );
@@ -241,17 +243,17 @@ public class Wrist extends SubsystemBase
   {
     // This method will be called once per scheduler run
 
-    BaseStatusSignal.refreshAll(m_rotaryPosition, m_ccPosition);
-    m_currentDegrees = Units.rotationsToDegrees((m_rotaryValid) ? m_rotaryPosition.getValue( ).in(Rotations) : 0.0);
+    BaseStatusSignal.refreshAll(m_wristMotorPosition, m_ccPosition);
+    m_currentDegrees = Units.rotationsToDegrees((m_wristMotorValid) ? m_wristMotorPosition.getValue( ).in(Rotations) : 0.0);
     m_ccDegrees = Units.rotationsToDegrees((m_canCoderValid) ? m_ccPosition.getValue( ).in(Rotations) : 0.0);
-    // m_algaeDetected = m_algaeDebouncer.calculate(m_algaeInIntake.get( ));
+    m_algaeDetected = m_algaeDebouncer.calculate(m_algaeInClaw.get( ));
 
     // // Update network table publishers
-    m_rollSpeedPub.set(m_rollerMotor.get( ));
-    m_rollSupCurPub.set(m_rollerMotor.getSupplyCurrent( ));
+    m_clawSpeedPub.set(m_clawMotor.get( ));
+    m_clawSupCurPub.set(m_clawMotor.getSupplyCurrent( ).getValueAsDouble( ));
 
+    m_wristDegreePub.set(m_currentDegrees);
     m_ccDegreesPub.set(m_ccDegrees);
-    m_rotDegreesPub.set(m_currentDegrees);
     m_targetDegreesPub.set(m_targetDegrees);
     m_algaeDetectedPub.set(m_algaeDetected);
   }
@@ -266,19 +268,19 @@ public class Wrist extends SubsystemBase
     // This method will be called once per scheduler run during simulation
 
     // Set input motor voltage from the motor setting
-    m_rotarySim.setSupplyVoltage(RobotController.getInputVoltage( ));
-    m_CANcoderSim.setSupplyVoltage(RobotController.getInputVoltage( ));
-    m_armSim.setInputVoltage(m_rotarySim.getMotorVoltage( ));
+    m_wristMotorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
+    m_wristCANcoderSim.setSupplyVoltage(RobotController.getInputVoltage( ));
+    m_armSim.setInputVoltage(m_wristMotorSim.getMotorVoltage( ));
 
     // update for 20 msec loop
     m_armSim.update(0.020);
 
     // Finally, we set our simulated encoder's readings and simulated battery voltage
-    m_rotarySim.setRawRotorPosition(Conversions.radiansToInputRotations(m_armSim.getAngleRads( ), kRotaryGearRatio));
-    m_rotarySim.setRotorVelocity(Conversions.radiansToInputRotations(m_armSim.getVelocityRadPerSec( ), kRotaryGearRatio));
+    m_wristMotorSim.setRawRotorPosition(Conversions.radiansToInputRotations(m_armSim.getAngleRads( ), kWristGearRatio));
+    m_wristMotorSim.setRotorVelocity(Conversions.radiansToInputRotations(m_armSim.getVelocityRadPerSec( ), kWristGearRatio));
 
-    m_CANcoderSim.setRawPosition(Units.radiansToRotations(m_armSim.getAngleRads( )));
-    m_CANcoderSim.setVelocity(Units.radiansToRotations(m_armSim.getVelocityRadPerSec( )));
+    m_wristCANcoderSim.setRawPosition(Units.radiansToRotations(m_armSim.getAngleRads( )));
+    m_wristCANcoderSim.setVelocity(Units.radiansToRotations(m_armSim.getVelocityRadPerSec( )));
 
     // SimBattery estimates loaded battery voltages
     RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_armSim.getCurrentDrawAmps( )));
@@ -294,28 +296,28 @@ public class Wrist extends SubsystemBase
   {
     // Get the default instance of NetworkTables that was created automatically when the robot program starts
     NetworkTableInstance inst = NetworkTableInstance.getDefault( );
-    NetworkTable table = inst.getTable("wrist");
+    NetworkTable table = inst.getTable("manipulator");
 
     // Initialize network tables publishers
-    m_rollSpeedPub = table.getDoubleTopic("rollSpeed").publish( );
-    m_rollSupCurPub = table.getDoubleTopic("rollSupCur").publish( );
+    m_clawSpeedPub = table.getDoubleTopic("clawSpeed").publish( );
+    m_clawSupCurPub = table.getDoubleTopic("clawSupCur").publish( );
 
+    m_wristDegreePub = table.getDoubleTopic("wristDegrees").publish( );
     m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
-    m_rotDegreesPub = table.getDoubleTopic("rotDegrees").publish( );
     m_algaeDetectedPub = table.getBooleanTopic("algaeDetected").publish( );
     m_targetDegreesPub = table.getDoubleTopic("targetDegrees").publish( );
 
-    SmartDashboard.putData("WRRotaryMech", m_rotaryMech);
+    SmartDashboard.putData("MNWristMech", m_wristRotaryMech);
 
     // Add commands
-    SmartDashboard.putData("InRollStop", getMoveToPositionCommand(WRRollerMode.STOP, this::getCurrentPosition));
-    SmartDashboard.putData("InRollAcquire", getMoveToPositionCommand(WRRollerMode.ACQUIRE, this::getCurrentPosition));
-    SmartDashboard.putData("InRollExpel", getMoveToPositionCommand(WRRollerMode.EXPEL, this::getCurrentPosition));
-    SmartDashboard.putData("InRollShoot", getMoveToPositionCommand(WRRollerMode.SHOOT, this::getCurrentPosition));
-    SmartDashboard.putData("InRollHandoff", getMoveToPositionCommand(WRRollerMode.HANDOFF, this::getCurrentPosition));
-    SmartDashboard.putData("InRollHold", getMoveToPositionCommand(WRRollerMode.HOLD, this::getCurrentPosition));
+    SmartDashboard.putData("MNClawStop", getMoveToPositionCommand(ClawMode.STOP, this::getCurrentPosition));
+    SmartDashboard.putData("MNClawAcquire", getMoveToPositionCommand(ClawMode.ACQUIRE, this::getCurrentPosition));
+    SmartDashboard.putData("MNClawExpel", getMoveToPositionCommand(ClawMode.EXPEL, this::getCurrentPosition));
+    SmartDashboard.putData("MNClawShoot", getMoveToPositionCommand(ClawMode.SHOOT, this::getCurrentPosition));
+    SmartDashboard.putData("MNClawHandoff", getMoveToPositionCommand(ClawMode.PROCESSOR, this::getCurrentPosition));
+    SmartDashboard.putData("MNClawHold", getMoveToPositionCommand(ClawMode.HOLD, this::getCurrentPosition));
 
-    SmartDashboard.putData("InRotRetract", getMoveToPositionCommand(WRRollerMode.HOLD, this::getIntakeRetracted));
+    SmartDashboard.putData("MNWristRetract", getMoveToPositionCommand(ClawMode.HOLD, this::getManipulatorRetracted));
 
   }
 
@@ -327,8 +329,8 @@ public class Wrist extends SubsystemBase
    */
   public void initialize( )
   {
-    setRollerMode(WRRollerMode.STOP);
-    setRotaryStopped( );
+    setClawMode(ClawMode.STOP);
+    setWristStopped( );
 
     m_targetDegrees = m_currentDegrees;
     DataLogManager.log(String.format("%s: Subsystem initialized! Target Degrees: %.1f", getSubsystem( ), m_targetDegrees));
@@ -340,13 +342,13 @@ public class Wrist extends SubsystemBase
    */
   public void printFaults( )
   {
-    // PhoenixUtil5.getInstance( ).talonSRXPrintFaults(m_rollerMotor, kSubsystemName + "Roller");
-    // PhoenixUtil6.getInstance( ).talonFXPrintFaults(m_rotaryMotor, kSubsystemName + "Rotary");
-    // PhoenixUtil6.getInstance( ).cancoderPrintFaults(m_CANcoder, kSubsystemName + "CANcoder");
+    PhoenixUtil6.getInstance( ).talonFXPrintFaults(m_clawMotor, kSubsystemName + "Claw");
+    PhoenixUtil6.getInstance( ).talonFXPrintFaults(m_wristMotor, kSubsystemName + "Wrist");
+    PhoenixUtil6.getInstance( ).cancoderPrintFaults(m_wristCANcoder, kSubsystemName + "CANcoder");
 
-    // m_rollerMotor.clearStickyFaults( );
-    // m_rotaryMotor.clearStickyFaults( );
-    // m_CANcoder.clearStickyFaults( );
+    m_clawMotor.clearStickyFaults( );
+    m_wristMotor.clearStickyFaults( );
+    m_wristCANcoder.clearStickyFaults( );
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -364,30 +366,30 @@ public class Wrist extends SubsystemBase
   {
     double axisValue = getAxis.getAsDouble( );
     boolean rangeLimited = false;
-    RotaryMode newMode = RotaryMode.INIT;
+    WristMode newMode = WristMode.INIT;
 
     axisValue = MathUtil.applyDeadband(axisValue, Constants.kStickDeadband);
 
-    if ((axisValue < 0.0) && (m_currentDegrees > kRotaryAngleMin))
-      newMode = RotaryMode.INBOARD;
-    else if ((axisValue > 0.0) && (m_currentDegrees < kRotaryAngleMax))
-      newMode = RotaryMode.OUTBOARD;
+    if ((axisValue < 0.0) && (m_currentDegrees > kWristAngleMin))
+      newMode = WristMode.INBOARD;
+    else if ((axisValue > 0.0) && (m_currentDegrees < kWristAngleMax))
+      newMode = WristMode.OUTBOARD;
     else
     {
       rangeLimited = true;
       axisValue = 0.0;
     }
 
-    if (newMode != m_rotaryMode)
+    if (newMode != m_wristMode)
     {
-      m_rotaryMode = newMode;
-      DataLogManager.log(String.format("%s: Manual move mode %s %.1f deg %s", getSubsystem( ), m_rotaryMode,
-          getCurrentPosition( ), ((rangeLimited) ? " - RANGE LIMITED" : "")));
+      m_wristMode = newMode;
+      DataLogManager.log(String.format("%s: Manual move mode %s %.1f deg %s", getSubsystem( ), m_wristMode, getCurrentPosition( ),
+          ((rangeLimited) ? " - RANGE LIMITED" : "")));
     }
 
     m_targetDegrees = m_currentDegrees;
 
-    m_rotaryMotor.setControl(m_requestVolts.withOutput(kRotaryManualVolts.times(axisValue)));
+    m_wristMotor.setControl(m_requestVolts.withOutput(kWristManualVolts.times(axisValue)));
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -396,18 +398,18 @@ public class Wrist extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Initialize a Motion Magic movement and control rollers
+   * Initialize a Motion Magic movement and control wrist
    * 
    * @param mode
-   *          roller mode to apply
+   *          claw mode to apply
    * @param newAngle
    *          rotation to move
    * @param holdPosition
    *          hold previous position if true
    */
-  public void moveToPositionInit(WRRollerMode mode, double newAngle, boolean holdPosition)
+  public void moveToPositionInit(ClawMode mode, double newAngle, boolean holdPosition)
   {
-    setRollerMode(mode);
+    setClawMode(mode);
     m_mmMoveTimer.restart( );
 
     if (holdPosition)
@@ -424,13 +426,13 @@ public class Wrist extends SubsystemBase
         m_mmWithinTolerance.calculate(false); // Reset the debounce filter
 
         double targetRotations = Units.degreesToRotations(m_targetDegrees);
-        m_rotaryMotor.setControl(m_mmRequestVolts.withPosition(targetRotations));
+        m_wristMotor.setControl(m_mmRequestVolts.withPosition(targetRotations));
         DataLogManager.log(String.format("%s: MM Position move: %.1f -> %.1f degrees (%.3f -> %.3f rot)", getSubsystem( ),
             m_currentDegrees, m_targetDegrees, Units.degreesToRotations(m_currentDegrees), targetRotations));
       }
       else
         DataLogManager.log(String.format("%s: MM Position move target %.1f degrees is OUT OF RANGE! [%.1f, %.1f deg]",
-            getSubsystem( ), m_targetDegrees, kRotaryAngleMin, kRotaryAngleMax));
+            getSubsystem( ), m_targetDegrees, kWristAngleMin, kWristAngleMax));
     }
     else
     {
@@ -459,7 +461,7 @@ public class Wrist extends SubsystemBase
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
     double error = m_targetDegrees - m_currentDegrees;
 
-    m_rotaryMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
+    m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
 
     if (holdPosition)
       return false;
@@ -492,53 +494,53 @@ public class Wrist extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Set roller speed based on requested mode
+   * Set claw roller speed based on requested mode
    * 
    * @param mode
-   *          requested speed
+   *          requested mode from caller
    */
-  private void setRollerMode(WRRollerMode mode)
+  private void setClawMode(ClawMode mode)
   {
     double output = 0.0;
 
-    if (mode == WRRollerMode.HOLD)
+    if (mode == ClawMode.HOLD)
     {
-      DataLogManager.log(String.format("%s: Roller mode is unchanged - %s (%.3f)", getSubsystem( ), mode, m_rollerMotor.get( )));
+      DataLogManager.log(String.format("%s: Claw mode is unchanged - %s (%.3f)", getSubsystem( ), mode, m_clawMotor.get( )));
     }
     else
     {
       switch (mode)
       {
         default :
-          DataLogManager.log(String.format("%s: Roller mode is invalid: %s", getSubsystem( ), mode));
+          DataLogManager.log(String.format("%s: Claw mode is invalid: %s", getSubsystem( ), mode));
         case STOP :
-          output = (m_algaeDetected) ? kRollerSpeedHold : 0.0;
+          output = (m_algaeDetected) ? kClawSpeedHold : 0.0;
           break;
         case ACQUIRE :
-          output = kRollerSpeedAcquire;
+          output = kClawSpeedAcquire;
           break;
         case EXPEL :
-          output = kRollerSpeedExpel;
+          output = kClawSpeedExpel;
           break;
         case SHOOT :
-          output = kRollerSpeedToShooter;
+          output = kClawSpeedToShoot;
           break;
-        case HANDOFF :
-          output = kRollerSpeedToFeeder;
+        case PROCESSOR :
+          output = kClawSpeedToProcessor;
       }
-      DataLogManager.log(String.format("%s: Roller mode is now - %s", getSubsystem( ), mode));
-      m_rollerMotor.set(output);
+      DataLogManager.log(String.format("%s: Claw mode is now - %s", getSubsystem( ), mode));
+      m_clawMotor.set(output);
     }
   }
 
   /****************************************************************************
    * 
-   * Set rotary motor to stopped
+   * Set wrist rotary motor to stopped
    */
-  private void setRotaryStopped( )
+  private void setWristStopped( )
   {
-    DataLogManager.log(String.format("%s: Rotary motor now STOPPED", getSubsystem( )));
-    m_rotaryMotor.setControl(m_requestVolts.withOutput(0.0));
+    DataLogManager.log(String.format("%s: Wrist motor now STOPPED", getSubsystem( )));
+    m_wristMotor.setControl(m_requestVolts.withOutput(0.0));
   }
 
   /****************************************************************************
@@ -551,7 +553,7 @@ public class Wrist extends SubsystemBase
    */
   private boolean isMoveValid(double degrees)
   {
-    return (degrees >= kRotaryAngleMin) && (degrees <= kRotaryAngleMax);
+    return (degrees >= kWristAngleMin) && (degrees <= kWristAngleMax);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -571,123 +573,123 @@ public class Wrist extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return wrist angle for retracted state
+   * Return manipulator angle for retracted state
    * 
    * @return retracted state angle
    */
-  public double getIntakeRetracted( )
+  public double getManipulatorRetracted( )
   {
-    return kRotaryAngleRetracted;
+    return kWristAngleRetracted;
   }
 
   /****************************************************************************
    * 
-   * Return wrist angle for deployed state
+   * Return manipulator angle for deployed state
    * 
    * @return deployed state angle
    */
-  public double getWristDeployed( )
+  public double getManipulatorDeployed( )
   {
-    return kRotaryAngleDeployed;
+    return kWristAngleDeployed;
   }
 
   /****************************************************************************
    * 
-   * Return wrist angle for stowed state
+   * Return manipulator angle for stowed state
    * 
    * @return deployed state angle
    */
-  public double getWristStowed( )
+  public double getManipulatorStowed( )
   {
-    return kRotaryStowed;
+    return kWristAngleStowed;
   }
 
   /****************************************************************************
    * 
-   * Return wrist angle for coral level 1 state
+   * Return manipulator angle for coral level 1 state
    * 
    * @return deployed state angle
    */
-  public double getWristCoralL1( )
+  public double getManipulatorCoralL1( )
   {
-    return kRotaryCoralL1;
+    return kWristAngleCoralL1;
   }
 
   /****************************************************************************
    * 
-   * Return wrist angle for coral level 2 and 3 state
+   * Return manipulator angle for coral level 2 and 3 state
    * 
    * @return deployed state angle
    */
-  public double getWristCoralL23( )
+  public double getManipulatorCoralL23( )
   {
-    return kRotaryCoralL23;
+    return kWristAngleCoralL23;
   }
 
   /****************************************************************************
    * 
-   * Return wrist angle for coral level 4 state
+   * Return manipulator angle for coral level 4 state
    * 
    * @return deployed state angle
    */
-  public double getWristCoralL4( )
+  public double getManipulatorCoralL4( )
   {
-    return kRotaryCoralL4;
+    return kWristAngleCoralL4;
   }
 
   /****************************************************************************
    * 
-   * Return wrist angle for coral station state
+   * Return manipulator angle for coral station state
    * 
    * @return deployed state angle
    */
-  public double getWristCoralStation( )
+  public double getManipulatorCoralStation( )
   {
-    return kRotaryCoralStation;
+    return kWristAngleCoralStation;
   }
 
   /****************************************************************************
    * 
-   * Return wrist angle for algae level 23 state
+   * Return manipulator angle for algae level 23 state
    * 
    * @return deployed state angle
    */
-  public double getWristAlgaeL23( )
+  public double getManipulatorAlgaeL23( )
   {
-    return kRotaryAlgaeL23;
+    return kWristAngleAlgaeL23;
   }
 
   /****************************************************************************
    * 
-   * Return wrist angle for algae level 34 state
+   * Return manipulator angle for algae level 34 state
    * 
    * @return deployed state angle
    */
-  public double getWristAlgaeL34( )
+  public double getManipulatorAlgaeL34( )
   {
-    return kRotaryAlgaeL34;
+    return kWristAngleAlgaeL34;
   }
 
   /****************************************************************************
    * 
-   * Return wrist angle for algae processor state
+   * Return manipulator angle for algae processor state
    * 
    * @return deployed state angle
    */
-  public double getWristAlgaeProcessor( )
+  public double getManipulatorAlgaeProcessor( )
   {
-    return kRotaryAlgaeProcessor;
+    return kWristAngleAlgaeProcessor;
   }
 
   /****************************************************************************
    * 
-   * Return wrist angle for algae net state
+   * Return manipulator angle for algae net state
    * 
    * @return deployed state angle
    */
-  public double getWristAlgaeNet( )
+  public double getManipulatorAlgaeNet( )
   {
-    return kRotaryAlgaeNet;
+    return kWristAngleAlgaeNet;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -716,14 +718,14 @@ public class Wrist extends SubsystemBase
    * Create motion magic base command
    * 
    * @param mode
-   *          roller mode to apply
+   *          claw mode to apply
    * @param position
-   *          double supplier that provides the target distance
+   *          double supplier that provides the desired position
    * @param holdPosition
    *          boolen to indicate whether the command ever finishes
-   * @return continuous command that runs climber motors
+   * @return continuous command that runs wrist rotary motor
    */
-  private Command getMMPositionCommand(WRRollerMode mode, DoubleSupplier position, boolean holdPosition)
+  private Command getMMPositionCommand(ClawMode mode, DoubleSupplier position, boolean holdPosition)
   {
     return new FunctionalCommand(                                               // Command with all phases declared
         ( ) -> moveToPositionInit(mode, position.getAsDouble( ), holdPosition), // Init method
@@ -739,12 +741,12 @@ public class Wrist extends SubsystemBase
    * Create motion magic move to position command
    * 
    * @param mode
-   *          roller mode to apply
+   *          claw mode to apply
    * @param position
-   *          double supplier that provides the target distance value
-   * @return continuous command that runs climber motors
+   *          double supplier that provides the desired position
+   * @return continuous command that runs wrist rotary motor
    */
-  public Command getMoveToPositionCommand(WRRollerMode mode, DoubleSupplier position)
+  public Command getMoveToPositionCommand(ClawMode mode, DoubleSupplier position)
   {
     return getMMPositionCommand(mode, position, false).withName(kSubsystemName + "MMMoveToPosition");
   }
@@ -754,12 +756,12 @@ public class Wrist extends SubsystemBase
    * Create motion magic hold position command
    * 
    * @param mode
-   *          roller mode to apply
+   *          claw mode to apply
    * @param position
-   *          double supplier that provides the target distance value
-   * @return continuous command that runs climber motors
+   *          double supplier that provides the desired position
+   * @return continuous command that runs wrist rotary motor
    */
-  public Command getHoldPositionCommand(WRRollerMode mode, DoubleSupplier position)
+  public Command getHoldPositionCommand(ClawMode mode, DoubleSupplier position)
   {
     return getMMPositionCommand(mode, position, true).withName(kSubsystemName + "MMHoldPosition");
   }
