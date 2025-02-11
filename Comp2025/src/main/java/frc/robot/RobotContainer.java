@@ -112,8 +112,6 @@ public class RobotContainer
   {
     AUTOSTOP,         // AutoStop - sit still, do nothing
     AUTOLEAVE,        // Leave starting zone avoiding spikes
-    AUTOPRELOADSCORE, // Score preload at a branch
-    AUTOSCORE4,       // Score preload at a branch and score 3 more
     AUTOTEST          // Run a selected test auto
   }
 
@@ -122,9 +120,9 @@ public class RobotContainer
    */
   private enum StartPose
   {
-    POSE1, // Starting pose 1 - blue left, red right (driver perspective)
-    POSE2, // Starting pose 2 - blue/red middle (driver perspective)
-    POSE3  // Starting pose 3 - blue right, red left (driver perspective)
+    START1, // Starting pose 1 - blue left, red right (driver perspective)
+    START2, // Starting pose 2 - blue/red middle (driver perspective)
+    START3  // Starting pose 3 - blue right, red left (driver perspective)
   }
 
   /** Dashboard chooser for auto option selection */
@@ -141,25 +139,17 @@ public class RobotContainer
    *          the auto filename associated with the key
    */
   private final HashMap<String, String> autoMap        = new HashMap<>(Map.ofEntries( //
-      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE1.toString( ), "Start1_Stop"),
-      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE2.toString( ), "Start2_Stop"),
-      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE3.toString( ), "Start3_Stop"),
+      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.START1.toString( ), "Start1_Stop"),
+      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.START2.toString( ), "Start2_Stop"),
+      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.START3.toString( ), "Start3_Stop"),
 
-      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE1.toString( ), "Start1_L1"),
-      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE2.toString( ), "Start2_L2"),
-      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE3.toString( ), "Start3_L3"),
+      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.START1.toString( ), "Start1_L1"),
+      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.START2.toString( ), "Start2_L2"),
+      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.START3.toString( ), "Start3_L3"),
 
-      Map.entry(AutoChooser.AUTOPRELOADSCORE.toString( ) + StartPose.POSE1.toString( ), "Pos1_P1_S1_P1"),
-      Map.entry(AutoChooser.AUTOPRELOADSCORE.toString( ) + StartPose.POSE2.toString( ), "Pos2_P2_S2_P2"),
-      Map.entry(AutoChooser.AUTOPRELOADSCORE.toString( ) + StartPose.POSE3.toString( ), "Pos3_P3_S3_P3"),
-
-      Map.entry(AutoChooser.AUTOSCORE4.toString( ) + StartPose.POSE1.toString( ), "Pos1_P1_S1_P1_S2_P2_S3_P3"),
-      Map.entry(AutoChooser.AUTOSCORE4.toString( ) + StartPose.POSE2.toString( ), "Pos2_P1_S1_P1_S2_P2_S3_P3"),
-      Map.entry(AutoChooser.AUTOSCORE4.toString( ) + StartPose.POSE3.toString( ), "Pos3_P3_S3_P3_S2_P2_S1_P1"),
-
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE1.toString( ), "Start1_Test1"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE2.toString( ), "Start2_Test2"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE3.toString( ), "Start3_Test3") //
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START1.toString( ), "Start1_Test1"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START2.toString( ), "Start2_Test2"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_Test3") //
   ));
 
   /****************************************************************************
@@ -195,14 +185,12 @@ public class RobotContainer
     // Configure autonomous sendable chooser
     m_autoChooser.setDefaultOption("0 - AutoStop", AutoChooser.AUTOSTOP);
     m_autoChooser.addOption("1 - AutoLeave", AutoChooser.AUTOLEAVE);
-    m_autoChooser.addOption("2 - AutoPreloadScore", AutoChooser.AUTOPRELOADSCORE);
-    m_autoChooser.addOption("3 - AutoScore4", AutoChooser.AUTOSCORE4);
-    m_autoChooser.addOption("4 - AutoTestPath", AutoChooser.AUTOTEST);
+    m_autoChooser.addOption("9 - AutoTestPath", AutoChooser.AUTOTEST);
 
     // Configure starting pose sendable chooser
-    m_startChooser.setDefaultOption("POSE1", StartPose.POSE1);
-    m_startChooser.addOption("POSE2", StartPose.POSE2);
-    m_startChooser.addOption("POSE3", StartPose.POSE3);
+    m_startChooser.setDefaultOption("START1", StartPose.START1);
+    m_startChooser.addOption("START2", StartPose.START2);
+    m_startChooser.addOption("START3", StartPose.START3);
 
     SmartDashboard.putData("AutoChooserRun", new InstantCommand(( ) -> getAutonomousCommand( )));
 
@@ -445,12 +433,6 @@ public class RobotContainer
         break;
       case AUTOLEAVE :
         m_autoCommand = new AutoLeave(ppPathList, m_drivetrain, m_led);
-        break;
-      case AUTOPRELOADSCORE :
-        // m_autoCommand = new AutoPreloadScore(ppPathList, m_drivetrain, m_intake, m_shooter, m_led, m_hid);
-        break;
-      case AUTOSCORE4 :
-        // m_autoCommand = new AutoScore4(ppPathList, m_drivetrain, m_intake, m_shooter, m_led, m_hid);
         break;
       case AUTOTEST :
         // m_autoCommand = new AutoTest(ppPathList, m_drivetrain, m_led);

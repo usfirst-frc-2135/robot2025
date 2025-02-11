@@ -10,7 +10,7 @@
     "AutoStop",
     "AutoTest"
   ],
-  "defaultMaxVel": 3.83,
+  "defaultMaxVel": 3.4974,
   "defaultMaxAccel": 3.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
