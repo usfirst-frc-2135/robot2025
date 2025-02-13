@@ -92,7 +92,7 @@ public class Constants
   /****************************************************************************
    * Manipulator subsystem constants
    ****************************************************************************/
-  public static final class CRConsts
+  public static final class CRConsts // Claw roller
   {
     /** Manipulator claw roller modes */
     public enum ClawMode
