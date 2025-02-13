@@ -175,6 +175,20 @@ public class RobotContainer
 
   /****************************************************************************
    * 
+   * Callbacks used by dashboard autonomous choosers to reload when an onChange event occurs
+   */
+  public void updateAutoChooserCallback(AutoChooser option)
+  {
+    Robot.reloadAutomousCommand(option.toString( ));
+  }
+
+  public void updateStartChooserCallback(StartPose option)
+  {
+    Robot.reloadAutomousCommand(option.toString( ));
+  }
+
+  /****************************************************************************
+   * 
    * Create general dashboard widgets for commands and subsystems
    */
   private void addDashboardWidgets( )
@@ -188,11 +202,13 @@ public class RobotContainer
     m_autoChooser.setDefaultOption("0 - AutoStop", AutoChooser.AUTOSTOP);
     m_autoChooser.addOption("1 - AutoLeave", AutoChooser.AUTOLEAVE);
     m_autoChooser.addOption("9 - AutoTestPath", AutoChooser.AUTOTEST);
+    m_autoChooser.onChange(this::updateAutoChooserCallback);
 
     // Configure starting pose sendable chooser
     m_startChooser.setDefaultOption("START1", StartPose.START1);
     m_startChooser.addOption("START2", StartPose.START2);
     m_startChooser.addOption("START3", StartPose.START3);
+    m_startChooser.onChange(this::updateStartChooserCallback);
 
     SmartDashboard.putData("AutoChooserRun", new InstantCommand(( ) -> getAutonomousCommand( )));
 
