@@ -68,21 +68,21 @@ import frc.robot.lib.phoenix.PhoenixUtil6;
 public class Manipulator extends SubsystemBase
 {
   // Constants
-  private static final String  kSubsystemName             = "Manipulator";
+  private static final String  kSubsystemName         = "Manipulator";
 
-  private static final double  kAlgaeClawSpeedAcquire     = 0.5;
-  private static final double  kAlgaeClawSpeedExpel       = -0.4;
-  private static final double  kAlgaeClawSpeedToShoot     = -1.0;
-  private static final double  kAlgaeClawSpeedToProcessor = -0.4;
-  private static final double  kAlgaeClawSpeedHold        = 0.1;
+  private static final double  kAlgaeSpeedAcquire     = 0.5;
+  private static final double  kAlgaeSpeedExpel       = -0.4;
+  private static final double  kAlgaeSpeedToShoot     = -1.0;
+  private static final double  kAlgaeSpeedToProcessor = -0.4;
+  private static final double  kAlgaeSpeedHold        = 0.1;
 
-  private static final double  kCoralClawSpeedAcquire     = 0.5;
-  private static final double  kCoralClawSpeedExpel       = -0.5;
+  private static final double  kCoralSpeedAcquire     = 0.5;
+  private static final double  kCoralSpeedExpel       = -0.5;
 
-  private static final double  kWristGearRatio            = 49.23;
-  private static final double  kWristLengthMeters         = Units.inchesToMeters(15); // Simulation
-  private static final double  kWristWeightKg             = Units.lbsToKilograms(20.0);  // Simulation
-  private static final Voltage kWristManualVolts          = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
+  private static final double  kWristGearRatio        = 49.23;
+  private static final double  kWristLengthMeters     = Units.inchesToMeters(15); // Simulation
+  private static final double  kWristWeightKg         = Units.lbsToKilograms(20.0);  // Simulation
+  private static final Voltage kWristManualVolts      = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
 
   /** Wrist rotary motor manual move parameters */
   private enum WristMode
@@ -526,25 +526,25 @@ public class Manipulator extends SubsystemBase
         default :
           DataLogManager.log(String.format("%s: Claw mode is invalid: %s", getSubsystem( ), mode));
         case STOP :
-          output = (m_algaeDetected) ? kAlgaeClawSpeedHold : 0.0;
+          output = (m_algaeDetected) ? kAlgaeSpeedHold : 0.0;
           break;
         case ALGAEACQUIRE :
-          output = kAlgaeClawSpeedAcquire;
+          output = kAlgaeSpeedAcquire;
           break;
         case ALGAEEXPEL :
-          output = kAlgaeClawSpeedExpel;
+          output = kAlgaeSpeedExpel;
           break;
         case ALGAESHOOT :
-          output = kAlgaeClawSpeedToShoot;
+          output = kAlgaeSpeedToShoot;
           break;
         case ALGAEPROCESSOR :
-          output = kAlgaeClawSpeedToProcessor;
+          output = kAlgaeSpeedToProcessor;
           break;
         case CORALACQUIRE :
-          output = kCoralClawSpeedAcquire;
+          output = kCoralSpeedAcquire;
           break;
         case CORALEXPEL :
-          output = kCoralClawSpeedExpel;
+          output = kCoralSpeedExpel;
           break;
       }
       DataLogManager.log(String.format("%s: Claw mode is now - %s", getSubsystem( ), mode));
