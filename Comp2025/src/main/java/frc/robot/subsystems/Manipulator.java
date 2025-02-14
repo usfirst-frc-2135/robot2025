@@ -115,8 +115,8 @@ public class Manipulator extends SubsystemBase
   private static final double       kWristAngleAlgaeProcessor = 0;
   private static final double       kWristAngleAlgaeNet       = 0;
 
-  private static final double       kWristAngleMin            = kWristAngleRetracted - 3.0;
-  private static final double       kWristAngleMax            = kWristAngleAlgaeReef + 3.0;
+  private static final double       kWristAngleMin            = kWristAngleRetracted;
+  private static final double       kWristAngleMax            = kWristAngleAlgaeReef;
 
   // Device objects
   private final TalonFX             m_wristMotor              = new TalonFX(Ports.kCANID_WristRotary);
