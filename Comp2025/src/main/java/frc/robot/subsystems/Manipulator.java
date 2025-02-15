@@ -99,6 +99,7 @@ public class Manipulator extends SubsystemBase
   private static final double       kMMDebounceTime           = 0.060;    // Seconds to debounce a final position check
   private static final double       kMMMoveTimeout            = 1.0;      // Seconds allowed for a Motion Magic movement
   private static final double       kAlgaeDebounceTime        = 0.045;    // Seconds to debounce detected algae sensor
+  private static final double       kCoralDebounceTime        = 0.045;
 
   // Wrist rotary angles - Motion Magic move parameters - TODO: Update for 2025 Reefscape needs
   //    Measured hardstops and pre-defined positions:
@@ -157,8 +158,9 @@ public class Manipulator extends SubsystemBase
   // Claw variables
   private boolean                   m_clawMotorValid;                 // Health indicator for motor 
   private Debouncer                 m_algaeDebouncer          = new Debouncer(kAlgaeDebounceTime, DebounceType.kBoth);
+  private Debouncer                 m_coralDebouncer          = new Debouncer(kCoralDebounceTime, DebounceType.kBoth);
   private boolean                   m_algaeDetected;                  // Detection state of algae in claws
-  private double                    m_coralDistance           = m_coralInClaw.getDistance( ).getValueAsDouble( );
+  private boolean                   m_coralDetected;
 
   // Wrist variables
   private boolean                   m_wristMotorValid;                // Health indicator for motor 
@@ -185,7 +187,7 @@ public class Manipulator extends SubsystemBase
   private DoublePublisher           m_ccDegreesPub;
   private DoublePublisher           m_targetDegreesPub;
   private BooleanPublisher          m_algaeDetectedPub;
-  private DoublePublisher           m_coralDetectedPub;
+  private BooleanPublisher          m_coralDetectedPub;
 
   /****************************************************************************
    * 
@@ -260,6 +262,7 @@ public class Manipulator extends SubsystemBase
     m_currentDegrees = Units.rotationsToDegrees((m_wristMotorValid) ? m_wristMotorPosition.getValue( ).in(Rotations) : 0.0);
     m_ccDegrees = Units.rotationsToDegrees((m_canCoderValid) ? m_ccPosition.getValue( ).in(Rotations) : 0.0);
     m_algaeDetected = m_algaeDebouncer.calculate(m_algaeInClaw.get( ));
+    m_coralDetected = m_coralDebouncer.calculate(m_coralInClaw.getIsDetected( ).getValue( ));
 
     // // Update network table publishers
     m_clawSpeedPub.set(m_clawMotor.get( ));
@@ -269,7 +272,7 @@ public class Manipulator extends SubsystemBase
     m_ccDegreesPub.set(m_ccDegrees);
     m_targetDegreesPub.set(m_targetDegrees);
     m_algaeDetectedPub.set(m_algaeDetected);
-    m_coralDetectedPub.set(m_coralDistance);
+    m_coralDetectedPub.set(m_coralDetected);
   }
 
   /****************************************************************************
@@ -319,7 +322,7 @@ public class Manipulator extends SubsystemBase
     m_wristDegreePub = table.getDoubleTopic("wristDegrees").publish( );
     m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
     m_algaeDetectedPub = table.getBooleanTopic("algaeDetected").publish( );
-    m_coralDetectedPub = table.getDoubleTopic("coralDetected").publish( );
+    m_coralDetectedPub = table.getBooleanTopic("coralDetected").publish( );
     m_targetDegreesPub = table.getDoubleTopic("targetDegrees").publish( );
 
     SmartDashboard.putData("MNWristMech", m_wristRotaryMech);
@@ -722,9 +725,9 @@ public class Manipulator extends SubsystemBase
    * 
    * @return true if note detected
    */
-  public double coralDistanceInClaw( )
+  public boolean coralDistanceInClaw( )
   {
-    return m_coralDistance;
+    return m_coralDetected;
   }
 
   ////////////////////////////////////////////////////////////////////////////
