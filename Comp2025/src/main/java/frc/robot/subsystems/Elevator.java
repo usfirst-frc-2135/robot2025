@@ -64,7 +64,10 @@ public class Elevator extends SubsystemBase
   // Constants
   private static final String  kSubsystemName        = "Elevator";
   private static final double  kGearRatio            = 9.706;            // Gear reduction
-  private static final double  kHeightMetersMax      = Units.inchesToMeters(29.69); // Simulation
+  private static final double  kHeightInchesMin      = 0.0;             // Minimum allowable height
+  private static final double  kHeightInchesMax      = 29.69;           // Maximum allowable height
+  private static final double  kSimHeightMetersMin   = Units.inchesToMeters(kHeightInchesMin - 0.1);
+  private static final double  kSimHeightMetersMax   = Units.inchesToMeters(kHeightInchesMax + 0.1);
   private static final double  kCarriageMassKg       = Units.lbsToKilograms(20.0);     // Simulation
   private static final double  kDrumDiameterInches   = 1.981;           // Drum diameter in inches
   private static final double  kDrumRadiusMeters     = Units.inchesToMeters(kDrumDiameterInches) / 2;
@@ -93,9 +96,6 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightAlgaeNet       = 25.0;            // By definition - at L34 for scoring algae in net
   private static final double  kHeightAlgaeProcessor = 0.0;             // By definition - at scoring algae in processor
 
-  private static final double  kHeightInchesMin      = 0.0;             // Minimum allowable height
-  private static final double  kHeightInchesMax      = 29.69;           // Maximum allowable height
-
   /** Elevator manual move parameters */
   private enum JoystickMode
   {
@@ -119,14 +119,13 @@ public class Elevator extends SubsystemBase
 
   // Simulation objects
   private final TalonFXSimState       m_motorSim          = m_leftMotor.getSimState( );
-  private final ElevatorSim           m_elevSim           =
-      new ElevatorSim(DCMotor.getKrakenX60Foc(2), kGearRatio, kCarriageMassKg, kDrumRadiusMeters,
-          Units.inchesToMeters(kHeightInchesMin), Units.inchesToMeters(kHeightInchesMax), true, 0.0);
+  private final ElevatorSim           m_elevSim           = new ElevatorSim(DCMotor.getKrakenX60Foc(2), kGearRatio,
+      kCarriageMassKg, kDrumRadiusMeters, kSimHeightMetersMin, kSimHeightMetersMax, true, 0.0);
 
   // Mechanism2d
   private final Mechanism2d           m_elevatorMech      = new Mechanism2d(1.0, 1.0);
   private final MechanismLigament2d   m_mechLigament      = m_elevatorMech.getRoot("Linear", 0.5, 0.1)
-      .append(new MechanismLigament2d(kSubsystemName, kHeightMetersMax, 90.0, 6, new Color8Bit(Color.kRed)));
+      .append(new MechanismLigament2d(kSubsystemName, kSimHeightMetersMax, 90.0, 6, new Color8Bit(Color.kRed)));
 
   // CTRE Status signals for sensors
   private final StatusSignal<Angle>   m_leftPosition;     // Default 4Hz (250ms)
@@ -371,10 +370,18 @@ public class Elevator extends SubsystemBase
 
     axisValue = MathUtil.applyDeadband(axisValue, Constants.kStickDeadband);
 
-    if ((axisValue < 0.0) && (m_leftHeight > kHeightInchesMin))
+    if ((axisValue < 0.0) && (m_leftHeight >= kHeightInchesMin))
+    {
       newMode = JoystickMode.DOWN;
-    else if ((axisValue > 0.0) && (m_leftHeight < kHeightInchesMax))
+      DataLogManager
+          .log(String.format("Joystick Down -- Axis: %f Position: %.1f Min: %.2f", axisValue, m_leftHeight, kHeightInchesMin));
+    }
+    else if ((axisValue > 0.0) && (m_leftHeight <= kHeightInchesMax))
+    {
       newMode = JoystickMode.UP;
+      DataLogManager
+          .log(String.format("Joystick Up -- Axis: %f Position: %.1f Max: %.2f", axisValue, m_leftHeight, kHeightInchesMax));
+    }
     else
     {
       rangeLimited = true;
