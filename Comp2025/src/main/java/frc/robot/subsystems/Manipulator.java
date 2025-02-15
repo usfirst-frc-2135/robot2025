@@ -100,6 +100,7 @@ public class Manipulator extends SubsystemBase
   private static final double       kMMDebounceTime           = 0.060;    // Seconds to debounce a final position check
   private static final double       kMMMoveTimeout            = 1.0;      // Seconds allowed for a Motion Magic movement
   private static final double       kCoralDebounceTime        = 0.045;
+  private static final double       kAlgaeDebounceTime        = 0.045;
 
   // Wrist rotary angles - Motion Magic move parameters - TODO: Update for 2025 Reefscape needs
   //    Measured hardstops and pre-defined positions:
@@ -128,6 +129,7 @@ public class Manipulator extends SubsystemBase
   private final CANcoder            m_wristCANcoder           = new CANcoder(Ports.kCANID_WristCANcoder);
   private final TalonFX             m_clawMotor               = new TalonFX(Ports.kCANID_ClawRoller);
   private final CANrange            m_coralInClaw             = new CANrange(Ports.kCANID_CoralDetector);
+  private final CANrange            m_algaeInClaw             = new CANrange(Ports.kCANID_AlgaeDetector);
 
   // Alerts
   private final Alert               m_rotaryAlert             =
@@ -141,6 +143,7 @@ public class Manipulator extends SubsystemBase
   private final TalonFXSimState     m_wristMotorSim           = m_wristMotor.getSimState( );
   private final CANcoderSimState    m_wristCANcoderSim        = m_wristCANcoder.getSimState( );
   private final CANrangeSimState    m_coralCANrangeSim        = m_coralInClaw.getSimState( );
+  private final CANrangeSimState    m_algaeCANrangeSim        = m_algaeInClaw.getSimState( );
   private final SingleJointedArmSim m_armSim                  = new SingleJointedArmSim(DCMotor.getFalcon500(1), kWristGearRatio,
       SingleJointedArmSim.estimateMOI(kWristLengthMeters, kWristWeightKg), kWristLengthMeters, -Math.PI, Math.PI, false, 0.0);
 
@@ -158,7 +161,9 @@ public class Manipulator extends SubsystemBase
   // Claw variables
   private boolean                   m_clawMotorValid;                 // Health indicator for motor 
   private Debouncer                 m_coralDebouncer          = new Debouncer(kCoralDebounceTime, DebounceType.kBoth);
+  private Debouncer                 m_algaeDebouncer          = new Debouncer(kAlgaeDebounceTime, DebounceType.kBoth);
   private boolean                   m_coralDetected;
+  private boolean                   m_algaeDetected;
 
   // Wrist variables
   private boolean                   m_wristMotorValid;                // Health indicator for motor 
@@ -185,6 +190,7 @@ public class Manipulator extends SubsystemBase
   private DoublePublisher           m_ccDegreesPub;
   private DoublePublisher           m_targetDegreesPub;
   private BooleanPublisher          m_coralDetectedPub;
+  private BooleanPublisher          m_algaeDetectedPub;
 
   /****************************************************************************
    * 
@@ -208,6 +214,7 @@ public class Manipulator extends SubsystemBase
 
     var CANrangeConfig = new CANrangeConfiguration( );
     m_coralInClaw.getConfigurator( ).apply(CANrangeConfig);
+    m_algaeInClaw.getConfigurator( ).apply(CANrangeConfig);
 
     m_clawAlert.set(!m_clawMotorValid);
     m_rotaryAlert.set(!m_wristMotorValid);
@@ -236,6 +243,8 @@ public class Manipulator extends SubsystemBase
     BaseStatusSignal.setUpdateFrequencyForAll(10, m_wristSupplyCur, m_wristStatorCur);
     BaseStatusSignal.setUpdateFrequencyForAll(50, m_coralInClaw.getDistance( ), m_coralInClaw.getSignalStrength( ),
         m_coralInClaw.getIsDetected( ));
+    BaseStatusSignal.setUpdateFrequencyForAll(50, m_algaeInClaw.getDistance( ), m_algaeInClaw.getSignalStrength( ),
+        m_algaeInClaw.getIsDetected( ));
 
     DataLogManager
         .log(String.format("%s: Update (Hz) wristPosition: %.1f wristSupplyCur: %.1f wristStatorCur: %.1f canCoderPosition: %.1f",
@@ -259,6 +268,7 @@ public class Manipulator extends SubsystemBase
     m_currentDegrees = Units.rotationsToDegrees((m_wristMotorValid) ? m_wristMotorPosition.getValue( ).in(Rotations) : 0.0);
     m_ccDegrees = Units.rotationsToDegrees((m_canCoderValid) ? m_ccPosition.getValue( ).in(Rotations) : 0.0);
     m_coralDetected = m_coralDebouncer.calculate(m_coralInClaw.getIsDetected( ).getValue( ));
+    m_algaeDetected = m_algaeDebouncer.calculate(m_algaeInClaw.getIsDetected( ).getValue( ));
 
     // // Update network table publishers
     m_clawSpeedPub.set(m_clawMotor.get( ));
@@ -268,6 +278,7 @@ public class Manipulator extends SubsystemBase
     m_ccDegreesPub.set(m_ccDegrees);
     m_targetDegreesPub.set(m_targetDegrees);
     m_coralDetectedPub.set(m_coralDetected);
+    m_algaeDetectedPub.set(m_algaeDetected);
   }
 
   /****************************************************************************
@@ -283,6 +294,7 @@ public class Manipulator extends SubsystemBase
     m_wristMotorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
     m_wristCANcoderSim.setSupplyVoltage(RobotController.getInputVoltage( ));
     m_coralCANrangeSim.setSupplyVoltage(RobotController.getInputVoltage( ));
+    m_algaeCANrangeSim.setSupplyVoltage(RobotController.getInputVoltage( ));
     m_armSim.setInputVoltage(m_wristMotorSim.getMotorVoltage( ));
 
     // update for 20 msec loop
@@ -318,6 +330,7 @@ public class Manipulator extends SubsystemBase
     m_wristDegreePub = table.getDoubleTopic("wristDegrees").publish( );
     m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
     m_coralDetectedPub = table.getBooleanTopic("coralDetected").publish( );
+    m_algaeDetectedPub = table.getBooleanTopic("algaeDetected").publish( );
     m_targetDegreesPub = table.getDoubleTopic("targetDegrees").publish( );
 
     SmartDashboard.putData("MNWristMech", m_wristRotaryMech);
