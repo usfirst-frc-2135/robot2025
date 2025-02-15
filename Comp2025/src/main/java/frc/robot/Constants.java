@@ -4,6 +4,8 @@ package frc.robot;
 import java.util.Collections;
 import java.util.List;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -92,17 +94,21 @@ public class Constants
   /****************************************************************************
    * Manipulator subsystem constants
    ****************************************************************************/
-  public static final class CRConsts
+  public static final class CRConsts // Claw roller
   {
     /** Manipulator claw roller modes */
     public enum ClawMode
     {
-      STOP,       // Stop all rotation
-      ACQUIRE,    // Speed for acquiring a game piece
-      EXPEL,      // Speed for expelling a game piece
-      SHOOT,      // Speed for shooting a game piece
-      PROCESSOR,  // Speed for putting game piece into processor 
-      HOLD        // Maintain existing speed setting
+      STOP,             // Stop all rotation
+      ALGAEACQUIRE,     // Speed for acquiring algae
+      ALGAEEXPEL,       // Speed for expelling algae
+      ALGAESHOOT,       // Speed for shooting algae
+      ALGAEPROCESSOR,   // Speed for putting algae into processor 
+      ALGAEHOLD,        // Maintain existing speed setting
+
+      CORALACQUIRE,     // Speed for acquiring coral
+      CORALEXPEL,       // Speed for expelling coral
+      CORALHOLD         // Maintain existing speed setting
     }
   }
 
@@ -111,30 +117,12 @@ public class Constants
    ****************************************************************************/
   public static final class VIConsts
   {
-    /** Field locations (poses) of AprilTags */
-    public static final List<Pose2d> kAprilTagPoses = Collections.unmodifiableList(List.of(           // TODO: update for 2025 from Field layout and marking diagram
-        new Pose2d(new Translation2d(0.0, 0.0), Rotation2d.fromDegrees(0)),               // AprilTag ID: 0 (invalid)
-        new Pose2d(new Translation2d(15.079472, 0.245872), Rotation2d.fromDegrees(120)),  // AprilTag ID: 1   - Blue source right
-        new Pose2d(new Translation2d(16.185134, 0.883666), Rotation2d.fromDegrees(120)),  // AprilTag ID: 2   - Blue source left
-        new Pose2d(new Translation2d(16.579342, 4.982718), Rotation2d.fromDegrees(180)),  // AprilTag ID: 3   - Red speaker right
-        new Pose2d(new Translation2d(16.579342, 5.547868), Rotation2d.fromDegrees(180)),  // AprilTag ID: 4   - Red speaker center
-        new Pose2d(new Translation2d(14.700758, 8.2042), Rotation2d.fromDegrees(270)),    // AprilTag ID: 5   - Red amp
-        new Pose2d(new Translation2d(1.8415, 8.20426), Rotation2d.fromDegrees(270)),      // AprilTag ID: 6   - Blue amp
-        new Pose2d(new Translation2d(-0.0381, 5.547868), Rotation2d.fromDegrees(0)),        // AprilTag ID: 7   - Blue speaker center
-        new Pose2d(new Translation2d(-0.0381, 4.982718), Rotation2d.fromDegrees(0)),        // AprilTag ID: 8   - Blue speker left
-        new Pose2d(new Translation2d(0.356108, 0.883666), Rotation2d.fromDegrees(60)),    // AprilTag ID: 9   - Red source right
-        new Pose2d(new Translation2d(1.461516, 0.245872), Rotation2d.fromDegrees(60)),    // AprilTag ID: 10  - Red source left
-        new Pose2d(new Translation2d(11.904726, 3.713226), Rotation2d.fromDegrees(300)),  // AprilTag ID: 11  - Red stage left
-        new Pose2d(new Translation2d(11.904726, 4.49834), Rotation2d.fromDegrees(60)),    // AprilTag ID: 12  - Red stage right
-        new Pose2d(new Translation2d(11.220196, 4.105148), Rotation2d.fromDegrees(180)),  // AprilTag ID: 13  - Red stage center
-        new Pose2d(new Translation2d(5.320792, 4.105148), Rotation2d.fromDegrees(0)),     // AprilTag ID: 14  - Blue stage center
-        new Pose2d(new Translation2d(4.641342, 4.49834), Rotation2d.fromDegrees(120)),    // AprilTag ID: 15  - Blue stage left
-        new Pose2d(new Translation2d(4.641342, 3.713226), Rotation2d.fromDegrees(240))    // AprilTag ID: 16  - Blue stage right
-    ));
+    public static final AprilTagFields      kGameField   = AprilTagFields.k2025Reefscape;
+    public static final AprilTagFieldLayout kATField     = AprilTagFieldLayout.loadField(kGameField);
 
     /** Destination field poses for the robot when using PathPlanner pathfinding */                   // TODO: update to desired 2025 field poses
-    public static final Pose2d       kSpeakerPose   = new Pose2d(2.17, 4.49, Rotation2d.fromDegrees(-26));
-    public static final Pose2d       kAmpPose       = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
+    public static final Pose2d              kSpeakerPose = new Pose2d(2.17, 4.49, Rotation2d.fromDegrees(-26));
+    public static final Pose2d              kAmpPose     = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
   }
 
   /****************************************************************************
