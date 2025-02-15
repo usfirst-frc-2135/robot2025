@@ -14,6 +14,7 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -203,6 +204,9 @@ public class Manipulator extends SubsystemBase
     m_canCoderValid = PhoenixUtil6.getInstance( ).canCoderInitialize6(m_wristCANcoder, kSubsystemName + "Wrist",
         CTREConfigs6.wristRotaryCANcoderConfig( ));
 
+    var CANrangeConfig = new CANrangeConfiguration( );
+    m_coralInClaw.getConfigurator( ).apply(CANrangeConfig);
+
     m_clawAlert.set(!m_clawMotorValid);
     m_rotaryAlert.set(!m_wristMotorValid);
     m_canCoderAlert.set(!m_canCoderValid);
@@ -228,6 +232,8 @@ public class Manipulator extends SubsystemBase
     StatusSignal<Current> m_wristSupplyCur = m_wristMotor.getSupplyCurrent( ); // Default 4Hz (250ms)
     StatusSignal<Current> m_wristStatorCur = m_wristMotor.getStatorCurrent( ); // Default 4Hz (250ms)
     BaseStatusSignal.setUpdateFrequencyForAll(10, m_wristSupplyCur, m_wristStatorCur);
+    BaseStatusSignal.setUpdateFrequencyForAll(50, m_coralInClaw.getDistance( ), m_coralInClaw.getSignalStrength( ),
+        m_coralInClaw.getIsDetected( ));
 
     DataLogManager
         .log(String.format("%s: Update (Hz) wristPosition: %.1f wristSupplyCur: %.1f wristStatorCur: %.1f canCoderPosition: %.1f",
