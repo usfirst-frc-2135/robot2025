@@ -106,17 +106,19 @@ public class Manipulator extends SubsystemBase
   private static final double       kWristAngleRetracted      = Robot.isComp( ) ? -176.3 : -176.8;  // One degree from hardstops
   // private static final double       kWristAngleDeployed       = Robot.isComp( ) ? 24.9 : 27.3;    Currently being kept for reference
 
-  private static final double       kWristAngleCoralL1        = 0;
-  private static final double       kWristAngleCoralL23       = 0;
-  private static final double       kWristAngleCoralL4        = 0;
-  private static final double       kWristAngleCoralStation   = 0;
+  private static final double       kWristAngleCoralL1        = 0.0;
+  private static final double       kWristAngleCoralL2        = 0.0;
+  private static final double       kWristAngleCoralL3        = 0.0;
+  private static final double       kWristAngleCoralL4        = 0.0;
+  private static final double       kWristAngleCoralStation   = 0.0;
 
-  private static final double       kWristAngleAlgaeReef      = 0;
-  private static final double       kWristAngleAlgaeProcessor = 0;
-  private static final double       kWristAngleAlgaeNet       = 0;
+  private static final double       kWristAngleAlgae23        = 0.0;
+  private static final double       kWristAngleAlgae34        = 0.0;
+  private static final double       kWristAngleAlgaeProcessor = 0.0;
+  private static final double       kWristAngleAlgaeNet       = 0.0;
 
-  private static final double       kWristAngleMin            = kWristAngleRetracted;
-  private static final double       kWristAngleMax            = kWristAngleAlgaeReef;
+  private static final double       kWristAngleMin            = 0.0; //TODO: Complete with Correct Angles 
+  private static final double       kWristAngleMax            = 0.0; // TODO: Complete with Correct Angles
 
   // Device objects
   private final TalonFX             m_wristMotor              = new TalonFX(Ports.kCANID_WristRotary);
@@ -324,10 +326,12 @@ public class Manipulator extends SubsystemBase
 
     SmartDashboard.putData("MNWristRetract", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorRetracted));
     SmartDashboard.putData("MNWristAngleCoral1", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL1));
-    SmartDashboard.putData("MNWristAngleCoral23", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL23));
+    SmartDashboard.putData("MNWristAngleCoral2", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL2));
+    SmartDashboard.putData("MNWristAngleCoral3", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL3));
     SmartDashboard.putData("MNWristAngleCoral4", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL4));
 
-    SmartDashboard.putData("MNWristAngleAlgaeReef", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorAlgaeReef));
+    SmartDashboard.putData("MNWristAngleAlgae23", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorAlgae23));
+    SmartDashboard.putData("MNWristAngleAlgae34", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorAlgae34));
     SmartDashboard.putData("MNWristAngleAlgaeNet", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorAlgaeNet));
     SmartDashboard.putData("MNWristAngleAlgaeProcessor",
         getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorAlgaeProcessor));
@@ -614,13 +618,24 @@ public class Manipulator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return manipulator angle for coral level 2 and 3 state
+   * Return manipulator angle for coral level 2 state
    * 
    * @return deployed state angle
    */
-  public double getManipulatorCoralL23( )
+  public double getManipulatorCoralL2( )
   {
-    return kWristAngleCoralL23;
+    return kWristAngleCoralL2;
+  }
+
+  /****************************************************************************
+   * 
+   * Return manipulator angle for coral level 3 state
+   * 
+   * @return deployed state angle
+   */
+  public double getManipulatorCoralL3( )
+  {
+    return kWristAngleCoralL3;
   }
 
   /****************************************************************************
@@ -651,9 +666,20 @@ public class Manipulator extends SubsystemBase
    * 
    * @return deployed state angle
    */
-  public double getManipulatorAlgaeReef( )
+  public double getManipulatorAlgae23( )
   {
-    return kWristAngleAlgaeReef;
+    return kWristAngleAlgae23;
+  }
+
+  /****************************************************************************
+   * 
+   * Return manipulator angle for algae level 34 state
+   * 
+   * @return deployed state angle
+   */
+  public double getManipulatorAlgae34( )
+  {
+    return kWristAngleAlgae34;
   }
 
   /****************************************************************************
