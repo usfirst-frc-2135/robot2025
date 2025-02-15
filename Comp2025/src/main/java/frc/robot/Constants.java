@@ -1,14 +1,10 @@
 
 package frc.robot;
 
-import java.util.Collections;
-import java.util.List;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * The Constants class provides a convenient place to hold robot-wide numerical or boolean
@@ -117,7 +113,7 @@ public class Constants
    ****************************************************************************/
   public static final class VIConsts
   {
-    public static final AprilTagFields      kGameField   = AprilTagFields.k2025Reefscape;
+    public static final AprilTagFields      kGameField   = AprilTagFields.k2025ReefscapeWelded;
     public static final AprilTagFieldLayout kATField     = AprilTagFieldLayout.loadField(kGameField);
 
     /** Destination field poses for the robot when using PathPlanner pathfinding */                   // TODO: update to desired 2025 field poses
