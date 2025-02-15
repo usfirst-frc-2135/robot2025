@@ -21,6 +21,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.CANcoderSimState;
+import com.ctre.phoenix6.sim.CANrangeSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
@@ -139,6 +140,7 @@ public class Manipulator extends SubsystemBase
   // Simulation objects
   private final TalonFXSimState     m_wristMotorSim           = m_wristMotor.getSimState( );
   private final CANcoderSimState    m_wristCANcoderSim        = m_wristCANcoder.getSimState( );
+  private final CANrangeSimState    m_coralCANrangeSim        = m_coralInClaw.getSimState( );
   private final SingleJointedArmSim m_armSim                  = new SingleJointedArmSim(DCMotor.getFalcon500(1), kWristGearRatio,
       SingleJointedArmSim.estimateMOI(kWristLengthMeters, kWristWeightKg), kWristLengthMeters, -Math.PI, Math.PI, false, 0.0);
 
@@ -280,6 +282,7 @@ public class Manipulator extends SubsystemBase
     // Set input motor voltage from the motor setting
     m_wristMotorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
     m_wristCANcoderSim.setSupplyVoltage(RobotController.getInputVoltage( ));
+    m_coralCANrangeSim.setSupplyVoltage(RobotController.getInputVoltage( ));
     m_armSim.setInputVoltage(m_wristMotorSim.getMotorVoltage( ));
 
     // update for 20 msec loop
