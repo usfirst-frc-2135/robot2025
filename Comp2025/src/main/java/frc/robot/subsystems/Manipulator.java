@@ -68,21 +68,21 @@ import frc.robot.lib.phoenix.PhoenixUtil6;
 public class Manipulator extends SubsystemBase
 {
   // Constants
-  private static final String  kSubsystemName         = "Manipulator";
+  private static final String  kSubsystemName       = "Manipulator";
 
-  private static final double  kAlgaeSpeedAcquire     = 0.5;
-  private static final double  kAlgaeSpeedExpel       = -0.4;
-  private static final double  kAlgaeSpeedToShoot     = -1.0;
-  private static final double  kAlgaeSpeedToProcessor = -0.4;
-  private static final double  kAlgaeSpeedHold        = 0.1;
+  private static final double  kAlgaeSpeedAcquire   = 0.5;
+  private static final double  kAlgaeSpeedExpel     = -0.4;
+  private static final double  kAlgaeSpeedShoot     = -1.0;
+  private static final double  kAlgaeSpeedProcessor = -0.4;
+  private static final double  kAlgaeSpeedHold      = 0.1;
 
-  private static final double  kCoralSpeedAcquire     = 0.5;
-  private static final double  kCoralSpeedExpel       = -0.5;
+  private static final double  kCoralSpeedAcquire   = 0.5;
+  private static final double  kCoralSpeedExpel     = -0.5;
 
-  private static final double  kWristGearRatio        = 49.23;
-  private static final double  kWristLengthMeters     = Units.inchesToMeters(15); // Simulation
-  private static final double  kWristWeightKg         = Units.lbsToKilograms(20.0);  // Simulation
-  private static final Voltage kWristManualVolts      = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
+  private static final double  kWristGearRatio      = 49.23;
+  private static final double  kWristLengthMeters   = Units.inchesToMeters(15); // Simulation
+  private static final double  kWristWeightKg       = Units.lbsToKilograms(20.0);  // Simulation
+  private static final Voltage kWristManualVolts    = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
 
   /** Wrist rotary motor manual move parameters */
   private enum WristMode
@@ -535,10 +535,10 @@ public class Manipulator extends SubsystemBase
           output = kAlgaeSpeedExpel;
           break;
         case ALGAESHOOT :
-          output = kAlgaeSpeedToShoot;
+          output = kAlgaeSpeedShoot;
           break;
         case ALGAEPROCESSOR :
-          output = kAlgaeSpeedToProcessor;
+          output = kAlgaeSpeedProcessor;
           break;
         case CORALACQUIRE :
           output = kCoralSpeedAcquire;
