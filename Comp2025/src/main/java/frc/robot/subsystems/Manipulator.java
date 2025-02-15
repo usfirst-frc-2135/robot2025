@@ -17,6 +17,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
@@ -122,6 +123,7 @@ public class Manipulator extends SubsystemBase
   private final CANcoder            m_wristCANcoder           = new CANcoder(Ports.kCANID_WristCANcoder);
   private final TalonFX             m_clawMotor               = new TalonFX(Ports.kCANID_ClawRoller);
   private final DigitalInput        m_algaeInClaw             = new DigitalInput(Ports.kDIO1_AlgaeInClaw);
+  private final CANrange            m_coralInClaw             = new CANrange(Ports.kCANID_CoralDetector);
 
   // Alerts
   private final Alert               m_rotaryAlert             =
@@ -152,6 +154,7 @@ public class Manipulator extends SubsystemBase
   private boolean                   m_clawMotorValid;                 // Health indicator for motor 
   private Debouncer                 m_algaeDebouncer          = new Debouncer(kAlgaeDebounceTime, DebounceType.kBoth);
   private boolean                   m_algaeDetected;                  // Detection state of algae in claws
+  private double                    m_coralDistance           = m_coralInClaw.getDistance( ).getValueAsDouble( );
 
   // Wrist variables
   private boolean                   m_wristMotorValid;                // Health indicator for motor 
@@ -178,6 +181,7 @@ public class Manipulator extends SubsystemBase
   private DoublePublisher           m_ccDegreesPub;
   private DoublePublisher           m_targetDegreesPub;
   private BooleanPublisher          m_algaeDetectedPub;
+  private DoublePublisher           m_coralDetectedPub;
 
   /****************************************************************************
    * 
@@ -256,6 +260,7 @@ public class Manipulator extends SubsystemBase
     m_ccDegreesPub.set(m_ccDegrees);
     m_targetDegreesPub.set(m_targetDegrees);
     m_algaeDetectedPub.set(m_algaeDetected);
+    m_coralDetectedPub.set(m_coralDistance);
   }
 
   /****************************************************************************
@@ -305,6 +310,7 @@ public class Manipulator extends SubsystemBase
     m_wristDegreePub = table.getDoubleTopic("wristDegrees").publish( );
     m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
     m_algaeDetectedPub = table.getBooleanTopic("algaeDetected").publish( );
+    m_coralDetectedPub = table.getDoubleTopic("coralDetected").publish( );
     m_targetDegreesPub = table.getDoubleTopic("targetDegrees").publish( );
 
     SmartDashboard.putData("MNWristMech", m_wristRotaryMech);
@@ -514,7 +520,7 @@ public class Manipulator extends SubsystemBase
         default :
           DataLogManager.log(String.format("%s: Claw mode is invalid: %s", getSubsystem( ), mode));
         case STOP :
-          output = (m_algaeDetected) ? kClawSpeedHold : 0.0;
+          output = 0.0;
           break;
         case ACQUIRE :
           output = kClawSpeedAcquire;
@@ -690,6 +696,17 @@ public class Manipulator extends SubsystemBase
   public double getManipulatorAlgaeNet( )
   {
     return kWristAngleAlgaeNet;
+  }
+
+  /****************************************************************************
+   * 
+   * Return coral sensor state
+   * 
+   * @return true if note detected
+   */
+  public double coralDistanceInClaw( )
+  {
+    return m_coralDistance;
   }
 
   ////////////////////////////////////////////////////////////////////////////
