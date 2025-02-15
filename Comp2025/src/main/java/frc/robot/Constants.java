@@ -92,17 +92,21 @@ public class Constants
   /****************************************************************************
    * Manipulator subsystem constants
    ****************************************************************************/
-  public static final class CRConsts
+  public static final class CRConsts // Claw roller
   {
     /** Manipulator claw roller modes */
     public enum ClawMode
     {
-      STOP,       // Stop all rotation
-      ACQUIRE,    // Speed for acquiring a game piece
-      EXPEL,      // Speed for expelling a game piece
-      SHOOT,      // Speed for shooting a game piece
-      PROCESSOR,  // Speed for putting game piece into processor 
-      HOLD        // Maintain existing speed setting
+      STOP,             // Stop all rotation
+      ALGAEACQUIRE,     // Speed for acquiring algae
+      ALGAEEXPEL,       // Speed for expelling algae
+      ALGAESHOOT,       // Speed for shooting algae
+      ALGAEPROCESSOR,   // Speed for putting algae into processor 
+      ALGAEHOLD,        // Maintain existing speed setting
+
+      CORALACQUIRE,     // Speed for acquiring coral
+      CORALEXPEL,       // Speed for expelling coral
+      CORALHOLD         // Maintain existing speed setting
     }
   }
 
