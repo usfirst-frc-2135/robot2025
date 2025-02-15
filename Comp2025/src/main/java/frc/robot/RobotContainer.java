@@ -22,6 +22,8 @@ import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -46,9 +48,9 @@ import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.Power;
 import frc.robot.subsystems.Telemetry;
 import frc.robot.subsystems.Vision;
@@ -163,6 +165,13 @@ public class RobotContainer
     Robot.timeMarker("robotContainer: before DAQ thread");
     // Swerve steer PID for facing swerve request
     facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);  // Swerve steer PID for facing swerve request
+    // Identify the field
+    DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField.toString( ),
+        VIConsts.kATField.getFieldWidth( ), VIConsts.kATField.getFieldLength( )));
+    for (int i = 1; i <= 22; i++)
+    {
+      DataLogManager.log(String.format("Field: ID %d %s", i, VIConsts.kATField.getTagPose(i)));
+    }
     // Add dashboard widgets for commands
     addDashboardWidgets( );           // Add dashboard widgets for commands
     // Configure game controller buttons
