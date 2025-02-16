@@ -1,5 +1,5 @@
 //
-// Elevator Subystem - lifts the robot to hang onto the chain
+// Elevator Subystem - lifts the game pieces to score and robot to hang onto the cage
 //
 package frc.robot.subsystems;
 
@@ -11,6 +11,7 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -62,10 +63,10 @@ public class Elevator extends SubsystemBase
 {
   // Constants
   private static final String  kSubsystemName        = "Elevator";
-  private static final double  kGearRatio            = 9.71;           // Gear reduction
+  private static final double  kGearRatio            = 9.706;            // Gear reduction
   private static final double  kHeightMetersMax      = Units.inchesToMeters(29.69); // Simulation
   private static final double  kCarriageMassKg       = Units.lbsToKilograms(20.0);     // Simulation
-  private static final double  kDrumDiameterInches   = 1.888;           // Drum diameter in inches
+  private static final double  kDrumDiameterInches   = 1.981;           // Drum diameter in inches
   private static final double  kDrumRadiusMeters     = Units.inchesToMeters(kDrumDiameterInches) / 2;
   private static final double  kRolloutRatio         = kDrumDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
   private static final Voltage kCalibrateSpeedVolts  = Volts.of(-1.0);  // Motor voltage during calibration
@@ -117,9 +118,9 @@ public class Elevator extends SubsystemBase
       new Alert(String.format("%s: Right motor init failed!", getSubsystem( )), AlertType.kError);
 
   // Simulation objects
-  private final TalonFXSimState       m_elevatorSim       = m_leftMotor.getSimState( );
+  private final TalonFXSimState       m_motorSim          = m_leftMotor.getSimState( );
   private final ElevatorSim           m_elevSim           =
-      new ElevatorSim(DCMotor.getKrakenX60Foc(1), kGearRatio, kCarriageMassKg, kDrumRadiusMeters,
+      new ElevatorSim(DCMotor.getKrakenX60Foc(2), kGearRatio, kCarriageMassKg, kDrumRadiusMeters,
           Units.inchesToMeters(kHeightInchesMin), Units.inchesToMeters(kHeightInchesMax), true, 0.0);
 
   // Mechanism2d
@@ -176,13 +177,15 @@ public class Elevator extends SubsystemBase
     setName(kSubsystemName);
     setSubsystem(kSubsystemName);
 
+    double min = Conversions.inchesToWinchRotations(kHeightInchesMin, kRolloutRatio);
+    double max = Conversions.inchesToWinchRotations(kHeightInchesMax, kRolloutRatio);
+    TalonFXConfiguration cfg;
+
     // Initialize motor objects
-    boolean leftValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_leftMotor, kSubsystemName + "Left",
-        CTREConfigs6.elevatorFXConfig(true, Conversions.inchesToWinchRotations(kHeightInchesMin, kRolloutRatio),
-            Conversions.inchesToWinchRotations(kHeightInchesMax, kRolloutRatio)));
-    boolean rightValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rightMotor, kSubsystemName + "Right",
-        CTREConfigs6.elevatorFXConfig(false, Conversions.inchesToWinchRotations(kHeightInchesMin, kRolloutRatio),
-            Conversions.inchesToWinchRotations(kHeightInchesMax, kRolloutRatio)));
+    cfg = CTREConfigs6.elevatorFXConfig(true, min, max);
+    boolean leftValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_leftMotor, kSubsystemName + "Left", cfg);
+    cfg = CTREConfigs6.elevatorFXConfig(false, min, max);
+    boolean rightValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_rightMotor, kSubsystemName + "Right", cfg);
     m_motorsValid = leftValid && rightValid;
 
     m_leftAlert.set(!leftValid);
@@ -213,7 +216,7 @@ public class Elevator extends SubsystemBase
     DataLogManager.log(String.format("%s: Initial position %.1f inches", getSubsystem( ), m_leftHeight));
 
     // Simulation object initialization
-    m_elevatorSim.Orientation = ChassisReference.CounterClockwise_Positive;
+    m_motorSim.Orientation = ChassisReference.Clockwise_Positive;
 
     initDashboard( );
     initialize( );
@@ -264,16 +267,16 @@ public class Elevator extends SubsystemBase
     // This method will be called once per scheduler run during simulation
 
     // Set input motor voltage from the motor setting
-    m_elevatorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
-    m_elevSim.setInput(m_elevatorSim.getMotorVoltage( ));
+    m_motorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
+    m_elevSim.setInput(m_motorSim.getMotorVoltage( ));
 
     // update for 20 msec loop
     m_elevSim.update(0.020);
 
     // Finally, we set our simulated encoder's readings and simulated battery voltage
-    m_elevatorSim.setRawRotorPosition(
+    m_motorSim.setRawRotorPosition(
         Conversions.inchesToWinchRotations(Units.metersToInches(m_elevSim.getPositionMeters( )), kRolloutRatio));
-    m_elevatorSim.setRotorVelocity(
+    m_motorSim.setRotorVelocity(
         Conversions.inchesToWinchRotations(Units.metersToInches(m_elevSim.getVelocityMetersPerSecond( )), kRolloutRatio));
 
     // SimBattery estimates loaded battery voltages

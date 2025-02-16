@@ -22,6 +22,8 @@ import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -40,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VIConsts;
+import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
@@ -47,6 +50,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.Power;
 import frc.robot.subsystems.Telemetry;
 import frc.robot.subsystems.Vision;
@@ -101,6 +105,7 @@ public class RobotContainer
   // These subsystems may use LED or vision and must be created afterward
   private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.createDrivetrain( );
   private final Elevator                              m_elevator      = new Elevator( );
+  private final Manipulator                           m_manipulator   = new Manipulator( );
   // Selected autonomous command
   private Command                                     m_autoCommand;  // Selected autonomous command
 
@@ -111,8 +116,6 @@ public class RobotContainer
   {
     AUTOSTOP,         // AutoStop - sit still, do nothing
     AUTOLEAVE,        // Leave starting zone avoiding spikes
-    AUTOPRELOADSCORE, // Score preload at a branch
-    AUTOSCORE4,       // Score preload at a branch and score 3 more
     AUTOTEST          // Run a selected test auto
   }
 
@@ -121,9 +124,9 @@ public class RobotContainer
    */
   private enum StartPose
   {
-    POSE1, // Starting pose 1 - blue left, red right (driver perspective)
-    POSE2, // Starting pose 2 - blue/red middle (driver perspective)
-    POSE3  // Starting pose 3 - blue right, red left (driver perspective)
+    START1, // Starting pose 1 - blue left, red right (driver perspective)
+    START2, // Starting pose 2 - blue/red middle (driver perspective)
+    START3  // Starting pose 3 - blue right, red left (driver perspective)
   }
 
   /** Dashboard chooser for auto option selection */
@@ -140,25 +143,17 @@ public class RobotContainer
    *          the auto filename associated with the key
    */
   private final HashMap<String, String> autoMap        = new HashMap<>(Map.ofEntries( //
-      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE1.toString( ), "Pos1_Stop"),
-      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE2.toString( ), "Pos2_Stop"),
-      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.POSE3.toString( ), "Pos3_Stop"),
+      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.START1.toString( ), "Start1_Stop"),
+      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.START2.toString( ), "Start2_Stop"),
+      Map.entry(AutoChooser.AUTOSTOP.toString( ) + StartPose.START3.toString( ), "Start3_Stop"),
 
-      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE1.toString( ), "Pos1_L1"),
-      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE2.toString( ), "Pos2_L4"),
-      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.POSE3.toString( ), "Pos3_L5"),
+      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.START1.toString( ), "Start1_L1"),
+      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.START2.toString( ), "Start2_L2"),
+      Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.START3.toString( ), "Start3_L3"),
 
-      Map.entry(AutoChooser.AUTOPRELOADSCORE.toString( ) + StartPose.POSE1.toString( ), "Pos1_P1_S1_P1"),
-      Map.entry(AutoChooser.AUTOPRELOADSCORE.toString( ) + StartPose.POSE2.toString( ), "Pos2_P2_S2_P2"),
-      Map.entry(AutoChooser.AUTOPRELOADSCORE.toString( ) + StartPose.POSE3.toString( ), "Pos3_P3_S3_P3"),
-
-      Map.entry(AutoChooser.AUTOSCORE4.toString( ) + StartPose.POSE1.toString( ), "Pos1_P1_S1_P1_S2_P2_S3_P3"),
-      Map.entry(AutoChooser.AUTOSCORE4.toString( ) + StartPose.POSE2.toString( ), "Pos2_P1_S1_P1_S2_P2_S3_P3"),
-      Map.entry(AutoChooser.AUTOSCORE4.toString( ) + StartPose.POSE3.toString( ), "Pos3_P3_S3_P3_S2_P2_S1_P1"),
-
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE1.toString( ), "Pos1_Test1"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE2.toString( ), "Pos2_Test2"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.POSE3.toString( ), "Pos3_Test3") //
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START1.toString( ), "Start1_Test1"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START2.toString( ), "Start2_Test2"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_Test3") //
   ));
 
   /****************************************************************************
@@ -170,6 +165,13 @@ public class RobotContainer
     Robot.timeMarker("robotContainer: before DAQ thread");
     // Swerve steer PID for facing swerve request
     facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);  // Swerve steer PID for facing swerve request
+    // Identify the field
+    DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField.toString( ),
+        VIConsts.kATField.getFieldWidth( ), VIConsts.kATField.getFieldLength( )));
+    for (int i = 1; i <= 22; i++)
+    {
+      DataLogManager.log(String.format("Field: ID %d %s", i, VIConsts.kATField.getTagPose(i)));
+    }
     // Add dashboard widgets for commands
     addDashboardWidgets( );           // Add dashboard widgets for commands
     // Configure game controller buttons
@@ -178,6 +180,20 @@ public class RobotContainer
     initDefaultCommands( );           // Initialize subsystem default commands
 
     Robot.timeMarker("robotContainer: after default commands");
+  }
+
+  /****************************************************************************
+   * 
+   * Callbacks used by dashboard autonomous choosers to reload when an onChange event occurs
+   */
+  public void updateAutoChooserCallback(AutoChooser option)
+  {
+    Robot.reloadAutomousCommand(option.toString( ));
+  }
+
+  public void updateStartChooserCallback(StartPose option)
+  {
+    Robot.reloadAutomousCommand(option.toString( ));
   }
 
   /****************************************************************************
@@ -194,14 +210,14 @@ public class RobotContainer
     // Configure autonomous sendable chooser
     m_autoChooser.setDefaultOption("0 - AutoStop", AutoChooser.AUTOSTOP);
     m_autoChooser.addOption("1 - AutoLeave", AutoChooser.AUTOLEAVE);
-    m_autoChooser.addOption("2 - AutoPreloadScore", AutoChooser.AUTOPRELOADSCORE);
-    m_autoChooser.addOption("3 - AutoScore4", AutoChooser.AUTOSCORE4);
-    m_autoChooser.addOption("4 - AutoTestPath", AutoChooser.AUTOTEST);
+    m_autoChooser.addOption("9 - AutoTestPath", AutoChooser.AUTOTEST);
+    m_autoChooser.onChange(this::updateAutoChooserCallback);
 
     // Configure starting pose sendable chooser
-    m_startChooser.setDefaultOption("POSE1", StartPose.POSE1);
-    m_startChooser.addOption("POSE2", StartPose.POSE2);
-    m_startChooser.addOption("POSE3", StartPose.POSE3);
+    m_startChooser.setDefaultOption("START1", StartPose.START1);
+    m_startChooser.addOption("START2", StartPose.START2);
+    m_startChooser.addOption("START3", StartPose.START3);
+    m_startChooser.onChange(this::updateStartChooserCallback);
 
     SmartDashboard.putData("AutoChooserRun", new InstantCommand(( ) -> getAutonomousCommand( )));
 
@@ -216,6 +232,7 @@ public class RobotContainer
 
     // Network tables publisher objects
     SmartDashboard.putData("elevator", m_elevator);
+    SmartDashboard.putData("manipulator", m_manipulator);
 
     SmartDashboard.putData(CommandScheduler.getInstance( ));
   }
@@ -353,9 +370,11 @@ public class RobotContainer
 
     // Default command - Motion Magic hold
     // m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getPosition));
+    // m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(m_manipulator::getPosition));
 
     // Default command - manual mode
     m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
+    m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
 
   /****************************************************************************
@@ -443,13 +462,7 @@ public class RobotContainer
         m_autoCommand = m_drivetrain.applyRequest(( ) -> idle);
         break;
       case AUTOLEAVE :
-        // m_autoCommand = new AutoLeave(ppPathList, m_drivetrain, m_led);
-        break;
-      case AUTOPRELOADSCORE :
-        // m_autoCommand = new AutoPreloadScore(ppPathList, m_drivetrain, m_intake, m_shooter, m_led, m_hid);
-        break;
-      case AUTOSCORE4 :
-        // m_autoCommand = new AutoScore4(ppPathList, m_drivetrain, m_intake, m_shooter, m_led, m_hid);
+        m_autoCommand = new AutoLeave(ppPathList, m_drivetrain, m_led);
         break;
       case AUTOTEST :
         // m_autoCommand = new AutoTest(ppPathList, m_drivetrain, m_led);
@@ -483,6 +496,16 @@ public class RobotContainer
 
   /****************************************************************************
    * 
+   * Gamepad joystick axis interfaces
+   */
+
+  public double getWristAxis( )
+  {
+    return -m_operatorPad.getLeftY( );
+  }
+
+  /****************************************************************************
+   * 
    * Called by disabledInit - place subsystem initializations here
    */
   public void initialize( )
@@ -492,6 +515,7 @@ public class RobotContainer
     m_vision.initialize( );
 
     m_elevator.initialize( );
+    m_manipulator.initialize( );
   }
 
   /****************************************************************************
@@ -504,6 +528,7 @@ public class RobotContainer
     m_power.printFaults( );
 
     m_elevator.printFaults( );
+    m_manipulator.printFaults( );
   }
 
   /****************************************************************************
