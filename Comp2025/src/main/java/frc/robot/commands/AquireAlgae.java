@@ -15,9 +15,9 @@ import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 
 /**
- * Command to acquire a coral from coral station
+ * Command to score a coral to the reef
  */
-public class AquireCoral extends SequentialCommandGroup
+public class AquireAlgae extends SequentialCommandGroup
 {
   /**
    * Group command to use the subsystems to acquire a coral from the coral station
@@ -31,24 +31,28 @@ public class AquireCoral extends SequentialCommandGroup
    * @param led
    *          led subsystem
    */
-  public AquireCoral(Elevator elevator, Manipulator manipulator, LED led, HID hid)
+  public AquireAlgae(Elevator elevator, Manipulator manipulator, LED led, HID hid)
   {
-    setName("AcquireCoral");
+    setName("AquireAlgae");
 
     addCommands(
         // Add Commands here:
 
         // @formatter:off
         
-        new LogCommand(getName(), "Drive to Coral Station"),
+        new LogCommand(getName(), "Drive to face on reef"),
 
         new LogCommand(getName(), "Move Elevator to Position"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralLStation),
+        elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23), //level 2/3
+        // elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL34), //level 3/4
+        // elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet),// Net
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
-        // led.getLEDCommand(COLOR.YELLOW, ANIMATION.CLEARALL), //TODO: change LED
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALACQUIRE, manipulator::getManipulatorCoralStation), // get coral from coral station
-
+        // led.getLEDCommand(COLOR.YELLOW, ANIMATION.CLEARALL),// 
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorAlgae23), //level 2/3
+        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorAlgae34),//level 3/4
+        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorAlgaeNet),// net
+        
         new LogCommand(getName(), "Wait for Coral"),
         // new WaitUntilCommand(manipulator::CoralDetected), // checks if coral is detected 
       

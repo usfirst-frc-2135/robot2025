@@ -15,9 +15,9 @@ import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 
 /**
- * Command to acquire a coral from coral station
+ * Command to score a coral to the reef
  */
-public class AquireCoral extends SequentialCommandGroup
+public class ScoreAlgae extends SequentialCommandGroup
 {
   /**
    * Group command to use the subsystems to acquire a coral from the coral station
@@ -31,26 +31,26 @@ public class AquireCoral extends SequentialCommandGroup
    * @param led
    *          led subsystem
    */
-  public AquireCoral(Elevator elevator, Manipulator manipulator, LED led, HID hid)
+  public ScoreAlgae(Elevator elevator, Manipulator manipulator, LED led, HID hid)
   {
-    setName("AcquireCoral");
+    setName("ScoreAlgae");
 
     addCommands(
         // Add Commands here:
 
         // @formatter:off
         
-        new LogCommand(getName(), "Drive to Coral Station"),
+        new LogCommand(getName(), "Drive to face on reef"),
 
         new LogCommand(getName(), "Move Elevator to Position"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralLStation),
+        elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor), 
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
         // led.getLEDCommand(COLOR.YELLOW, ANIMATION.CLEARALL), //TODO: change LED
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALACQUIRE, manipulator::getManipulatorCoralStation), // get coral from coral station
-
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorAlgaeProcessor), 
+        
         new LogCommand(getName(), "Wait for Coral"),
-        // new WaitUntilCommand(manipulator::CoralDetected), // checks if coral is detected 
+        // new WaitUntilCommand(manipulator::AlgaeDetected), // checks if coral is detected 
       
         new LogCommand(getName(), "Stop rollers & Retract intake rotary"),
        
