@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pos3_L5"
+            "pathName": "Start3-L3"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "AutoLeave",
+  "folder": "AutoTest",
   "choreoAuto": false
 }
