@@ -47,7 +47,7 @@ public class ScoreAlgae extends SequentialCommandGroup
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
         // led.getLEDCommand(COLOR.YELLOW, ANIMATION.CLEARALL), //TODO: change LED
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorAlgaeProcessor), 
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAEEXPEL, manipulator::getManipulatorAlgaeProcessor), 
         
         new LogCommand(getName(), "Wait for Coral"),
         // new WaitUntilCommand(manipulator::AlgaeDetected), // checks if coral is detected 
