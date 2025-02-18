@@ -17,7 +17,7 @@ public class AutoLeave extends SequentialCommandGroup
 {
   /**
    * Autonomous command to:
-   * 1 - Leave the starting zone while avoiding spike notes
+   * 1 - Leave the starting line
    * 
    * @param ppAuto
    *          list of auto paths to follow

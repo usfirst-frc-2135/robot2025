@@ -57,7 +57,6 @@ import frc.robot.lib.LimelightHelpers;
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
     private static final boolean        m_useLimelight           = true;
-    private Pose2d                      m_allianceSpeakerATPose  = new Pose2d( );
 
     /* What to publish over networktables for telemetry */
     private final NetworkTableInstance  inst                     = NetworkTableInstance.getDefault( );
@@ -325,9 +324,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
-        double speakerTagDistance = this.getState( ).Pose.getTranslation( ).getDistance(m_allianceSpeakerATPose.getTranslation( ));
-        shooterDistancePub.set(Units.metersToInches(speakerTagDistance));
-
         if (m_useLimelight && Robot.isReal( )) {
             visionUpdate( );
         }
