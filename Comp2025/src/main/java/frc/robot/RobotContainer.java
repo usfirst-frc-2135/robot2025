@@ -22,8 +22,6 @@ import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -40,7 +38,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-// import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
@@ -88,7 +85,7 @@ public class RobotContainer
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
   @SuppressWarnings("unused")
   private final SwerveRequest.PointWheelsAt           point           = new SwerveRequest.PointWheelsAt( );
-  private final SwerveRequest.RobotCentric            aim             = new SwerveRequest.RobotCentric( );
+  // private final SwerveRequest.RobotCentric            aim             = new SwerveRequest.RobotCentric( );
   private final SwerveRequest.Idle                    idle            = new SwerveRequest.Idle( );
   @SuppressWarnings("unused")
   private final SwerveRequest.RobotCentric            forwardStraight =
@@ -536,17 +533,12 @@ public class RobotContainer
    * Called during teleopInit to start any needed commands
    */
   public void autoInit( )
-  {
-    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( )); TODO: Decide whether to use this calibration command
-
-  }
+  {}
 
   /****************************************************************************
    * 
    * Called during teleopInit to start any needed commands
    */
   public void teleopInit( )
-  {
-    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( )); TODO: Decide whether to use this calibration command
-  }
+  {}
 }

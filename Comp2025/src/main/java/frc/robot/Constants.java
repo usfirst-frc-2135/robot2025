@@ -18,7 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public class Constants
 {
   // bot serial nums
-  public static final String  kCompSN               = "03260A3A"; // TODO: update for 2025 roboRIO serial numbers
+  public static final String  kCompSN               = "03260A3A";
   public static final String  kBetaSN               = "03238074";
 
   // Game controller definitions
@@ -33,7 +33,7 @@ public class Constants
   public static final double  kRumbleIntensity      = 0.5;  // 0.0 is low, 1.0 is high
 
   // Phoenix firmware versions expected
-  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0); // TODO: update CTRE version numbers for 2025
+  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0);
   public static final int     kPhoenix6MajorVersion = 25;
 
   /****************************************************************************
