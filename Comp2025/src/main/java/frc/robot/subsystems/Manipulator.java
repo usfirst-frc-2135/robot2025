@@ -292,8 +292,6 @@ public class Manipulator extends SubsystemBase
     // Set input motor voltage from the motor setting
     m_wristMotorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
     m_wristCANcoderSim.setSupplyVoltage(RobotController.getInputVoltage( ));
-    m_coralCANrangeSim.setSupplyVoltage(RobotController.getInputVoltage( ));
-    m_algaeCANrangeSim.setSupplyVoltage(RobotController.getInputVoltage( ));
     m_armSim.setInputVoltage(m_wristMotorSim.getMotorVoltage( ));
 
     // update for 20 msec loop
