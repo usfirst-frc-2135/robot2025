@@ -3,8 +3,6 @@
 
 package frc.robot.lib.phoenix;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
-
 /****************************************************************************
  * 
  * CTRE configuration structure for v5 devices
