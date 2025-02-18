@@ -212,7 +212,7 @@ public class Manipulator extends SubsystemBase
     m_canCoderValid = PhoenixUtil6.getInstance( ).canCoderInitialize6(m_wristCANcoder, kSubsystemName + "Wrist",
         CTREConfigs6.wristRotaryCANcoderConfig( ));
 
-    var CANrangeConfig = new CANrangeConfiguration( );
+    CANrangeConfiguration CANrangeConfig = new CANrangeConfiguration( );
     m_coralInClaw.getConfigurator( ).apply(CANrangeConfig);
     m_algaeInClaw.getConfigurator( ).apply(CANrangeConfig);
 
