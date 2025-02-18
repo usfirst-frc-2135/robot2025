@@ -49,19 +49,18 @@ public class AquireAlgae extends SequentialCommandGroup
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
         // led.getLEDCommand(COLOR.YELLOW, ANIMATION.CLEARALL),// 
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorAlgae23), //level 2/3
-        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorAlgae34),//level 3/4
-        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorAlgaeNet),// net
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAEACQUIRE, manipulator::getManipulatorAlgae23), //level 2/3
+        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAEACQUIRE, manipulator::getManipulatorAlgae34),//level 3/4
         
         new LogCommand(getName(), "Wait for Coral"),
-        // new WaitUntilCommand(manipulator::CoralDetected), // checks if coral is detected 
+        // new WaitUntilCommand(manipulator::coralDetected), // checks if coral is detected 
       
         new LogCommand(getName(), "Stop rollers & Retract intake rotary"),
        
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorAlgae23)
         
         // @formatter:on
     );
