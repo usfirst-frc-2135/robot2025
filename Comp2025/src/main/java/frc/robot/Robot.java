@@ -1,7 +1,6 @@
 
 package frc.robot;
 
-// import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.net.PortForwarder;
@@ -40,7 +39,6 @@ public class Robot extends TimedRobot
     DataLogManager.start( );
     DataLogManager.logConsoleOutput(true);
     DriverStation.startDataLog(DataLogManager.getLog( )); // Logs joystick data
-    // SignalLogger.start();                              // Start CTRE signal logging
     Robot.timeMarker("Robot: start");
 
     // Start the web server for remoote dashboard layout

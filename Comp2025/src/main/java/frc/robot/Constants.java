@@ -1,14 +1,10 @@
 
 package frc.robot;
 
-import java.util.Collections;
-import java.util.List;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * The Constants class provides a convenient place to hold robot-wide numerical or boolean
@@ -22,7 +18,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class Constants
 {
   // bot serial nums
-  public static final String  kCompSN               = "03260A3A"; // TODO: update for 2025 roboRIO serial numbers
+  public static final String  kCompSN               = "03260A3A";
   public static final String  kBetaSN               = "03238074";
 
   // Game controller definitions
@@ -37,7 +33,7 @@ public class Constants
   public static final double  kRumbleIntensity      = 0.5;  // 0.0 is low, 1.0 is high
 
   // Phoenix firmware versions expected
-  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0); // TODO: update CTRE version numbers for 2025
+  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0);
   public static final int     kPhoenix6MajorVersion = 25;
 
   /****************************************************************************
@@ -117,7 +113,7 @@ public class Constants
    ****************************************************************************/
   public static final class VIConsts
   {
-    public static final AprilTagFields      kGameField   = AprilTagFields.k2025Reefscape;
+    public static final AprilTagFields      kGameField   = AprilTagFields.k2025ReefscapeWelded;
     public static final AprilTagFieldLayout kATField     = AprilTagFieldLayout.loadField(kGameField);
 
     /** Destination field poses for the robot when using PathPlanner pathfinding */                   // TODO: update to desired 2025 field poses
