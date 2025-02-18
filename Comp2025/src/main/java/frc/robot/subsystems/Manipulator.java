@@ -141,8 +141,6 @@ public class Manipulator extends SubsystemBase
   // Simulation objects
   private final TalonFXSimState     m_wristMotorSim           = m_wristMotor.getSimState( );
   private final CANcoderSimState    m_wristCANcoderSim        = m_wristCANcoder.getSimState( );
-  private final CANrangeSimState    m_coralCANrangeSim        = m_coralInClaw.getSimState( );
-  private final CANrangeSimState    m_algaeCANrangeSim        = m_algaeInClaw.getSimState( );
   private final SingleJointedArmSim m_armSim                  = new SingleJointedArmSim(DCMotor.getFalcon500(1), kWristGearRatio,
       SingleJointedArmSim.estimateMOI(kWristLengthMeters, kWristWeightKg), kWristLengthMeters, -Math.PI, Math.PI, false, 0.0);
 
