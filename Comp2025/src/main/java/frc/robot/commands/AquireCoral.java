@@ -39,25 +39,22 @@ public class AquireCoral extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-        
-        new LogCommand(getName(), "Drive to Coral Station"),
 
         new LogCommand(getName(), "Move Elevator to Position"),
         elevator.getMoveToPositionCommand(elevator::getHeightCoralLStation),
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
-        // led.getLEDCommand(COLOR.YELLOW, ANIMATION.CLEARALL), //TODO: change LED
         manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALACQUIRE, manipulator::getManipulatorCoralStation), // get coral from coral station
 
         new LogCommand(getName(), "Wait for Coral"),
-        // new WaitUntilCommand(manipulator::CoralDetected), // checks if coral is detected 
+        // new WaitUntilCommand(manipulator::isCoralDetected), // checks if coral is detected 
       
-        new LogCommand(getName(), "Stop rollers & Retract intake rotary"),
+        new LogCommand(getName(), "Stop rollers"),
        
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
-        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
+        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
         
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
+        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         
         // @formatter:on
     );

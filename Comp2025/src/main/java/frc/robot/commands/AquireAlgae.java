@@ -39,28 +39,22 @@ public class AquireAlgae extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-        
-        new LogCommand(getName(), "Drive to face on reef"),
 
         new LogCommand(getName(), "Move Elevator to Position"),
         elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23), //level 2/3
-        // elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL34), //level 3/4
-        // elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet),// Net
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
-        // led.getLEDCommand(COLOR.YELLOW, ANIMATION.CLEARALL),// 
         manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAEACQUIRE, manipulator::getManipulatorAlgae23), //level 2/3
-        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAEACQUIRE, manipulator::getManipulatorAlgae34),//level 3/4
         
         new LogCommand(getName(), "Wait for Algae"),
-        // new WaitUntilCommand(manipulator::algaeDetected), // checks if algae is detected 
+        // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is detected 
       
-        new LogCommand(getName(), "Stop rollers & Retract intake rotary"),
+        new LogCommand(getName(), "Stop rollers"),
        
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
-        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
+        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
         
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
+        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         
         // @formatter:on
     );

@@ -39,25 +39,22 @@ public class ScoreAlgae extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-        
-        new LogCommand(getName(), "Drive to face on reef"),
 
         new LogCommand(getName(), "Move Elevator to Position"),
-        elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor), 
+        elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet), 
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
-        // led.getLEDCommand(COLOR.YELLOW, ANIMATION.CLEARALL), //TODO: change LED
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAEEXPEL, manipulator::getManipulatorAlgaeProcessor), 
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAEEXPEL, manipulator::getManipulatorAlgaeNet), 
         
         new LogCommand(getName(), "Wait for Algae"),
-        // new WaitUntilCommand(manipulator::AlgaeDetected), // checks if algae is detected 
+        // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is detected 
       
-        new LogCommand(getName(), "Stop rollers & Retract intake rotary"),
+        new LogCommand(getName(), "Stop rollers"),
        
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
-        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
+        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
         
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
+        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         
         // @formatter:on
     );

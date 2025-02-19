@@ -39,31 +39,22 @@ public class ScoreCoral extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-        
-        new LogCommand(getName(), "Drive to face on reef"),
 
         new LogCommand(getName(), "Move Elevator to Position"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralL1), //level 1
-        // elevator.getMoveToPositionCommand(elevator::getHeightCoralL2), //level 2
-        // elevator.getMoveToPositionCommand(elevator::getHeightCoralL3),//level 3
-        //elevator.getMoveToPositionCommand(elevator::getHeightCoralL4), //level 4
+        elevator.getMoveToPositionCommand(elevator::getHeightCoralL4), //level 4
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
-        // led.getLEDCommand(COLOR.YELLOW, ANIMATION.CLEARALL), //TODO: change LED
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorCoralL1), //level 1
-        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorCoralL2),//level 2
-        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorCoralL3),//level 3
-        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorCoralL4), //level 4
-        
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorCoralL4), //level 4
+
         new LogCommand(getName(), "Wait for Coral"),
         // new WaitUntilCommand(manipulator::CoralDetected), // checks if coral is detected 
       
-        new LogCommand(getName(), "Stop rollers & Retract intake rotary"),
+        new LogCommand(getName(), "Stop rollers"),
        
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
-        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
+        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
         
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
+        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         
         // @formatter:on
     );
