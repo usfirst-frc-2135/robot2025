@@ -113,12 +113,11 @@ public class Constants
    ****************************************************************************/
   public static final class VIConsts
   {
-    public static final AprilTagFields      kGameField   = AprilTagFields.k2025ReefscapeWelded;
-    public static final AprilTagFieldLayout kATField     = AprilTagFieldLayout.loadField(kGameField);
+    public static final AprilTagFields      kGameField = AprilTagFields.k2025ReefscapeWelded;
+    public static final AprilTagFieldLayout kATField   = AprilTagFieldLayout.loadField(kGameField);
 
     /** Destination field poses for the robot when using PathPlanner pathfinding */                   // TODO: update to desired 2025 field poses
-    public static final Pose2d              kSpeakerPose = new Pose2d(2.17, 4.49, Rotation2d.fromDegrees(-26));
-    public static final Pose2d              kAmpPose     = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
+    public static final Pose2d              kAmpPose   = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
   }
 
   /****************************************************************************
