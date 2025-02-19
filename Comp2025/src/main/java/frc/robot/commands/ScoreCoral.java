@@ -18,7 +18,7 @@ import frc.robot.subsystems.Manipulator;
 public class ScoreCoral extends SequentialCommandGroup
 {
   /**
-   * Group command to use the subsystems to acquire a coral from the coral station
+   * Group command to use the subsystems to score a coral in the reef level 4
    * 
    * @param elevator
    *          elevator subsystem

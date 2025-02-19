@@ -13,12 +13,12 @@ import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 
 /**
- * Command to score a coral to the reef
+ * Command to score a algae to the net
  */
 public class ScoreAlgae extends SequentialCommandGroup
 {
   /**
-   * Group command to use the subsystems to acquire a coral from the coral station
+   * Group command to use the subsystems to score a algae in the net
    * 
    * @param elevator
    *          elevator subsystem
