@@ -18,7 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public class Constants
 {
   // bot serial nums
-  public static final String  kCompSN               = "03260A3A"; // TODO: update for 2025 roboRIO serial numbers
+  public static final String  kCompSN               = "03260A3A";
   public static final String  kBetaSN               = "03238074";
 
   // Game controller definitions
@@ -33,7 +33,7 @@ public class Constants
   public static final double  kRumbleIntensity      = 0.5;  // 0.0 is low, 1.0 is high
 
   // Phoenix firmware versions expected
-  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0); // TODO: update CTRE version numbers for 2025
+  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0);
   public static final int     kPhoenix6MajorVersion = 25;
 
   /****************************************************************************
@@ -113,12 +113,11 @@ public class Constants
    ****************************************************************************/
   public static final class VIConsts
   {
-    public static final AprilTagFields      kGameField   = AprilTagFields.k2025ReefscapeWelded;
-    public static final AprilTagFieldLayout kATField     = AprilTagFieldLayout.loadField(kGameField);
+    public static final AprilTagFields      kGameField = AprilTagFields.k2025ReefscapeWelded;
+    public static final AprilTagFieldLayout kATField   = AprilTagFieldLayout.loadField(kGameField);
 
     /** Destination field poses for the robot when using PathPlanner pathfinding */                   // TODO: update to desired 2025 field poses
-    public static final Pose2d              kSpeakerPose = new Pose2d(2.17, 4.49, Rotation2d.fromDegrees(-26));
-    public static final Pose2d              kAmpPose     = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
+    public static final Pose2d              kAmpPose   = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
   }
 
   /****************************************************************************

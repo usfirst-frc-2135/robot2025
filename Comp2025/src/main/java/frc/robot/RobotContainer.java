@@ -22,8 +22,6 @@ import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -40,7 +38,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-// import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
@@ -88,7 +85,7 @@ public class RobotContainer
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
   @SuppressWarnings("unused")
   private final SwerveRequest.PointWheelsAt           point           = new SwerveRequest.PointWheelsAt( );
-  private final SwerveRequest.RobotCentric            aim             = new SwerveRequest.RobotCentric( );
+  // private final SwerveRequest.RobotCentric            aim             = new SwerveRequest.RobotCentric( );
   private final SwerveRequest.Idle                    idle            = new SwerveRequest.Idle( );
   @SuppressWarnings("unused")
   private final SwerveRequest.RobotCentric            forwardStraight =
@@ -115,7 +112,7 @@ public class RobotContainer
   private enum AutoChooser
   {
     AUTOSTOP,         // AutoStop - sit still, do nothing
-    AUTOLEAVE,        // Leave starting zone avoiding spikes
+    AUTOLEAVE,        // Leave starting line
     AUTOTEST          // Run a selected test auto
   }
 
@@ -288,8 +285,7 @@ public class RobotContainer
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
-    m_driverPad.leftTrigger(Constants.kTriggerThreshold)
-        .whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kSpeakerPose));
+    m_driverPad.leftTrigger(Constants.kTriggerThreshold).whileTrue(new LogCommand("driverPad", "left trigger"));
     m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new LogCommand("driverPad", "right trigger"));
 
     m_driverPad.leftStick( ).onTrue(new LogCommand("driverPad", "left stick"));
@@ -536,17 +532,12 @@ public class RobotContainer
    * Called during teleopInit to start any needed commands
    */
   public void autoInit( )
-  {
-    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( )); TODO: Decide whether to use this calibration command
-
-  }
+  {}
 
   /****************************************************************************
    * 
    * Called during teleopInit to start any needed commands
    */
   public void teleopInit( )
-  {
-    // CommandScheduler.getInstance( ).schedule(m_elevator.getCalibrateCommand( )); TODO: Decide whether to use this calibration command
-  }
+  {}
 }
