@@ -47,7 +47,7 @@ public class ScoreAlgae extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAEEXPEL, manipulator::getManipulatorAlgaeNet), 
         
         new LogCommand(getName(), "Wait for Algae"),
-        // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is detected 
+        // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is expelled 
       
         new LogCommand(getName(), "Stop rollers")
         

@@ -47,7 +47,7 @@ public class ScoreCoral extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getManipulatorCoralL4), //level 4
 
         new LogCommand(getName(), "Wait for Coral"),
-        // new WaitUntilCommand(manipulator::CoralDetected), // checks if coral is detected 
+        // new WaitUntilCommand(manipulator::isCoralDetected), // checks if coral is expelled 
       
         new LogCommand(getName(), "Stop rollers")
         

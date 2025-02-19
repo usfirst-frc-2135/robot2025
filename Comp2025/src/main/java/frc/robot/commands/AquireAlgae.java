@@ -47,7 +47,7 @@ public class AquireAlgae extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAEACQUIRE, manipulator::getManipulatorAlgae23), //level 2/3
         
         new LogCommand(getName(), "Wait for Algae"),
-        // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is detected 
+        // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is acquired 
       
         new LogCommand(getName(), "Stop rollers"),
        

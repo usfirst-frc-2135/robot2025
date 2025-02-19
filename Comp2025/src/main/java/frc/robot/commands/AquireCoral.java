@@ -47,7 +47,7 @@ public class AquireCoral extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALACQUIRE, manipulator::getManipulatorCoralStation), // get coral from coral station
 
         new LogCommand(getName(), "Wait for Coral"),
-        // new WaitUntilCommand(manipulator::isCoralDetected), // checks if coral is detected 
+        // new WaitUntilCommand(manipulator::isCoralDetected), // checks if coral is acquired 
       
         new LogCommand(getName(), "Stop rollers"),
        
