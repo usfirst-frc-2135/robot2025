@@ -112,7 +112,7 @@ public class RobotContainer
   private enum AutoChooser
   {
     AUTOSTOP,         // AutoStop - sit still, do nothing
-    AUTOLEAVE,        // Leave starting zone avoiding spikes
+    AUTOLEAVE,        // Leave starting line
     AUTOTEST          // Run a selected test auto
   }
 
@@ -285,8 +285,7 @@ public class RobotContainer
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
-    m_driverPad.leftTrigger(Constants.kTriggerThreshold)
-        .whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kSpeakerPose));
+    m_driverPad.leftTrigger(Constants.kTriggerThreshold).whileTrue(new LogCommand("driverPad", "left trigger"));
     m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new LogCommand("driverPad", "right trigger"));
 
     m_driverPad.leftStick( ).onTrue(new LogCommand("driverPad", "left stick"));
