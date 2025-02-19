@@ -49,10 +49,7 @@ public class ScoreCoral extends SequentialCommandGroup
         new LogCommand(getName(), "Wait for Coral"),
         // new WaitUntilCommand(manipulator::CoralDetected), // checks if coral is detected 
       
-        new LogCommand(getName(), "Stop rollers"),
-       
-        hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
-        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
+        new LogCommand(getName(), "Stop rollers")
         
         // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         

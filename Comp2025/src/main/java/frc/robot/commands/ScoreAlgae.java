@@ -49,10 +49,7 @@ public class ScoreAlgae extends SequentialCommandGroup
         new LogCommand(getName(), "Wait for Algae"),
         // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is detected 
       
-        new LogCommand(getName(), "Stop rollers"),
-       
-        hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
-        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
+        new LogCommand(getName(), "Stop rollers")
         
         // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         
