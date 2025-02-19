@@ -54,6 +54,7 @@ public class AquireCoral extends SequentialCommandGroup
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
         
+        // elevator.getMoveToPositionCommand(elevator::getHeightStowed), // stowed
         // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         
         // @formatter:on

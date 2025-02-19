@@ -51,6 +51,7 @@ public class ScoreCoral extends SequentialCommandGroup
       
         new LogCommand(getName(), "Stop rollers")
         
+        // elevator.getMoveToPositionCommand(elevator::getHeightStowed), // stowed
         // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         
         // @formatter:on
