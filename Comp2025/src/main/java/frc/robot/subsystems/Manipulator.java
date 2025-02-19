@@ -743,7 +743,7 @@ public class Manipulator extends SubsystemBase
    * 
    * @return true if coral detected
    */
-  public boolean isCoralDDetected( )
+  public boolean isCoralDetected( )
   {
     return m_coralDetected;
   }
@@ -754,7 +754,7 @@ public class Manipulator extends SubsystemBase
    * 
    * @return true if algae detected
    */
-  public boolean isAlgaeDDetected( )
+  public boolean isAlgaeDetected( )
   {
     return m_algaeDetected;
   }
