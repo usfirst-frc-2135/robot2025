@@ -297,6 +297,8 @@ public class Elevator extends SubsystemBase
     SmartDashboard.putData("ElRunAlgae34", getMoveToPositionCommand(this::getHeightAlgaeL34));
     SmartDashboard.putData("ElRunNet", getMoveToPositionCommand(this::getHeightAlgaeNet));
     SmartDashboard.putData("ElRunProcessor", getMoveToPositionCommand(this::getHeightAlgaeProcessor));
+
+    SmartDashboard.putData("ElCalibrate", getCalibrateHeightCommand( ));
   }
 
   // Put methods for controlling this subsystem here. Call these from Commands.
