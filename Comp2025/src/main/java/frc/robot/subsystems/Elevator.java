@@ -62,35 +62,35 @@ import frc.robot.lib.phoenix.PhoenixUtil6;
 public class Elevator extends SubsystemBase
 {
   // Constants
-  private static final String  kSubsystemName        = "Elevator";
-  private static final double  kGearRatio            = 9.706;           // Gear reduction
-  private static final double  kHeightInchesMin      = 0.0;             // Minimum allowable height
-  private static final double  kHeightInchesMax      = 29.69;           // Maximum allowable height
-  private static final double  kSimHeightMetersMin   = Units.inchesToMeters(kHeightInchesMin - 0.1); // Make sim height range larger than useful range
-  private static final double  kSimHeightMetersMax   = Units.inchesToMeters(kHeightInchesMax + 0.1);
-  private static final double  kCarriageMassKg       = Units.lbsToKilograms(20.0);     // Simulation
-  private static final double  kDrumDiameterInches   = 1.981;           // Drum diameter in inches
-  private static final double  kDrumRadiusMeters     = Units.inchesToMeters(kDrumDiameterInches) / 2;
-  private static final double  kRolloutRatio         = kDrumDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
-  private static final Voltage kManualSpeedVolts     = Volts.of(3.0); // Motor voltage during manual operation (joystick)
+  private static final String  kSubsystemName          = "Elevator";
+  private static final double  kGearRatio              = 9.706;           // Gear reduction
+  private static final double  kHeightInchesMin        = 0.0;             // Minimum allowable height
+  private static final double  kHeightInchesMax        = 29.69;           // Maximum allowable height
+  private static final double  kSimHeightMetersMin     = Units.inchesToMeters(kHeightInchesMin - 0.1); // Make sim height range larger than useful range
+  private static final double  kSimHeightMetersMax     = Units.inchesToMeters(kHeightInchesMax + 0.1);
+  private static final double  kCarriageMassKg         = Units.lbsToKilograms(20.0);     // Simulation
+  private static final double  kSprocketDiameterInches = 1.751;           // Sprocket diameter in inches (22T * 0.25"/T / Pi)
+  private static final double  kSprocketRadiusMeters   = Units.inchesToMeters(kSprocketDiameterInches) / 2;
+  private static final double  kRolloutRatio           = kSprocketDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
+  private static final Voltage kManualSpeedVolts       = Volts.of(3.0); // Motor voltage during manual operation (joystick)
 
-  private static final double  kToleranceInches      = 0.5;             // PID tolerance in inches
-  private static final double  kMMDebounceTime       = 0.060;           // Seconds to debounce a final position check
-  private static final double  kMMMoveTimeout        = 1.5;             // Seconds allowed for a Motion Magic movement
+  private static final double  kToleranceInches        = 0.5;             // PID tolerance in inches
+  private static final double  kMMDebounceTime         = 0.060;           // Seconds to debounce a final position check
+  private static final double  kMMMoveTimeout          = 1.5;             // Seconds allowed for a Motion Magic movement
 
   // Elevator heights - Motion Magic config parameters                  // TODO: define desired elevator heights for 2025
-  private static final double  kHeightStowed         = 0.0;             // By definition - full down
-  private static final double  kHeightCoralStation   = 0.0;             // By definition - at coral station
+  private static final double  kHeightStowed           = 0.0;             // By definition - full down
+  private static final double  kHeightCoralStation     = 0.0;             // By definition - at coral station
 
-  private static final double  kHeightCoralL1        = 5.0;             // By definition - at L1 for scoring coral
-  private static final double  kHeightCoralL2        = 10.0;            // By definition - at L2 for scoring coral
-  private static final double  kHeightCoralL3        = 15.0;            // By definition - at L3 for scoring coral
-  private static final double  kHeightCoralL4        = 20.0;            // By definition - at L4 for scoring coral
+  private static final double  kHeightCoralL1          = 5.0;             // By definition - at L1 for scoring coral
+  private static final double  kHeightCoralL2          = 10.0;            // By definition - at L2 for scoring coral
+  private static final double  kHeightCoralL3          = 15.0;            // By definition - at L3 for scoring coral
+  private static final double  kHeightCoralL4          = 20.0;            // By definition - at L4 for scoring coral
 
-  private static final double  kHeightAlgaeL23       = 12.5;            // By definition - at L23 for taking algae
-  private static final double  kHeightAlgaeL34       = 17.5;            // By definition - at L34 for taking algae
-  private static final double  kHeightAlgaeNet       = 25.0;            // By definition - at scoring algae in net
-  private static final double  kHeightAlgaeProcessor = 0.0;             // By definition - at scoring algae in processor
+  private static final double  kHeightAlgaeL23         = 12.5;            // By definition - at L23 for taking algae
+  private static final double  kHeightAlgaeL34         = 17.5;            // By definition - at L34 for taking algae
+  private static final double  kHeightAlgaeNet         = 25.0;            // By definition - at scoring algae in net
+  private static final double  kHeightAlgaeProcessor   = 0.0;             // By definition - at scoring algae in processor
 
   /** Elevator manual move parameters */
   private enum JoystickMode
@@ -115,7 +115,7 @@ public class Elevator extends SubsystemBase
   // Simulation objects
   private final TalonFXSimState       m_motorSim          = m_leftMotor.getSimState( );
   private final ElevatorSim           m_elevSim           = new ElevatorSim(DCMotor.getKrakenX60Foc(2), kGearRatio,
-      kCarriageMassKg, kDrumRadiusMeters, kSimHeightMetersMin, kSimHeightMetersMax, false, 0.0);
+      kCarriageMassKg, kSprocketRadiusMeters, kSimHeightMetersMin, kSimHeightMetersMax, false, 0.0);
 
   // Mechanism2d
   private final Mechanism2d           m_elevatorMech      = new Mechanism2d(1.0, 1.0);
