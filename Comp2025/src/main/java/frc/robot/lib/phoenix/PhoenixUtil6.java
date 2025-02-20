@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -293,25 +294,49 @@ public class PhoenixUtil6
    * 
    * Print fault flags for a CANcoder
    * 
-   * @param cancoder
+   * @param canCoder
    *          reference to a CANcoder
    * @param name
    *          descriptive name of the CANcoder
    */
-  public void cancoderPrintFaults(CANcoder cancoder, String name)
+  public void canCoderPrintFaults(CANcoder canCoder, String name)
   {
     DataLogManager.log(String.format("%s: ------------------ DUMP FAULTS ------------------", name));
     DataLogManager.log(String.format("  FaultField ......................... 0x%08x 0x%08x",
-        cancoder.getFaultField( ).getValue( ), cancoder.getStickyFaultField( ).getValue( )));
-    DataLogManager.log(String.format("  Hardware ........................... %5s %5s", cancoder.getFault_Hardware( ).getValue( ),
-        cancoder.getStickyFault_Hardware( ).getValue( )));
+        canCoder.getFaultField( ).getValue( ), canCoder.getStickyFaultField( ).getValue( )));
+    DataLogManager.log(String.format("  Hardware ........................... %5s %5s", canCoder.getFault_Hardware( ).getValue( ),
+        canCoder.getStickyFault_Hardware( ).getValue( )));
     DataLogManager.log(String.format("  Undervoltage ....................... %5s %5s",
-        cancoder.getFault_Undervoltage( ).getValue( ), cancoder.getStickyFault_Undervoltage( ).getValue( )));
+        canCoder.getFault_Undervoltage( ).getValue( ), canCoder.getStickyFault_Undervoltage( ).getValue( )));
     DataLogManager.log(String.format("  BootDuringEnable ................... %5s %5s",
-        cancoder.getFault_BootDuringEnable( ).getValue( ), cancoder.getStickyFault_BootDuringEnable( ).getValue( )));
+        canCoder.getFault_BootDuringEnable( ).getValue( ), canCoder.getStickyFault_BootDuringEnable( ).getValue( )));
     DataLogManager.log(String.format("  UnlicensedFeatureInUse ............. %5s %5s",
-        cancoder.getFault_UnlicensedFeatureInUse( ).getValue( ), cancoder.getStickyFault_UnlicensedFeatureInUse( ).getValue( )));
-    DataLogManager.log(String.format("  BadMagnet .......................... %5s %5s", cancoder.getFault_BadMagnet( ).getValue( ),
-        cancoder.getStickyFault_BadMagnet( ).getValue( )));
+        canCoder.getFault_UnlicensedFeatureInUse( ).getValue( ), canCoder.getStickyFault_UnlicensedFeatureInUse( ).getValue( )));
+    DataLogManager.log(String.format("  BadMagnet .......................... %5s %5s", canCoder.getFault_BadMagnet( ).getValue( ),
+        canCoder.getStickyFault_BadMagnet( ).getValue( )));
+  }
+
+  /****************************************************************************
+   * 
+   * Print fault flags for a CANrange
+   * 
+   * @param canrange
+   *          reference to a CANrange
+   * @param name
+   *          descriptive name of the CANrange
+   */
+  public void canRangePrintFaults(CANrange canRange, String name)
+  {
+    DataLogManager.log(String.format("%s: ------------------ DUMP FAULTS ------------------", name));
+    DataLogManager.log(String.format("  FaultField ......................... 0x%08x 0x%08x",
+        canRange.getFaultField( ).getValue( ), canRange.getStickyFaultField( ).getValue( )));
+    DataLogManager.log(String.format("  Hardware ........................... %5s %5s", canRange.getFault_Hardware( ).getValue( ),
+        canRange.getStickyFault_Hardware( ).getValue( )));
+    DataLogManager.log(String.format("  Undervoltage ....................... %5s %5s",
+        canRange.getFault_Undervoltage( ).getValue( ), canRange.getStickyFault_Undervoltage( ).getValue( )));
+    DataLogManager.log(String.format("  BootDuringEnable ................... %5s %5s",
+        canRange.getFault_BootDuringEnable( ).getValue( ), canRange.getStickyFault_BootDuringEnable( ).getValue( )));
+    DataLogManager.log(String.format("  UnlicensedFeatureInUse ............. %5s %5s",
+        canRange.getFault_UnlicensedFeatureInUse( ).getValue( ), canRange.getStickyFault_UnlicensedFeatureInUse( ).getValue( )));
   }
 }

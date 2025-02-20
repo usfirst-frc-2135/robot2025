@@ -72,12 +72,12 @@ public class Constants
 
     public static final int    kCANID_ClawRoller    = 21;   // Kraken X60 (Manipulator)
     public static final int    kCANID_CoralDetector = 22;   // CANrange   (Manipulator)
+    public static final int    kCANID_AlgaeDetector = 23;   // CANrange   (Manipulator)
 
     public static final int    kCANID_CANdle        = 0;
 
     // Digital I/Os
     public static final int    kDIO0_ElevatorDown   = 0;    // REV Magnetic Limit Switch
-    public static final int    kDIO1_AlgaeInClaw    = 1;    // REV Magnetic Limit Switch
   }
 
   /****************************************************************************

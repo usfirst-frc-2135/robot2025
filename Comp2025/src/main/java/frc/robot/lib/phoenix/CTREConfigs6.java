@@ -4,6 +4,7 @@
 package frc.robot.lib.phoenix;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -183,9 +184,9 @@ public final class CTREConfigs6
     // wristRotaryConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio
-    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 50.0 / gearRatio;  // Rotations / second
-    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 220.0 / gearRatio;   // Rotations / second ^ 2
-    wristRotaryConfig.MotionMagic.MotionMagicJerk = 1600.0 / gearRatio;          // Rotations / second ^ 3
+    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 50.0 / gearRatio / 2;  // Rotations / second
+    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 220.0 / gearRatio / 2;   // Rotations / second ^ 2
+    wristRotaryConfig.MotionMagic.MotionMagicJerk = 1600.0 / gearRatio / 2;          // Rotations / second ^ 3
 
     // Motor output settings
     wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
@@ -212,6 +213,32 @@ public final class CTREConfigs6
     // wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 
     return wristRotaryConfig;
+  }
+
+  /****************************************************************************
+   * 
+   * Manipulator coral CANRange detector
+   */
+  public static CANrangeConfiguration coralCANRangeConfig( )
+  {
+    CANrangeConfiguration crConfig = new CANrangeConfiguration( );
+
+    crConfig.ProximityParams.ProximityThreshold = 0.1; // Proximity distance in meters (about 4 inches)
+
+    return crConfig;
+  }
+
+  /****************************************************************************
+   * 
+   * Manipulator algae CANRange detector
+   */
+  public static CANrangeConfiguration algaeCANRangeConfig( )
+  {
+    CANrangeConfiguration crConfig = new CANrangeConfiguration( );
+
+    crConfig.ProximityParams.ProximityThreshold = 0.1; // Proximity distance in meters (about 4 inches)
+
+    return crConfig;
   }
 
   /****************************************************************************
