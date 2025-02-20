@@ -80,10 +80,10 @@ public final class CTREConfigs6
     elevatorConfig.Slot0.kD = 0.0;                                 // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // Software limit switches
-    // elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;   // Rotations
-    // elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    // elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = max;   // Rotations
-    // elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;   // Rotations
+    elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = max;   // Rotations
+    elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 
     return elevatorConfig;
   }
