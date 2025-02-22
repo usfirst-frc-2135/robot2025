@@ -19,7 +19,7 @@ public class Constants
 {
   // bot serial nums
   public static final String  kCompSN               = "03260A3A";
-  public static final String  kBetaSN               = "03238074";
+  public static final String  kPracticeSN           = "03238074";
 
   // Game controller definitions
   public static final int     kDriverPadPort        = 0;
