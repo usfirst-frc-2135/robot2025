@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
+import frc.robot.commands.AcquireCoral;
 import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -232,6 +233,8 @@ public class RobotContainer
     SmartDashboard.putData("manipulator", m_manipulator);
 
     SmartDashboard.putData(CommandScheduler.getInstance( ));
+
+    SmartDashboard.putData("CoralAquire", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
   }
 
   /****************************************************************************

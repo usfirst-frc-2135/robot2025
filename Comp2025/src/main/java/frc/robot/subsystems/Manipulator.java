@@ -70,13 +70,13 @@ public class Manipulator extends SubsystemBase
   // Constants
   private static final String  kSubsystemName       = "Manipulator";
 
-  private static final double  kCoralSpeedAcquire   = 0.5;
-  private static final double  kCoralSpeedExpel     = -0.5;
+  private static final double  kCoralSpeedAcquire   = -0.25;
+  private static final double  kCoralSpeedExpel     = -0.25;
 
-  private static final double  kAlgaeSpeedAcquire   = 0.5;
-  private static final double  kAlgaeSpeedExpel     = -0.4;
+  private static final double  kAlgaeSpeedAcquire   = 0.25;
+  private static final double  kAlgaeSpeedExpel     = -0.25;
   private static final double  kAlgaeSpeedShoot     = -1.0;
-  private static final double  kAlgaeSpeedProcessor = -0.4;
+  private static final double  kAlgaeSpeedProcessor = -0.25;
   private static final double  kAlgaeSpeedHold      = 0.1;
 
   private static final double  kWristGearRatio      = 49.23;
