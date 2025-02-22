@@ -232,10 +232,10 @@ public class Robot extends TimedRobot
       isComp = true;
       robotName = "COMPETITION (A)";
     }
-    else if (serialNum.equals(Constants.kBetaSN))
+    else if (serialNum.equals(Constants.kPracticeSN))
     {
       isComp = false;
-      robotName = "PRACTICE/BETA (B)";
+      robotName = "PRACTICE (B)";
     }
     DataLogManager.log(String.format("robotContainer: Detected the %s robot (RoboRIO)!", robotName));
 
