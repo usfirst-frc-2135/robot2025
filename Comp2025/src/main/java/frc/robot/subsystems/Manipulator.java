@@ -108,15 +108,15 @@ public class Manipulator extends SubsystemBase
   // private static final double       kWristAngleDeployed       = Robot.isComp( ) ? 24.9 : 27.3;    Currently being kept for reference
 
   private static final double         kWristAngleCoralL1        = -90.0;
-  private static final double         kWristAngleCoralL2        = -35.0;
-  private static final double         kWristAngleCoralL3        = -35.0;
-  private static final double         kWristAngleCoralL4        = 0.0;
-  private static final double         kWristAngleCoralStation   = 0.0;
+  private static final double         kWristAngleCoralL2        = -80.0;
+  private static final double         kWristAngleCoralL3        = -80.0;
+  private static final double         kWristAngleCoralL4        = -5.0;
+  private static final double         kWristAngleCoralStation   = -90.0;
 
-  private static final double         kWristAngleAlgae23        = 20.0;
-  private static final double         kWristAngleAlgae34        = 20.0;
-  private static final double         kWristAngleAlgaeProcessor = 20.0;
-  private static final double         kWristAngleAlgaeNet       = -10.0;
+  private static final double         kWristAngleAlgae23        = -20.0;
+  private static final double         kWristAngleAlgae34        = -20.0;
+  private static final double         kWristAngleAlgaeProcessor = -20.0;
+  private static final double         kWristAngleAlgaeNet       = -75.0;
 
   private static final double         kWristAngleMin            = -90.0; //TODO: Complete with Correct Angles 
   private static final double         kWristAngleMax            = 35.0; // TODO: Complete with Correct Angles

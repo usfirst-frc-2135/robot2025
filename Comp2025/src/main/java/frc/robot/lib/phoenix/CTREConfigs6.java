@@ -215,9 +215,9 @@ public final class CTREConfigs6
 
     // Software limit switches
     wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;  // Rotations
-    // wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = max;  // Rotations
-    // wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 
     return wristRotaryConfig;
   }
@@ -260,7 +260,7 @@ public final class CTREConfigs6
     ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     ccConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
     if (Robot.isReal( ))
-      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (-0.311768 - kQuarterRotation) : (-0.2490 - kQuarterRotation);
+      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (-0.311768 - kQuarterRotation) : (0.2490 - kQuarterRotation);
     else
       ccConfig.MagnetSensor.MagnetOffset = -0.25;                   // Simulated CANcoder default in rotations
 
