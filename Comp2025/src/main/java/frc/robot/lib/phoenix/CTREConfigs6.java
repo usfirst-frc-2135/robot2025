@@ -264,7 +264,7 @@ public final class CTREConfigs6
       ccConfig.MagnetSensor.MagnetOffset =
           (Robot.isComp( )) ? (-0.311768 - kQuarterRotation + CompRobotOffset) : (0.1184 - kQuarterRotation);
     else
-      ccConfig.MagnetSensor.MagnetOffset = -0.25;                   // Simulated CANcoder default in rotations
+      ccConfig.MagnetSensor.MagnetOffset = -0.001709;                   // Simulated CANcoder default in rotations
 
     return ccConfig;
   }
