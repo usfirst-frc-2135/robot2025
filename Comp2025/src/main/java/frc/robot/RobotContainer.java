@@ -487,7 +487,7 @@ public class RobotContainer
 
   public double getElevatorAxis( )
   {
-    return -m_operatorPad.getRightY( );
+    return -m_operatorPad.getLeftY( );
   }
 
   /****************************************************************************
@@ -497,7 +497,7 @@ public class RobotContainer
 
   public double getWristAxis( )
   {
-    return -m_operatorPad.getLeftY( );
+    return m_operatorPad.getRightX( );
   }
 
   /****************************************************************************
