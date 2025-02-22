@@ -365,11 +365,11 @@ public class RobotContainer
     // TODO: Only one default command can be active per subsystem--use the manual modes during bring-up
 
     // Default command - Motion Magic hold
-    // m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getPosition));
+    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getPosition));
     // m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(m_manipulator::getPosition));
 
     // Default command - manual mode
-    m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
+    // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
     m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
 

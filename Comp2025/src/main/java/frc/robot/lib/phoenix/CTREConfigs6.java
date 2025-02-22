@@ -58,9 +58,9 @@ public final class CTREConfigs6
     // elevatorConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings
-    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 72.50;  // Rotations / second
-    elevatorConfig.MotionMagic.MotionMagicAcceleration = 241.7;    // Rotations / second ^ 2
-    elevatorConfig.MotionMagic.MotionMagicJerk = 2417;             // Rotations / second ^ 3
+    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 72.50 / 2;  // Rotations / second
+    elevatorConfig.MotionMagic.MotionMagicAcceleration = 241.7 / 2;    // Rotations / second ^ 2
+    elevatorConfig.MotionMagic.MotionMagicJerk = 2417 / 2;             // Rotations / second ^ 3
 
     // Motor output settings
     elevatorConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;   // Percentage
