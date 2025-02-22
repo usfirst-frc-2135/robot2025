@@ -218,7 +218,11 @@ public class RobotContainer
 
     SmartDashboard.putData("AutoChooserRun", new InstantCommand(( ) ->
     {
-      if (m_autoCommand != null)
+      if (m_autoCommand.isScheduled( ))
+      {
+        m_autoCommand.cancel( );
+      }
+      if ((m_autoCommand = getAutonomousCommand( )) != null)
       {
         m_autoCommand.schedule( );
       }
