@@ -119,7 +119,7 @@ public class Manipulator extends SubsystemBase
   private static final double         kWristAngleAlgaeNet       = -10.0;
 
   private static final double         kWristAngleMin            = -90.0; //TODO: Complete with Correct Angles 
-  private static final double         kWristAngleMax            = 20.0; // TODO: Complete with Correct Angles
+  private static final double         kWristAngleMax            = 35.0; // TODO: Complete with Correct Angles
 
   // Device objects
   private final TalonFX               m_wristMotor              = new TalonFX(Ports.kCANID_WristRotary);
