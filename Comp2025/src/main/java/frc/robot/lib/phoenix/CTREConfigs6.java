@@ -58,9 +58,9 @@ public final class CTREConfigs6
     // elevatorConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings
-    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 79.75 / 3;  // Rotations / second
-    elevatorConfig.MotionMagic.MotionMagicAcceleration = 159.5 / 3;    // Rotations / second ^ 2
-    elevatorConfig.MotionMagic.MotionMagicJerk = 3544 / 3;             // Rotations / second ^ 3
+    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 72.50;  // Rotations / second
+    elevatorConfig.MotionMagic.MotionMagicAcceleration = 241.7;    // Rotations / second ^ 2
+    elevatorConfig.MotionMagic.MotionMagicJerk = 2417;             // Rotations / second ^ 3
 
     // Motor output settings
     elevatorConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;   // Percentage
@@ -71,9 +71,10 @@ public final class CTREConfigs6
     // elevatorConfig.OpenLoopRamps.*                              // Seconds to ramp
 
     // Slot settings
+    elevatorConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
     elevatorConfig.Slot0.kS = 0.075;                                 // Feedforward: Voltage or duty cylce to overcome static friction
     elevatorConfig.Slot0.kG = 0.325;                                 // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
-    elevatorConfig.Slot0.kV = 0.1129;                              // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
+    elevatorConfig.Slot0.kV = 0.1241;                              // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
     elevatorConfig.Slot0.kP = 9.60;                                // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
     elevatorConfig.Slot0.kI = 0.0;                                 // Feedback: Voltage or duty cycle per accumulated unit
