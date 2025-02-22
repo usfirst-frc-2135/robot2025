@@ -136,7 +136,7 @@ public final class CTREConfigs6
 
     // Motor output settings
     clawRollerConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
-    clawRollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    clawRollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     clawRollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Open Loop settings
@@ -197,7 +197,7 @@ public final class CTREConfigs6
 
     // Motor output settings
     wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
-    wristRotaryConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    wristRotaryConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     wristRotaryConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Open Loop settings
