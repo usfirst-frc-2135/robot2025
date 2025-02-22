@@ -256,15 +256,13 @@ public final class CTREConfigs6
   {
     CANcoderConfiguration ccConfig = new CANcoderConfiguration( );
     double kQuarterRotation = 0.25;
-    double CompRobotOffset = -0.015;
 
     ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     ccConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
     if (Robot.isReal( ))
-      ccConfig.MagnetSensor.MagnetOffset =
-          (Robot.isComp( )) ? (-0.311768 - kQuarterRotation + CompRobotOffset) : (0.1184 - kQuarterRotation);
+      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (-0.311768 - kQuarterRotation) : (-0.2490 - kQuarterRotation);
     else
-      ccConfig.MagnetSensor.MagnetOffset = -0.001709;                   // Simulated CANcoder default in rotations
+      ccConfig.MagnetSensor.MagnetOffset = -0.25;                   // Simulated CANcoder default in rotations
 
     return ccConfig;
   }
