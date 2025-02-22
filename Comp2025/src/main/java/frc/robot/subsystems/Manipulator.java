@@ -475,7 +475,7 @@ public class Manipulator extends SubsystemBase
         m_mmWithinTolerance.calculate(false); // Reset the debounce filter
 
         double targetRotations = Units.degreesToRotations(m_targetDegrees);
-        m_wristMotor.setControl(m_mmRequestVolts.withPosition(targetRotations));
+        // m_wristMotor.setControl(m_mmRequestVolts.withPosition(targetRotations));
         DataLogManager.log(String.format("%s: MM Position move: %.1f -> %.1f degrees (%.3f -> %.3f rot)", getSubsystem( ),
             m_currentDegrees, m_targetDegrees, Units.degreesToRotations(m_currentDegrees), targetRotations));
       }
@@ -510,7 +510,7 @@ public class Manipulator extends SubsystemBase
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
     double error = m_targetDegrees - m_currentDegrees;
 
-    m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
+    // m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
 
     if (holdPosition)
       return false;
@@ -596,7 +596,7 @@ public class Manipulator extends SubsystemBase
   private void setWristStopped( )
   {
     DataLogManager.log(String.format("%s: Wrist motor now STOPPED", getSubsystem( )));
-    m_wristMotor.setControl(m_requestVolts.withOutput(0.0));
+    // m_wristMotor.setControl(m_requestVolts.withOutput(0.0));
   }
 
   /****************************************************************************

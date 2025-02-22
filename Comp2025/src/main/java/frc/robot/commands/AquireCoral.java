@@ -47,15 +47,15 @@ public class AquireCoral extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALACQUIRE, manipulator::getManipulatorCoralStation), // get coral from coral station
 
         new LogCommand(getName(), "Wait for Coral"),
-        // new WaitUntilCommand(manipulator::isCoralDetected), // checks if coral is acquired 
+        new WaitUntilCommand(manipulator::isCoralDetected), // checks if coral is acquired 
       
         new LogCommand(getName(), "Stop rollers"),
        
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
-        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
+        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         
         // elevator.getMoveToPositionCommand(elevator::getHeightStowed), // stowed
-        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         
         // @formatter:on
     );
