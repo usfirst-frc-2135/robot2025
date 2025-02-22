@@ -71,8 +71,8 @@ public final class CTREConfigs6
     // elevatorConfig.OpenLoopRamps.*                              // Seconds to ramp
 
     // Slot settings
-    elevatorConfig.Slot0.kS = 0.0;                                 // Feedforward: Voltage or duty cylce to overcome static friction
-    elevatorConfig.Slot0.kG = 0.0;                                 // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
+    elevatorConfig.Slot0.kS = 0.075;                                 // Feedforward: Voltage or duty cylce to overcome static friction
+    elevatorConfig.Slot0.kG = 0.325;                                 // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
     elevatorConfig.Slot0.kV = 0.1129;                              // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
     elevatorConfig.Slot0.kP = 9.60;                                // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
