@@ -72,6 +72,12 @@ public final class CTREConfigs6
 
     // Slot settings
     elevatorConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+
+    /*
+     * Elevator Upward was 0.40 V, Elevator Downward was 0.25.
+     * (0.40+0.25)/2 = kG
+     * 0.40 - kG OR kG - 0.25 = kS
+     */
     elevatorConfig.Slot0.kS = 0.075;                                 // Feedforward: Voltage or duty cylce to overcome static friction
     elevatorConfig.Slot0.kG = 0.325;                                 // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
     elevatorConfig.Slot0.kV = 0.1241;                              // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
