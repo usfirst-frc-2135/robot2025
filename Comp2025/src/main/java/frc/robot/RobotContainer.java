@@ -41,7 +41,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
+import frc.robot.commands.AcquireAlgae;
+import frc.robot.commands.AcquireCoral;
 import frc.robot.commands.LogCommand;
+import frc.robot.commands.ScoreAlgae;
+import frc.robot.commands.ScoreCoral;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
@@ -232,6 +236,11 @@ public class RobotContainer
     SmartDashboard.putData("manipulator", m_manipulator);
 
     SmartDashboard.putData(CommandScheduler.getInstance( ));
+
+    SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
   }
 
   /****************************************************************************
@@ -365,11 +374,11 @@ public class RobotContainer
     // TODO: Only one default command can be active per subsystem--use the manual modes during bring-up
 
     // Default command - Motion Magic hold
-    // m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getPosition));
+    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getPosition));
     // m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(m_manipulator::getPosition));
 
     // Default command - manual mode
-    m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
+    // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
     m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
 
@@ -487,7 +496,7 @@ public class RobotContainer
 
   public double getElevatorAxis( )
   {
-    return -m_operatorPad.getRightY( );
+    return -m_operatorPad.getLeftY( );
   }
 
   /****************************************************************************
@@ -497,7 +506,7 @@ public class RobotContainer
 
   public double getWristAxis( )
   {
-    return -m_operatorPad.getLeftY( );
+    return m_operatorPad.getRightX( );
   }
 
   /****************************************************************************
