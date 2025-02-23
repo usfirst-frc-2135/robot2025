@@ -17,7 +17,7 @@ import frc.robot.subsystems.Manipulator;
 /**
  * Command to score a algae to the reef
  */
-public class AquireAlgae extends SequentialCommandGroup
+public class AcquireAlgae extends SequentialCommandGroup
 {
   /**
    * Group command to use the subsystems to acquire algae from the reef level 23
@@ -31,7 +31,7 @@ public class AquireAlgae extends SequentialCommandGroup
    * @param led
    *          led subsystem
    */
-  public AquireAlgae(Elevator elevator, Manipulator manipulator, LED led, HID hid)
+  public AcquireAlgae(Elevator elevator, Manipulator manipulator, LED led, HID hid)
   {
     setName("AquireAlgae");
 

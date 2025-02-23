@@ -214,10 +214,10 @@ public final class CTREConfigs6
     wristRotaryConfig.Slot0.kD = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // Software limit switches
-    wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;  // Rotations
-    wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = max;  // Rotations
-    wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    // wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;  // Rotations
+    // wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = max;  // Rotations
+    // wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 
     return wristRotaryConfig;
   }
@@ -230,7 +230,7 @@ public final class CTREConfigs6
   {
     CANrangeConfiguration crConfig = new CANrangeConfiguration( );
 
-    crConfig.ProximityParams.ProximityThreshold = 0.1; // Proximity distance in meters (about 4 inches)
+    crConfig.ProximityParams.ProximityThreshold = 0.2; // Proximity distance in meters (about 4 inches)
 
     return crConfig;
   }
