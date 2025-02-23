@@ -2,11 +2,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants;
 import frc.robot.Constants.CRConsts;
-import frc.robot.Constants.LEDConsts.ANIMATION;
-import frc.robot.Constants.LEDConsts.COLOR;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
@@ -47,10 +43,9 @@ public class ScoreCoral extends SequentialCommandGroup
         new LogCommand(getName(), "Wait for Coral"),
         // new WaitUntilCommand(manipulator::isCoralDetected), // checks if coral is expelled 
       
-        new LogCommand(getName(), "Stop rollers")
-        
+        new LogCommand(getName(), "Stop rollers"),
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         // elevator.getMoveToPositionCommand(elevator::getHeightStowed), // stowed
-        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
         
         // @formatter:on
     );

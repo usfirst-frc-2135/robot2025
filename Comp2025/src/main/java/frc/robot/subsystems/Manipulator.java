@@ -130,15 +130,15 @@ public class Manipulator extends SubsystemBase
 
   // Alerts
   private final Alert                 m_rotaryAlert             =
-      new Alert(String.format("%s: Wrist motor init failed!", getSubsystem( )), AlertType.kError);
+      new Alert(String.format("%s: Wrist rotary motor init failed!", getSubsystem( )), AlertType.kError);
   private final Alert                 m_canCoderAlert           =
-      new Alert(String.format("%s: CANcoder init failed!", getSubsystem( )), AlertType.kError);
+      new Alert(String.format("%s: Wrist CANcoder init failed!", getSubsystem( )), AlertType.kError);
   private final Alert                 m_clawAlert               =
-      new Alert(String.format("%s: Claw motor init failed!", getSubsystem( )), AlertType.kError);
+      new Alert(String.format("%s: Claw roller motor init failed!", getSubsystem( )), AlertType.kError);
   private final Alert                 m_coralCRAlert            =
-      new Alert(String.format("%s: Claw motor init failed!", getSubsystem( )), AlertType.kError);
+      new Alert(String.format("%s: Coral detector init failed!", getSubsystem( )), AlertType.kError);
   private final Alert                 m_algaeCRAlert            =
-      new Alert(String.format("%s: Claw motor init failed!", getSubsystem( )), AlertType.kError);
+      new Alert(String.format("%s: Algae detector init failed!", getSubsystem( )), AlertType.kError);
 
   // Simulation objects
   private final TalonFXSimState       m_wristMotorSim           = m_wristMotor.getSimState( );
@@ -209,8 +209,8 @@ public class Manipulator extends SubsystemBase
     setSubsystem(kSubsystemName);
 
     // Claw motor init
-    m_clawMotorValid =
-        PhoenixUtil6.getInstance( ).talonFXInitialize6(m_clawMotor, kSubsystemName + "Claw", CTREConfigs6.clawRollerFXConfig( ));
+    m_clawMotorValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_clawMotor, kSubsystemName + "Claw",
+        CTREConfigs6.clawRollerFXConfig(m_coralDetector.getDeviceID( )));
 
     // // Initialize rotary motor and CANcoder objects
     m_wristMotorValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_wristMotor, kSubsystemName + "Wrist",
@@ -420,9 +420,13 @@ public class Manipulator extends SubsystemBase
     axisValue = MathUtil.applyDeadband(axisValue, Constants.kStickDeadband);
 
     if ((axisValue < 0.0) && (m_currentDegrees > kWristAngleMin))
+    {
       newMode = WristMode.INBOARD;
+    }
     else if ((axisValue > 0.0) && (m_currentDegrees < kWristAngleMax))
+    {
       newMode = WristMode.OUTBOARD;
+    }
     else
     {
       rangeLimited = true;
@@ -596,7 +600,7 @@ public class Manipulator extends SubsystemBase
   private void setWristStopped( )
   {
     DataLogManager.log(String.format("%s: Wrist motor now STOPPED", getSubsystem( )));
-    // m_wristMotor.setControl(m_requestVolts.withOutput(0.0));
+    m_wristMotor.setControl(m_requestVolts.withOutput(0.0));
   }
 
   /****************************************************************************

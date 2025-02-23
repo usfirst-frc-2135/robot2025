@@ -4,11 +4,8 @@ package frc.robot.commands;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.CRConsts;
-import frc.robot.Constants.LEDConsts.ANIMATION;
-import frc.robot.Constants.LEDConsts.COLOR;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
@@ -33,7 +30,7 @@ public class AcquireAlgae extends SequentialCommandGroup
    */
   public AcquireAlgae(Elevator elevator, Manipulator manipulator, LED led, HID hid)
   {
-    setName("AquireAlgae");
+    setName("AcquireAlgae");
 
     addCommands(
         // Add Commands here:
@@ -50,7 +47,6 @@ public class AcquireAlgae extends SequentialCommandGroup
         // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is acquired 
       
         new LogCommand(getName(), "Stop rollers"),
-       
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
         

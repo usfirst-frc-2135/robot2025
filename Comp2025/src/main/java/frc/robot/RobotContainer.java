@@ -41,8 +41,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
+import frc.robot.commands.AcquireAlgae;
 import frc.robot.commands.AcquireCoral;
 import frc.robot.commands.LogCommand;
+import frc.robot.commands.ScoreAlgae;
+import frc.robot.commands.ScoreCoral;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
@@ -234,7 +237,10 @@ public class RobotContainer
 
     SmartDashboard.putData(CommandScheduler.getInstance( ));
 
-    SmartDashboard.putData("CoralAquire", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
   }
 
   /****************************************************************************

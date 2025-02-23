@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.CRConsts;
-import frc.robot.Constants.LEDConsts.ANIMATION;
-import frc.robot.Constants.LEDConsts.COLOR;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
@@ -41,7 +39,7 @@ public class AcquireCoral extends SequentialCommandGroup
         // @formatter:off
 
         new LogCommand(getName(), "Move Elevator to Position"),
-       // elevator.getMoveToPositionCommand(elevator::getHeightCoralLStation),
+       elevator.getMoveToPositionCommand(elevator::getHeightCoralLStation),
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
         manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALACQUIRE, manipulator::getCurrentPosition), // get coral from coral station
@@ -50,12 +48,11 @@ public class AcquireCoral extends SequentialCommandGroup
         new WaitUntilCommand(manipulator::isCoralDetected), // checks if coral is acquired 
       
         new LogCommand(getName(), "Stop rollers"),
-       
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
-        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
+        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
         
         // elevator.getMoveToPositionCommand(elevator::getHeightStowed), // stowed
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getCurrentPosition)
+        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getCurrentPosition)
         
         // @formatter:on
     );
