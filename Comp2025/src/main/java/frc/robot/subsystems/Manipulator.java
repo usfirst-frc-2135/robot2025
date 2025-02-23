@@ -70,7 +70,7 @@ public class Manipulator extends SubsystemBase
   // Constants
   private static final String  kSubsystemName       = "Manipulator";
 
-  private static final double  kCoralSpeedAcquire   = 0.5;
+  private static final double  kCoralSpeedAcquire   = -0.08;
   private static final double  kCoralSpeedExpel     = -0.5;
 
   private static final double  kAlgaeSpeedAcquire   = 0.5;
@@ -108,18 +108,18 @@ public class Manipulator extends SubsystemBase
   // private static final double       kWristAngleDeployed       = Robot.isComp( ) ? 24.9 : 27.3;    Currently being kept for reference
 
   private static final double         kWristAngleCoralL1        = -90.0;
-  private static final double         kWristAngleCoralL2        = -35.0;
-  private static final double         kWristAngleCoralL3        = -35.0;
-  private static final double         kWristAngleCoralL4        = 0.0;
-  private static final double         kWristAngleCoralStation   = 0.0;
+  private static final double         kWristAngleCoralL2        = -80.0;
+  private static final double         kWristAngleCoralL3        = -80.0;
+  private static final double         kWristAngleCoralL4        = -5.0;
+  private static final double         kWristAngleCoralStation   = -90.0;
 
-  private static final double         kWristAngleAlgae23        = 20.0;
-  private static final double         kWristAngleAlgae34        = 20.0;
-  private static final double         kWristAngleAlgaeProcessor = 20.0;
-  private static final double         kWristAngleAlgaeNet       = -10.0;
+  private static final double         kWristAngleAlgae23        = -20.0;
+  private static final double         kWristAngleAlgae34        = -20.0;
+  private static final double         kWristAngleAlgaeProcessor = -20.0;
+  private static final double         kWristAngleAlgaeNet       = -75.0;
 
-  private static final double         kWristAngleMin            = -90.0; //TODO: Complete with Correct Angles 
-  private static final double         kWristAngleMax            = 20.0; // TODO: Complete with Correct Angles
+  private static final double         kWristAngleMin            = -180.0; //TODO: Complete with Correct Angles 
+  private static final double         kWristAngleMax            = 180.0; // TODO: Complete with Correct Angles
 
   // Device objects
   private final TalonFX               m_wristMotor              = new TalonFX(Ports.kCANID_WristRotary);
@@ -130,15 +130,15 @@ public class Manipulator extends SubsystemBase
 
   // Alerts
   private final Alert                 m_rotaryAlert             =
-      new Alert(String.format("%s: Wrist motor init failed!", getSubsystem( )), AlertType.kError);
+      new Alert(String.format("%s: Wrist rotary motor init failed!", getSubsystem( )), AlertType.kError);
   private final Alert                 m_canCoderAlert           =
-      new Alert(String.format("%s: CANcoder init failed!", getSubsystem( )), AlertType.kError);
+      new Alert(String.format("%s: Wrist CANcoder init failed!", getSubsystem( )), AlertType.kError);
   private final Alert                 m_clawAlert               =
-      new Alert(String.format("%s: Claw motor init failed!", getSubsystem( )), AlertType.kError);
+      new Alert(String.format("%s: Claw roller motor init failed!", getSubsystem( )), AlertType.kError);
   private final Alert                 m_coralCRAlert            =
-      new Alert(String.format("%s: Claw motor init failed!", getSubsystem( )), AlertType.kError);
+      new Alert(String.format("%s: Coral detector init failed!", getSubsystem( )), AlertType.kError);
   private final Alert                 m_algaeCRAlert            =
-      new Alert(String.format("%s: Claw motor init failed!", getSubsystem( )), AlertType.kError);
+      new Alert(String.format("%s: Algae detector init failed!", getSubsystem( )), AlertType.kError);
 
   // Simulation objects
   private final TalonFXSimState       m_wristMotorSim           = m_wristMotor.getSimState( );
@@ -209,8 +209,8 @@ public class Manipulator extends SubsystemBase
     setSubsystem(kSubsystemName);
 
     // Claw motor init
-    m_clawMotorValid =
-        PhoenixUtil6.getInstance( ).talonFXInitialize6(m_clawMotor, kSubsystemName + "Claw", CTREConfigs6.clawRollerFXConfig( ));
+    m_clawMotorValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_clawMotor, kSubsystemName + "Claw",
+        CTREConfigs6.clawRollerFXConfig(m_coralDetector.getDeviceID( )));
 
     // // Initialize rotary motor and CANcoder objects
     m_wristMotorValid = PhoenixUtil6.getInstance( ).talonFXInitialize6(m_wristMotor, kSubsystemName + "Wrist",
@@ -275,8 +275,8 @@ public class Manipulator extends SubsystemBase
     BaseStatusSignal.refreshAll(m_wristMotorPosition, m_ccPosition);
     m_currentDegrees = Units.rotationsToDegrees((m_wristMotorValid) ? m_wristMotorPosition.getValue( ).in(Rotations) : 0.0);
     m_ccDegrees = Units.rotationsToDegrees((m_canCoderValid) ? m_ccPosition.getValue( ).in(Rotations) : 0.0);
-    m_coralDetected = m_coralDebouncer.calculate(m_coralDetector.getIsDetected( ).getValue( ));
-    m_algaeDetected = m_algaeDebouncer.calculate(m_algaeDetector.getIsDetected( ).getValue( ));
+    m_coralDetected = m_coralDetector.getIsDetected( ).getValue( );
+    // m_algaeDetected = m_algaeDebouncer.calculate(m_algaeDetector.getIsDetected( ).getValue( ));
 
     // // Update network table publishers
     m_clawSpeedPub.set(m_clawMotor.get( ));
@@ -286,7 +286,7 @@ public class Manipulator extends SubsystemBase
     m_ccDegreesPub.set(m_ccDegrees);
     m_targetDegreesPub.set(m_targetDegrees);
     m_coralDetectedPub.set(m_coralDetected);
-    m_algaeDetectedPub.set(m_algaeDetected);
+    // m_algaeDetectedPub.set(m_algaeDetected);
   }
 
   /****************************************************************************
@@ -420,9 +420,13 @@ public class Manipulator extends SubsystemBase
     axisValue = MathUtil.applyDeadband(axisValue, Constants.kStickDeadband);
 
     if ((axisValue < 0.0) && (m_currentDegrees > kWristAngleMin))
+    {
       newMode = WristMode.INBOARD;
+    }
     else if ((axisValue > 0.0) && (m_currentDegrees < kWristAngleMax))
+    {
       newMode = WristMode.OUTBOARD;
+    }
     else
     {
       rangeLimited = true;
@@ -475,7 +479,7 @@ public class Manipulator extends SubsystemBase
         m_mmWithinTolerance.calculate(false); // Reset the debounce filter
 
         double targetRotations = Units.degreesToRotations(m_targetDegrees);
-        m_wristMotor.setControl(m_mmRequestVolts.withPosition(targetRotations));
+        // m_wristMotor.setControl(m_mmRequestVolts.withPosition(targetRotations));
         DataLogManager.log(String.format("%s: MM Position move: %.1f -> %.1f degrees (%.3f -> %.3f rot)", getSubsystem( ),
             m_currentDegrees, m_targetDegrees, Units.degreesToRotations(m_currentDegrees), targetRotations));
       }
@@ -510,7 +514,7 @@ public class Manipulator extends SubsystemBase
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
     double error = m_targetDegrees - m_currentDegrees;
 
-    m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
+    // m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
 
     if (holdPosition)
       return false;
