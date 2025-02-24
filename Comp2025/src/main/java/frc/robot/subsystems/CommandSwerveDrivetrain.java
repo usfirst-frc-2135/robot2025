@@ -441,6 +441,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return AutoBuilder.pathfindToPoseFlipped(pose, kPathFindConstraints, 0.0);
     }
 
+    public String closestFace(Pose2d pose, DriverStation alliance)
+    {
+
+    }
+
     private void setOdometryFromDashboard( )
     {
         resetPose(        //
