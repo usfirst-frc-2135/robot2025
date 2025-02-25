@@ -220,7 +220,17 @@ public class RobotContainer
     m_startChooser.addOption("START3", StartPose.START3);
     m_startChooser.onChange(this::updateStartChooserCallback);
 
-    SmartDashboard.putData("AutoChooserRun", new InstantCommand(( ) -> getAutonomousCommand( )));
+    SmartDashboard.putData("AutoChooserRun", new InstantCommand(( ) ->
+    {
+      if (m_autoCommand.isScheduled( ))
+      {
+        m_autoCommand.cancel( );
+      }
+      if ((m_autoCommand = getAutonomousCommand( )) != null)
+      {
+        m_autoCommand.schedule( );
+      }
+    }));
 
     // Command tab
     // SmartDashboard.putData("PrepareToClimb", new PrepareToClimb(m_climber, m_feeder));
