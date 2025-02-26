@@ -10,7 +10,9 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.UpdateModeValue;
 
 import frc.robot.Robot;
 
@@ -128,6 +130,10 @@ public final class CTREConfigs6
     // Hardware limit switches - CANrange
     // clawRollerConfig.HardwareLimitSwitch.ForwardLimitRemoteSensorID = canRangeID;
     // clawRollerConfig.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.RemoteCANrange;
+    // clawRollerConfig.HardwareLimitSwitch.ForwardLimitEnable = true;
+    clawRollerConfig.HardwareLimitSwitch.ReverseLimitRemoteSensorID = canRangeID; // Stop coral on CANrange detection
+    clawRollerConfig.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.RemoteCANrange;
+    clawRollerConfig.HardwareLimitSwitch.ReverseLimitEnable = true;
 
     // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio
     // clawRollerConfig.MotionMagic.*
@@ -232,6 +238,7 @@ public final class CTREConfigs6
     CANrangeConfiguration crConfig = new CANrangeConfiguration( );
 
     crConfig.ProximityParams.ProximityThreshold = 0.2; // Proximity distance in meters (about 4 inches)
+    crConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
 
     return crConfig;
   }
