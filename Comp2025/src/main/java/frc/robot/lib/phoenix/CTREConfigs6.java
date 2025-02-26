@@ -180,18 +180,21 @@ public final class CTREConfigs6
     wristRotaryConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
-    wristRotaryConfig.Feedback.FeedbackRemoteSensorID = ccPort;
-    wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    wristRotaryConfig.Feedback.SensorToMechanismRatio = 1.0;
-    wristRotaryConfig.Feedback.RotorToSensorRatio = gearRatio;
+    // wristRotaryConfig.Feedback.FeedbackRemoteSensorID = ccPort;    // TODO: wrist is CANcoder referenced 
+    // wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    // wristRotaryConfig.Feedback.SensorToMechanismRatio = 1.0;
+    // wristRotaryConfig.Feedback.RotorToSensorRatio = gearRatio;
+    wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor; // TODO: wrist is referenced to internal encoder
+    wristRotaryConfig.Feedback.SensorToMechanismRatio = gearRatio;
+    wristRotaryConfig.Feedback.RotorToSensorRatio = 1.0;
 
     // Hardware limit switches - NONE
     // wristRotaryConfig.HardwareLimitSwitch.*
 
-    // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio
-    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio / 2;  // Rotations / second
-    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio / 2;   // Rotations / second ^ 2
-    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio / 2;          // Rotations / second ^ 3
+    // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio // TODO: wrist is temporarily slowed until we get it tuned
+    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio / 3;  // Rotations / second
+    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio / 3;   // Rotations / second ^ 2
+    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio / 3;          // Rotations / second ^ 3
 
     // Motor output settings
     wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
