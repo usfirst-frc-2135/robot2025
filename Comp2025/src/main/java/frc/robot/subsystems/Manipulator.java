@@ -123,8 +123,9 @@ public class Manipulator extends SubsystemBase
   private static final double         kWristAngleAlgaeProcessor = -20.0;
   private static final double         kWristAngleAlgaeNet       = -75.0;
 
-  private static final double         kWristAngleMin            = -109.0; //TODO: Complete with Correct Angles 
-  private static final double         kWristAngleMax            = 10.0; // TODO: Complete with Correct Angles
+  private static final double         kMNSafePosition           = -75.0;
+  private static final double         kWristAngleMin            = -180.0; //TODO: Complete with Correct Angles 
+  private static final double         kWristAngleMax            = 180.0; // TODO: Complete with Correct Angles
 
   // Device objects
   private final TalonFX               m_wristMotor              = new TalonFX(Ports.kCANID_WristRotary);
@@ -793,6 +794,17 @@ public class Manipulator extends SubsystemBase
   public double getManipulatorAlgaeNet( )
   {
     return kWristAngleAlgaeNet;
+  }
+
+  /****************************************************************************
+   * 
+   * Return manipulator angle for Safe Position
+   * 
+   * @return deployed state angle
+   */
+  public double getMNSafePosition( )
+  {
+    return kMNSafePosition;
   }
 
   /****************************************************************************

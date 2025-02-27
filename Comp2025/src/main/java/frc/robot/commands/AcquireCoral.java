@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.CRConsts;
+import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
@@ -37,9 +38,13 @@ public class AcquireCoral extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
+        new LogCommand(getName(),"Move Manipulator To safe position"),
+        manipulator.getMoveToPositionCommand(ClawMode.CORALHOLD,manipulator::getMNSafePosition),
+
 
         new LogCommand(getName(), "Move Elevator to Position"),
-       elevator.getMoveToPositionCommand(elevator::getHeightCoralLStation),
+        elevator.getMoveToPositionCommand(elevator::getHeightCoralLStation),
+        // elevator.getMoveToPositionCommand(elevator::getHeightCoralL4),
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
         manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALACQUIRE, manipulator::getCurrentPosition), // get coral from coral station

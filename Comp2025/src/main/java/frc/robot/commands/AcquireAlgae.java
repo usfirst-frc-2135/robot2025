@@ -4,8 +4,10 @@ package frc.robot.commands;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.CRConsts;
+import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
@@ -36,7 +38,7 @@ public class AcquireAlgae extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-
+        
         new LogCommand(getName(), "Move Elevator to Position"),
         elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23), //level 2/3
 
