@@ -58,7 +58,7 @@ public class AcquireCoral extends SequentialCommandGroup
         
         // elevator.getMoveToPositionCommand(elevator::getHeightStowed), // stowed
         // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getCurrentPosition)
-        
+
         // @formatter:on
     );
   }
