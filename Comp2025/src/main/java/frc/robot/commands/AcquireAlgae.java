@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
-import frc.robot.Constants.CRConsts;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
@@ -39,23 +38,25 @@ public class AcquireAlgae extends SequentialCommandGroup
 
         // @formatter:off
         new LogCommand(getName(),"Move Manipulator To safe position"),
-        manipulator.getMoveToPositionCommand(ClawMode.CORALHOLD, manipulator:: getMNSafePosition),
+        manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState),
         
-        new LogCommand(getName(), "Move Elevator to Position"),
+        new LogCommand(getName(), "Move Elevator to acquire position"),
         elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23), //level 2/3
 
-        new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAEACQUIRE, manipulator::getManipulatorAlgae23), //level 2/3
+        new LogCommand(getName(), "Start algae rollers & move Manipulator to algae height"),
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAEACQUIRE, manipulator::getAngleAlgae23), //level 2/3
         
-        new LogCommand(getName(), "Wait for Algae"),
+        new LogCommand(getName(), "Wait for algae"),
+        new WaitCommand(Seconds.of(1.0)),
         // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is acquired 
       
-        new LogCommand(getName(), "Stop rollers"),
+        new LogCommand(getName(), "Stop algae rollers"),
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, manipulator::getAngleSafeState),
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
-        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)
+        hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         
-        // elevator.getMoveToPositionCommand(elevator::getHeightStowed), // stowed
-        // manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
+        new LogCommand(getName(), "Move Elevator to stowed height"),
+        elevator.getMoveToPositionCommand(elevator::getHeightStowed) // stowed
         
         // @formatter:on
     );

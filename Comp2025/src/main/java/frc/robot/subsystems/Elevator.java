@@ -577,7 +577,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return current position in inches
    */
-  public double getPosition( )
+  public double getCurrentHeight( )
   {
     return m_currentHeight;
   }
