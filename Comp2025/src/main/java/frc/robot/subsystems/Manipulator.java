@@ -113,8 +113,8 @@ public class Manipulator extends SubsystemBase
   // private static final double       kWristAngleDeployed       = Robot.isComp( ) ? 24.9 : 27.3;    Currently being kept for reference
 
   private static final double         kWristAngleCoralL1        = -90.0;
-  private static final double         kWristAngleCoralL2        = -80.0;
-  private static final double         kWristAngleCoralL3        = -80.0;
+  private static final double         kWristAngleCoralL2        = -75.0;
+  private static final double         kWristAngleCoralL3        = -75.0;
   private static final double         kWristAngleCoralL4        = -5.0;
   private static final double         kWristAngleCoralStation   = -90.0;
 
@@ -183,6 +183,7 @@ public class Manipulator extends SubsystemBase
   private boolean                     m_coralDetectorValid;             // Health indicator for CANrange
   // private Debouncer                   m_coralDebouncer          = new Debouncer(kCoralDebounceTime, DebounceType.kBoth); // TODO: debouncers necessary?
   private boolean                     m_coralDetected;
+  private boolean                     m_coralExpelled;
 
   //Claw Roller Parameters
   private DutyCycleOut                m_clawRequestVolts        = kClawRollerStop;
@@ -291,6 +292,7 @@ public class Manipulator extends SubsystemBase
     m_currentDegrees = Units.rotationsToDegrees((m_wristMotorValid) ? m_wristMotorPosition.getValue( ).in(Rotations) : 0.0);
     m_ccDegrees = Units.rotationsToDegrees((m_canCoderValid) ? m_ccPosition.getValue( ).in(Rotations) : 0.0);
     m_coralDetected = m_coralDetector.getIsDetected( ).getValue( );
+    m_coralExpelled = m_coralDetector.getIsDetected( ).getValue( );
     // m_algaeDetected = m_algaeDetector.getIsDetected( ).getValue( );  // TODO: temporary until algae sensor is mounted
 
     // // Update network table publishers
@@ -301,6 +303,7 @@ public class Manipulator extends SubsystemBase
     m_ccDegreesPub.set(m_ccDegrees);
     m_targetDegreesPub.set(m_targetDegrees);
     m_coralDetectedPub.set(m_coralDetected);
+    m_coralDetectedPub.set(m_coralExpelled);
     // m_algaeDetectedPub.set(m_algaeDetected);
 
     SmartDashboard.putNumber("WristPos", Units.rotationsToDegrees((m_wristMotor.getPosition( ).getValueAsDouble( )))); // TODO: temporary until wrist CANcoder is installed
@@ -379,6 +382,7 @@ public class Manipulator extends SubsystemBase
     SmartDashboard.putData("MNCoralHold", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getCurrentPosition));
 
     SmartDashboard.putData("MNWristRetracted", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorRetracted));
+    SmartDashboard.putData("MNWristCoralStation", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralStation));
     SmartDashboard.putData("MNWristCoralL1", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL1));
     SmartDashboard.putData("MNWristCoralL2", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL2));
     SmartDashboard.putData("MNWristCoralL3", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL3));
@@ -816,6 +820,17 @@ public class Manipulator extends SubsystemBase
   public boolean isCoralDetected( )
   {
     return m_coralDetected;
+  }
+
+  /****************************************************************************
+   * 
+   * Return coral sensor state
+   * 
+   * @return true if coral detected
+   */
+  public boolean isCoralExpelled( )
+  {
+    return !m_coralExpelled;
   }
 
   /****************************************************************************

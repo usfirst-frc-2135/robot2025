@@ -2,6 +2,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CRConsts;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.subsystems.Elevator;
@@ -42,13 +43,14 @@ public class ScoreCoral extends SequentialCommandGroup
         elevator.getMoveToPositionCommand(elevator::getHeightCoralL4), //level 4
 
         new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorCoralL4),
         manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getCurrentPosition), //level 4
 
         new LogCommand(getName(), "Wait for Coral"),
-        // new WaitUntilCommand(manipulator::isCoralDetected), // checks if coral is expelled 
+        new WaitUntilCommand(manipulator::isCoralExpelled), // checks if coral is expelled 
       
         new LogCommand(getName(), "Stop rollers"),
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
+        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getMNSafePosition)
         // elevator.getMoveToPositionCommand(elevator::getHeightStowed), // stowed
         
         // @formatter:on

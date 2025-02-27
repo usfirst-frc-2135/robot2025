@@ -60,9 +60,9 @@ public final class CTREConfigs6
     // elevatorConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings
-    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 72.50 / 2;  // Rotations / second
-    elevatorConfig.MotionMagic.MotionMagicAcceleration = 241.7 / 2;    // Rotations / second ^ 2
-    elevatorConfig.MotionMagic.MotionMagicJerk = 2417 / 2;             // Rotations / second ^ 3
+    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 72.50 * 0.75;  // Rotations / second
+    elevatorConfig.MotionMagic.MotionMagicAcceleration = 241.7 * 0.75;    // Rotations / second ^ 2
+    elevatorConfig.MotionMagic.MotionMagicJerk = 2417 * 0.75;             // Rotations / second ^ 3
 
     // Motor output settings
     elevatorConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;   // Percentage
@@ -198,9 +198,9 @@ public final class CTREConfigs6
     // wristRotaryConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio // TODO: wrist is temporarily slowed until we get it tuned
-    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio / 3;  // Rotations / second
-    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio / 3;   // Rotations / second ^ 2
-    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio / 3;          // Rotations / second ^ 3
+    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio / 2;  // Rotations / second
+    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio / 2;   // Rotations / second ^ 2
+    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio / 2;          // Rotations / second ^ 3
 
     // Motor output settings
     wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
