@@ -75,8 +75,8 @@ public class Manipulator extends SubsystemBase
   private static final String       kSubsystemName       = "Manipulator";
 
   private static final DutyCycleOut kClawRollerStop      = new DutyCycleOut(0).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.08).withIgnoreHardwareLimits(false);
-  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.5).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.15).withIgnoreHardwareLimits(false);
+  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.25).withIgnoreHardwareLimits(true);
 
   private static final DutyCycleOut kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
@@ -123,7 +123,7 @@ public class Manipulator extends SubsystemBase
   private static final double         kWristAngleAlgaeProcessor = -20.0;
   private static final double         kWristAngleAlgaeNet       = -75.0;
 
-  private static final double         kWristAngleMin            = -109.0; //TODO: Complete with Correct Angles 
+  private static final double         kWristAngleMin            = -91.0; //TODO: Complete with Correct Angles 
   private static final double         kWristAngleMax            = 10.0; // TODO: Complete with Correct Angles
 
   // Device objects
