@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.CRConsts;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
@@ -385,11 +386,12 @@ public class RobotContainer
 
     // Default command - Motion Magic hold
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getPosition));
-    // m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(m_manipulator::getPosition));
+    m_manipulator.setDefaultCommand(
+        m_manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALHOLD, m_manipulator::getCurrentPosition));
 
     // Default command - manual mode
     // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
-    m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
+    // m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
 
   /****************************************************************************
