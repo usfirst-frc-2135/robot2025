@@ -38,6 +38,8 @@ public class AcquireAlgae extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
+        new LogCommand(getName(),"Move Manipulator To safe position"),
+        manipulator.getMoveToPositionCommand(ClawMode.CORALHOLD, manipulator:: getMNSafePosition),
         
         new LogCommand(getName(), "Move Elevator to Position"),
         elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23), //level 2/3
