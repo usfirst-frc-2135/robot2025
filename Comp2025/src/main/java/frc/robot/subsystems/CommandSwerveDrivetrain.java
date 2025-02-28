@@ -50,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.VIConsts;
 import frc.robot.Robot;
+import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.lib.LimelightHelpers;
 
@@ -449,13 +450,31 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return AutoBuilder.pathfindToPoseFlipped(pose, kPathFindConstraints, 0.0);
     }
 
-    public Command getReefAllignment(int branch)
+    public Command getReefAlignmentCommand( )
     {
-        return new SequentialCommandGroup(reefBranchPub.set(branch),
-                getDrivePathToPoseCommand(m_drivetrainId, inst.getEntry(VIConsts.kReefOffsetString))
+        // TODO: Updates needed
+        //  1) The path following command will need to have a Path created from the current robot pose and the desired pose
+        //  2) So we need to get the reef offset from the publisher created in robotContainer, and
+        //  3) also get the closest AT tag face
+        //  4) to create a pose that will let us score
+        //  5) Need to generate a path that starts with the current pose and ends at the target pose
+        //  6) Options:
+        //      a) PPLib FollowPath would follow this directly
+        //      b) PPLib PathFindToPose should also get to the correct destination, but may take longer
+        //      c) PPLib PathFindToPath is probably the highest accuracy, but may take more work
+        //  Get ANY of these to work, and we can always make it better, PathFindToPose worked for us last year, so that may be best for now
 
-        );
+        // Note that getReefAlignment can do all the work before returning the PPLib call we need to run the path
 
+        // I commented some of this out to test all the linkages
+        // I don't quite have the deferred command sequence figured out, you can work on all the rest of the calculations above
+        //  then we can figure out how to defer the command properly
+
+        return new LogCommand(this.getName( ), "ReefAlign command");
+        //new SequentialCommandGroup(
+        //reefBranchPub.set(branch),
+        // getDrivePathToPoseCommand(m_drivetrainId, inst.getEntry(VIConsts.kReefOffsetString))
+        // );
     }
 
     /*
