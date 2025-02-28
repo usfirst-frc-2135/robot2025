@@ -37,7 +37,7 @@ public class ScoreAlgae extends SequentialCommandGroup
 
         // @formatter:off
         new LogCommand(getName(),"Move Manipulator To safe position"),
-        manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator:: getAngleSafeState),
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator:: getAngleAlgae23),
 
         new LogCommand(getName(), "Move Elevator to net height"),
         elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet), 

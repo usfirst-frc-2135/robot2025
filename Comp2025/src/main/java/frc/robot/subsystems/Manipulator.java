@@ -111,7 +111,7 @@ public class Manipulator extends SubsystemBase
   //      Comp     -90.0  -90         ?         ?         10.0
   //      Practice ?      ?           ?         ?         ?
   private static final double         kWristAngleMin            = -92.0; //TODO: Complete with Correct Angles 
-  private static final double         kWristAngleMax            = 12.0; // TODO: Complete with Correct Angles
+  private static final double         kWristAngleMax            = 38.0; // TODO: Complete with Correct Angles
 
   private static final double         kWristAngleSafeState      = -75.0;
 
@@ -119,10 +119,10 @@ public class Manipulator extends SubsystemBase
   private static final double         kWristAngleCoralL1        = -90.0;
   private static final double         kWristAngleCoralL2        = -75.0;
   private static final double         kWristAngleCoralL3        = -75.0;
-  private static final double         kWristAngleCoralL4        = -5.0;
+  private static final double         kWristAngleCoralL4        = -45.0;
 
-  private static final double         kWristAngleAlgae23        = -20.0;
-  private static final double         kWristAngleAlgae34        = -20.0;
+  private static final double         kWristAngleAlgae23        = 38.0;
+  private static final double         kWristAngleAlgae34        = 38.0;
   private static final double         kWristAngleAlgaeProcessor = 0.0;
   private static final double         kWristAngleAlgaeNet       = 0.0;
 
@@ -613,7 +613,7 @@ public class Manipulator extends SubsystemBase
         default :
           DataLogManager.log(String.format("%s: Claw mode is invalid: %s", getSubsystem( ), mode));
         case STOP :
-          m_clawRequestVolts = kClawRollerStop;
+          m_clawRequestVolts = (m_algaeDetected) ? kAlgaeSpeedHold : kClawRollerStop;
           break;
         case ALGAEACQUIRE :
           m_clawRequestVolts = kAlgaeSpeedAcquire;

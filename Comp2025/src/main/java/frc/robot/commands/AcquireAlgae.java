@@ -51,12 +51,12 @@ public class AcquireAlgae extends SequentialCommandGroup
         // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is acquired 
       
         new LogCommand(getName(), "Stop algae rollers"),
-        manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, manipulator::getAngleSafeState),
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, manipulator::getCurrentAngle),
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         
         new LogCommand(getName(), "Move Elevator to stowed height"),
-        elevator.getMoveToPositionCommand(elevator::getHeightStowed) // stowed
+        elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor) // stowed
         
         // @formatter:on
     );
