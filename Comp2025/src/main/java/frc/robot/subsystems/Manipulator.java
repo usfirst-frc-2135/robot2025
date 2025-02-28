@@ -366,33 +366,33 @@ public class Manipulator extends SubsystemBase
     SmartDashboard.putData("MNWristMech", m_wristRotaryMech);
 
     // Add commands
-    SmartDashboard.putData("MNClawStop", getMoveToPositionCommand(ClawMode.STOP, this::getCurrentAngle));
+    // SmartDashboard.putData("MNClawStop", getMoveToPositionCommand(ClawMode.STOP, this::getCurrentAngle));
 
-    SmartDashboard.putData("MNAlgaeAcquire", getMoveToPositionCommand(ClawMode.ALGAEACQUIRE, this::getCurrentAngle));
-    SmartDashboard.putData("MNAlgaeHold", getMoveToPositionCommand(ClawMode.ALGAEHOLD, this::getCurrentAngle));
-    SmartDashboard.putData("MNAlgaeExpel", getMoveToPositionCommand(ClawMode.ALGAEEXPEL, this::getCurrentAngle));
-    SmartDashboard.putData("MNAlgaeShoot", getMoveToPositionCommand(ClawMode.ALGAESHOOT, this::getCurrentAngle));
-    SmartDashboard.putData("MNAlgaeProcessor", getMoveToPositionCommand(ClawMode.ALGAEPROCESSOR, this::getCurrentAngle));
-    SmartDashboard.putData("MNAlgaeMaintain", getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, this::getCurrentAngle));
+    // SmartDashboard.putData("MNAlgaeAcquire", getMoveToPositionCommand(ClawMode.ALGAEACQUIRE, this::getCurrentAngle));
+    // SmartDashboard.putData("MNAlgaeHold", getMoveToPositionCommand(ClawMode.ALGAEHOLD, this::getCurrentAngle));
+    // SmartDashboard.putData("MNAlgaeExpel", getMoveToPositionCommand(ClawMode.ALGAEEXPEL, this::getCurrentAngle));
+    // SmartDashboard.putData("MNAlgaeShoot", getMoveToPositionCommand(ClawMode.ALGAESHOOT, this::getCurrentAngle));
+    // SmartDashboard.putData("MNAlgaeProcessor", getMoveToPositionCommand(ClawMode.ALGAEPROCESSOR, this::getCurrentAngle));
+    // SmartDashboard.putData("MNAlgaeMaintain", getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, this::getCurrentAngle));
 
-    SmartDashboard.putData("MNCoralAcquire", getMoveToPositionCommand(ClawMode.CORALACQUIRE, this::getCurrentAngle));
-    SmartDashboard.putData("MNCoralExpel", getMoveToPositionCommand(ClawMode.CORALEXPEL, this::getCurrentAngle));
-    SmartDashboard.putData("MNCoralHold", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getCurrentAngle));
+    // SmartDashboard.putData("MNCoralAcquire", getMoveToPositionCommand(ClawMode.CORALACQUIRE, this::getCurrentAngle));
+    // SmartDashboard.putData("MNCoralExpel", getMoveToPositionCommand(ClawMode.CORALEXPEL, this::getCurrentAngle));
+    // SmartDashboard.putData("MNCoralHold", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getCurrentAngle));
 
-    SmartDashboard.putData("MNWrisSafeState", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleSafeState));
+    // SmartDashboard.putData("MNWrisSafeState", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleSafeState));
 
-    SmartDashboard.putData("MNWristCoralStation", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralStation));
-    SmartDashboard.putData("MNWristCoralL1", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL1));
-    SmartDashboard.putData("MNWristCoralL2", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL2));
-    SmartDashboard.putData("MNWristCoralL3", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL3));
-    SmartDashboard.putData("MNWristCoralL4", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL4));
+    // SmartDashboard.putData("MNWristCoralStation", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralStation));
+    // SmartDashboard.putData("MNWristCoralL1", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL1));
+    // SmartDashboard.putData("MNWristCoralL2", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL2));
+    // SmartDashboard.putData("MNWristCoralL3", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL3));
+    // SmartDashboard.putData("MNWristCoralL4", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL4));
 
-    SmartDashboard.putData("MNWristAlgaeL23", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgae23));
-    SmartDashboard.putData("MNWristAlgaeL34", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgae34));
-    SmartDashboard.putData("MNWristAlgaeProcessor",
-        getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgaeProcessor));
-    SmartDashboard.putData("MNWristAlgaeNet", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgaeNet));
-
+    // SmartDashboard.putData("MNWristAlgaeL23", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgae23));
+    // SmartDashboard.putData("MNWristAlgaeL34", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgae34));
+    // SmartDashboard.putData("MNWristAlgaeProcessor",
+    //     getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgaeProcessor));
+    // SmartDashboard.putData("MNWristAlgaeNet", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgaeNet));
+  
     SmartDashboard.putData("MNCalibrate", getCalibrateCommand( ));  // TODO: temporary until wrist CANcoder can be installed
   }
 
@@ -490,8 +490,80 @@ public class Manipulator extends SubsystemBase
    * @param holdPosition
    *          hold previous position if true
    */
-  public void moveToPositionInit(ClawMode mode, double newAngle, boolean holdPosition)
+  public void moveToPositionInit(String level)
   {
+
+    ClawMode mode;
+    double newAngle;
+    boolean holdPosition;
+
+    switch (level)
+    {
+      default :
+        DataLogManager.log(String.format("%s: Manipulator is invalid: %s", getSubsystem( ), level));
+      case "CORAL1" :
+        newAngle = kWristAngleCoralL1;
+        mode = ClawMode.CORALEXPEL;
+        holdPosition = false;
+        break;
+      case "CORAL2" :
+        newAngle = kWristAngleCoralL2;
+        mode = ClawMode.CORALEXPEL;
+        holdPosition = false;
+        break;
+      case "CORAL3" :
+        newAngle = kWristAngleCoralL3;
+        mode = ClawMode.CORALEXPEL;
+        holdPosition = false;
+        break;
+      case "CORAL4" :
+        newAngle = kWristAngleCoralL4;
+        mode = ClawMode.CORALEXPEL;
+        holdPosition = false;
+        break;
+      case "ALGAE23" :
+        newAngle = kWristAngleAlgae23;
+        mode = ClawMode.ALGAEACQUIRE;
+        holdPosition = false;
+        break;
+      case "ALGAE34" :
+        newAngle = kWristAngleAlgae34;
+        mode = ClawMode.ALGAEACQUIRE;
+        holdPosition = false;
+        break;
+      case "CORALSTATION" :
+        newAngle = kWristAngleCoralStation;
+        mode = ClawMode.CORALACQUIRE;
+        holdPosition = false;
+        break;
+      case "NET" :
+        newAngle = kWristAngleAlgaeNet;
+        mode = ClawMode.ALGAESHOOT;
+        holdPosition = false;
+        break;
+      case "PROCESSOR" :
+      newAngle = kWristAngleAlgaeProcessor;
+      mode = ClawMode.ALGAEEXPEL;
+      holdPosition = false;
+      break;
+      case "CORALSAFE":
+      newAngle = kWristAngleSafeState;
+      holdPosition = false;
+      mode = ClawMode.STOP;
+      break;
+      case "ALGAESAFE":
+      newAngle = kWristAngleAlgae34;
+      holdPosition = false;
+      mode = ClawMode.STOP;
+      break;
+      case "CURRENT":
+      newAngle = m_currentDegrees;
+      holdPosition = true;
+      mode = ClawMode.CORALMAINTAIN;
+      break;
+
+    }
+
     setClawMode(mode);
     m_mmMoveTimer.restart( );
 
@@ -881,10 +953,10 @@ public class Manipulator extends SubsystemBase
    *          boolen to indicate whether the command ever finishes
    * @return continuous command that runs wrist rotary motor
    */
-  private Command getMMPositionCommand(ClawMode mode, DoubleSupplier position, boolean holdPosition)
+  private Command getMMPositionCommand(boolean holdPosition,String level)
   {
     return new FunctionalCommand(                                               // Command with all phases declared
-        ( ) -> moveToPositionInit(mode, position.getAsDouble( ), holdPosition), // Init method
+        ( ) -> moveToPositionInit(level), // Init method
         ( ) -> moveToPositionExecute( ),                                        // Execute method
         interrupted -> moveToPositionEnd( ),                                    // End method
         ( ) -> moveToPositionIsFinished(holdPosition),                          // IsFinished method
@@ -902,9 +974,9 @@ public class Manipulator extends SubsystemBase
    *          double supplier that provides the desired position
    * @return continuous command that runs wrist rotary motor
    */
-  public Command getMoveToPositionCommand(ClawMode mode, DoubleSupplier position)
+  public Command getMoveToPositionCommand(String level)
   {
-    return getMMPositionCommand(mode, position, false).withName(kSubsystemName + "MMMoveToPosition");
+    return getMMPositionCommand(false, level).withName(kSubsystemName + "MMMoveToPosition");
   }
 
   /****************************************************************************
@@ -917,9 +989,9 @@ public class Manipulator extends SubsystemBase
    *          double supplier that provides the desired position
    * @return continuous command that runs wrist rotary motor
    */
-  public Command getHoldPositionCommand(ClawMode mode, DoubleSupplier position)
+  public Command getHoldPositionCommand(String level)
   {
-    return getMMPositionCommand(mode, position, true).withName(kSubsystemName + "MMHoldPosition");
+    return getMMPositionCommand(true, level).withName(kSubsystemName + "MMHoldPosition");
   }
 
 }

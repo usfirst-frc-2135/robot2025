@@ -38,15 +38,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
-import frc.robot.commands.AcquireAlgae;
-import frc.robot.commands.AcquireCoral;
 import frc.robot.commands.LogCommand;
-import frc.robot.commands.ScoreAlgae;
-import frc.robot.commands.ScoreCoral;
+// import frc.robot.commands.ScoreAlgae;
+// import frc.robot.commands.ScoreCoral;
+import frc.robot.commands.ScoreCoralLevels;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
@@ -248,10 +246,11 @@ public class RobotContainer
 
     SmartDashboard.putData(CommandScheduler.getInstance( ));
 
-    SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
-    SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
-    SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
-    SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
+    // SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    // SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
+    // SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    // SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("ScoreCoralLevel", new ScoreCoralLevels(m_elevator, m_manipulator, m_led, m_hid, "CORAL4", "REEF4"));
   }
 
   /****************************************************************************
@@ -324,28 +323,28 @@ public class RobotContainer
 
     //
     // Operator - Bumpers, start, back
-    //
-    m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
+    // //
+    // m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    // m_operatorPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));   // aka View button
     m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));  // aka Menu button
 
     //
     // Operator - POV buttons
-    //
-    m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL1));
-    m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL2));
-    m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL3));
-    m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL4));
+    // //
+    // m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL1));
+    // m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL2));
+    // m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL3));
+    // m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL4));
 
     //
     // Operator Left/Right Trigger
     //
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
-    //
-    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
+    // //
+    // m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    // m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
 
     m_operatorPad.leftStick( ).toggleOnTrue(new LogCommand("operPad", "left stick"));
     m_operatorPad.rightStick( ).toggleOnTrue(new LogCommand("operPad", "right stick"));
@@ -385,8 +384,9 @@ public class RobotContainer
     // TODO: Only one default command can be active per subsystem--use the manual modes during bring-up
 
     // Default command - Motion Magic hold
-    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
-    m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
+    // m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
+    m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand("CURRENT"));
+    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand("CURRENT"));
 
     // Default command - manual mode
     // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));

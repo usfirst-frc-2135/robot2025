@@ -50,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.Ports;
 import frc.robot.lib.math.Conversions;
 import frc.robot.lib.phoenix.CTREConfigs6;
@@ -288,16 +289,16 @@ public class Elevator extends SubsystemBase
     SmartDashboard.putData(kSubsystemName + "Mech", m_elevatorMech);
 
     // Add commands
-    SmartDashboard.putData("ElRunStowed", getMoveToPositionCommand(this::getHeightStowed));
-    SmartDashboard.putData("ElRunCoralStation", getMoveToPositionCommand(this::getHeightCoralLStation));
-    SmartDashboard.putData("ElRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
-    SmartDashboard.putData("ElRunCoralL2", getMoveToPositionCommand(this::getHeightCoralL2));
-    SmartDashboard.putData("ElRunCoralL3", getMoveToPositionCommand(this::getHeightCoralL3));
-    SmartDashboard.putData("ElRunCoralL4", getMoveToPositionCommand(this::getHeightCoralL4));
-    SmartDashboard.putData("ElRunAlgae23", getMoveToPositionCommand(this::getHeightAlgaeL23));
-    SmartDashboard.putData("ElRunAlgae34", getMoveToPositionCommand(this::getHeightAlgaeL34));
-    SmartDashboard.putData("ElRunNet", getMoveToPositionCommand(this::getHeightAlgaeNet));
-    SmartDashboard.putData("ElRunProcessor", getMoveToPositionCommand(this::getHeightAlgaeProcessor));
+    // SmartDashboard.putData("ElRunStowed", getMoveToPositionCommand(this::getHeightStowed));
+    // SmartDashboard.putData("ElRunCoralStation", getMoveToPositionCommand(this::getHeightCoralLStation));
+    // SmartDashboard.putData("ElRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
+    // SmartDashboard.putData("ElRunCoralL2", getMoveToPositionCommand(this::getHeightCoralL2));
+    // SmartDashboard.putData("ElRunCoralL3", getMoveToPositionCommand(this::getHeightCoralL3));
+    // SmartDashboard.putData("ElRunCoralL4", getMoveToPositionCommand(this::getHeightCoralL4));
+    // SmartDashboard.putData("ElRunAlgae23", getMoveToPositionCommand(this::getHeightAlgaeL23));
+    // SmartDashboard.putData("ElRunAlgae34", getMoveToPositionCommand(this::getHeightAlgaeL34));
+    // SmartDashboard.putData("ElRunNet", getMoveToPositionCommand(this::getHeightAlgaeNet));
+    // SmartDashboard.putData("ElRunProcessor", getMoveToPositionCommand(this::getHeightAlgaeProcessor));
 
     SmartDashboard.putData("ElCalibrate", getCalibrateHeightCommand( ));
   }
@@ -392,11 +393,70 @@ public class Elevator extends SubsystemBase
    * @param holdPosition
    *          hold previous position if true
    */
-  private void moveToPositionInit(double newHeight, boolean holdPosition)
+  private void moveToPositionInit(String reefLevel)
   {
     m_mmMoveTimer.restart( );
     m_mmHardStopCounter = 0;
+    double newHeight;
+    boolean holdPosition;
 
+    switch (reefLevel)
+    {
+      default :
+        DataLogManager.log(String.format("%s: Manipulator is invalid: %s", getSubsystem( ), reefLevel));
+      case "REEF1" :
+        newHeight = kHeightCoralL1;
+        holdPosition = false;
+        break;
+      case "REEF2" :
+        newHeight = kHeightCoralL2;
+        holdPosition = false;
+        break;
+      case "REEF3" :
+        newHeight = kHeightCoralL3;
+
+        holdPosition = false;
+        break;
+      case "REEF4" :
+        newHeight = kHeightCoralL4;
+
+        holdPosition = false;
+        break;
+      case "REEF23" :
+        newHeight = kHeightAlgaeL23;
+
+        holdPosition = false;
+        break;
+      case "REEF34" :
+        newHeight = kHeightAlgaeL34;
+        holdPosition = false;
+        break;
+      case "ELCORALSTATION" :
+        newHeight = kHeightCoralStation;
+        holdPosition = false;
+        break;
+      case "ELNET" :
+        newHeight = kHeightAlgaeNet;
+        holdPosition = false;
+        break;
+      case "ELPROCESSOR" :
+        newHeight = kHeightAlgaeProcessor;
+        holdPosition = false;
+        break;
+      case "ELCORALSAFE" :
+        newHeight = kHeightCoralStation;
+        holdPosition = false;
+        break;
+      case "ELALGAESAFE" :
+        newHeight = kHeightAlgaeProcessor;
+        holdPosition = false;
+        break;
+      case "ELCURRENT" :
+        newHeight = m_currentHeight;
+        holdPosition = true;
+        break;
+
+    }
     if (!(m_calibrated))
     {
       DataLogManager.log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_targetHeight));
@@ -738,10 +798,10 @@ public class Elevator extends SubsystemBase
    *          boolen to indicate whether the command ever finishes
    * @return continuous command that runs elevator motors to a position (Motion Magic)
    */
-  private Command getMMPositionCommand(DoubleSupplier position, boolean holdPosition)
+  private Command getMMPositionCommand(Boolean holdPosition, String reefLevel)
   {
     return new FunctionalCommand(                                         // Command with all phases declared
-        ( ) -> moveToPositionInit(position.getAsDouble( ), holdPosition), // Init method
+        ( ) -> moveToPositionInit(reefLevel), // Init method
         ( ) -> moveToPositionExecute( ),                                  // Execute method
         interrupted -> moveToPositionEnd( ),                              // End method
         ( ) -> moveToPositionIsFinished(holdPosition),                    // IsFinished method
@@ -757,9 +817,9 @@ public class Elevator extends SubsystemBase
    *          double supplier that provides the target distance value
    * @return continuous command that runs elevator motors to a position (Motion Magic)
    */
-  public Command getMoveToPositionCommand(DoubleSupplier position)
+  public Command getMoveToPositionCommand(String reefLevel)
   {
-    return getMMPositionCommand(position, false).withName(kSubsystemName + "MMMoveToPosition");
+    return getMMPositionCommand(false, reefLevel).withName(kSubsystemName + "MMMoveToPosition");
   }
 
   /****************************************************************************
@@ -770,8 +830,8 @@ public class Elevator extends SubsystemBase
    *          double supplier that provides the target distance value
    * @return continuous command that holds elevator motors in a position (Motion Magic)
    */
-  public Command getHoldPositionCommand(DoubleSupplier position)
+  public Command getHoldPositionCommand(String reefLevel)
   {
-    return getMMPositionCommand(position, true).withName(kSubsystemName + "MMHoldPosition");
+    return getMMPositionCommand(true, reefLevel).withName(kSubsystemName + "MMHoldPosition");
   }
 }
