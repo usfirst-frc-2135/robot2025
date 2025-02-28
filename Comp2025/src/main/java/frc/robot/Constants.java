@@ -1,10 +1,14 @@
 
 package frc.robot;
 
+import java.util.Collections;
+import java.util.List;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * The Constants class provides a convenient place to hold robot-wide numerical or boolean
@@ -113,11 +117,51 @@ public class Constants
    ****************************************************************************/
   public static final class VIConsts
   {
-    public static final AprilTagFields      kGameField = AprilTagFields.k2025ReefscapeWelded;
-    public static final AprilTagFieldLayout kATField   = AprilTagFieldLayout.loadField(kGameField);
+    public static final AprilTagFields      kGameField         = AprilTagFields.k2025ReefscapeWelded;
+    public static final AprilTagFieldLayout kATField           = AprilTagFieldLayout.loadField(kGameField);
 
     /** Destination field poses for the robot when using PathPlanner pathfinding */                   // TODO: update to desired 2025 field poses
-    public static final Pose2d              kAmpPose   = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
+    public static final Pose2d              kAmpPose           = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
+
+    // blue side reef poses for pathToPose
+    public static final Pose2d[ ][ ]        kBlueSideReefPoses =
+    {
+        { // Face 0 (CD)
+            new Pose2d(new Translation2d(143.76, 114.37), Rotation2d.fromDegrees(240.00)), //Left branch
+            new Pose2d(new Translation2d(151.39, 114.58), Rotation2d.fromDegrees(240)), // Algae
+            new Pose2d(new Translation2d(155.02, 107.87), Rotation2d.fromDegrees(240)) // Right branch
+        },
+
+        { // Face 1 (AB)
+            new Pose2d(new Translation2d(122.00, 165.00), Rotation2d.fromDegrees(180)), //Left branch
+            new Pose2d(new Translation2d(126.00, 158.50), Rotation2d.fromDegrees(180)), // Algae
+            new Pose2d(new Translation2d(122.00, 152.00), Rotation2d.fromDegrees(180)) // Right branch
+        },
+
+        { // Face 2 (LK)
+            new Pose2d(new Translation2d(155.02, 209.13), Rotation2d.fromDegrees(120)), //Left branch
+            new Pose2d(new Translation2d(151.39, 202.42), Rotation2d.fromDegrees(120)), // Algae
+            new Pose2d(new Translation2d(202.42, 202.63), Rotation2d.fromDegrees(120)) // Right branch
+        },
+
+        { // Face 3 (IJ)
+            new Pose2d(new Translation2d(209.73, 202.63), Rotation2d.fromDegrees(60)), //Left branch
+            new Pose2d(new Translation2d(202.10, 202.42), Rotation2d.fromDegrees(60)), // Algae
+            new Pose2d(new Translation2d(198.47, 209.13), Rotation2d.fromDegrees(60)) // Right branch
+        },
+
+        { // Face 4 (GH)
+            new Pose2d(new Translation2d(231.49, 152.00), Rotation2d.fromDegrees(0)), //Left branch
+            new Pose2d(new Translation2d(227.49, 158.50), Rotation2d.fromDegrees(0)), // Algae
+            new Pose2d(new Translation2d(231.49, 165.00), Rotation2d.fromDegrees(0)) // Right branch
+        },
+
+        { // Face 5 (EF)
+            new Pose2d(new Translation2d(198.47, 107.87), Rotation2d.fromDegrees(300)), //Left branch
+            new Pose2d(new Translation2d(202.10, 114.58), Rotation2d.fromDegrees(300)), // Algae
+            new Pose2d(new Translation2d(209.73, 114.37), Rotation2d.fromDegrees(300)) // Right branch
+        }
+    };
   }
 
   /****************************************************************************

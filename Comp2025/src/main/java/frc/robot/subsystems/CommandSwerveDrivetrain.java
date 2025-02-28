@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -24,11 +25,13 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -45,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.VIConsts;
 import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.lib.LimelightHelpers;
@@ -357,7 +361,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         poseRotEntry = table.getDoubleTopic("rotation").getEntry(0.0);
         shooterDistancePub = table.getDoubleTopic("shooterDistance").getEntry(0.0);
         SmartDashboard.putData("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
-
+        SmartDashboard.putData("runSelector", new InstantCommand(( ) -> cloestFace( )));
     }
 
     public Command getPathCommand(PathPlannerPath ppPath)
@@ -441,9 +445,131 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return AutoBuilder.pathfindToPoseFlipped(pose, kPathFindConstraints, 0.0);
     }
 
-    public void closestFace(Pose2d pose, DriverStation alliance)
+    public int closestFace( )
     {
+        Transform2d smallestAprilTagDistance = null;
+        int closestFace = 0;
+        int closestTag = 0;
+        Optional<Alliance> alliance = DriverStation.getAlliance( );
 
+        if (alliance.isPresent( ))
+        {
+            if (DriverStation.getAlliance( ).get( ) == Alliance.Blue)
+            {
+                for (int i = 17; i < 23; i++)
+                {
+                    Pose3d tempPose3d = VIConsts.kATField.getTagPose(i).get( );
+                    Pose2d tempPose2d = tempPose3d.toPose2d( );
+                    Transform2d difference = getState( ).Pose.minus(tempPose2d);
+
+                    if ((Math.pow(smallestAprilTagDistance.getX( ), 2)
+                            + Math.pow(smallestAprilTagDistance.getY( ), 2)) < (Math.pow(difference.getX( ), 2)
+                                    + Math.pow(difference.getY( ), 2)))
+                    {
+                        smallestAprilTagDistance = difference;
+                        closestTag = i;
+                    }
+                }
+
+                if (closestTag == 17)
+                {
+                    closestFace = 0;
+                }
+                else if (closestTag == 18)
+                {
+                    closestFace = 1;
+                }
+                else if (closestTag == 19)
+                {
+                    closestFace = 2;
+                }
+                else if (closestTag == 20)
+                {
+                    closestFace = 3;
+                }
+                else if (closestTag == 21)
+                {
+                    closestFace = 4;
+                }
+                else if (closestTag == 22)
+                {
+                    closestFace = 5;
+                }
+            }
+
+            else if (DriverStation.getAlliance( ).get( ) == Alliance.Blue)
+            {
+                for (int i = 6; i < 12; i++)
+                {
+                    Pose3d tempPose3d = VIConsts.kATField.getTagPose(i).get( );
+                    Pose2d tempPose2d = tempPose3d.toPose2d( );
+                    Transform2d difference = getState( ).Pose.minus(tempPose2d);
+
+                    if ((Math.pow(smallestAprilTagDistance.getX( ), 2)
+                            + Math.pow(smallestAprilTagDistance.getY( ), 2)) < (Math.pow(difference.getX( ), 2)
+                                    + Math.pow(difference.getY( ), 2)))
+                    {
+                        smallestAprilTagDistance = difference;
+                        closestTag = i;
+                    }
+                }
+
+                if (closestTag == 6)
+                {
+                    closestFace = 0;
+                }
+                else if (closestTag == 7)
+                {
+                    closestFace = 1;
+                }
+                else if (closestTag == 8)
+                {
+                    closestFace = 2;
+                }
+                else if (closestTag == 9)
+                {
+                    closestFace = 3;
+                }
+                else if (closestTag == 10)
+                {
+                    closestFace = 4;
+                }
+                else if (closestTag == 11)
+                {
+                    closestFace = 5;
+                }
+            }
+
+            DataLogManager.log(String.format("closest face %s", closestFace));
+            return closestFace;
+        }
+    }
+
+    public Pose2d selector(Pose3d pose, DriverStation.Alliance alliance, int desiredScorePoseIndex)
+    {
+        int desiredFace = closestFace( );
+        Pose2d desiredPose = new Pose2d(new Translation2d(0, 0), new Rotation2d(0));
+
+        for (int i = 0; i < 6; i++)
+        {
+            if (i == desiredFace)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (j == desiredScorePoseIndex)
+                    {
+                        desiredPose = VIConsts.kBlueSideReefPoses[i][j];
+                    }
+                }
+            }
+        }
+
+        return desiredPose;
+    }
+
+    public Command getSelector( )
+    {
+        return new InstantCommand(this::selector);
     }
 
     private void setOdometryFromDashboard( )
