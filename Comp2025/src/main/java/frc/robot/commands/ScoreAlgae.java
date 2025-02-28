@@ -36,14 +36,15 @@ public class ScoreAlgae extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-        new LogCommand(getName(),"Move Manipulator To safe position"),
+        new LogCommand(getName(),"Move Manipulator to safe position"),
         manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator:: getAngleAlgae23),
 
-        new LogCommand(getName(), "Move Elevator to net height"),
+        new LogCommand(getName(), "Move Elevator to net height & move Manipulator to net position"),
         elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet), 
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet), 
 
-        new LogCommand(getName(), "Start algae rollers & move Manipulator to net position"),
-        manipulator.getMoveToPositionCommand(ClawMode.ALGAESHOOT, manipulator::getAngleAlgaeNet), 
+        new LogCommand(getName(), "Start algae rollers to shoot"),
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAESHOOT, manipulator::getCurrentAngle), 
         
         new LogCommand(getName(), "Wait for algae"),
         new WaitCommand(Seconds.of(1.0)),

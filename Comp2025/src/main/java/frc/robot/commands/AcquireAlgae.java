@@ -37,13 +37,13 @@ public class AcquireAlgae extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-        new LogCommand(getName(),"Move Manipulator To safe position"),
+        new LogCommand(getName(),"Move Manipulator to safe position"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState),
         
         new LogCommand(getName(), "Move Elevator to acquire position"),
         elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23), //level 2/3
 
-        new LogCommand(getName(), "Start algae rollers & move Manipulator to algae height"),
+        new LogCommand(getName(), "Start algae rollers & move Manipulator to algae acquire height"),
         manipulator.getMoveToPositionCommand(ClawMode.ALGAEACQUIRE, manipulator::getAngleAlgae23), //level 2/3
         
         new LogCommand(getName(), "Wait for algae"),
@@ -55,7 +55,7 @@ public class AcquireAlgae extends SequentialCommandGroup
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         
-        new LogCommand(getName(), "Move Elevator to stowed height"),
+        new LogCommand(getName(), "Move Elevator to processor height"),
         elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor) // stowed
         
         // @formatter:on
