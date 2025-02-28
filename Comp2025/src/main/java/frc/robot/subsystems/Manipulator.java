@@ -556,11 +556,6 @@ public class Manipulator extends SubsystemBase
     {
       m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
     }
-    else
-    {
-      DataLogManager
-          .log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_currentDegrees));
-    }
 
     if (holdPosition)
       return false;
