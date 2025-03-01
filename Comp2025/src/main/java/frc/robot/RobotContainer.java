@@ -524,7 +524,7 @@ public class RobotContainer
    * 
    * Called by disabledInit - place subsystem initializations here
    */
-  public void initialize( )
+  public void disabledInit( )
   {
     m_led.initialize( );
     m_power.initialize( );
@@ -532,6 +532,7 @@ public class RobotContainer
 
     m_elevator.initialize( );
     m_manipulator.initialize( );
+    m_vision.SetThrottleLevel(false);
   }
 
   /****************************************************************************
@@ -552,12 +553,16 @@ public class RobotContainer
    * Called during teleopInit to start any needed commands
    */
   public void autoInit( )
-  {}
+  {
+    m_vision.SetThrottleLevel(true);
+  }
 
   /****************************************************************************
    * 
    * Called during teleopInit to start any needed commands
    */
   public void teleopInit( )
-  {}
+  {
+    m_vision.SetThrottleLevel(true);
+  }
 }
