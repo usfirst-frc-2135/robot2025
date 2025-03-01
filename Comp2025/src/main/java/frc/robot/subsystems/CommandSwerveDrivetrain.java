@@ -7,7 +7,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -25,10 +24,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -361,7 +357,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         poseRotEntry = table.getDoubleTopic("rotation").getEntry(0.0);
         shooterDistancePub = table.getDoubleTopic("shooterDistance").getEntry(0.0);
         SmartDashboard.putData("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
-        SmartDashboard.putData("runSelector", new InstantCommand(( ) -> cloestFace( )));
+        // TODO: This dashboard button will only run the closest AT ID selection
+        SmartDashboard.putData("FaceSelector", new InstantCommand(( ) -> findClosestReefTag( )).ignoringDisable(true));
+        // TODO: This dashboard button will run the whole command
+        SmartDashboard.putData("DriveToPoseCommand", getDriveToPoseCommand( ));
     }
 
     public Command getPathCommand(PathPlannerPath ppPath)
@@ -445,131 +444,220 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return AutoBuilder.pathfindToPoseFlipped(pose, kPathFindConstraints, 0.0);
     }
 
-    public int closestFace( )
+    /*
+     * Initialize the array with the reef tags and faces TODO: check them--these were just put in for
+     * testing!
+     */
+    private int[ ] blueReefTags =
     {
-        Transform2d smallestAprilTagDistance = null;
-        int closestFace = 0;
-        int closestTag = 0;
-        Optional<Alliance> alliance = DriverStation.getAlliance( );
+            17, 18, 19, 20, 21, 22
+    }; // TODO: finish this out!
 
-        if (alliance.isPresent( ))
-        {
-            if (DriverStation.getAlliance( ).get( ) == Alliance.Blue)
-            {
-                for (int i = 17; i < 23; i++)
-                {
-                    Pose3d tempPose3d = VIConsts.kATField.getTagPose(i).get( );
-                    Pose2d tempPose2d = tempPose3d.toPose2d( );
-                    Transform2d difference = getState( ).Pose.minus(tempPose2d);
-
-                    if ((Math.pow(smallestAprilTagDistance.getX( ), 2)
-                            + Math.pow(smallestAprilTagDistance.getY( ), 2)) < (Math.pow(difference.getX( ), 2)
-                                    + Math.pow(difference.getY( ), 2)))
-                    {
-                        smallestAprilTagDistance = difference;
-                        closestTag = i;
-                    }
-                }
-
-                if (closestTag == 17)
-                {
-                    closestFace = 0;
-                }
-                else if (closestTag == 18)
-                {
-                    closestFace = 1;
-                }
-                else if (closestTag == 19)
-                {
-                    closestFace = 2;
-                }
-                else if (closestTag == 20)
-                {
-                    closestFace = 3;
-                }
-                else if (closestTag == 21)
-                {
-                    closestFace = 4;
-                }
-                else if (closestTag == 22)
-                {
-                    closestFace = 5;
-                }
-            }
-
-            else if (DriverStation.getAlliance( ).get( ) == Alliance.Blue)
-            {
-                for (int i = 6; i < 12; i++)
-                {
-                    Pose3d tempPose3d = VIConsts.kATField.getTagPose(i).get( );
-                    Pose2d tempPose2d = tempPose3d.toPose2d( );
-                    Transform2d difference = getState( ).Pose.minus(tempPose2d);
-
-                    if ((Math.pow(smallestAprilTagDistance.getX( ), 2)
-                            + Math.pow(smallestAprilTagDistance.getY( ), 2)) < (Math.pow(difference.getX( ), 2)
-                                    + Math.pow(difference.getY( ), 2)))
-                    {
-                        smallestAprilTagDistance = difference;
-                        closestTag = i;
-                    }
-                }
-
-                if (closestTag == 6)
-                {
-                    closestFace = 0;
-                }
-                else if (closestTag == 7)
-                {
-                    closestFace = 1;
-                }
-                else if (closestTag == 8)
-                {
-                    closestFace = 2;
-                }
-                else if (closestTag == 9)
-                {
-                    closestFace = 3;
-                }
-                else if (closestTag == 10)
-                {
-                    closestFace = 4;
-                }
-                else if (closestTag == 11)
-                {
-                    closestFace = 5;
-                }
-            }
-
-            DataLogManager.log(String.format("closest face %s", closestFace));
-            return closestFace;
-        }
-    }
-
-    public Pose2d selector(Pose3d pose, DriverStation.Alliance alliance, int desiredScorePoseIndex)
+    private int[ ] redReefTags  =
     {
-        int desiredFace = closestFace( );
-        Pose2d desiredPose = new Pose2d(new Translation2d(0, 0), new Rotation2d(0));
+            6, 7, 8, 9, 10, 11
+    };
 
-        for (int i = 0; i < 6; i++)
+    /*
+     * The calculation to find the closest face tag IDand return it (the caller can use the id
+     * and the branch, etc. to find target pose)
+     * 
+     */
+    public int findClosestReefTag( )
+    {
+        Alliance alliance = DriverStation.getAlliance( ).orElse(Alliance.Blue); // This will always return either Red or Blue and removes the optional type
+                                                                               // The orElse means "use Blue if no alliance is found"
+        int tagsToUse[];                                                       // The array to be used in the calculation
+
+        tagsToUse = (alliance.equals(Alliance.Blue)) ? blueReefTags : redReefTags; // Select the red or blue tag array
+
+        Pose2d robotPose = getState( ).Pose;                                    // Get the robot pose (2d) in a convenient local variable
+        int closestTag = 0;                                                     // Variable for saving the tag with the shortest distance (0 means none found)
+        double shortestDistance = 54.0; // field length                         // Variable for keeping track of lowest distance (54.0 means none found)
+
+        // Just one calculation for either tag set
+        for (int i : tagsToUse)                                                 // Iterate through the array of selected tags
         {
-            if (i == desiredFace)
+            Pose2d atPose = VIConsts.kATField.getTagPose(i).get( ).toPose2d( );                     // Get the AT tag in Pose2d form
+            double distance = robotPose.getTranslation( ).getDistance((atPose.getTranslation( )));  // Calculate the distance from the AT tag to the robotPose
+            if (distance < shortestDistance)                                                        // If the distance is shorter than what was saved before
             {
-                for (int j = 0; j < 3; j++)
-                {
-                    if (j == desiredScorePoseIndex)
-                    {
-                        desiredPose = VIConsts.kBlueSideReefPoses[i][j];
-                    }
-                }
+                closestTag = i;                                                                     // Save the new tag ID
             }
         }
 
-        return desiredPose;
+        DataLogManager.log(String.format("closest AT tag is %d", closestTag));
+        return closestTag;
+
+        // TODO: Commented the original code out for now
+
+        // Transform2d smallestAprilTagDistance = null;
+        // int closestFace = 0;
+        // int closestTag = 0;
+
+        // if (alliance.isPresent( ))
+        // {
+        //     if (DriverStation.getAlliance( ).get( ) == Alliance.Blue)
+        //     {
+        //         for (int i = 17; i < 23; i++)
+        //         {
+        //             Pose3d tempPose3d = VIConsts.kATField.getTagPose(i).get( );
+        //             Pose2d tempPose2d = tempPose3d.toPose2d( );
+        //             Transform2d difference = getState( ).Pose.minus(tempPose2d);
+
+        //             if ((Math.pow(smallestAprilTagDistance.getX( ), 2)
+        //                     + Math.pow(smallestAprilTagDistance.getY( ), 2)) < (Math.pow(difference.getX( ), 2)
+        //                             + Math.pow(difference.getY( ), 2)))
+        //             {
+        //                 smallestAprilTagDistance = difference;
+        //                 closestTag = i;
+        //             }
+        //         }
+
+        //         if (closestTag == 17)
+        //         {
+        //             closestFace = 0;
+        //         }
+        //         else if (closestTag == 18)
+        //         {
+        //             closestFace = 1;
+        //         }
+        //         else if (closestTag == 19)
+        //         {
+        //             closestFace = 2;
+        //         }
+        //         else if (closestTag == 20)
+        //         {
+        //             closestFace = 3;
+        //         }
+        //         else if (closestTag == 21)
+        //         {
+        //             closestFace = 4;
+        //         }
+        //         else if (closestTag == 22)
+        //         {
+        //             closestFace = 5;
+        //         }
+        //     }
+
+        //     else if (DriverStation.getAlliance( ).get( ) == Alliance.Blue)
+        //     {
+        //         for (int i = 6; i < 12; i++)
+        //         {
+        //             Pose3d tempPose3d = VIConsts.kATField.getTagPose(i).get( );
+        //             Pose2d tempPose2d = tempPose3d.toPose2d( );
+        //             Transform2d difference = getState( ).Pose.minus(tempPose2d);
+
+        //             if ((Math.pow(smallestAprilTagDistance.getX( ), 2)
+        //                     + Math.pow(smallestAprilTagDistance.getY( ), 2)) < (Math.pow(difference.getX( ), 2)
+        //                             + Math.pow(difference.getY( ), 2)))
+        //             {
+        //                 smallestAprilTagDistance = difference;
+        //                 closestTag = i;
+        //             }
+        //         }
+
+        //         if (closestTag == 6)
+        //         {
+        //             closestFace = 0;
+        //         }
+        //         else if (closestTag == 7)
+        //         {
+        //             closestFace = 1;
+        //         }
+        //         else if (closestTag == 8)
+        //         {
+        //             closestFace = 2;
+        //         }
+        //         else if (closestTag == 9)
+        //         {
+        //             closestFace = 3;
+        //         }
+        //         else if (closestTag == 10)
+        //         {
+        //             closestFace = 4;
+        //         }
+        //         else if (closestTag == 11)
+        //         {
+        //             closestFace = 5;
+        //         }
+        //     }
+
+        //     DataLogManager.log(String.format("closest face %s", closestFace));
+        // return closestTag;
     }
 
-    public Command getSelector( )
+    /*
+     * We want a method that:
+     * - given a branch/face selection (left, middle, right)
+     * - finds the closest face to the robot (closest AT tag)
+     * - selects either branch left pose or right pose, or selects the algae pose
+     * - returns the target pose
+     * 
+     * - the branch/face selection will eventually come from network table publishers (but can be
+     * hard-coded for now to test)
+     * - the closest face (reef tag) method is handled above
+     * - need another array of left, right, algae poses for each AT id (face)
+     * 
+     */
+    public Pose2d findTargetPose( )
     {
-        return new InstantCommand(this::selector);
+        int branchAlgae = -1;       // Invalid setting (should use enums here for readability LEFT, RIGHT, ALGAE)
+        int desiredReefTag = findClosestReefTag( );
+        Pose2d desiredPose2d = new Pose2d( );
+
+        // TODO: Pseudo-code for what is needed
+        //  simple method (no searching)
+        //  switch (desiredReefTag) 
+        //  case 6:
+        //      if (LEFT)
+        //          desiredPose = tagIdleftPose
+        //      else (RIGHT)
+        //          desiredPose = tagIdRightPose
+        //      else // must be algae
+        //          desiredPose = tagIdAlgaePose
+        //      etc. for all tags
+        //
+        //  return desiredPose to caller
+
+        // TODO: Commented the original code out for now
+
+        // Pose2d desiredPose = new Pose2d( ); // This is 0, 0, Rot2d(0) by default
+
+        // for (int i = 0; i < 6; i++)
+        // {
+        //     if (i == desiredFace)
+        //     {
+        //         for (int j = 0; j < 3; j++)
+        //         {
+        //             if (j == desiredScorePoseIndex)
+        //             {
+        //                 desiredPose = VIConsts.kBlueSideReefPoses[i][j];
+        //             }
+        //         }
+        //     }
+        // }
+
+        return desiredPose2d;
+    }
+
+    /*
+     * We want a command factory that:
+     * - given a branch/face selection (left, middle, right) done elsewhere
+     * - finds the closest face to the robot (closest AT tag)
+     * - selects either branch left pose or right pose, or selects the algae pose
+     * 
+     * This command factory will just wrap the findPathToPose method in an instant command
+     * - the pathToPose method needs to have the target branch left/right/algae pose as a parameter
+     * 
+     * This is what is hooked into a button trigger
+     */
+    public Command getDriveToPoseCommand( )
+    {
+        return new InstantCommand(( ) ->
+        {
+            drivePathtoPose(this, findTargetPose( ));
+        });
     }
 
     private void setOdometryFromDashboard( )
