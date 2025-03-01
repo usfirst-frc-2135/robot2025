@@ -182,8 +182,8 @@ public class Vision extends SubsystemBase
    * 
    * Set priorityid and display alliance color
    * 
-   * @param id
-   *          aprilTag ID to set as priority
+   * @param limelightName
+   *          Name/identifier of the Limelight
    * @param throttle
    *          Defaults to 0. Your Limelgiht will process one frame
    *          after skipping <throttle> frames.
@@ -192,6 +192,22 @@ public class Vision extends SubsystemBase
   {
     DataLogManager.log(String.format("%s: Set Throttle level to %s", getSubsystem( ), throttle));
     LimelightHelpers.SetThrottle("limelight", throttle ? 0 : 50);
+  }
+
+  /****************************************************************************
+   * 
+   * Set priorityid and display alliance color
+   * 
+   * @param limelightName
+   *          Name/identifier of the Limelight
+   * @param mode
+   *          Defaults to 0. Your Limelgiht will process one frame
+   *          after skipping <throttle> frames.
+   */
+  public void SetIMU(int mode)
+  {
+    DataLogManager.log(String.format("%s: Set Mode level to %s", getSubsystem( ), mode));
+    LimelightHelpers.SetIMUMode("limelight", 1);
   }
 
 }

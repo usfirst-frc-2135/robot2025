@@ -533,6 +533,7 @@ public class RobotContainer
     m_elevator.initialize( );
     m_manipulator.initialize( );
     m_vision.SetThrottleLevel(false);
+    m_vision.SetIMU(1);
   }
 
   /****************************************************************************
