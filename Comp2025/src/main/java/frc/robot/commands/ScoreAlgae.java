@@ -76,7 +76,7 @@ public class ScoreAlgae extends SequentialCommandGroup
         // Maps selector values to commands 
         Map.ofEntries( 
             Map.entry(LevelSelector.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet)), 
-            Map.entry(LevelSelector.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleCoralL2))),  
+            Map.entry(LevelSelector.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeProcessor))),  
         this::selectLevel), 
 
       new LogCommand(getName(), "Start Claw Rollers"), 
