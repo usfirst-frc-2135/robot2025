@@ -1,14 +1,23 @@
+<<<<<<< HEAD
 //LimelightHelpers v1.12 (REQUIRES LLOS 2025.0 OR LATER)
 
 package frc.robot;
+=======
+//LimelightHelpers v1.11 (REQUIRES LLOS 2025.0 OR LATER)
+
+package frc.robot.lib;
+>>>>>>> origin/updating_limelight_helpers
 
 import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
+<<<<<<< HEAD
 import frc.robot.LimelightHelpers.LimelightResults;
 import frc.robot.LimelightHelpers.PoseEstimate;
+=======
+>>>>>>> origin/updating_limelight_helpers
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,7 +30,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+<<<<<<< HEAD
 import java.util.Arrays;
+=======
+>>>>>>> origin/updating_limelight_helpers
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -488,6 +500,7 @@ public class LimelightHelpers {
             this.distToRobot = distToRobot;
             this.ambiguity = ambiguity;
         }
+<<<<<<< HEAD
 
         @Override
         public boolean equals(Object obj) {
@@ -503,6 +516,8 @@ public class LimelightHelpers {
                 Double.compare(ambiguity, other.ambiguity) == 0;
         }
 
+=======
+>>>>>>> origin/updating_limelight_helpers
     }
 
     /**
@@ -588,6 +603,7 @@ public class LimelightHelpers {
             this.isMegaTag2 = isMegaTag2;
         }
 
+<<<<<<< HEAD
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
@@ -604,6 +620,8 @@ public class LimelightHelpers {
                 && Arrays.equals(rawFiducials, that.rawFiducials);
         }
 
+=======
+>>>>>>> origin/updating_limelight_helpers
     }
 
     /**
@@ -1517,6 +1535,7 @@ public class LimelightHelpers {
     }
 
     /**
+<<<<<<< HEAD
      * Configures the complementary filter alpha value for IMU Assist Modes (Modes 3 and 4)
      * 
      * @param limelightName Name/identifier of the Limelight
@@ -1538,6 +1557,8 @@ public class LimelightHelpers {
     }
 
     /**
+=======
+>>>>>>> origin/updating_limelight_helpers
      * Sets the 3D point-of-interest offset for the current fiducial pipeline. 
      * https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-3d#point-of-interest-tracking
      *
