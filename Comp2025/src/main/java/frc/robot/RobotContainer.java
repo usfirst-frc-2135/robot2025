@@ -41,8 +41,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.VIConsts;
 import frc.robot.Constants.CRConsts.ClawMode;
+import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.AcquireAlgae;
@@ -50,7 +50,6 @@ import frc.robot.commands.AcquireCoral;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreAlgae;
 import frc.robot.commands.ScoreCoral;
-import frc.robot.commands.ScoreCoralLevel;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
@@ -262,7 +261,6 @@ public class RobotContainer
     SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
-    SmartDashboard.putData("ScoreCoralLevel", new ScoreCoralLevel(m_elevator, m_manipulator, m_led, m_hid));
   }
 
   public void setSelectLevel(int level)
@@ -331,7 +329,7 @@ public class RobotContainer
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(-180.0))));
-    m_driverPad.pov(235).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+    m_driverPad.pov(225).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(120.0))));

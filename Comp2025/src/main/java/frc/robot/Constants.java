@@ -85,6 +85,18 @@ public class Constants
    ****************************************************************************/
   public static final class ELConsts
   {
+    public enum LevelSelector
+    {
+      ONE,        // Coral Level One (Troph)
+      TWO,        // Coral Level Two
+      THREE,      // Coral Level Three
+      FOUR,       // Coral Level Four
+      TWOTHREE,   // Algae Level Two/Three
+      THREEFOUR, // Algae Level Three/Four
+      NET,       // Algae Net
+      PROCESSOR  // Algae Processor
+    }
+
   }
 
   /****************************************************************************
@@ -157,13 +169,4 @@ public class Constants
       DASHBOARD   // Animation taken from the dashboard
     }
   }
-
-  public enum ELCommandSelector
-  {
-    ONE,   // Level One (Troph)
-    TWO,   // Level Two
-    THREE, // Level Three
-    FOUR   // Level Four
-  }
-
 }
