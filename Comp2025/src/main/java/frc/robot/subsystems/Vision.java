@@ -71,8 +71,7 @@ public class Vision extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Periodic actions that run every scheduler loop time (20 msec) during
-   * simulation
+   * Periodic actions that run every scheduler loop time (20 msec) during simulation
    */
   @Override
   public void simulationPeriodic( )
