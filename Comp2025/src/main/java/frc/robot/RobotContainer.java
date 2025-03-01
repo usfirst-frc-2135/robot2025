@@ -48,7 +48,6 @@ import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreAlgae;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.generated.TunerConstants;
-import frc.robot.lib.LimelightHelpers;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
@@ -85,13 +84,13 @@ public class RobotContainer
       .withRotationalDeadband(kMaxAngularRate.times(Constants.kStickDeadband))  //
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
   private final SwerveRequest.SwerveDriveBrake        brake           = new SwerveRequest.SwerveDriveBrake( );
-  private final SwerveRequest.FieldCentricFacingAngle facing          = new SwerveRequest.FieldCentricFacingAngle( ) //
+  private final SwerveRequest.FieldCentricFacingAngle facing          = new SwerveRequest.FieldCentricFacingAngle( )  //
       .withDeadband(kMaxSpeed.times(Constants.kStickDeadband))                  //
       .withRotationalDeadband(kMaxAngularRate.times(Constants.kStickDeadband))  //
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
   @SuppressWarnings("unused")
   private final SwerveRequest.PointWheelsAt           point           = new SwerveRequest.PointWheelsAt( );
-  // private final SwerveRequest.RobotCentric aim = new SwerveRequest.RobotCentric( );
+  // private final SwerveRequest.RobotCentric            aim             = new SwerveRequest.RobotCentric( );
   private final SwerveRequest.Idle                    idle            = new SwerveRequest.Idle( );
   @SuppressWarnings("unused")
   private final SwerveRequest.RobotCentric            forwardStraight =
@@ -167,7 +166,7 @@ public class RobotContainer
   {
     Robot.timeMarker("robotContainer: before DAQ thread");
     // Swerve steer PID for facing swerve request
-    facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd); // Swerve steer PID for facing swerve request
+    facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);  // Swerve steer PID for facing swerve request
     // Identify the field
     DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField.toString( ),
         VIConsts.kATField.getFieldWidth( ), VIConsts.kATField.getFieldLength( )));
@@ -257,8 +256,7 @@ public class RobotContainer
 
   /****************************************************************************
    * 
-   * Define button-command mappings. Triggers are created and bound to the desired
-   * commands.
+   * Define button-command mappings. Triggers are created and bound to the desired commands.
    */
   private void configureButtonBindings( )
   {
@@ -361,33 +359,30 @@ public class RobotContainer
   {
     if (!m_macOSXSim)
     {
-      m_drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-          m_drivetrain.applyRequest(( ) -> drive //
+      m_drivetrain.setDefaultCommand(                                                         // Drivetrain will execute this command periodically
+          m_drivetrain.applyRequest(( ) -> drive                                              //
               .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                       // Drive forward with negative Y (forward)
               .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
-              .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))           // Drive counterclockwise with
-          // negative X (left)
-          ) //
+              .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))           // Drive counterclockwise with negative X (left)
+          )                                                                                   //
               .ignoringDisable(true) //
               .withName("CommandSwerveDrivetrain"));
     }
     else // When using simulation on MacOS X, XBox controllers need to be re-mapped due to an Apple bug
     {
-      m_drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
+      m_drivetrain.setDefaultCommand(                                                         // Drivetrain will execute this command periodically
           m_drivetrain.applyRequest(( ) -> drive                                              //
               .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                       // Drive forward with negative Y (forward)
               .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
-              .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getLeftTriggerAxis( )))  // Drive counterclockwise
-          // with negative X (left)
-          ) //
+              .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getLeftTriggerAxis( )))  // Drive counterclockwise with negative X (left)
+          )                                                                                   //
               .ignoringDisable(true) //
               .withName("CommandSwerveDrivetrain"));
     }
 
     m_drivetrain.registerTelemetry(logger::telemeterize);
 
-    // TODO: Only one default command can be active per subsystem--use the manual
-    // modes during bring-up
+    // TODO: Only one default command can be active per subsystem--use the manual modes during bring-up
 
     // Default command - Motion Magic hold
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
@@ -456,10 +451,10 @@ public class RobotContainer
       initialPath = initialPath.flipPath( );
 
     // {
-    // // Debug only: print states of first path
-    // List<PathPlannerTrajectory.State> states = initialPath.getTrajectory(new ChassisSpeeds( ), new Rotation2d( )).getStates( );
-    // for (int i = 0; i < states.size( ); i++)
-    // DataLogManager.log(String.format("autoCommand: Auto path state: (%d) %s", i, states.get(i).getTargetHolonomicPose( )));
+    //   // Debug only: print states of first path
+    //   List<PathPlannerTrajectory.State> states = initialPath.getTrajectory(new ChassisSpeeds( ), new Rotation2d( )).getStates( );
+    //   for (int i = 0; i < states.size( ); i++)
+    //     DataLogManager.log(String.format("autoCommand: Auto path state: (%d) %s", i, states.get(i).getTargetHolonomicPose( )));
     // }
 
     // Set field centric robot position to start of auto sequence
@@ -496,9 +491,9 @@ public class RobotContainer
     double delay = SmartDashboard.getNumber("AutoDelay", 0.0);
     if (delay > 0.0)
     {
-      m_autoCommand = new SequentialCommandGroup( //
-          new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)), //
-          new WaitCommand(delay), //
+      m_autoCommand = new SequentialCommandGroup(                                                         //
+          new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)),   //
+          new WaitCommand(delay),                                                                         //
           m_autoCommand);
     }
 
