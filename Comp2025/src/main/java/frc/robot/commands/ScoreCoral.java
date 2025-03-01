@@ -2,7 +2,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.CRConsts;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
@@ -34,22 +34,27 @@ public class ScoreCoral extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-        new LogCommand(getName(),"Move Manipulator To safe position"),
-        manipulator.getMoveToPositionCommand(ClawMode.CORALHOLD, manipulator:: getMNSafePosition),
 
+        new LogCommand(getName(),"Move Manipulator to safe position"),
+        manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState),
 
-        new LogCommand(getName(), "Move Elevator to Position"),
+        new LogCommand(getName(), "Move Elevator to Reef L4 height"),
         elevator.getMoveToPositionCommand(elevator::getHeightCoralL4), //level 4
 
-        new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.CORALEXPEL, manipulator::getCurrentPosition), //level 4
+        new LogCommand(getName(), "Move Manipulator to reef L4 position"),
+        manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4),
 
-        new LogCommand(getName(), "Wait for Coral"),
-        // new WaitUntilCommand(manipulator::isCoralDetected), // checks if coral is expelled 
+        new LogCommand(getName(), "Start coral rollers"),
+        manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle), //level 4
+
+        new LogCommand(getName(), "Wait for coral to expel"),
+        new WaitUntilCommand(manipulator::isCoralExpelled), // checks if coral is expelled 
       
-        new LogCommand(getName(), "Stop rollers"),
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)
-        // elevator.getMoveToPositionCommand(elevator::getHeightStowed), // stowed
+        new LogCommand(getName(), "Stop coral rollers"),
+        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),
+
+        new LogCommand(getName(), "Move Elevator to coral station height"),
+        elevator.getMoveToPositionCommand(elevator::getHeightCoralLStation) // coral station height
         
         // @formatter:on
     );

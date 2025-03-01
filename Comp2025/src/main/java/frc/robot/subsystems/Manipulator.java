@@ -74,9 +74,10 @@ public class Manipulator extends SubsystemBase
   // Constants
   private static final String       kSubsystemName       = "Manipulator";
 
-  private static final DutyCycleOut kClawRollerStop      = new DutyCycleOut(0).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.08).withIgnoreHardwareLimits(false);
-  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.5).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kClawRollerStop      = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
+
+  private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.15).withIgnoreHardwareLimits(false);
+  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.25).withIgnoreHardwareLimits(true);
 
   private static final DutyCycleOut kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
@@ -94,12 +95,12 @@ public class Manipulator extends SubsystemBase
   {
     INIT,    // Initialize rotary
     INBOARD, // Wrist moving into the robot
-    STOPPED, // Wrist stop and hold position
+    STOPPED, // Wrist stop and hold angle
     OUTBOARD // Wrist moving out of the robot
   }
 
   private static final double         kToleranceDegrees         = 3.0;      // PID tolerance in degrees
-  private static final double         kMMDebounceTime           = 0.060;    // Seconds to debounce a final position check
+  private static final double         kMMDebounceTime           = 0.060;    // Seconds to debounce a final angle check
   private static final double         kMMMoveTimeout            = 1.0;      // Seconds allowed for a Motion Magic movement
   // private static final double         kCoralDebounceTime        = 0.045;  // TODO: debouncers not necessary on CANrange sensors?
   // private static final double         kAlgaeDebounceTime        = 0.045;
@@ -107,25 +108,23 @@ public class Manipulator extends SubsystemBase
   // Wrist rotary angles - Motion Magic move parameters - TODO: Update for 2025 Reefscape needs
   //    Measured hardstops and pre-defined positions:
   //               hstop  retracted   processor deployed  hstop
-  //      Comp     -177.3  -176.3     -124.7    24.9      25.8
-  //      Practice -177.8  -176.8     -124.7    27.3      27.4
-  private static final double         kWristAngleRetracted      = Robot.isComp( ) ? -176.3 : -176.8;  // One degree from hardstops
-  // private static final double       kWristAngleDeployed       = Robot.isComp( ) ? 24.9 : 27.3;    Currently being kept for reference
+  //      Comp     -90.0  -90         ?         ?         10.0
+  //      Practice ?      ?           ?         ?         ?
+  private static final double         kWristAngleMin            = -92.0; //TODO: Complete with Correct Angles 
+  private static final double         kWristAngleMax            = 38.0; // TODO: Complete with Correct Angles
 
-  private static final double         kWristAngleCoralL1        = -90.0;
-  private static final double         kWristAngleCoralL2        = -80.0;
-  private static final double         kWristAngleCoralL3        = -80.0;
-  private static final double         kWristAngleCoralL4        = -5.0;
+  private static final double         kWristAngleSafeState      = -75.0;
+
   private static final double         kWristAngleCoralStation   = -90.0;
+  private static final double         kWristAngleCoralL1        = -90.0;
+  private static final double         kWristAngleCoralL2        = -75.0;
+  private static final double         kWristAngleCoralL3        = -75.0;
+  private static final double         kWristAngleCoralL4        = -45.0;
 
-  private static final double         kWristAngleAlgae23        = -20.0;
-  private static final double         kWristAngleAlgae34        = -20.0;
-  private static final double         kWristAngleAlgaeProcessor = -20.0;
-  private static final double         kWristAngleAlgaeNet       = -75.0;
-
-  private static final double         kMNSafePosition           = -75.0;
-  private static final double         kWristAngleMin            = -180.0; //TODO: Complete with Correct Angles 
-  private static final double         kWristAngleMax            = 180.0; // TODO: Complete with Correct Angles
+  private static final double         kWristAngleAlgae23        = 38.0;
+  private static final double         kWristAngleAlgae34        = 38.0;
+  private static final double         kWristAngleAlgaeProcessor = 0.0;
+  private static final double         kWristAngleAlgaeNet       = 0.0;
 
   // Device objects
   private final TalonFX               m_wristMotor              = new TalonFX(Ports.kCANID_WristRotary);
@@ -367,28 +366,32 @@ public class Manipulator extends SubsystemBase
     SmartDashboard.putData("MNWristMech", m_wristRotaryMech);
 
     // Add commands
-    SmartDashboard.putData("MNClawStop", getMoveToPositionCommand(ClawMode.STOP, this::getCurrentPosition));
-    SmartDashboard.putData("MNAlgaeAcquire", getMoveToPositionCommand(ClawMode.ALGAEACQUIRE, this::getCurrentPosition));
-    SmartDashboard.putData("MNAlgaeExpel", getMoveToPositionCommand(ClawMode.ALGAEEXPEL, this::getCurrentPosition));
-    SmartDashboard.putData("MNAlgaeShoot", getMoveToPositionCommand(ClawMode.ALGAESHOOT, this::getCurrentPosition));
-    SmartDashboard.putData("MNAlgaeProcessor", getMoveToPositionCommand(ClawMode.ALGAEPROCESSOR, this::getCurrentPosition));
-    SmartDashboard.putData("MNAlgaeHold", getMoveToPositionCommand(ClawMode.ALGAEHOLD, this::getCurrentPosition));
+    SmartDashboard.putData("MNClawStop", getMoveToPositionCommand(ClawMode.STOP, this::getCurrentAngle));
 
-    SmartDashboard.putData("MNCoralAcquire", getMoveToPositionCommand(ClawMode.CORALACQUIRE, this::getCurrentPosition));
-    SmartDashboard.putData("MNCoralExpel", getMoveToPositionCommand(ClawMode.CORALEXPEL, this::getCurrentPosition));
-    SmartDashboard.putData("MNCoralHold", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getCurrentPosition));
+    SmartDashboard.putData("MNAlgaeAcquire", getMoveToPositionCommand(ClawMode.ALGAEACQUIRE, this::getCurrentAngle));
+    SmartDashboard.putData("MNAlgaeHold", getMoveToPositionCommand(ClawMode.ALGAEHOLD, this::getCurrentAngle));
+    SmartDashboard.putData("MNAlgaeExpel", getMoveToPositionCommand(ClawMode.ALGAEEXPEL, this::getCurrentAngle));
+    SmartDashboard.putData("MNAlgaeShoot", getMoveToPositionCommand(ClawMode.ALGAESHOOT, this::getCurrentAngle));
+    SmartDashboard.putData("MNAlgaeProcessor", getMoveToPositionCommand(ClawMode.ALGAEPROCESSOR, this::getCurrentAngle));
+    SmartDashboard.putData("MNAlgaeMaintain", getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, this::getCurrentAngle));
 
-    SmartDashboard.putData("MNWristRetracted", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorRetracted));
-    SmartDashboard.putData("MNWristCoralL1", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL1));
-    SmartDashboard.putData("MNWristCoralL2", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL2));
-    SmartDashboard.putData("MNWristCoralL3", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL3));
-    SmartDashboard.putData("MNWristCoralL4", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorCoralL4));
+    SmartDashboard.putData("MNCoralAcquire", getMoveToPositionCommand(ClawMode.CORALACQUIRE, this::getCurrentAngle));
+    SmartDashboard.putData("MNCoralExpel", getMoveToPositionCommand(ClawMode.CORALEXPEL, this::getCurrentAngle));
+    SmartDashboard.putData("MNCoralHold", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getCurrentAngle));
 
-    SmartDashboard.putData("MNWristAlgaeL23", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorAlgae23));
-    SmartDashboard.putData("MNWristAlgaeL34", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorAlgae34));
-    SmartDashboard.putData("MNWristAlgaeNet", getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorAlgaeNet));
+    SmartDashboard.putData("MNWrisSafeState", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleSafeState));
+
+    SmartDashboard.putData("MNWristCoralStation", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralStation));
+    SmartDashboard.putData("MNWristCoralL1", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL1));
+    SmartDashboard.putData("MNWristCoralL2", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL2));
+    SmartDashboard.putData("MNWristCoralL3", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL3));
+    SmartDashboard.putData("MNWristCoralL4", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL4));
+
+    SmartDashboard.putData("MNWristAlgaeL23", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgae23));
+    SmartDashboard.putData("MNWristAlgaeL34", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgae34));
     SmartDashboard.putData("MNWristAlgaeProcessor",
-        getMoveToPositionCommand(ClawMode.CORALHOLD, this::getManipulatorAlgaeProcessor));
+        getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgaeProcessor));
+    SmartDashboard.putData("MNWristAlgaeNet", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgaeNet));
 
     SmartDashboard.putData("MNCalibrate", getCalibrateCommand( ));  // TODO: temporary until wrist CANcoder can be installed
   }
@@ -463,7 +466,7 @@ public class Manipulator extends SubsystemBase
     if (newMode != m_wristMode)
     {
       m_wristMode = newMode;
-      DataLogManager.log(String.format("%s: Manual move mode %s %.1f deg %s", getSubsystem( ), m_wristMode, getCurrentPosition( ),
+      DataLogManager.log(String.format("%s: Manual move mode %s %.1f deg %s", getSubsystem( ), m_wristMode, getCurrentAngle( ),
           ((rangeLimited) ? " - RANGE LIMITED" : "")));
     }
 
@@ -493,7 +496,7 @@ public class Manipulator extends SubsystemBase
     m_mmMoveTimer.restart( );
 
     if (holdPosition)
-      newAngle = getCurrentPosition( );
+      newAngle = getCurrentAngle( );
 
     // Decide if a new position request
     if (holdPosition || newAngle != m_targetDegrees || !MathUtil.isNear(newAngle, m_currentDegrees, kToleranceDegrees))
@@ -553,11 +556,6 @@ public class Manipulator extends SubsystemBase
     {
       m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
     }
-    else
-    {
-      DataLogManager
-          .log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_currentDegrees));
-    }
 
     if (holdPosition)
       return false;
@@ -599,7 +597,7 @@ public class Manipulator extends SubsystemBase
   {
     m_clawRequestVolts = kClawRollerStop;
 
-    if (mode == ClawMode.ALGAEHOLD || mode == ClawMode.CORALHOLD)
+    if (mode == ClawMode.ALGAEMAINTAIN || mode == ClawMode.CORALMAINTAIN)
     {
       DataLogManager.log(String.format("%s: Claw mode is unchanged - %s (%.3f)", getSubsystem( ), mode, m_clawMotor.get( )));
     }
@@ -610,7 +608,7 @@ public class Manipulator extends SubsystemBase
         default :
           DataLogManager.log(String.format("%s: Claw mode is invalid: %s", getSubsystem( ), mode));
         case STOP :
-          m_clawRequestVolts = kClawRollerStop;
+          m_clawRequestVolts = (m_algaeDetected) ? kAlgaeSpeedHold : kClawRollerStop;
           break;
         case ALGAEACQUIRE :
           m_clawRequestVolts = kAlgaeSpeedAcquire;
@@ -631,6 +629,7 @@ public class Manipulator extends SubsystemBase
           m_clawRequestVolts = kCoralSpeedExpel;
           break;
       }
+
       DataLogManager.log(String.format("%s: Claw mode is now - %s", getSubsystem( ), mode));
       m_clawMotor.setControl(m_clawRequestVolts);
     }
@@ -677,33 +676,33 @@ public class Manipulator extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Return current position
+   * Return current angle
    * 
    * @return current rotary angle
    */
-  public double getCurrentPosition( )
+  public double getCurrentAngle( )
   {
     return m_currentDegrees;
   }
 
   /****************************************************************************
    * 
-   * Return manipulator angle for retracted state
+   * Return manipulator angle for Safe Position
    * 
-   * @return retracted state angle
+   * @return safe state angle
    */
-  public double getManipulatorRetracted( )
+  public double getAngleSafeState( )
   {
-    return kWristAngleRetracted;
+    return kWristAngleSafeState;
   }
 
   /****************************************************************************
    * 
    * Return manipulator angle for coral level 1 state
    * 
-   * @return deployed state angle
+   * @return coral L1 angle
    */
-  public double getManipulatorCoralL1( )
+  public double getAngleCoralL1( )
   {
     return kWristAngleCoralL1;
   }
@@ -712,9 +711,9 @@ public class Manipulator extends SubsystemBase
    * 
    * Return manipulator angle for coral level 2 state
    * 
-   * @return deployed state angle
+   * @return coral L2 angle
    */
-  public double getManipulatorCoralL2( )
+  public double getAngleCoralL2( )
   {
     return kWristAngleCoralL2;
   }
@@ -723,9 +722,9 @@ public class Manipulator extends SubsystemBase
    * 
    * Return manipulator angle for coral level 3 state
    * 
-   * @return deployed state angle
+   * @return coral L3 angle
    */
-  public double getManipulatorCoralL3( )
+  public double getAngleCoralL3( )
   {
     return kWristAngleCoralL3;
   }
@@ -734,9 +733,9 @@ public class Manipulator extends SubsystemBase
    * 
    * Return manipulator angle for coral level 4 state
    * 
-   * @return deployed state angle
+   * @return coral L4 angle
    */
-  public double getManipulatorCoralL4( )
+  public double getAngleCoralL4( )
   {
     return kWristAngleCoralL4;
   }
@@ -745,9 +744,9 @@ public class Manipulator extends SubsystemBase
    * 
    * Return manipulator angle for coral station state
    * 
-   * @return deployed state angle
+   * @return coral station angle
    */
-  public double getManipulatorCoralStation( )
+  public double getAngleCoralStation( )
   {
     return kWristAngleCoralStation;
   }
@@ -756,9 +755,9 @@ public class Manipulator extends SubsystemBase
    * 
    * Return manipulator angle for algae level 23 state
    * 
-   * @return deployed state angle
+   * @return algae L23 angle
    */
-  public double getManipulatorAlgae23( )
+  public double getAngleAlgae23( )
   {
     return kWristAngleAlgae23;
   }
@@ -767,9 +766,9 @@ public class Manipulator extends SubsystemBase
    * 
    * Return manipulator angle for algae level 34 state
    * 
-   * @return deployed state angle
+   * @return algae L34 angle
    */
-  public double getManipulatorAlgae34( )
+  public double getAngleAlgae34( )
   {
     return kWristAngleAlgae34;
   }
@@ -778,9 +777,9 @@ public class Manipulator extends SubsystemBase
    * 
    * Return manipulator angle for algae processor state
    * 
-   * @return deployed state angle
+   * @return algae processor angle
    */
-  public double getManipulatorAlgaeProcessor( )
+  public double getAngleAlgaeProcessor( )
   {
     return kWristAngleAlgaeProcessor;
   }
@@ -789,22 +788,11 @@ public class Manipulator extends SubsystemBase
    * 
    * Return manipulator angle for algae net state
    * 
-   * @return deployed state angle
+   * @return algae net angle
    */
-  public double getManipulatorAlgaeNet( )
+  public double getAngleAlgaeNet( )
   {
     return kWristAngleAlgaeNet;
-  }
-
-  /****************************************************************************
-   * 
-   * Return manipulator angle for Safe Position
-   * 
-   * @return deployed state angle
-   */
-  public double getMNSafePosition( )
-  {
-    return kMNSafePosition;
   }
 
   /****************************************************************************
@@ -816,6 +804,17 @@ public class Manipulator extends SubsystemBase
   public boolean isCoralDetected( )
   {
     return m_coralDetected;
+  }
+
+  /****************************************************************************
+   * 
+   * Return coral sensor state
+   * 
+   * @return true if coral not present
+   */
+  public boolean isCoralExpelled( )
+  {
+    return !m_coralDetected;
   }
 
   /****************************************************************************
