@@ -23,8 +23,8 @@ public class Vision extends SubsystemBase
   /** Camera stream mode parameter */
   private enum streamMode
   {
-    STANDARD(0), //
-    PIPMAIN(1), //
+    STANDARD(0),    //
+    PIPMAIN(1),     //
     PIPSECONDARY(2);
 
     @SuppressWarnings("unused")

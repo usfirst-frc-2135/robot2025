@@ -365,7 +365,7 @@ public class RobotContainer
               .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
               .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))           // Drive counterclockwise with negative X (left)
           )                                                                                   //
-              .ignoringDisable(true) //
+              .ignoringDisable(true)                                      //
               .withName("CommandSwerveDrivetrain"));
     }
     else // When using simulation on MacOS X, XBox controllers need to be re-mapped due to an Apple bug
@@ -376,7 +376,7 @@ public class RobotContainer
               .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
               .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getLeftTriggerAxis( )))  // Drive counterclockwise with negative X (left)
           )                                                                                   //
-              .ignoringDisable(true) //
+              .ignoringDisable(true)                                      //
               .withName("CommandSwerveDrivetrain"));
     }
 
@@ -491,9 +491,9 @@ public class RobotContainer
     double delay = SmartDashboard.getNumber("AutoDelay", 0.0);
     if (delay > 0.0)
     {
-      m_autoCommand = new SequentialCommandGroup(                                                         //
-          new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)),   //
-          new WaitCommand(delay),                                                                         //
+      m_autoCommand = new SequentialCommandGroup(                                                       //
+          new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)), //
+          new WaitCommand(delay),                                                                       //
           m_autoCommand);
     }
 
