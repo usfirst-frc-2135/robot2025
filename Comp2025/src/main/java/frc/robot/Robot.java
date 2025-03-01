@@ -108,7 +108,7 @@ public class Robot extends TimedRobot
     if (m_loadAutoCommand)
     {
       m_autonomousCommand = m_robotContainer.getAutonomousCommand( );
-      m_loadAutoCommand = false; // Load only once per request
+      m_loadAutoCommand = false;  // Load only once per request
     }
 
     // If RoboRIO User button is pressed, dump all CAN faults

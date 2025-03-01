@@ -60,23 +60,20 @@ import frc.robot.subsystems.Vision;
 
 /****************************************************************************
  * 
- * This class is where the bulk of the robot is declared. Since Command-based is
- * a "declarative"
- * paradigm, very little robot logic should actually be handled in the Robot
- * periodic methods (other
- * than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands,
+ * This class is where the bulk of the robot is declared. Since Command-based is a "declarative"
+ * paradigm, very little robot logic should actually be handled in the Robot periodic methods (other
+ * than the scheduler calls). Instead, the structure of the robot (including subsystems, commands,
  * and button mappings) should be declared here.
  */
 public class RobotContainer
 {
-  private final boolean                               m_macOSXSim     = false; // Enables Mac OS X controller compatibility in simulation
+  private final boolean                               m_macOSXSim     = false;  // Enables Mac OS X controller compatibility in simulation
 
   // Gamepad controllers
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
   private static final CommandXboxController          m_operatorPad   = new CommandXboxController(Constants.kOperatorPadPort);
 
-  private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts; // Maximum top speed
+  private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
   private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(3.0 * Math.PI); // Max 1.5 rot per second
   private static final double                         kHeadingKp      = 10.0;
   private static final double                         kHeadingKi      = 0.0;
@@ -84,18 +81,17 @@ public class RobotContainer
 
   // Setting up bindings for necessary control of the swerve drive platform
   private final SwerveRequest.FieldCentric            drive           = new SwerveRequest.FieldCentric( ) //
-      .withDeadband(kMaxSpeed.times(Constants.kStickDeadband)) //
-      .withRotationalDeadband(kMaxAngularRate.times(Constants.kStickDeadband)) //
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // We want field-centric driving in open loop
+      .withDeadband(kMaxSpeed.times(Constants.kStickDeadband))                  //
+      .withRotationalDeadband(kMaxAngularRate.times(Constants.kStickDeadband))  //
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
   private final SwerveRequest.SwerveDriveBrake        brake           = new SwerveRequest.SwerveDriveBrake( );
   private final SwerveRequest.FieldCentricFacingAngle facing          = new SwerveRequest.FieldCentricFacingAngle( ) //
-      .withDeadband(kMaxSpeed.times(Constants.kStickDeadband)) //
-      .withRotationalDeadband(kMaxAngularRate.times(Constants.kStickDeadband)) //
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // We want field-centric driving in open loop
+      .withDeadband(kMaxSpeed.times(Constants.kStickDeadband))                  //
+      .withRotationalDeadband(kMaxAngularRate.times(Constants.kStickDeadband))  //
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
   @SuppressWarnings("unused")
   private final SwerveRequest.PointWheelsAt           point           = new SwerveRequest.PointWheelsAt( );
-  // private final SwerveRequest.RobotCentric aim = new
-  // SwerveRequest.RobotCentric( );
+  // private final SwerveRequest.RobotCentric aim = new SwerveRequest.RobotCentric( );
   private final SwerveRequest.Idle                    idle            = new SwerveRequest.Idle( );
   @SuppressWarnings("unused")
   private final SwerveRequest.RobotCentric            forwardStraight =
@@ -114,16 +110,16 @@ public class RobotContainer
   private final Elevator                              m_elevator      = new Elevator( );
   private final Manipulator                           m_manipulator   = new Manipulator( );
   // Selected autonomous command
-  private Command                                     m_autoCommand; // Selected autonomous command
+  private Command                                     m_autoCommand;  // Selected autonomous command
 
   /**
    * Chooser options for autonomous commands - all starting from poses 1-3
    */
   private enum AutoChooser
   {
-    AUTOSTOP, // AutoStop - sit still, do nothing
-    AUTOLEAVE, // Leave starting line
-    AUTOTEST // Run a selected test auto
+    AUTOSTOP,         // AutoStop - sit still, do nothing
+    AUTOLEAVE,        // Leave starting line
+    AUTOTEST          // Run a selected test auto
   }
 
   /**
@@ -133,7 +129,7 @@ public class RobotContainer
   {
     START1, // Starting pose 1 - blue left, red right (driver perspective)
     START2, // Starting pose 2 - blue/red middle (driver perspective)
-    START3 // Starting pose 3 - blue right, red left (driver perspective)
+    START3  // Starting pose 3 - blue right, red left (driver perspective)
   }
 
   /** Dashboard chooser for auto option selection */
@@ -165,16 +161,14 @@ public class RobotContainer
 
   /****************************************************************************
    * 
-   * The main container for the robot. Contains subsystems, OI devices, and
-   * commands.
+   * The main container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer( )
   {
     Robot.timeMarker("robotContainer: before DAQ thread");
     // Swerve steer PID for facing swerve request
-    facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd); // Swerve steer PID for
-                                                                                            // facing swerve request
-                                                                                            // Identify the field
+    facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd); // Swerve steer PID for facing swerve request
+    // Identify the field
     DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField.toString( ),
         VIConsts.kATField.getFieldWidth( ), VIConsts.kATField.getFieldLength( )));
     for (int i = 1; i <= 22; i++)
@@ -182,19 +176,18 @@ public class RobotContainer
       DataLogManager.log(String.format("Field: ID %d %s", i, VIConsts.kATField.getTagPose(i)));
     }
     // Add dashboard widgets for commands
-    addDashboardWidgets( ); // Add dashboard widgets for commands
+    addDashboardWidgets( );           // Add dashboard widgets for commands
     // Configure game controller buttons
-    configureButtonBindings( ); // Configure game controller buttons
+    configureButtonBindings( );       // Configure game controller buttons
     // Initialize subsystem default commands
-    initDefaultCommands( ); // Initialize subsystem default commands
+    initDefaultCommands( );           // Initialize subsystem default commands
 
     Robot.timeMarker("robotContainer: after default commands");
   }
 
   /****************************************************************************
    * 
-   * Callbacks used by dashboard autonomous choosers to reload when an onChange
-   * event occurs
+   * Callbacks used by dashboard autonomous choosers to reload when an onChange event occurs
    */
   public void updateAutoChooserCallback(AutoChooser option)
   {
@@ -242,8 +235,7 @@ public class RobotContainer
     }));
 
     // Command tab
-    // SmartDashboard.putData("PrepareToClimb", new PrepareToClimb(m_climber,
-    // m_feeder));
+    // SmartDashboard.putData("PrepareToClimb", new PrepareToClimb(m_climber, m_feeder));
 
     Time duration = Seconds.of(1.0);
     SmartDashboard.putData("HIDRumbleDriver",
@@ -286,36 +278,34 @@ public class RobotContainer
     //
     m_driverPad.leftBumper( ).whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
     m_driverPad.rightBumper( ).onTrue(new LogCommand("driverPad", "right bumper"));
-    m_driverPad.back( ).whileTrue(m_drivetrain.applyRequest(( ) -> brake)); // aka View button
-    m_driverPad.start( ).onTrue(m_drivetrain.runOnce(( ) -> m_drivetrain.seedFieldCentric( ))); // aka Menu button
+    m_driverPad.back( ).whileTrue(m_drivetrain.applyRequest(( ) -> brake));                             // aka View button
+    m_driverPad.start( ).onTrue(m_drivetrain.runOnce(( ) -> m_drivetrain.seedFieldCentric( )));         // aka Menu button
 
     //
     // Driver - POV buttons
     //
-    m_driverPad.pov(0).whileTrue(m_drivetrain.applyRequest(( ) -> facing //
-        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( ))) //
-        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( ))) //
+    m_driverPad.pov(0).whileTrue(m_drivetrain.applyRequest(( ) -> facing    //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(0.0))));
-    m_driverPad.pov(90).whileTrue(m_drivetrain.applyRequest(( ) -> facing //
-        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( ))) //
-        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( ))) //
+    m_driverPad.pov(90).whileTrue(m_drivetrain.applyRequest(( ) -> facing   //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(270.0))));
-    m_driverPad.pov(180).whileTrue(m_drivetrain.applyRequest(( ) -> facing //
-        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( ))) //
-        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( ))) //
+    m_driverPad.pov(180).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(180.0))));
-    m_driverPad.pov(270).whileTrue(m_drivetrain.applyRequest(( ) -> facing //
-        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( ))) //
-        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( ))) //
+    m_driverPad.pov(270).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(90.0))));
 
     //
     // Driver Left/Right Trigger
     //
-    // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX
-    // = 4, rightY = 5}
-    // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger =
-    // 5, rightTrigger = 4}
+    // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
+    // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
     m_driverPad.leftTrigger(Constants.kTriggerThreshold).whileTrue(new LogCommand("driverPad", "left trigger"));
     m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new LogCommand("driverPad", "right trigger"));
@@ -329,8 +319,7 @@ public class RobotContainer
     //
     // Operator - A, B, X, Y
     //
-    m_operatorPad.a( ).onTrue(m_manipulator.getCalibrateCommand( ).ignoringDisable(true)); // TODO: manual wrist
-                                                                                          // calibration command
+    m_operatorPad.a( ).onTrue(m_manipulator.getCalibrateCommand( ).ignoringDisable(true)); // TODO: manual wrist calibration command
     m_operatorPad.b( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));
     m_operatorPad.x( ).onTrue(new LogCommand("operPad", "X"));
     m_operatorPad.y( ).onTrue(new LogCommand("operPad", "Y"));
@@ -340,8 +329,8 @@ public class RobotContainer
     //
     m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( ))); // aka View button
-    m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( ))); // aka Menu button
+    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));   // aka View button
+    m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));  // aka Menu button
 
     //
     // Operator - POV buttons
@@ -354,10 +343,8 @@ public class RobotContainer
     //
     // Operator Left/Right Trigger
     //
-    // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX
-    // = 4, rightY = 5}
-    // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger =
-    // 5, rightTrigger = 4}
+    // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
+    // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
     m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
@@ -376,23 +363,22 @@ public class RobotContainer
     {
       m_drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
           m_drivetrain.applyRequest(( ) -> drive //
-              .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( ))) // Drive forward with negative Y (forward)
-              .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( ))) // Drive left with negative X (left)
-              .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( ))) // Drive counterclockwise with
-                                                                                   // negative X (left)
+              .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                       // Drive forward with negative Y (forward)
+              .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
+              .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))           // Drive counterclockwise with
+          // negative X (left)
           ) //
               .ignoringDisable(true) //
               .withName("CommandSwerveDrivetrain"));
     }
-    else // When using simulation on MacOS X, XBox controllers need to be re-mapped due
-        // to an Apple bug
+    else // When using simulation on MacOS X, XBox controllers need to be re-mapped due to an Apple bug
     {
       m_drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-          m_drivetrain.applyRequest(( ) -> drive //
-              .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( ))) // Drive forward with negative Y (forward)
-              .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( ))) // Drive left with negative X (left)
-              .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getLeftTriggerAxis( ))) // Drive counterclockwise
-                                                                                            // with negative X (left)
+          m_drivetrain.applyRequest(( ) -> drive                                              //
+              .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                       // Drive forward with negative Y (forward)
+              .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
+              .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getLeftTriggerAxis( )))  // Drive counterclockwise
+          // with negative X (left)
           ) //
               .ignoringDisable(true) //
               .withName("CommandSwerveDrivetrain"));
@@ -408,10 +394,8 @@ public class RobotContainer
     m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
 
     // Default command - manual mode
-    // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) ->
-    // getElevatorAxis( )));
-    // m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) ->
-    // getWristAxis( )));
+    // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
+    // m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
 
   /****************************************************************************
@@ -473,11 +457,9 @@ public class RobotContainer
 
     // {
     // // Debug only: print states of first path
-    // List<PathPlannerTrajectory.State> states = initialPath.getTrajectory(new
-    // ChassisSpeeds( ), new Rotation2d( )).getStates( );
+    // List<PathPlannerTrajectory.State> states = initialPath.getTrajectory(new ChassisSpeeds( ), new Rotation2d( )).getStates( );
     // for (int i = 0; i < states.size( ); i++)
-    // DataLogManager.log(String.format("autoCommand: Auto path state: (%d) %s", i,
-    // states.get(i).getTargetHolonomicPose( )));
+    // DataLogManager.log(String.format("autoCommand: Auto path state: (%d) %s", i, states.get(i).getTargetHolonomicPose( )));
     // }
 
     // Set field centric robot position to start of auto sequence
