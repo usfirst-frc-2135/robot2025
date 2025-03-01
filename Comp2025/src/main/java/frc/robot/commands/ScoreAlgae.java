@@ -1,8 +1,10 @@
 
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.CRConsts;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
@@ -34,21 +36,25 @@ public class ScoreAlgae extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-        new LogCommand(getName(),"Move Manipulator To safe position"),
-        manipulator.getMoveToPositionCommand(ClawMode.CORALHOLD, manipulator:: getMNSafePosition),
+        new LogCommand(getName(),"Move Manipulator to safe position"),
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator:: getAngleAlgae23),
 
-        new LogCommand(getName(), "Move Elevator to Position"),
+        new LogCommand(getName(), "Move Elevator to net height & move Manipulator to net position"),
         elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet), 
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet), 
 
-        new LogCommand(getName(), "Start rollers & Deploy Manipulator rotary"),
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.ALGAESHOOT, manipulator::getManipulatorAlgaeNet), 
+        new LogCommand(getName(), "Start algae rollers to shoot"),
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAESHOOT, manipulator::getCurrentAngle), 
         
-        new LogCommand(getName(), "Wait for Algae"),
+        new LogCommand(getName(), "Wait for algae"),
+        new WaitCommand(Seconds.of(1.0)),
         // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is expelled 
       
-        new LogCommand(getName(), "Stop rollers"),
-        manipulator.getMoveToPositionCommand(CRConsts.ClawMode.STOP, manipulator::getManipulatorRetracted)        
-        // elevator.getMoveToPositionCommand(elevator::getHeightStowed), // stowed
+        new LogCommand(getName(), "Stop algae rollers"),
+        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),
+        
+        new LogCommand(getName(), "Move Elevator to stowed height"),
+        elevator.getMoveToPositionCommand(elevator::getHeightStowed) // stowed
         
         // @formatter:on
     );

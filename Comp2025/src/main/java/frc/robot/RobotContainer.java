@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
@@ -319,25 +320,25 @@ public class RobotContainer
     Pose2d selectedPose= new Pose2d (new Translation2d(0,0), new Rotation2d(0));
 
     m_operatorPad.a( ).onTrue(m_manipulator.getCalibrateCommand( ).ignoringDisable(true)); // TODO: manual wrist calibration command
-    m_operatorPad.b( ).onTrue(new LogCommand("operPad", "B"));
-    m_operatorPad.x( ).and(m_operatorPad.pov(0).onTrue(sele)
+    m_operatorPad.b( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));
+    m_operatorPad.x( ).onTrue(new LogCommand("operPad", "X"));
     m_operatorPad.y( ).onTrue(new LogCommand("operPad", "Y"));
 
     //
     // Operator - Bumpers, start, back
     //
-    m_operatorPad.leftBumper( ).onTrue(new LogCommand("operPad", "left bumper"));
-    m_operatorPad.rightBumper( ).onTrue(new LogCommand("operPad", "right bumper"));
-    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));                  // aka View button
-    m_operatorPad.start( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));  // aka Menu button
+    m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    m_operatorPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
+    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));   // aka View button
+    m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));  // aka Menu button
 
     //
     // Operator - POV buttons
     //
-    m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL4));
-    m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL1));
-    m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightStowed));
-    m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL2));
+    m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL1));
+    m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL2));
+    m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL3));
+    m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL4));
 
     //
     // Operator Left/Right Trigger
@@ -345,8 +346,8 @@ public class RobotContainer
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
-    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new LogCommand("operPad", "left trigger"));
-    m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new LogCommand("operPad", "right trigger"));
+    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
 
     m_operatorPad.leftStick( ).toggleOnTrue(new LogCommand("operPad", "left stick"));
     m_operatorPad.rightStick( ).toggleOnTrue(new LogCommand("operPad", "right stick"));
@@ -386,12 +387,12 @@ public class RobotContainer
     // TODO: Only one default command can be active per subsystem--use the manual modes during bring-up
 
     // Default command - Motion Magic hold
-    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getPosition));
-    // m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(m_manipulator::getPosition));
+    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
+    m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
 
     // Default command - manual mode
     // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
-    m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
+    // m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
 
   /****************************************************************************
@@ -525,7 +526,7 @@ public class RobotContainer
    * 
    * Called by disabledInit - place subsystem initializations here
    */
-  public void initialize( )
+  public void disabledInit( )
   {
     m_led.initialize( );
     m_power.initialize( );
@@ -533,6 +534,7 @@ public class RobotContainer
 
     m_elevator.initialize( );
     m_manipulator.initialize( );
+    m_vision.SetThrottleLevel(false);
   }
 
   /****************************************************************************
@@ -553,12 +555,16 @@ public class RobotContainer
    * Called during teleopInit to start any needed commands
    */
   public void autoInit( )
-  {}
+  {
+    m_vision.SetThrottleLevel(true);
+  }
 
   /****************************************************************************
    * 
    * Called during teleopInit to start any needed commands
    */
   public void teleopInit( )
-  {}
+  {
+    m_vision.SetThrottleLevel(true);
+  }
 }
