@@ -31,6 +31,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.ConcurrentHashMap;
 
+// @formatter:off
+
 /**
  * LimelightHelpers provides static methods and classes for interfacing with
  * Limelight vision cameras in FRC.
