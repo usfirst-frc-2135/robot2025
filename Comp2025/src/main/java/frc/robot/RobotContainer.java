@@ -38,7 +38,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
@@ -47,6 +46,7 @@ import frc.robot.commands.AcquireCoral;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreAlgae;
 import frc.robot.commands.ScoreCoral;
+import frc.robot.commands.ScoreCoralLevel;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
@@ -252,6 +252,7 @@ public class RobotContainer
     SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("ScoreCoralLevel", new ScoreCoralLevel(m_elevator, m_manipulator, m_led, m_hid));
   }
 
   /****************************************************************************
@@ -266,7 +267,7 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
-    m_driverPad.a( ).onTrue(new LogCommand("driverPad", "A"));
+    m_driverPad.a( ).whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
     m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B"));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
@@ -274,8 +275,8 @@ public class RobotContainer
     //
     // Driver - Bumpers, start, back
     //
-    m_driverPad.leftBumper( ).whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
-    m_driverPad.rightBumper( ).onTrue(new LogCommand("driverPad", "right bumper"));
+    m_driverPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    m_driverPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
     m_driverPad.back( ).whileTrue(m_drivetrain.applyRequest(( ) -> brake));                             // aka View button
     m_driverPad.start( ).onTrue(m_drivetrain.runOnce(( ) -> m_drivetrain.seedFieldCentric( )));         // aka Menu button
 
@@ -286,18 +287,34 @@ public class RobotContainer
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(0.0))));
+    m_driverPad.pov(45).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
+        .withTargetDirection(Rotation2d.fromDegrees(-60.0))));
     m_driverPad.pov(90).whileTrue(m_drivetrain.applyRequest(( ) -> facing   //
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
-        .withTargetDirection(Rotation2d.fromDegrees(270.0))));
+        .withTargetDirection(Rotation2d.fromDegrees(-90.0))));
+    m_driverPad.pov(135).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
+        .withTargetDirection(Rotation2d.fromDegrees(-120.0))));
     m_driverPad.pov(180).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
-        .withTargetDirection(Rotation2d.fromDegrees(180.0))));
+        .withTargetDirection(Rotation2d.fromDegrees(-180.0))));
+    m_driverPad.pov(235).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
+        .withTargetDirection(Rotation2d.fromDegrees(120.0))));
     m_driverPad.pov(270).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(90.0))));
+    m_driverPad.pov(315).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
+        .withTargetDirection(Rotation2d.fromDegrees(60.0))));
 
     //
     // Driver Left/Right Trigger
@@ -305,8 +322,8 @@ public class RobotContainer
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
-    m_driverPad.leftTrigger(Constants.kTriggerThreshold).whileTrue(new LogCommand("driverPad", "left trigger"));
-    m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new LogCommand("driverPad", "right trigger"));
+    m_driverPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
 
     m_driverPad.leftStick( ).onTrue(new LogCommand("driverPad", "left stick"));
     m_driverPad.rightStick( ).onTrue(new LogCommand("driverPad", "right stick"));
@@ -318,7 +335,7 @@ public class RobotContainer
     // Operator - A, B, X, Y
     //
     m_operatorPad.a( ).onTrue(m_manipulator.getCalibrateCommand( ).ignoringDisable(true)); // TODO: manual wrist calibration command
-    m_operatorPad.b( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));
+    m_operatorPad.b( ).onTrue(new LogCommand("operPad", "B"));
     m_operatorPad.x( ).onTrue(new LogCommand("operPad", "X"));
     m_operatorPad.y( ).onTrue(new LogCommand("operPad", "Y"));
 
@@ -327,16 +344,16 @@ public class RobotContainer
     //
     m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));   // aka View button
-    m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));  // aka Menu button
+    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));                  // aka View button
+    m_operatorPad.start( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));  // aka Menu button
 
     //
     // Operator - POV buttons
     //
-    m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL1));
-    m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL2));
-    m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL3));
-    m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL4));
+    m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL4));
+    m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL1));
+    m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightStowed));
+    m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL2));
 
     //
     // Operator Left/Right Trigger
@@ -386,11 +403,11 @@ public class RobotContainer
 
     // Default command - Motion Magic hold
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
-    m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
+    // m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(m_manipulator::getPosition));
 
     // Default command - manual mode
     // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
-    // m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
+    m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
 
   /****************************************************************************

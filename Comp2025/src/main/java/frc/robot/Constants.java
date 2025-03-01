@@ -158,4 +158,12 @@ public class Constants
     }
   }
 
+  public enum ELCommandSelector
+  {
+    ONE,   // Level One (Troph)
+    TWO,   // Level Two
+    THREE, // Level Three
+    FOUR   // Level Four
+  }
+
 }
