@@ -3,6 +3,10 @@ package frc.robot.commands;
 
 import java.util.Map;
 
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.IntegerSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -22,6 +26,28 @@ public class ScoreCoralLevel extends SequentialCommandGroup
   private ELCommandSelector select( )
   {
     return ELCommandSelector.ONE;
+  }
+
+  private ELCommandSelector selector( )
+  {
+    NetworkTableInstance inst = NetworkTableInstance.getDefault( );
+    NetworkTable table = inst.getTable("robotContainer");
+
+    IntegerSubscriber reefLevel = table.getIntegerTopic("ReefLevel").subscribe(0);
+    int level = (int) reefLevel.get( );
+
+    switch (level)
+    {
+      default :
+      case 1 :
+        return ELCommandSelector.ONE;
+      case 2 :
+        return ELCommandSelector.TWO;
+      case 3 :
+        return ELCommandSelector.THREE;
+      case 4 :
+        return ELCommandSelector.FOUR;
+    }
   }
 
   /**
@@ -55,7 +81,7 @@ public class ScoreCoralLevel extends SequentialCommandGroup
             Map.entry(ELCommandSelector.TWO, elevator.getMoveToPositionCommand(elevator::getHeightCoralL2)), 
             Map.entry(ELCommandSelector.THREE, elevator.getMoveToPositionCommand(elevator::getHeightCoralL3)), 
             Map.entry(ELCommandSelector.FOUR, elevator.getMoveToPositionCommand(elevator::getHeightCoralL4))), 
-        this::select), 
+        this::selector), 
  
       new LogCommand(getName(), "Move Manipulator to reef position based on the level"), 
       new SelectCommand<>( 
@@ -65,7 +91,7 @@ public class ScoreCoralLevel extends SequentialCommandGroup
             Map.entry(ELCommandSelector.TWO, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL2)), 
             Map.entry(ELCommandSelector.THREE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL3)), 
             Map.entry(ELCommandSelector.FOUR, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4))), 
-        this::select), 
+        this::selector), 
 
         new LogCommand(getName(), "Start coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle), //level 4

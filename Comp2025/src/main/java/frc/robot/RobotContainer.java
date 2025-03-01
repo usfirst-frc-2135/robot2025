@@ -24,6 +24,9 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
@@ -67,6 +70,7 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer
 {
   private final boolean                               m_macOSXSim     = false;  // Enables Mac OS X controller compatibility in simulation
+  private IntegerPublisher                            m_reefLevelPub;
 
   // Gamepad controllers
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
@@ -204,6 +208,11 @@ public class RobotContainer
    */
   private void addDashboardWidgets( )
   {
+    NetworkTableInstance inst = NetworkTableInstance.getDefault( );
+    NetworkTable table = inst.getTable("robotContainer");
+
+    m_reefLevelPub = table.getIntegerTopic("ReefLevel").publish( );
+
     // Network tables publisher objects
     SmartDashboard.putData("AutoMode", m_autoChooser);
     SmartDashboard.putData("StartPosition", m_startChooser);
@@ -253,6 +262,24 @@ public class RobotContainer
     SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("ScoreCoralLevel", new ScoreCoralLevel(m_elevator, m_manipulator, m_led, m_hid));
+  }
+
+  public void setSelectLevel(int level)
+  {
+    m_reefLevelPub.set(level);
+  }
+
+  /****************************************************************************
+   * 
+   * Create Select Level Command
+   * 
+   * @return instant command to Select Coral Scoring Level
+   */
+  public Command getSelectLevelCommand(int level)
+  {
+    return new InstantCommand(          // Command with init only phase declared
+        ( ) -> setSelectLevel(level)      // Init method                          
+    ).withName("SelectLevel");
   }
 
   /****************************************************************************
@@ -350,10 +377,10 @@ public class RobotContainer
     //
     // Operator - POV buttons
     //
-    m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL4));
-    m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL1));
-    m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightStowed));
-    m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL2));
+    m_operatorPad.pov(0).onTrue(getSelectLevelCommand(4));
+    m_operatorPad.pov(90).onTrue(getSelectLevelCommand(1));
+    m_operatorPad.pov(180).onTrue(getSelectLevelCommand(2));
+    m_operatorPad.pov(270).onTrue(getSelectLevelCommand(3));
 
     //
     // Operator Left/Right Trigger
