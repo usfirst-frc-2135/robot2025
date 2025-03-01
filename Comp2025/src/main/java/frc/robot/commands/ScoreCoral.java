@@ -28,14 +28,14 @@ public class ScoreCoral extends SequentialCommandGroup
 
     switch (level)
     {
-      case 1 : // POV 90
+      case 1 : // Coral Level 1 - POV 90
         return LevelSelector.ONE;
-      case 2 : // POV 180
+      case 2 : // Coral Level 2 - POV 180
         return LevelSelector.TWO;
-      case 3 : // POV 270
+      case 3 : // Coral Level 3 - POV 270
         return LevelSelector.THREE;
       default :
-      case 4 : // POV 0
+      case 4 : // Coral Level 4 - POV 0
         return LevelSelector.FOUR;
     }
   }
@@ -90,8 +90,8 @@ public class ScoreCoral extends SequentialCommandGroup
         new LogCommand(getName(), "Wait for coral to expel"),
         new WaitUntilCommand(manipulator::isCoralExpelled), // checks if coral is expelled 
       
-        new LogCommand(getName(), "Stop coral rollers"),
-        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),
+        new LogCommand(getName(), "Stop coral rollers"), 
+        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), // Manipulator Safe State 
 
         new LogCommand(getName(), "Move Elevator to coral station height"),
         elevator.getMoveToPositionCommand(elevator::getHeightCoralLStation) // coral station height

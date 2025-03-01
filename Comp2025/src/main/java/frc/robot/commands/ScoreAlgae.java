@@ -30,11 +30,13 @@ public class ScoreAlgae extends SequentialCommandGroup
 
     switch (level)
     {
-      case 4 : // POV 0
-        return LevelSelector.NET;
+      case 4 : // Algae Net - POV 0
+      case 3 :
+        return LevelSelector.ONE;
       default :
-      case 2 : // POV 180
-        return LevelSelector.PROCESSOR;
+      case 2 : // Algae Processor - POV 180
+      case 1 :
+        return LevelSelector.TWO;
     }
   }
 
@@ -65,24 +67,24 @@ public class ScoreAlgae extends SequentialCommandGroup
         new SelectCommand<>( 
         // Maps selector values to commands 
         Map.ofEntries( 
-            Map.entry(LevelSelector.NET, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet)), 
-            Map.entry(LevelSelector.PROCESSOR, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor))), 
+            Map.entry(LevelSelector.ONE, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet)), 
+            Map.entry(LevelSelector.TWO, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor))), 
         this::selectLevel), 
  
       new LogCommand(getName(), "Move Manipulator to reef position based on the level"), 
       new SelectCommand<>( 
         // Maps selector values to commands 
         Map.ofEntries( 
-            Map.entry(LevelSelector.NET, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet)), 
-            Map.entry(LevelSelector.PROCESSOR, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleCoralL2))),  
+            Map.entry(LevelSelector.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet)), 
+            Map.entry(LevelSelector.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleCoralL2))),  
         this::selectLevel), 
 
       new LogCommand(getName(), "Start Claw Rollers"), 
       new SelectCommand<>( 
         // Maps selector values to commands 
         Map.ofEntries( 
-            Map.entry(LevelSelector.NET, manipulator.getMoveToPositionCommand(ClawMode.ALGAESHOOT, manipulator::getCurrentAngle)), 
-            Map.entry(LevelSelector.PROCESSOR, manipulator.getMoveToPositionCommand(ClawMode.ALGAEEXPEL, manipulator::getCurrentAngle))),  
+            Map.entry(LevelSelector.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAESHOOT, manipulator::getCurrentAngle)), 
+            Map.entry(LevelSelector.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEEXPEL, manipulator::getCurrentAngle))),  
         this::selectLevel), 
         
         new LogCommand(getName(), "Wait for algae"),
@@ -90,7 +92,7 @@ public class ScoreAlgae extends SequentialCommandGroup
         // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is expelled 
       
         new LogCommand(getName(), "Stop algae rollers"),
-        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),
+        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), // Manipulator Safe State
         
         new LogCommand(getName(), "Move Elevator to stowed height"),
         elevator.getMoveToPositionCommand(elevator::getHeightStowed) // stowed

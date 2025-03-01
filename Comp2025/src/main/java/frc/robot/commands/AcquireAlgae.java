@@ -31,16 +31,18 @@ public class AcquireAlgae extends SequentialCommandGroup
 
     switch (level)
     {
-      case 3 : // POV 270
-        return LevelSelector.TWOTHREE;
+      case 2 :
+      case 1 : // Algae Level 23 - POV 270
+        return LevelSelector.ONE;
       default :
-      case 1 : // POV 90
-        return LevelSelector.THREEFOUR;
+      case 3 : // Algae Level 34 - POV 90
+      case 4 :
+        return LevelSelector.THREE;
     }
   }
 
   /**
-   * Group command to use the subsystems to acquire algae from the reef level 23
+   * Group command to use the subsystems to acquire algae from the reef
    * 
    * @param elevator
    *          elevator subsystem
@@ -61,17 +63,24 @@ public class AcquireAlgae extends SequentialCommandGroup
         // @formatter:off
         new LogCommand(getName(),"Move Manipulator to safe position"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState),
+        elevator.getMoveToPositionCommand(elevator::getHeightCoralLStation),
         
       new LogCommand(getName(), "Move Manipulator to reef position based on the level"), 
       new SelectCommand<>( 
         // Maps selector values to commands 
         Map.ofEntries( 
-            Map.entry(LevelSelector.TWOTHREE, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23)), 
-            Map.entry(LevelSelector.THREEFOUR, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL34))),  
+            Map.entry(LevelSelector.ONE, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23)), 
+            Map.entry(LevelSelector.THREE, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL34))),  
         this::selectLevel), 
 
-        new LogCommand(getName(), "Start algae rollers & move Manipulator to algae acquire height"),
-        manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgae23), //level 2/3
+        new LogCommand(getName(), "Move Manipulator to reef position based on the level"), 
+      new SelectCommand<>( 
+        // Maps selector values to commands 
+        Map.ofEntries( 
+            Map.entry(LevelSelector.ONE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleAlgae23)), 
+            Map.entry(LevelSelector.THREE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleAlgae34))), 
+        this::selectLevel),
+
         manipulator.getMoveToPositionCommand(ClawMode.ALGAEACQUIRE, manipulator::getCurrentAngle), //level 2/3
         
         new LogCommand(getName(), "Wait for algae"),
@@ -83,12 +92,12 @@ public class AcquireAlgae extends SequentialCommandGroup
         
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
-
-        new LogCommand(getName(), "Move Manipulator to Algae safe position"),
-        manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, manipulator::getAngleAlgaeProcessor),
         
         new LogCommand(getName(), "Move Elevator to processor height"),
-        elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor) // stowed
+        elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23), // stowed
+
+        new LogCommand(getName(), "Move Manipulator to Algae safe position"),
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, manipulator::getCurrentAngle) // Manipulator Safe State with Algae
         
         // @formatter:on
     );

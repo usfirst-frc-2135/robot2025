@@ -91,12 +91,7 @@ public class Constants
       TWO,        // Coral Level Two
       THREE,      // Coral Level Three
       FOUR,       // Coral Level Four
-      TWOTHREE,   // Algae Level Two/Three
-      THREEFOUR, // Algae Level Three/Four
-      NET,       // Algae Net
-      PROCESSOR  // Algae Processor
     }
-
   }
 
   /****************************************************************************
