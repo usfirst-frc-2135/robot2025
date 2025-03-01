@@ -13,21 +13,17 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.lib.LimelightHelpers;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the
- * name of this class or
- * the package after creating this project, you must also update the
- * build.properties file in the
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.properties file in the
  * project.
  */
 public class Robot extends TimedRobot
 {
-  private static final boolean m_isComp          = detectRobot( ); // Detect which robot is in use
-  private final RobotContainer m_robotContainer  = new RobotContainer( ); // Create that robot
+  private static final boolean m_isComp          = detectRobot( );         // Detect which robot is in use
+  private final RobotContainer m_robotContainer  = new RobotContainer( );  // Create that robot
   private Command              m_autonomousCommand;
   private boolean              m_faultsCleared   = false;
   private static double        m_timeMark        = Timer.getFPGATimestamp( );
@@ -35,8 +31,7 @@ public class Robot extends TimedRobot
 
   /****************************************************************************
    * 
-   * This function runs when the Robot class is first started and used for
-   * initialization.
+   * This function runs when the Robot class is first started and used for initialization.
    */
   public Robot( )
   {
@@ -62,32 +57,25 @@ public class Robot extends TimedRobot
     PortForwarder.add(5804, "limelight.local", 5804);
     PortForwarder.add(5805, "limelight.local", 5805);
 
-    FollowPathCommand.warmupCommand( ).withName("PathPlanner - warmupCommand").schedule( ); // Recommended by PathPlanner
-                                                                                           // docs
+    FollowPathCommand.warmupCommand( ).withName("PathPlanner - warmupCommand").schedule( ); // Recommended by PathPlanner docs
 
     Robot.timeMarker("Robot: after warmup");
   }
 
   /****************************************************************************
    * 
-   * This function is called every 20 msec robot loop, no matter the mode. Use
-   * this for items like
-   * diagnostics that you want to run during Disabled, Autonomous, Teleoperated
-   * and Test.
+   * This function is called every 20 msec robot loop, no matter the mode. Use this for items like
+   * diagnostics that you want to run during Disabled, Autonomous, Teleoperated and Test.
    *
-   * This runs after the mode specific periodic functions, but before LiveWindow
-   * and SmartDashboard
+   * This runs after the mode specific periodic functions, but before LiveWindow and SmartDashboard
    * integrated updating.
    */
   @Override
   public void robotPeriodic( )
   {
-    // Runs the Command Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled commands,
-    // running already-scheduled commands, removing finished or interrupted
-    // commands, and running
-    // subsystem periodic() methods. This must be called from the robot's periodic
-    // block in order
+    // Runs the Command Scheduler. This is responsible for polling buttons, adding newly-scheduled commands,
+    // running already-scheduled commands, removing finished or interrupted commands, and running
+    // subsystem periodic() methods. This must be called from the robot's periodic block in order
     // for anything in the Command-based framework to work.
     //
     CommandScheduler.getInstance( ).run( );
@@ -173,8 +161,7 @@ public class Robot extends TimedRobot
   {
     datalogMatchBanner("teleopInit");
 
-    // Make sure that the autonomous command stops running when Teleop starts
-    // running
+    // Make sure that the autonomous command stops running when Teleop starts running
     cancelOldAutonomousCommand( );
 
     // Handle any commands that need to be scheduled when entering Teleop mode
@@ -223,8 +210,7 @@ public class Robot extends TimedRobot
 
   /****************************************************************************
    * 
-   * Our robot detection process to differentiate between competition and beta
-   * (practice) robots
+   * Our robot detection process to differentiate between competition and beta (practice) robots
    */
   public static boolean isComp( )
   {
