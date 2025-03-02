@@ -36,6 +36,25 @@ public class Vision extends SubsystemBase
     }
   };
 
+  /** Camera stream mode parameter */
+  private enum imuMode
+  {
+    EXTERNAL(0),        // Use external IMU
+    EXTERNAL_SEED(1),   // Use external IMU, seed internal
+    INTERNAL(2),        // Use internal
+    INTERNAL_MT1(3),    // Use internal with MT1 assisted convergence
+    INTERNAL_ASSIST(4)  // Use internal IMU with external IMU assisted convergence
+    ;
+
+    @SuppressWarnings("unused")
+    public final int value;
+
+    private imuMode(int value)
+    {
+      this.value = value;
+    }
+  };
+
   // Constants
   private static final double kAimingKp  = 0.01;
   private static final double kDrivingKp = 0.06;
@@ -196,18 +215,19 @@ public class Vision extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Set priorityid and display alliance color
+   * Set IMU mode as a default
    * 
    * @param limelightName
    *          Name/identifier of the Limelight
    * @param mode
-   *          Defaults to 0. Your Limelgiht will process one frame
-   *          after skipping <throttle> frames.
+   *          Defaults to 0. Choose the IMU mode
    */
-  public void SetIMU(int mode)
+  public void SetIMUMode( )
   {
-    DataLogManager.log(String.format("%s: Set Mode level to %s", getSubsystem( ), mode));
-    LimelightHelpers.SetIMUMode("limelight", 1);
+    imuMode mode = imuMode.EXTERNAL_SEED;
+
+    DataLogManager.log(String.format("%s: Set IMU Mode to %s", getSubsystem( ), mode));
+    LimelightHelpers.SetIMUMode("limelight", mode.value);
   }
 
 }
