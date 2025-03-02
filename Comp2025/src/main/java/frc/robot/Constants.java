@@ -145,39 +145,39 @@ public class Constants
     public static final Pose2d[ ][ ] kBlueSideReefPoses = // TODO: These should be in meters???
     {
         { // Face 0 (CD) AT 17
-            new Pose2d(new Translation2d(143.76 / 39.37, 114.37 / 39.37), Rotation2d.fromDegrees(240.00)),  // Left branch
-            new Pose2d(new Translation2d(151.39 / 39.37, 114.58 / 39.37), Rotation2d.fromDegrees(240)),     // Algae
-            new Pose2d(new Translation2d(155.02 / 39.37, 107.87 / 39.37), Rotation2d.fromDegrees(240))      // Right branch
+            new Pose2d(new Translation2d(3.65, 2.90), Rotation2d.fromDegrees(240.00)),  // Left branch
+            new Pose2d(new Translation2d(3.85, 2.91), Rotation2d.fromDegrees(240)),     // Algae
+            new Pose2d(new Translation2d(3.94, 2.74), Rotation2d.fromDegrees(240))      // Right branch
         },
 
         { // Face 1 (AB) AT 18
-            new Pose2d(new Translation2d(122.00 / 39.37, 165.00 / 39.37), Rotation2d.fromDegrees(180)),     // Left branch
-            new Pose2d(new Translation2d(126.00 / 39.37, 158.50 / 39.37), Rotation2d.fromDegrees(180)),     // Algae
-            new Pose2d(new Translation2d(122.00 / 39.37, 152.00 / 39.37), Rotation2d.fromDegrees(180))      // Right branch
+            new Pose2d(new Translation2d(3.10, 4.19), Rotation2d.fromDegrees(180)),     // Left branch
+            new Pose2d(new Translation2d(3.20, 4.03), Rotation2d.fromDegrees(180)),     // Algae
+            new Pose2d(new Translation2d(3.10, 3.86), Rotation2d.fromDegrees(180))      // Right branch
         },
 
         { // Face 2 (LK) AT 19
-            new Pose2d(new Translation2d(155.02 / 39.37, 209.13 / 39.37), Rotation2d.fromDegrees(120)),     // Left branch
-            new Pose2d(new Translation2d(151.39 / 39.37, 202.42 / 39.37), Rotation2d.fromDegrees(120)),     // Algae
-            new Pose2d(new Translation2d(202.42 / 39.37, 202.63 / 39.37), Rotation2d.fromDegrees(120))      // Right branch
+            new Pose2d(new Translation2d(3.94, 5.31), Rotation2d.fromDegrees(120)),     // Left branch
+            new Pose2d(new Translation2d(3.85, 5.14), Rotation2d.fromDegrees(120)),     // Algae
+            new Pose2d(new Translation2d(3.65, 5.15), Rotation2d.fromDegrees(120))      // Right branch
         },
 
         { // Face 3 (IJ) AT 20
-            new Pose2d(new Translation2d(209.73 / 39.37, 202.63 / 39.37), Rotation2d.fromDegrees(60)),      // Left branch
-            new Pose2d(new Translation2d(202.10 / 39.37, 202.42 / 39.37), Rotation2d.fromDegrees(60)),      // Algae
-            new Pose2d(new Translation2d(198.47 / 39.37, 209.13 / 39.37), Rotation2d.fromDegrees(60))       // Right branch
+            new Pose2d(new Translation2d(5.33, 5.15), Rotation2d.fromDegrees(60)),      // Left branch
+            new Pose2d(new Translation2d(5.13, 5.14), Rotation2d.fromDegrees(60)),      // Algae
+            new Pose2d(new Translation2d(5.04, 5.31), Rotation2d.fromDegrees(60))       // Right branch
         },
 
         { // Face 4 (GH) AT 21
-            new Pose2d(new Translation2d(231.49 / 39.37, 152.00 / 39.37), Rotation2d.fromDegrees(0)),       // Left branch
-            new Pose2d(new Translation2d(227.49 / 39.37, 158.50 / 39.37), Rotation2d.fromDegrees(0)),       // Algae
-            new Pose2d(new Translation2d(231.49 / 39.37, 165.00 / 39.37), Rotation2d.fromDegrees(0))        // Right branch
+            new Pose2d(new Translation2d(5.88, 3.86), Rotation2d.fromDegrees(0)),       // Left branch
+            new Pose2d(new Translation2d(5.78, 4.03), Rotation2d.fromDegrees(0)),       // Algae
+            new Pose2d(new Translation2d(5.88, 4.19), Rotation2d.fromDegrees(0))        // Right branch
         },
 
         { // Face 5 (EF) AT 22
-            new Pose2d(new Translation2d(198.47 / 39.37, 107.87 / 39.37), Rotation2d.fromDegrees(300)),     // Left branch
-            new Pose2d(new Translation2d(202.10 / 39.37, 114.58 / 39.37), Rotation2d.fromDegrees(300)),     // Algae
-            new Pose2d(new Translation2d(209.73 / 39.37, 114.37 / 39.37), Rotation2d.fromDegrees(300))      // Right branch
+            new Pose2d(new Translation2d(5.04, 2.74), Rotation2d.fromDegrees(300)),     // Left branch
+            new Pose2d(new Translation2d(5.13, 2.91), Rotation2d.fromDegrees(300)),     // Algae
+            new Pose2d(new Translation2d(5.33, 2.90), Rotation2d.fromDegrees(300))      // Right branch
         }
     };
 
