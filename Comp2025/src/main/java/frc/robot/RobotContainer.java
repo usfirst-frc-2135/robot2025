@@ -575,13 +575,13 @@ public class RobotContainer
         m_autoCommand = new AutoPreload(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
         break;
       case AUTOPRELOADCORAL :
-        m_autoCommand = new AutoPreloadCoral(ppPathList, m_drivetrain);
+        m_autoCommand = new AutoPreloadCoral(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
         break;
       case AUTOPRELOADCORAL2 :
-        m_autoCommand = new AutoPreloadCoral2(ppPathList, m_drivetrain);
+        m_autoCommand = new AutoPreloadCoral2(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
         break;
       case AUTOPRELOADCORAL3 :
-        m_autoCommand = new AutoPreloadCoral3(ppPathList, m_drivetrain);
+        m_autoCommand = new AutoPreloadCoral3(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
         break;
       case AUTOPRELOADALGAE :
         m_autoCommand = new AutoPreloadAlgae(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
