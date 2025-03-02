@@ -169,16 +169,16 @@ public class RobotContainer
       Map.entry(AutoChooser.AUTOPRELOAD.toString( ) + StartPose.START2.toString( ), "Start2-RH"),
       Map.entry(AutoChooser.AUTOPRELOAD.toString( ) + StartPose.START3.toString( ), "Start3-RE"),
 
-      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START1.toString( ), "Start1-RK_RK-S1L_S1L-RL"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START1.toString( ), "Start1-RJ_RJ-S1L_S1L-RL"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START2.toString( ), "Start2-RH_RH-S1L_S1L-RI"),
-      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START3.toString( ), "Start3-RD_RD-S2R_S2R-RC"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START3.toString( ), "Start3-RE_RE-S2R_S2R-RC"),
 
       Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START1.toString( ),
-          "Start1-RK_RK-S1L_S1L-RL_RL-S1L_S1L-RA"),
+          "Start1-RJ_RJ-S1L_S1L-RL_RL-S1L_S1L-RA"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START2.toString( ),
           "Start2-RH_RH-S1L_S1L-RL_RL-S1L_S1L-RA"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START3.toString( ),
-          "Start3-RD_RD-S2R_S2R-RC_RC-S2R_S2R-RB"),
+          "Start3-RE_RE-S2R_S2R-RC_RC-S2R_S2R-RB"),
 
       Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START1.toString( ),
           "Start1-RJ_RJ-S1L_S1L-RL_RL-S1L_S1L-RA_RA-S1L_S1L-RB"),
