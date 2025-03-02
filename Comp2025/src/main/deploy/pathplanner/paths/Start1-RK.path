@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.120000000000001,
+        "x": 6.630824765198008,
         "y": 6.17
       },
       "isLocked": false,
@@ -20,12 +20,12 @@
         "y": 5.31
       },
       "prevControl": {
-        "x": 3.44,
-        "y": 6.176025403784438
+        "x": 5.205789110749502,
+        "y": 6.196315077130566
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BranchK"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.4974,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

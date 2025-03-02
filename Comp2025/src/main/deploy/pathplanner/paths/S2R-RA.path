@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.12,
-        "y": 4.03
+        "x": 1.49,
+        "y": 0.8
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.119999999999999,
-        "y": 4.03
+        "x": 1.615,
+        "y": 1.0165063509461096
       },
       "isLocked": false,
-      "linkedName": "Start2"
+      "linkedName": "S2R"
     },
     {
       "anchor": {
-        "x": 5.78,
-        "y": 4.03
+        "x": 3.1,
+        "y": 4.19
       },
       "prevControl": {
-        "x": 6.78,
-        "y": 4.03
+        "x": 3.360710724953325,
+        "y": 2.711436005392854
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AlgaeGH"
+      "linkedName": "RA"
     }
   ],
   "rotationTargets": [],
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.4974,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "FromStart",
+  "folder": "FromCoralStation",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 55.0
   },
   "useDefaultConstraints": true
 }
