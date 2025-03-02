@@ -7,7 +7,9 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.LogCommand;
+import frc.robot.commands.ScoreCoral;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Elevator;
 
 /**
  * Auto command that can be used for testing new sequences
@@ -32,7 +34,7 @@ public class AutoPreload extends SequentialCommandGroup
 
                 // @formatter:off
 
-        new LogCommand(getName(), "Drive a test path"),
+        new LogCommand(getName(), "Drive to reef to score preloaded coral"),
         drivetrain.getPathCommand(ppPaths.get(0))
         
         // @formatter:on

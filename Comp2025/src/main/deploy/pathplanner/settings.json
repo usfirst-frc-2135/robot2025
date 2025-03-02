@@ -11,9 +11,10 @@
     "AutoLeave",
     "AutoPreload",
     "AutoPreloadCoral",
+    "AutoPreloadCoral2",
     "AutoStop",
     "AutoTest",
-    "AutoPreloadCoral2"
+    "AutoPreloadCoral3"
   ],
   "defaultMaxVel": 2.0,
   "defaultMaxAccel": 2.5,
