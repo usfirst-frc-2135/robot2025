@@ -40,6 +40,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
+import frc.robot.autos.AutoPreload;
+import frc.robot.autos.AutoPreloadCoral;
+import frc.robot.autos.AutoPreloadCoral2;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.AcquireAlgae;
 import frc.robot.commands.AcquireCoral;
@@ -116,8 +119,10 @@ public class RobotContainer
   private enum AutoChooser
   {
     AUTOSTOP,         // AutoStop - sit still, do nothing
-    AUTOLEAVE,        // Leave starting line
-    AUTOTEST          // Run a selected test auto
+    AUTOLEAVE, // Leave starting line
+    AUTOPRELOAD, // Preload coral
+    AUTOPRELOADCORAL,       // Preload coral and score one more
+    AUTOPRELOADCORAL2, AUTOTEST         // Run a selected test auto
   }
 
   /**
@@ -152,10 +157,24 @@ public class RobotContainer
       Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.START2.toString( ), "Start2_L2"),
       Map.entry(AutoChooser.AUTOLEAVE.toString( ) + StartPose.START3.toString( ), "Start3_L3"),
 
+      Map.entry(AutoChooser.AUTOPRELOAD.toString( ) + StartPose.START1.toString( ), "Start1-RJ"),
+      Map.entry(AutoChooser.AUTOPRELOAD.toString( ) + StartPose.START2.toString( ), "Start2-RH"),
+      Map.entry(AutoChooser.AUTOPRELOAD.toString( ) + StartPose.START3.toString( ), "Start3-RE"),
+
+      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START1.toString( ), "Start1-RK_RK-S1L_S1L-RL"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START2.toString( ), "Start2-RH_RH-S1L_S1L-RI"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START3.toString( ), "Start3-RD_RD-S2R_S2R-RC"),
+
+      Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START1.toString( ),
+          "Start1-RK_RK-S1L_S1L-RL_RL-S1L_S1L-RA"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START2.toString( ),
+          "Start2-RH_RH-S1L_S1L-RL_RL-S1L_S1L-RA"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START3.toString( ),
+          "Start3-RD_RD-S2R_S2R-RC_RC-S2R_S2R-RB"),
+
       Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START1.toString( ), "Start1_Test1"),
       Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START2.toString( ), "Start2_Test2"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_Test3") //
-  ));
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_Test3")));
 
   /****************************************************************************
    * 
@@ -211,6 +230,9 @@ public class RobotContainer
     // Configure autonomous sendable chooser
     m_autoChooser.setDefaultOption("0 - AutoStop", AutoChooser.AUTOSTOP);
     m_autoChooser.addOption("1 - AutoLeave", AutoChooser.AUTOLEAVE);
+    m_autoChooser.addOption("2 - AutoPreload", AutoChooser.AUTOPRELOAD);
+    m_autoChooser.addOption("3 - AutoPreloadCoral", AutoChooser.AUTOPRELOADCORAL);
+    m_autoChooser.addOption("3 - AutoPreloadCoral2", AutoChooser.AUTOPRELOADCORAL2);
     m_autoChooser.addOption("9 - AutoTestPath", AutoChooser.AUTOTEST);
     m_autoChooser.onChange(this::updateAutoChooserCallback);
 
@@ -479,10 +501,21 @@ public class RobotContainer
       case AUTOLEAVE :
         m_autoCommand = new AutoLeave(ppPathList, m_drivetrain, m_led);
         break;
+      case AUTOPRELOAD :
+        m_autoCommand = new AutoPreload(ppPathList, m_drivetrain);
+        break;
+      case AUTOPRELOADCORAL :
+        m_autoCommand = new AutoPreloadCoral(ppPathList, m_drivetrain);
+        break;
+      case AUTOPRELOADCORAL2 :
+        m_autoCommand = new AutoPreloadCoral2(ppPathList, m_drivetrain);
+        break;
+
       case AUTOTEST :
         // m_autoCommand = new AutoTest(ppPathList, m_drivetrain, m_led);
         m_autoCommand = new AutoTest(ppPathList, m_drivetrain);
         break;
+
     }
 
     DataLogManager.log(String.format("getAuto: autoMode %s startOption %s (%s)", autoKey, startPose, m_autoCommand.getName( )));
