@@ -8,11 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.772252366413214,
-        "y": 2.5796307327482855
+        "x": 4.769712518089292,
+        "y": 2.5839494495602664
       },
       "isLocked": false,
-      "linkedName": "RD"
+      "linkedName": "RE"
     },
     {
       "anchor": {
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 55.0
+    "rotation": -125.00000000000001
   },
   "reversed": false,
   "folder": "FromBranch",

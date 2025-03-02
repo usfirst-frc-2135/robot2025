@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.04,
-        "y": 5.31
+        "x": 7.12,
+        "y": 1.88
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.54,
-        "y": 6.176025403784438
+        "x": 6.119999999999999,
+        "y": 1.8800000000000001
       },
       "isLocked": false,
-      "linkedName": "RJ"
+      "linkedName": "Start3"
     },
     {
       "anchor": {
-        "x": 5.13,
-        "y": 5.14
+        "x": 3.94,
+        "y": 2.74
       },
       "prevControl": {
-        "x": 5.63,
-        "y": 6.006025403784438
+        "x": 4.4399999999999995,
+        "y": 1.8739745962155618
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AlgaeIJ"
+      "linkedName": "RD"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 59.99999999999999
   },
   "reversed": false,
-  "folder": "FromBranch",
+  "folder": "FromStart",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

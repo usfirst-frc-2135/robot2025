@@ -12,9 +12,10 @@
     "AutoPreload",
     "AutoPreloadCoral",
     "AutoPreloadCoral2",
+    "AutoPreloadCoral3",
     "AutoStop",
     "AutoTest",
-    "AutoPreloadCoral3"
+    "AutoPreloadAlgae"
   ],
   "defaultMaxVel": 2.0,
   "defaultMaxAccel": 2.5,
