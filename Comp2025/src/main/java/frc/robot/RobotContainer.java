@@ -71,6 +71,7 @@ public class RobotContainer
 {
   private final boolean                               m_macOSXSim     = false;  // Enables Mac OS X controller compatibility in simulation
   private IntegerPublisher                            m_reefLevelPub;
+  private IntegerPublisher                            m_reefScoreOffsetPub;
 
   // Gamepad controllers
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
@@ -210,6 +211,7 @@ public class RobotContainer
   {
     NetworkTableInstance inst = NetworkTableInstance.getDefault( );
     m_reefLevelPub = inst.getTable("robotContainer").getIntegerTopic("ReefLevel").publish( );
+    m_reefScoreOffsetPub = inst.getTable("robotContainer").getIntegerTopic(VIConsts.ReefScoreOffsetNTString).publish( );
 
     // Network tables publisher objects
     SmartDashboard.putData("AutoMode", m_autoChooser);
@@ -277,6 +279,16 @@ public class RobotContainer
     return new InstantCommand(          // Command with init only phase declared
         ( ) -> setSelectLevel(level)      // Init method                          
     ).withName("SelectLevel");
+  }
+
+  public void setReefScoreOffset(int offset)
+  {
+    m_reefScoreOffsetPub.set(offset);
+  }
+
+  public Command getReefScoreOffsetCommand(int offset)
+  {
+    return new InstantCommand(( ) -> setReefScoreOffset(offset)).withName(VIConsts.ReefScoreOffsetNTString);
   }
 
   /****************************************************************************
@@ -359,9 +371,9 @@ public class RobotContainer
     // Operator - A, B, X, Y
     //
     m_operatorPad.a( ).onTrue(m_manipulator.getCalibrateCommand( ).ignoringDisable(true)); // TODO: manual wrist calibration command
-    m_operatorPad.b( ).onTrue(new LogCommand("operPad", "B"));
-    m_operatorPad.x( ).onTrue(new LogCommand("operPad", "X"));
-    m_operatorPad.y( ).onTrue(new LogCommand("operPad", "Y"));
+    m_operatorPad.b( ).onTrue(getReefScoreOffsetCommand(2));
+    m_operatorPad.x( ).onTrue(getReefScoreOffsetCommand(0));
+    m_operatorPad.y( ).onTrue(getReefScoreOffsetCommand(1));
 
     //
     // Operator - Bumpers, start, back

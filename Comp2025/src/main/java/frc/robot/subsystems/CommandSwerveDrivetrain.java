@@ -45,6 +45,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.VIConsts;
+import frc.robot.Constants.VIConsts.DesiredReefPose;
 import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.lib.LimelightHelpers;
@@ -476,13 +477,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double shortestDistance = 54.0; // field length                         // Variable for keeping track of lowest distance (54.0 means none found)
 
         // Just one calculation for either tag set
-        for (int i : tagsToUse)                                                 // Iterate through the array of selected tags
+        for (int i = 0; i < 6; i++)                                                 // Iterate through the array of selected tags
         {
-            Pose2d atPose = VIConsts.kATField.getTagPose(i).get( ).toPose2d( );                     // Get the AT tag in Pose2d form
+            Pose2d atPose = VIConsts.kATField.getTagPose(tagsToUse[i]).get( ).toPose2d( );                     // Get the AT tag in Pose2d form
             double distance = robotPose.getTranslation( ).getDistance((atPose.getTranslation( )));  // Calculate the distance from the AT tag to the robotPose
             if (distance < shortestDistance)                                                        // If the distance is shorter than what was saved before
             {
-                closestTag = i;                                                                     // Save the new tag ID
+                closestTag = blueReefTags[i];                                                                     // Saves cloest AT id (always in blue space)
             }
         }
 
@@ -600,11 +601,117 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * - need another array of left, right, algae poses for each AT id (face)
      * 
      */
+
+    NetworkTable instance      = NetworkTableInstance.getDefault( ).getTable("robotContainer");
+    int          scoringOffset = (int) instance.getIntegerTopic(VIConsts.ReefScoreOffsetNTString).subscribe(0).get( );
+
     public Pose2d findTargetPose( )
     {
-        int branchAlgae = -1;       // Invalid setting (should use enums here for readability LEFT, RIGHT, ALGAE)
+        //int branchAlgae = -1;       // Invalid setting (should use enums here for readability LEFT, RIGHT, ALGAE)
         int desiredReefTag = findClosestReefTag( );
         Pose2d desiredPose2d = new Pose2d( );
+
+        switch (desiredReefTag)
+        {
+            case 17 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[0][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[0][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[0][1];
+                }
+                break;
+            }
+
+            case 18 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[1][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[1][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[1][1];
+                }
+                break;
+            }
+            case 19 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[2][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[2][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[2][1];
+                }
+                break;
+            }
+            case 20 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[3][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[3][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[3][1];
+                }
+                break;
+            }
+            case 21 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[4][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[4][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[4][1];
+                }
+                break;
+            }
+            case 22 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[5][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[5][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[5][1];
+                }
+                break;
+            }
+
+        }
 
         // TODO: Pseudo-code for what is needed
         //  simple method (no searching)
