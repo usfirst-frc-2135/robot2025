@@ -8,6 +8,10 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.LogCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.HID;
+import frc.robot.subsystems.LED;
+import frc.robot.subsystems.Manipulator;
 
 /**
  * Auto command that can be used for testing new sequences
@@ -23,7 +27,8 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
      * @param drivetrain
      *            swerve drivetrain subsystem
      */
-    public AutoPreloadCoral2(List<PathPlannerPath> ppPaths, CommandSwerveDrivetrain drivetrain)
+    public AutoPreloadCoral2(List<PathPlannerPath> ppPaths, CommandSwerveDrivetrain drivetrain, Elevator elevator,
+            Manipulator manipulator, LED led, HID hid)
     {
         setName("AutoPreloadCoral2");
 

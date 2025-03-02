@@ -35,12 +35,12 @@ public class AutoPreload extends SequentialCommandGroup
 
         addCommands(
                 // Add Commands here:
-
                 // @formatter:off
 
-        new LogCommand(getName(), "Drive to reef to score preloaded coral"),
+        new LogCommand(getName(), "Drive to nearest branch on reef"),
         drivetrain.getPathCommand(ppPaths.get(0)),
 
+        new LogCommand(getName(), "Score preloaded coral"),
         new ScoreCoral(elevator, manipulator, led, hid)
         
         // @formatter:on
