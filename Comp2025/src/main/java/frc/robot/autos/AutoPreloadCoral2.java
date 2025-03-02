@@ -25,7 +25,7 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
      */
     public AutoPreloadCoral2(List<PathPlannerPath> ppPaths, CommandSwerveDrivetrain drivetrain)
     {
-        setName("AutoPreloadCoral");
+        setName("AutoPreloadCoral2");
 
         addCommands(
                 // Add Commands here:
