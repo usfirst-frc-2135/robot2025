@@ -25,7 +25,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.IntegerPublisher;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -42,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.CRConsts.ClawMode;
+import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoTest;
@@ -70,8 +70,8 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer
 {
   private final boolean                               m_macOSXSim     = false;  // Enables Mac OS X controller compatibility in simulation
-  private IntegerPublisher                            m_reefLevelPub;
-  private IntegerPublisher                            m_reefScoreOffsetPub;
+  private IntegerPublisher                            m_reefLevelPub;           // Level of the reef to score or acquire from
+  private IntegerPublisher                            m_reefBranchPub;          // Branch (left, middle, right) to align
 
   // Gamepad controllers
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
@@ -210,8 +210,8 @@ public class RobotContainer
   private void addDashboardWidgets( )
   {
     NetworkTableInstance inst = NetworkTableInstance.getDefault( );
-    m_reefLevelPub = inst.getTable("robotContainer").getIntegerTopic("ReefLevel").publish( );
-    m_reefScoreOffsetPub = inst.getTable("robotContainer").getIntegerTopic(VIConsts.ReefScoreOffsetNTString).publish( );
+    m_reefLevelPub = inst.getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
+    m_reefBranchPub = inst.getTable(Constants.kRobotString).getIntegerTopic(VIConsts.kReefOffsetString).publish( );
 
     // Network tables publisher objects
     SmartDashboard.putData("AutoMode", m_autoChooser);
@@ -263,32 +263,34 @@ public class RobotContainer
     SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
   }
 
-  public void setSelectLevel(int level)
-  {
-    m_reefLevelPub.set(level);
-  }
-
   /****************************************************************************
    * 
    * Create Select Level Command
    * 
-   * @return instant command to Select Coral Scoring Level
+   * @return instant command to Select Reef Scoring Level
    */
-  public Command getSelectLevelCommand(int level)
+  public Command getLevelSelectCommand(int level)
   {
     return new InstantCommand(          // Command with init only phase declared
-        ( ) -> setSelectLevel(level)      // Init method                          
-    ).withName("SelectLevel");
+        ( ) ->
+        {
+          m_reefLevelPub.set(level);
+        }).withName(ELConsts.kReefLevelString);
   }
 
-  public void setReefScoreOffset(int offset)
+  /****************************************************************************
+   * 
+   * Create Select Branch Command
+   * 
+   * @return instant command to Select Branch Alignment
+   */
+  public Command getReefOffsetSelectCommand(int branch)
   {
-    m_reefScoreOffsetPub.set(offset);
-  }
-
-  public Command getReefScoreOffsetCommand(int offset)
-  {
-    return new InstantCommand(( ) -> setReefScoreOffset(offset)).withName(VIConsts.ReefScoreOffsetNTString);
+    return new InstantCommand(           // Command with init only phase declared
+        ( ) ->
+        {
+          m_reefBranchPub.set(branch);
+        }).withName(VIConsts.kReefOffsetString);
   }
 
   /****************************************************************************
@@ -303,7 +305,7 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
-    m_driverPad.a( ).whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
+    m_driverPad.a( ).whileTrue(m_drivetrain.getDrivePathToPoseCommand(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
     m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B"));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
@@ -371,25 +373,25 @@ public class RobotContainer
     // Operator - A, B, X, Y
     //
     m_operatorPad.a( ).onTrue(m_manipulator.getCalibrateCommand( ).ignoringDisable(true)); // TODO: manual wrist calibration command
-    m_operatorPad.b( ).onTrue(getReefScoreOffsetCommand(2));
-    m_operatorPad.x( ).onTrue(getReefScoreOffsetCommand(0));
-    m_operatorPad.y( ).onTrue(getReefScoreOffsetCommand(1));
+    m_operatorPad.b( ).onTrue(getReefOffsetSelectCommand(2));
+    m_operatorPad.x( ).onTrue(getReefOffsetSelectCommand(0));
+    m_operatorPad.y( ).onTrue(getReefOffsetSelectCommand(1));
 
     //
     // Operator - Bumpers, start, back
     //
     m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));                  // aka View button
-    m_operatorPad.start( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));  // aka Menu button
+    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));     // aka View button
+    m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));    // aka Menu button
 
     //
     // Operator - POV buttons
     //
-    m_operatorPad.pov(0).onTrue(getSelectLevelCommand(4));
-    m_operatorPad.pov(90).onTrue(getSelectLevelCommand(1));
-    m_operatorPad.pov(180).onTrue(getSelectLevelCommand(2));
-    m_operatorPad.pov(270).onTrue(getSelectLevelCommand(3));
+    m_operatorPad.pov(0).onTrue(getLevelSelectCommand(4));
+    m_operatorPad.pov(90).onTrue(getLevelSelectCommand(1));
+    m_operatorPad.pov(180).onTrue(getLevelSelectCommand(2));
+    m_operatorPad.pov(270).onTrue(getLevelSelectCommand(3));
 
     //
     // Operator Left/Right Trigger
@@ -435,7 +437,7 @@ public class RobotContainer
 
     m_drivetrain.registerTelemetry(logger::telemeterize);
 
-    // TODO: Only one default command can be active per subsystem--use the manual modes during bring-up
+    // Only one default command can be active per subsystem--use the manual modes during bring-up
 
     // Default command - Motion Magic hold
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
