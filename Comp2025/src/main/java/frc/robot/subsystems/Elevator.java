@@ -65,7 +65,7 @@ public class Elevator extends SubsystemBase
   private static final String  kSubsystemName          = "Elevator";
   private static final double  kGearRatio              = 9.706;           // Gear reduction
   private static final double  kHeightInchesMin        = 0.0;             // Minimum allowable height
-  private static final double  kHeightInchesMax        = 30.0;           // Maximum allowable height
+  private static final double  kHeightInchesMax        = 30.75;           // Maximum allowable height
   private static final double  kSimHeightMetersMin     = Units.inchesToMeters(kHeightInchesMin - 0.1); // Make sim height range larger than useful range
   private static final double  kSimHeightMetersMax     = Units.inchesToMeters(kHeightInchesMax + 0.1);
   private static final double  kCarriageMassKg         = Units.lbsToKilograms(20.0);     // Simulation
@@ -89,8 +89,8 @@ public class Elevator extends SubsystemBase
 
   private static final double  kHeightAlgaeL23         = 12.5;            // By definition - at L23 for taking algae
   private static final double  kHeightAlgaeL34         = 20.5;            // By definition - at L34 for taking algae
-  private static final double  kHeightAlgaeNet         = 25.0;            // By definition - at scoring algae in net
-  private static final double  kHeightAlgaeProcessor   = 0.0;             // By definition - at scoring algae in processor
+  private static final double  kHeightAlgaeNet         = 30.75;            // By definition - at scoring algae in net
+  private static final double  kHeightAlgaeProcessor   = 5.0;             // By definition - at scoring algae in processor
 
   /** Elevator manual move parameters */
   private enum JoystickMode
@@ -289,6 +289,7 @@ public class Elevator extends SubsystemBase
 
     // Add commands
     SmartDashboard.putData("ElRunStowed", getMoveToPositionCommand(this::getHeightStowed));
+    SmartDashboard.putData("ElRunCoralStation", getMoveToPositionCommand(this::getHeightCoralLStation));
     SmartDashboard.putData("ElRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
     SmartDashboard.putData("ElRunCoralL2", getMoveToPositionCommand(this::getHeightCoralL2));
     SmartDashboard.putData("ElRunCoralL3", getMoveToPositionCommand(this::getHeightCoralL3));
@@ -576,7 +577,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return current position in inches
    */
-  public double getPosition( )
+  public double getCurrentHeight( )
   {
     return m_currentHeight;
   }

@@ -36,6 +36,25 @@ public class Vision extends SubsystemBase
     }
   };
 
+  /** Camera stream mode parameter */
+  private enum imuMode
+  {
+    EXTERNAL(0),        // Use external IMU
+    EXTERNAL_SEED(1),   // Use external IMU, seed internal
+    INTERNAL(2),        // Use internal
+    INTERNAL_MT1(3),    // Use internal with MT1 assisted convergence
+    INTERNAL_ASSIST(4)  // Use internal IMU with external IMU assisted convergence
+    ;
+
+    @SuppressWarnings("unused")
+    public final int value;
+
+    private imuMode(int value)
+    {
+      this.value = value;
+    }
+  };
+
   // Constants
   private static final double kAimingKp  = 0.01;
   private static final double kDrivingKp = 0.06;
@@ -176,6 +195,39 @@ public class Vision extends SubsystemBase
   {
     DataLogManager.log(String.format("%s: Set AprilTag priority id %d (%s)", getSubsystem( ), id, alliance));
     LimelightHelpers.setPriorityTagID(kLLName, id);
+  }
+
+  /****************************************************************************
+   * 
+   * Set priorityid and display alliance color
+   * 
+   * @param limelightName
+   *          Name/identifier of the Limelight
+   * @param throttle
+   *          Defaults to 0. Your Limelgiht will process one frame
+   *          after skipping <throttle> frames.
+   */
+  public void SetThrottleLevel(boolean throttle)
+  {
+    DataLogManager.log(String.format("%s: Set Throttle level to %s", getSubsystem( ), throttle));
+    LimelightHelpers.SetThrottle("limelight", throttle ? 0 : 50);
+  }
+
+  /****************************************************************************
+   * 
+   * Set IMU mode as a default
+   * 
+   * @param limelightName
+   *          Name/identifier of the Limelight
+   * @param mode
+   *          Defaults to 0. Choose the IMU mode
+   */
+  public void SetIMUMode( )
+  {
+    imuMode mode = imuMode.EXTERNAL_SEED;
+
+    DataLogManager.log(String.format("%s: Set IMU Mode to %s", getSubsystem( ), mode));
+    LimelightHelpers.SetIMUMode("limelight", mode.value);
   }
 
 }

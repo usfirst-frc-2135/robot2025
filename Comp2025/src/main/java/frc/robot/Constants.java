@@ -85,6 +85,13 @@ public class Constants
    ****************************************************************************/
   public static final class ELConsts
   {
+    public enum LevelSelector
+    {
+      ONE,        // Coral Level One (Troph)
+      TWO,        // Coral Level Two
+      THREE,      // Coral Level Three
+      FOUR,       // Coral Level Four
+    }
   }
 
   /****************************************************************************
@@ -96,15 +103,17 @@ public class Constants
     public enum ClawMode
     {
       STOP,             // Stop all rotation
+
       ALGAEACQUIRE,     // Speed for acquiring algae
+      ALGAEHOLD,        // Speed for holding algae in claw
       ALGAEEXPEL,       // Speed for expelling algae
       ALGAESHOOT,       // Speed for shooting algae
       ALGAEPROCESSOR,   // Speed for putting algae into processor 
-      ALGAEHOLD,        // Maintain existing speed setting
+      ALGAEMAINTAIN,    // Maintain existing speed setting
 
       CORALACQUIRE,     // Speed for acquiring coral
       CORALEXPEL,       // Speed for expelling coral
-      CORALHOLD         // Maintain existing speed setting
+      CORALMAINTAIN     // Maintain existing speed setting
     }
   }
 
@@ -155,5 +164,4 @@ public class Constants
       DASHBOARD   // Animation taken from the dashboard
     }
   }
-
 }
