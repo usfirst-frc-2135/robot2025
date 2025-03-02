@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.540000000000001,
-        "y": 1.873974596215561
+        "x": 5.165,
+        "y": 2.9565063509461096
       },
       "isLocked": false,
       "linkedName": "BranchE"
@@ -20,8 +20,8 @@
         "y": 2.91
       },
       "prevControl": {
-        "x": 5.63,
-        "y": 2.0439745962155613
+        "x": 5.005,
+        "y": 2.6934936490538908
       },
       "nextControl": null,
       "isLocked": false,

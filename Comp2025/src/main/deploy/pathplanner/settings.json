@@ -3,19 +3,23 @@
   "robotLength": 0.876,
   "holonomicMode": true,
   "pathFolders": [
+    "FromAlgae",
     "FromBranch",
     "FromCoralStation",
-    "FromStart"
+    "FromNet",
+    "FromStart",
+    "FromProc"
   ],
   "autoFolders": [
     "AutoLeave",
     "AutoPreload",
+    "AutoPreloadAlgae",
     "AutoPreloadCoral",
     "AutoPreloadCoral2",
     "AutoPreloadCoral3",
     "AutoStop",
     "AutoTest",
-    "AutoPreloadAlgae"
+    "AutoPreloadAlgae2"
   ],
   "defaultMaxVel": 2.0,
   "defaultMaxAccel": 2.5,
