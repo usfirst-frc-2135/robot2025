@@ -392,6 +392,29 @@ public class RobotContainer
     m_operatorPad.rightStick( ).toggleOnTrue(new LogCommand("operPad", "right stick"));
   }
 
+  public void SlowCommand( )
+  {
+    if (!m_macOSXSim)
+    {
+      m_drivetrain.applyRequest(( ) -> drive                                              //
+          .withVelocityX(3.5 * (-m_driverPad.getLeftY( )))                       // Drive forward with negative Y (forward)
+          .withVelocityY(3.5 * (-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
+          .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))           // Drive counterclockwise with negative X (left)
+      )                                                                                   //
+          .ignoringDisable(true)                                      //
+          .withName("CommandSwerveDrivetrain");
+    }
+    else // When using simulation on MacOS X, XBox controllers need to be re-mapped due to an Apple bug
+    {
+      m_drivetrain.applyRequest(( ) -> drive                                              //
+          .withVelocityX(3.5 * (-m_driverPad.getLeftY( )))                       // Drive forward with negative Y (forward)
+          .withVelocityY(3.5 * (-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
+          .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getLeftTriggerAxis( )))  // Drive counterclockwise with negative X (left)
+      )                                                                                   //
+          .ignoringDisable(true)                                      //
+          .withName("CommandSwerveDrivetrain");
+    }
+  }
   /****************************************************************************
    * 
    * Initialize default commands for these subsystems

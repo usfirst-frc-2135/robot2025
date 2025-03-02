@@ -87,7 +87,7 @@ public class Constants
   {
     public enum LevelSelector
     {
-      ONE,        // Coral Level One (Troph)
+      ONE,        // Coral Level One (Trough)
       TWO,        // Coral Level Two
       THREE,      // Coral Level Three
       FOUR,       // Coral Level Four
