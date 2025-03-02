@@ -209,9 +209,7 @@ public class RobotContainer
   private void addDashboardWidgets( )
   {
     NetworkTableInstance inst = NetworkTableInstance.getDefault( );
-    NetworkTable table = inst.getTable("robotContainer");
-
-    m_reefLevelPub = table.getIntegerTopic("ReefLevel").publish( );
+    m_reefLevelPub = inst.getTable("robotContainer").getIntegerTopic("ReefLevel").publish( );
 
     // Network tables publisher objects
     SmartDashboard.putData("AutoMode", m_autoChooser);
