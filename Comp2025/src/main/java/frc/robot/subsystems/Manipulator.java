@@ -7,7 +7,6 @@
 //
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -59,7 +58,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.Ports;
-import frc.robot.Robot;
 import frc.robot.lib.math.Conversions;
 import frc.robot.lib.phoenix.CTREConfigs6;
 import frc.robot.lib.phoenix.PhoenixUtil6;
