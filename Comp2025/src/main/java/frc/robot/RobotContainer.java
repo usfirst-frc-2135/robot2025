@@ -24,6 +24,9 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
@@ -67,6 +70,7 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer
 {
   private final boolean                               m_macOSXSim     = false;  // Enables Mac OS X controller compatibility in simulation
+  private IntegerPublisher                            m_reefLevelPub;
 
   // Gamepad controllers
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
@@ -204,6 +208,9 @@ public class RobotContainer
    */
   private void addDashboardWidgets( )
   {
+    NetworkTableInstance inst = NetworkTableInstance.getDefault( );
+    m_reefLevelPub = inst.getTable("robotContainer").getIntegerTopic("ReefLevel").publish( );
+
     // Network tables publisher objects
     SmartDashboard.putData("AutoMode", m_autoChooser);
     SmartDashboard.putData("StartPosition", m_startChooser);
@@ -254,6 +261,24 @@ public class RobotContainer
     SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
   }
 
+  public void setSelectLevel(int level)
+  {
+    m_reefLevelPub.set(level);
+  }
+
+  /****************************************************************************
+   * 
+   * Create Select Level Command
+   * 
+   * @return instant command to Select Coral Scoring Level
+   */
+  public Command getSelectLevelCommand(int level)
+  {
+    return new InstantCommand(          // Command with init only phase declared
+        ( ) -> setSelectLevel(level)      // Init method                          
+    ).withName("SelectLevel");
+  }
+
   /****************************************************************************
    * 
    * Define button-command mappings. Triggers are created and bound to the desired commands.
@@ -266,7 +291,7 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
-    m_driverPad.a( ).onTrue(new LogCommand("driverPad", "A"));
+    m_driverPad.a( ).whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
     m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B"));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
@@ -274,8 +299,8 @@ public class RobotContainer
     //
     // Driver - Bumpers, start, back
     //
-    m_driverPad.leftBumper( ).whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
-    m_driverPad.rightBumper( ).onTrue(new LogCommand("driverPad", "right bumper"));
+    m_driverPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    m_driverPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
     m_driverPad.back( ).whileTrue(m_drivetrain.applyRequest(( ) -> brake));                             // aka View button
     m_driverPad.start( ).onTrue(m_drivetrain.runOnce(( ) -> m_drivetrain.seedFieldCentric( )));         // aka Menu button
 
@@ -286,18 +311,34 @@ public class RobotContainer
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(0.0))));
+    m_driverPad.pov(45).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
+        .withTargetDirection(Rotation2d.fromDegrees(-60.0))));
     m_driverPad.pov(90).whileTrue(m_drivetrain.applyRequest(( ) -> facing   //
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
-        .withTargetDirection(Rotation2d.fromDegrees(270.0))));
+        .withTargetDirection(Rotation2d.fromDegrees(-90.0))));
+    m_driverPad.pov(135).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
+        .withTargetDirection(Rotation2d.fromDegrees(-120.0))));
     m_driverPad.pov(180).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
-        .withTargetDirection(Rotation2d.fromDegrees(180.0))));
+        .withTargetDirection(Rotation2d.fromDegrees(-180.0))));
+    m_driverPad.pov(225).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
+        .withTargetDirection(Rotation2d.fromDegrees(120.0))));
     m_driverPad.pov(270).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(90.0))));
+    m_driverPad.pov(315).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+        .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
+        .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
+        .withTargetDirection(Rotation2d.fromDegrees(60.0))));
 
     //
     // Driver Left/Right Trigger
@@ -305,8 +346,8 @@ public class RobotContainer
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
-    m_driverPad.leftTrigger(Constants.kTriggerThreshold).whileTrue(new LogCommand("driverPad", "left trigger"));
-    m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new LogCommand("driverPad", "right trigger"));
+    m_driverPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
+    m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
 
     m_driverPad.leftStick( ).onTrue(new LogCommand("driverPad", "left stick"));
     m_driverPad.rightStick( ).onTrue(new LogCommand("driverPad", "right stick"));
@@ -327,16 +368,16 @@ public class RobotContainer
     //
     m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));   // aka View button
-    m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));  // aka Menu button
+    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));                  // aka View button
+    m_operatorPad.start( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));  // aka Menu button
 
     //
     // Operator - POV buttons
     //
-    m_operatorPad.pov(0).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL1));
-    m_operatorPad.pov(90).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL2));
-    m_operatorPad.pov(180).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL3));
-    m_operatorPad.pov(270).onTrue(m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL4));
+    m_operatorPad.pov(0).onTrue(getSelectLevelCommand(4));
+    m_operatorPad.pov(90).onTrue(getSelectLevelCommand(1));
+    m_operatorPad.pov(180).onTrue(getSelectLevelCommand(2));
+    m_operatorPad.pov(270).onTrue(getSelectLevelCommand(3));
 
     //
     // Operator Left/Right Trigger
