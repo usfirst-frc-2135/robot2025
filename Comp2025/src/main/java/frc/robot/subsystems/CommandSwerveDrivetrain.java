@@ -28,7 +28,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -58,13 +57,16 @@ import frc.robot.lib.LimelightHelpers;
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
     private static final boolean        m_useLimelight           = true;
 
-    /* What to publish over networktables for telemetry */
-    private final NetworkTableInstance  inst                     = NetworkTableInstance.getDefault( );
-
     /* Robot pose for field positioning */
-    private final NetworkTable          table                    = inst.getTable("Pose");
+    private final NetworkTable          table                    = NetworkTableInstance.getDefault( ).getTable("Pose");
     private final DoubleArrayPublisher  fieldPub                 = table.getDoubleArrayTopic("llPose").publish( );
     private final StringPublisher       fieldTypePub             = table.getStringTopic(".type").publish( );
+
+    // Network tables publisher objects
+    DoubleEntry                         poseXEntry;
+    DoubleEntry                         poseYEntry;
+    DoubleEntry                         poseRotEntry;
+    DoublePublisher                     shooterDistancePub;
 
     /* Robot pathToPose constraints */
     private final PathConstraints       kPathFindConstraints     = new PathConstraints( // 
@@ -73,12 +75,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         1.5 * Math.PI,            // kMaxAngularSpeedRadiansPerSecond              (slowed from 2.0 * Math.PI for testing)  
         1.5 * Math.PI             // kMaxAngularSpeedRadiansPerSecondSquared       (slowed from 1.5 * Math.PIfor testing)  
     );
-
-    // Network tables publisher objects
-    DoubleEntry                         poseXEntry;
-    DoubleEntry                         poseYEntry;
-    DoubleEntry                         poseRotEntry;
-    DoublePublisher                     shooterDistancePub;
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -344,20 +340,52 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
+    /**
+     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
+     * while still accounting for measurement noise.
+     *
+     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
+     * @param timestampSeconds The timestamp of the vision measurement in seconds.
+     */
+    @Override
+    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    /**
+     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
+     * while still accounting for measurement noise.
+     * <p>
+     * Note that the vision measurement standard deviations passed into this method
+     * will continue to apply to future measurements until a subsequent call to
+     * {@link #setVisionMeasurementStdDevs(Matrix)} or this method.
+     *
+     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
+     * @param timestampSeconds The timestamp of the vision measurement in seconds.
+     * @param visionMeasurementStdDevs Standard deviations of the vision pose measurement
+     *     in the form [x, y, theta]ᵀ, with units in meters and radians.
+     */
+    @Override
+    public void addVisionMeasurement(
+        Pose2d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs
+    ) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+    }
+
     // @formatter:on
 
     private void initDashboard( )
     {
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
-        NetworkTableInstance inst = NetworkTableInstance.getDefault( );
-        NetworkTable table = inst.getTable("swerve");
+        NetworkTable table = NetworkTableInstance.getDefault( ).getTable("swerve");
 
         poseXEntry = table.getDoubleTopic("X").getEntry(0.0);
         poseYEntry = table.getDoubleTopic("Y").getEntry(0.0);
         poseRotEntry = table.getDoubleTopic("rotation").getEntry(0.0);
         shooterDistancePub = table.getDoubleTopic("shooterDistance").getEntry(0.0);
         SmartDashboard.putData("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
-
     }
 
     public Command getPathCommand(PathPlannerPath ppPath)
@@ -375,8 +403,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * and changes with number of tags available.
      *
      * This example is sufficient to show that vision integration is possible, though exact
-     * implementation
-     * of how to use vision should be tuned per-robot and to the team's specification.
+     * implementation of how to use vision should be tuned per-robot and to the team's specification.
      */
     private void visionUpdate( )
     {
@@ -443,10 +470,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private void setOdometryFromDashboard( )
     {
-        resetPose(        //
-                new Pose2d(           //
-                        new Translation2d(poseXEntry.get(0.0), poseYEntry.get(0.0)), //
-                        new Rotation2d(poseRotEntry.get(0.0)))        //
+        resetPose(                                                                                              //
+                new Pose2d(                                                                                     //
+                        new Translation2d(poseXEntry.get(0.0), poseYEntry.get(0.0)),  //
+                        new Rotation2d(poseRotEntry.get(0.0)))                                     //
         );
     }
 
