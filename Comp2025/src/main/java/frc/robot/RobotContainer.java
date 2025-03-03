@@ -171,6 +171,7 @@ public class RobotContainer
     Robot.timeMarker("robotContainer: before DAQ thread");
     // Swerve steer PID for facing swerve request
     facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);  // Swerve steer PID for facing swerve request
+    facing.HeadingController.enableContinuousInput(-180.0, 180.0);
     // Identify the field
     DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField.toString( ),
         VIConsts.kATField.getFieldWidth( ), VIConsts.kATField.getFieldLength( )));
