@@ -392,6 +392,20 @@ public class RobotContainer
     m_operatorPad.rightStick( ).toggleOnTrue(new LogCommand("operPad", "right stick"));
   }
 
+  // TODO (JLM):
+  //  You've gotten quite far here, so here's my recommendations
+  //    0) Make a single constant (private static final double) named kSlowSwerve that defines your ratio (note that 1.0 is full speed, so somethin like 0.30)
+  //    0a) Keep the "kMaxSpeed.times(-m_driverPad.getLeftY( )" as a parameter of withVelocity, etc. and multiple kSlowServe times that
+  //    1) Change this method to return a Command type and rename the method getSlowSwerveCommand (all command factories use this naming semantic)
+  //    2) Remove the "else" case that is used for macOSX, since we don't care about fixing the button problems in macOSX simulation mode
+  //    3) That should leave only the m_drivetrain.applyRequest line of code (yes, it's just one line of code--with one semi-colon at the end)
+  //    4) Look at what the applyRequest returns -- it's the Command type you need!
+  //    5) Assign this method (getSlowSwerveCommand) to the operator Y button as show in the button assignment spreadsheet
+  //    6) That should be it!
+  //    6a) Maybe move this method just below the getAutonomousCommmand (a better location), add a header with an appropriate comment that says what it does
+  //    6b) Remove all these comments I inserted
+  //    7) Test in the robot, commit, create a PR!
+  //
   public void SlowCommand( )
   {
     if (!m_macOSXSim)
@@ -415,6 +429,7 @@ public class RobotContainer
           .withName("CommandSwerveDrivetrain");
     }
   }
+
   /****************************************************************************
    * 
    * Initialize default commands for these subsystems
