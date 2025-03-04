@@ -50,12 +50,10 @@ public class Robot extends TimedRobot
     CommandScheduler.getInstance( ).onCommandFinish(cmd -> DataLogManager.log(String.format("%s: End", cmd.getName( ))));
 
     // Forward packets from RoboRIO USB connections to ethernet
-    PortForwarder.add(5800, "limelight.local", 5800);
-    PortForwarder.add(5801, "limelight.local", 5801);
-    PortForwarder.add(5802, "limelight.local", 5802);
-    PortForwarder.add(5803, "limelight.local", 5803);
-    PortForwarder.add(5804, "limelight.local", 5804);
-    PortForwarder.add(5805, "limelight.local", 5805);
+    for (int port = 5800; port <= 5809; port++)
+    {
+      PortForwarder.add(port, "limelight.local", port);
+    }
 
     FollowPathCommand.warmupCommand( ).withName("PathPlanner - warmupCommand").schedule( ); // Recommended by PathPlanner docs
 

@@ -46,7 +46,6 @@ public class Vision extends SubsystemBase
     INTERNAL_ASSIST(4)  // Use internal IMU with external IMU assisted convergence
     ;
 
-    @SuppressWarnings("unused")
     public final int value;
 
     private imuMode(int value)

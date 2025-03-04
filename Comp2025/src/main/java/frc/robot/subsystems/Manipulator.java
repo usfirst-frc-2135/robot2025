@@ -108,8 +108,8 @@ public class Manipulator extends SubsystemBase
   //               hstop  retracted   processor deployed  hstop
   //      Comp     -90.0  -90         ?         ?         10.0
   //      Practice ?      ?           ?         ?         ?
-  private static final double         kWristAngleMin            = -92.0; //TODO: Complete with Correct Angles 
-  private static final double         kWristAngleMax            = 38.0; // TODO: Complete with Correct Angles
+  private static final double         kWristAngleMin            = -92.0; //TODO: Complete all with Correct Angles 
+  private static final double         kWristAngleMax            = 38.0;
 
   private static final double         kWristAngleSafeState      = -75.0;
 
