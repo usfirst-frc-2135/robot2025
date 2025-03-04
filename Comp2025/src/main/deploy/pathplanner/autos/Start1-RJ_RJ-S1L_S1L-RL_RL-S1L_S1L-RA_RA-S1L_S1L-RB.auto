@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start1-RJ"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RJ-S1L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1L-RL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RL-S1L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1L-RA"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RA-S1L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1L-RB"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "AutoPreloadCoral3",
+  "choreoAuto": false
+}
