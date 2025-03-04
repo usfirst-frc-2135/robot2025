@@ -3,15 +3,26 @@
   "robotLength": 0.876,
   "holonomicMode": true,
   "pathFolders": [
-    "FromStart"
+    "FromAlgae",
+    "FromBranch",
+    "FromCoralStation",
+    "FromNet",
+    "FromStart",
+    "FromProc"
   ],
   "autoFolders": [
     "AutoLeave",
+    "AutoPreload",
+    "AutoPreloadAlgae",
+    "AutoPreloadCoral",
+    "AutoPreloadCoral2",
+    "AutoPreloadCoral3",
     "AutoStop",
-    "AutoTest"
+    "AutoTest",
+    "AutoPreloadAlgae2"
   ],
-  "defaultMaxVel": 3.4974,
-  "defaultMaxAccel": 3.5,
+  "defaultMaxVel": 2.0,
+  "defaultMaxAccel": 2.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,

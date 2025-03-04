@@ -78,18 +78,18 @@ public class Elevator extends SubsystemBase
   private static final double  kMMDebounceTime         = 0.060;           // Seconds to debounce a final position check
   private static final double  kMMMoveTimeout          = 1.5;             // Seconds allowed for a Motion Magic movement
 
-  // Elevator heights - Motion Magic config parameters                  // TODO: define desired elevator heights for 2025
+  // Elevator heights - Motion Magic config parameters                    // TODO: define desired elevator heights for 2025
   private static final double  kHeightStowed           = 0.0;             // By definition - full down
   private static final double  kHeightCoralStation     = 0.0;             // By definition - at coral station
 
   private static final double  kHeightCoralL1          = 3.0;             // By definition - at L1 for scoring coral
-  private static final double  kHeightCoralL2          = 8.0;            // By definition - at L2 for scoring coral
+  private static final double  kHeightCoralL2          = 8.0;             // By definition - at L2 for scoring coral
   private static final double  kHeightCoralL3          = 15.5;            // By definition - at L3 for scoring coral
   private static final double  kHeightCoralL4          = 30.0;            // By definition - at L4 for scoring coral
 
   private static final double  kHeightAlgaeL23         = 12.5;            // By definition - at L23 for taking algae
   private static final double  kHeightAlgaeL34         = 20.5;            // By definition - at L34 for taking algae
-  private static final double  kHeightAlgaeNet         = 30.75;            // By definition - at scoring algae in net
+  private static final double  kHeightAlgaeNet         = 30.75;           // By definition - at scoring algae in net
   private static final double  kHeightAlgaeProcessor   = 5.0;             // By definition - at scoring algae in processor
 
   /** Elevator manual move parameters */

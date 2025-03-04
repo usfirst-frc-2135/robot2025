@@ -46,7 +46,6 @@ public class Vision extends SubsystemBase
     INTERNAL_ASSIST(4)  // Use internal IMU with external IMU assisted convergence
     ;
 
-    @SuppressWarnings("unused")
     public final int value;
 
     private imuMode(int value)
@@ -210,7 +209,7 @@ public class Vision extends SubsystemBase
   public void SetThrottleLevel(boolean throttle)
   {
     DataLogManager.log(String.format("%s: Set Throttle level to %s", getSubsystem( ), throttle));
-    LimelightHelpers.SetThrottle("limelight", throttle ? 0 : 50);
+    LimelightHelpers.SetThrottle("limelight", throttle ? 0 : 200);
   }
 
   /****************************************************************************
