@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -77,7 +78,6 @@ public class RobotContainer
 {
   private final boolean                               m_macOSXSim     = false;  // Enables Mac OS X controller compatibility in simulation
   private IntegerPublisher                            m_reefLevelPub;           // Level of the reef to score or acquire from
-  private IntegerPublisher                            m_reefBranchPub;          // Branch (left, middle, right) to align
 
   // Gamepad controllers
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
@@ -256,7 +256,6 @@ public class RobotContainer
   {
     NetworkTableInstance inst = NetworkTableInstance.getDefault( );
     m_reefLevelPub = inst.getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
-    m_reefBranchPub = inst.getTable(Constants.kRobotString).getIntegerTopic(VIConsts.kReefOffsetString).publish( );
 
     // Network tables publisher objects
     SmartDashboard.putData("AutoMode", m_autoChooser);
@@ -335,13 +334,10 @@ public class RobotContainer
    * 
    * @return instant command to Select Branch Alignment
    */
-  public Command getReefOffsetSelectCommand(int branch)
+
+  public DeferredCommand getAllignToReefCommand(int branch)
   {
-    return new InstantCommand(           // Command with init only phase declared
-        ( ) ->
-        {
-          m_reefBranchPub.set(branch);
-        }).withName(VIConsts.kReefOffsetString);
+    return new DeferredCommand(getReefOffsetSelectCommand(branch), m_drivetrain);
   }
 
   /****************************************************************************
