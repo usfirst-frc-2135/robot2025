@@ -82,6 +82,7 @@ public class RobotContainer
   private static final CommandXboxController          m_operatorPad   = new CommandXboxController(Constants.kOperatorPadPort);
 
   private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
+  private static final double                         kSlowSwerve     = 0.30;
   private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(3.0 * Math.PI); // Max 1.5 rot per second
   private static final double                         kHeadingKp      = 10.0;
   private static final double                         kHeadingKi      = 0.0;
@@ -410,7 +411,7 @@ public class RobotContainer
     m_operatorPad.a( ).onTrue(m_manipulator.getCalibrateCommand( ).ignoringDisable(true)); // TODO: manual wrist calibration command
     m_operatorPad.b( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));
     m_operatorPad.x( ).onTrue(new LogCommand("operPad", "X"));
-    m_operatorPad.y( ).onTrue(new LogCommand("operPad", "Y"));
+    m_operatorPad.y( ).onTrue(getSlowSwerveCommand( ));
 
     //
     // Operator - Bumpers, start, back
@@ -439,44 +440,6 @@ public class RobotContainer
 
     m_operatorPad.leftStick( ).toggleOnTrue(new LogCommand("operPad", "left stick"));
     m_operatorPad.rightStick( ).toggleOnTrue(new LogCommand("operPad", "right stick"));
-  }
-
-  // TODO (JLM):
-  //  You've gotten quite far here, so here's my recommendations
-  //    0) Make a single constant (private static final double) named kSlowSwerve that defines your ratio (note that 1.0 is full speed, so somethin like 0.30)
-  //    0a) Keep the "kMaxSpeed.times(-m_driverPad.getLeftY( )" as a parameter of withVelocity, etc. and multiple kSlowServe times that
-  //    1) Change this method to return a Command type and rename the method getSlowSwerveCommand (all command factories use this naming semantic)
-  //    2) Remove the "else" case that is used for macOSX, since we don't care about fixing the button problems in macOSX simulation mode
-  //    3) That should leave only the m_drivetrain.applyRequest line of code (yes, it's just one line of code--with one semi-colon at the end)
-  //    4) Look at what the applyRequest returns -- it's the Command type you need!
-  //    5) Assign this method (getSlowSwerveCommand) to the operator Y button as show in the button assignment spreadsheet
-  //    6) That should be it!
-  //    6a) Maybe move this method just below the getAutonomousCommmand (a better location), add a header with an appropriate comment that says what it does
-  //    6b) Remove all these comments I inserted
-  //    7) Test in the robot, commit, create a PR!
-  //
-  public void SlowCommand( )
-  {
-    if (!m_macOSXSim)
-    {
-      m_drivetrain.applyRequest(( ) -> drive                                              //
-          .withVelocityX(3.5 * (-m_driverPad.getLeftY( )))                       // Drive forward with negative Y (forward)
-          .withVelocityY(3.5 * (-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
-          .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))           // Drive counterclockwise with negative X (left)
-      )                                                                                   //
-          .ignoringDisable(true)                                      //
-          .withName("CommandSwerveDrivetrain");
-    }
-    else // When using simulation on MacOS X, XBox controllers need to be re-mapped due to an Apple bug
-    {
-      m_drivetrain.applyRequest(( ) -> drive                                              //
-          .withVelocityX(3.5 * (-m_driverPad.getLeftY( )))                       // Drive forward with negative Y (forward)
-          .withVelocityY(3.5 * (-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
-          .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getLeftTriggerAxis( )))  // Drive counterclockwise with negative X (left)
-      )                                                                                   //
-          .ignoringDisable(true)                                      //
-          .withName("CommandSwerveDrivetrain");
-    }
   }
 
   /****************************************************************************
@@ -645,6 +608,22 @@ public class RobotContainer
     }
 
     return m_autoCommand;
+  }
+
+  /****************************************************************************
+   * 
+   * Use to slow down swerve drivetrain to 30 percent max speed
+   */
+
+  public Command getSlowSwerveCommand( )
+  {
+    return m_drivetrain.applyRequest(( ) -> drive                                                 // Drivetrain will execute this command when invoked
+        .withVelocityX(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftY( )))            // Drive forward with negative Y (forward)
+        .withVelocityY(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftX( )))              // Drive left with negative X (left)
+        .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))                     // Drive counterclockwise with negative X (left)
+    )                                                                                             //
+        .ignoringDisable(true)                                                                    //
+        .withName("CommandSwerveDrivetrain");
   }
 
   /****************************************************************************
