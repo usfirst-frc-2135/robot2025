@@ -622,7 +622,7 @@ public class RobotContainer
     return m_drivetrain.applyRequest(( ) -> drive                                                 // 
         .withVelocityX(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftY( )))              // Drive forward with negative Y (forward)
         .withVelocityY(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftX( )))              // Drive left with negative X (left)
-        .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))                     // Drive counterclockwise with negative X (left)
+        .withRotationalRate(kMaxAngularRate.times(kSlowSwerve).times(-m_driverPad.getRightX( )))                     // Drive counterclockwise with negative X (left)
     )                                                                                             //
         .ignoringDisable(true)                                                //
         .withName("CommandSwerveDrivetrain");
