@@ -613,16 +613,17 @@ public class RobotContainer
   /****************************************************************************
    * 
    * Use to slow down swerve drivetrain to 30 percent max speed
+   * Drivetrain will execute this command when invoked
    */
 
   public Command getSlowSwerveCommand( )
   {
-    return m_drivetrain.applyRequest(( ) -> drive                                                 // Drivetrain will execute this command when invoked
-        .withVelocityX(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftY( )))            // Drive forward with negative Y (forward)
+    return m_drivetrain.applyRequest(( ) -> drive                                                 // 
+        .withVelocityX(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftY( )))              // Drive forward with negative Y (forward)
         .withVelocityY(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftX( )))              // Drive left with negative X (left)
         .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))                     // Drive counterclockwise with negative X (left)
     )                                                                                             //
-        .ignoringDisable(true)                                                                    //
+        .ignoringDisable(true)                                                //
         .withName("CommandSwerveDrivetrain");
   }
 
