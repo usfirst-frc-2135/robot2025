@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start2-RH"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RH-RGH"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RGH-Net"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Net-RIJ"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RIJ-Net"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "AutoPreloadAlgae2",
+  "choreoAuto": false
+}

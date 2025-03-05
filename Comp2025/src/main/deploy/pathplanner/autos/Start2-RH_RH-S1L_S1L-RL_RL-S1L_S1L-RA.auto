@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start2-RH"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RH-SL1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1L-RL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RL-S1L"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1L-RA"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "AutoPreloadCoral2",
+  "choreoAuto": false
+}

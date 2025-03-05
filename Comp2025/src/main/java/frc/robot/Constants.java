@@ -92,10 +92,10 @@ public class Constants
 
     public enum ReefLevel
     {
-      ONE,        // Reef Level One (Troph)
-      TWO,        // Reef Level Two
-      THREE,      // Reef Level Three
-      FOUR,       // Reef Level Four
+      ONE,        // Coral Level One (Trough)
+      TWO,        // Coral Level Two
+      THREE,      // Coral Level Three
+      FOUR,       // Coral Level Four
     }
   }
 

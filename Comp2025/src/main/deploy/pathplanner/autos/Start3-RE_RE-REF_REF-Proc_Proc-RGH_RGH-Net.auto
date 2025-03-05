@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start3-RE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RE-REF"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "REF-Proc"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Proc-RGH"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RGH-Net"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "AutoPreloadAlgae2",
+  "choreoAuto": false
+}
