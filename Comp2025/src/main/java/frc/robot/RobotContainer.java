@@ -82,7 +82,7 @@ public class RobotContainer
   private static final CommandXboxController          m_operatorPad   = new CommandXboxController(Constants.kOperatorPadPort);
 
   private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
-  private static final double                         kSlowSwerve     = 0.30;
+  private static final double                         kSlowSwerve     = 0.10;
   private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(3.0 * Math.PI); // Max 1.5 rot per second
   private static final double                         kHeadingKp      = 10.0;
   private static final double                         kHeadingKi      = 0.0;
@@ -341,7 +341,8 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
-    m_driverPad.a( ).whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
+    // m_driverPad.a( ).whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
+    m_driverPad.a( ).whileTrue(getSlowSwerveCommand( ));
     m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B"));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
@@ -411,7 +412,7 @@ public class RobotContainer
     m_operatorPad.a( ).onTrue(m_manipulator.getCalibrateCommand( ).ignoringDisable(true)); // TODO: manual wrist calibration command
     m_operatorPad.b( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));
     m_operatorPad.x( ).onTrue(new LogCommand("operPad", "X"));
-    m_operatorPad.y( ).onTrue(getSlowSwerveCommand( ));
+    m_operatorPad.y( ).onTrue(new LogCommand("operPad", "Y"));
 
     //
     // Operator - Bumpers, start, back
@@ -612,8 +613,8 @@ public class RobotContainer
 
   /****************************************************************************
    * 
-   * Use to slow down swerve drivetrain to 30 percent max speed
-   * Drivetrain will execute this command when invoked
+   * Use to slow down swerve drivetrain to 30 percent max speed. Drivetrain will execute this command
+   * when invoked
    */
 
   public Command getSlowSwerveCommand( )
