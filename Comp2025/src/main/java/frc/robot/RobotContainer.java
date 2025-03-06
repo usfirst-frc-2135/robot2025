@@ -341,7 +341,6 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
-    // m_driverPad.a( ).whileTrue(m_drivetrain.drivePathtoPose(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
     m_driverPad.a( ).whileTrue(getSlowSwerveCommand( ));
     m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B"));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
