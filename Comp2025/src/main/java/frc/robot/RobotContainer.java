@@ -361,7 +361,7 @@ public class RobotContainer
    */
   public Command getAlignToReefCommand( )
   {
-    return (m_drivetrain.getReefAlignmentCommand( ));
+    return (m_drivetrain.getReefAlignmentCommand( )).defer( );
   }
 
   /****************************************************************************

@@ -142,7 +142,7 @@ public class Constants
     }
 
     /** Destination field poses for the robot when using PathPlanner pathToPose (blue side) */
-    public static final Pose2d[ ][ ] kBlueSideReefPoses = // TODO: These should be in meters???
+    public static final Pose2d[ ][ ] kBlueSideReefPoses =
     {
         { // Face 0 (CD) AT 17
             new Pose2d(new Translation2d(3.65, 2.90), Rotation2d.fromDegrees(240.00)),  // Left branch
