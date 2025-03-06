@@ -361,7 +361,7 @@ public class RobotContainer
    */
   public Command getAlignToReefCommand( )
   {
-    return (m_drivetrain.getReefAlignmentCommand( )).defer( );
+    return (m_drivetrain.getReefAlignmentCommand( ));
   }
 
   /****************************************************************************
@@ -376,7 +376,7 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
-    m_driverPad.b( ).whileTrue(getAlignToReefCommand( ));
+    m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getReefAlignmentCommand( ), Set.of(m_drivetrain)));
     m_driverPad.a( ).whileTrue(getSlowSwerveCommand( ));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
