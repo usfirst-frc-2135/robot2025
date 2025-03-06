@@ -100,24 +100,24 @@ public class Manipulator extends SubsystemBase
   private static final double         kToleranceDegrees         = 3.0;      // PID tolerance in degrees
   private static final double         kMMDebounceTime           = 0.060;    // Seconds to debounce a final angle check
   private static final double         kMMMoveTimeout            = 1.0;      // Seconds allowed for a Motion Magic movement
-  // private static final double         kCoralDebounceTime        = 0.045;  // TODO: debouncers not necessary on CANrange sensors?
-  // private static final double         kAlgaeDebounceTime        = 0.045;
+  private static final double         kCoralDebounceTime        = 0.045;  // TODO: debouncers not necessary on CANrange sensors?
+  private static final double         kAlgaeDebounceTime        = 0.045;
 
   // Wrist rotary angles - Motion Magic move parameters - TODO: Update for 2025 Reefscape needs
   //    Measured hardstops and pre-defined positions:
   //               hstop  retracted   processor deployed  hstop
   //      Comp     -90.0  -90         ?         ?         10.0
   //      Practice ?      ?           ?         ?         ?
-  private static final double         kWristAngleMin            = -92.0; //TODO: Complete all with Correct Angles 
+  private static final double         kWristAngleMin            = -119.0; //TODO: Complete all with Correct Angles 
   private static final double         kWristAngleMax            = 38.0;
 
-  private static final double         kWristAngleSafeState      = -75.0;
+  private static final double         kWristAngleSafeState      = -95.0;
 
-  private static final double         kWristAngleCoralStation   = -90.0;
-  private static final double         kWristAngleCoralL1        = -90.0;
-  private static final double         kWristAngleCoralL2        = -75.0;
-  private static final double         kWristAngleCoralL3        = -75.0;
-  private static final double         kWristAngleCoralL4        = -45.0;
+  private static final double         kWristAngleCoralStation   = -119.0;
+  private static final double         kWristAngleCoralL1        = -95.0;//-90
+  private static final double         kWristAngleCoralL2        = -95.0;//-75
+  private static final double         kWristAngleCoralL3        = -95.0;//75
+  private static final double         kWristAngleCoralL4        = -95.0;//-45
 
   private static final double         kWristAngleAlgae23        = 38.0;
   private static final double         kWristAngleAlgae34        = 38.0;
@@ -174,11 +174,11 @@ public class Manipulator extends SubsystemBase
   private double                      m_currentDegrees          = 0.0;  // Current angle in degrees
   private double                      m_targetDegrees           = 0.0;  // Target angle in degrees
   private double                      m_ccDegrees               = 0.0;  // CANcoder angle in degrees
-  private Boolean                     m_wristCalibrated         = false;  // TODO: temporary calibration state until wrist CANcoder can be implemented
+  private Boolean                     m_wristCalibrated         = true;  // TODO: temporary calibration state until wrist CANcoder can be implemented
 
   // Coral detector
   private boolean                     m_coralDetectorValid;             // Health indicator for CANrange
-  // private Debouncer                   m_coralDebouncer          = new Debouncer(kCoralDebounceTime, DebounceType.kBoth); // TODO: debouncers necessary?
+  private Debouncer                   m_coralDebouncer          = new Debouncer(kCoralDebounceTime, DebounceType.kBoth); // TODO: debouncers necessary?
   private boolean                     m_coralDetected;
 
   //Claw Roller Parameters
@@ -186,7 +186,7 @@ public class Manipulator extends SubsystemBase
 
   // Algae detector
   private boolean                     m_algaeDetectorValid;             // Health indicator for CANrange
-  // private Debouncer                   m_algaeDebouncer          = new Debouncer(kAlgaeDebounceTime, DebounceType.kBoth); // TODO: debouncers necessary?
+  private Debouncer                   m_algaeDebouncer          = new Debouncer(kAlgaeDebounceTime, DebounceType.kBoth); // TODO: debouncers necessary?
   private boolean                     m_algaeDetected;
 
   // Manual mode config parameters
@@ -300,7 +300,7 @@ public class Manipulator extends SubsystemBase
     m_coralDetectedPub.set(m_coralDetected);
     // m_algaeDetectedPub.set(m_algaeDetected);
 
-    SmartDashboard.putNumber("WristPos", Units.rotationsToDegrees((m_wristMotor.getPosition( ).getValueAsDouble( )))); // TODO: temporary until wrist CANcoder is installed
+    // SmartDashboard.putNumber("WristPos", Units.rotationsToDegrees((m_wristMotor.getPosition( ).getValueAsDouble( )))); // TODO: temporary until wrist CANcoder is installed
   }
 
   /****************************************************************************

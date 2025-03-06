@@ -186,13 +186,13 @@ public final class CTREConfigs6
     wristRotaryConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
-    // wristRotaryConfig.Feedback.FeedbackRemoteSensorID = ccPort;    // TODO: wrist is CANcoder referenced 
-    // wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    // wristRotaryConfig.Feedback.SensorToMechanismRatio = 1.0;
-    // wristRotaryConfig.Feedback.RotorToSensorRatio = gearRatio;
-    wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor; // TODO: wrist is referenced to internal encoder
-    wristRotaryConfig.Feedback.SensorToMechanismRatio = gearRatio;
-    wristRotaryConfig.Feedback.RotorToSensorRatio = 1.0;
+    wristRotaryConfig.Feedback.FeedbackRemoteSensorID = ccPort;    // TODO: wrist is CANcoder referenced 
+    wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    wristRotaryConfig.Feedback.SensorToMechanismRatio = 1.0;
+    wristRotaryConfig.Feedback.RotorToSensorRatio = gearRatio;
+    // wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor; // TODO: wrist is referenced to internal encoder
+    // wristRotaryConfig.Feedback.SensorToMechanismRatio = gearRatio;
+    // wristRotaryConfig.Feedback.RotorToSensorRatio = 1.0;
 
     // Hardware limit switches - NONE
     // wristRotaryConfig.HardwareLimitSwitch.*
@@ -271,7 +271,7 @@ public final class CTREConfigs6
     ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     ccConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
     if (Robot.isReal( ))
-      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (-0.311768 - kQuarterRotation) : (0.590 - kQuarterRotation);
+      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (-0.2372) : (0.590 - kQuarterRotation);
     else
       ccConfig.MagnetSensor.MagnetOffset = -0.25;                   // Simulated CANcoder default in rotations
 
