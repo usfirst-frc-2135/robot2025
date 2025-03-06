@@ -624,7 +624,7 @@ public class RobotContainer
         .withRotationalRate(kMaxAngularRate.times(kSlowSwerve).times(-m_driverPad.getRightX( )))                     // Drive counterclockwise with negative X (left)
     )                                                                                             //
         .ignoringDisable(false)                                                //
-        .withName("CommandSLowSwerveDrivetrain");
+        .withName("CommandSlowSwerveDrivetrain");
   }
 
   /****************************************************************************
