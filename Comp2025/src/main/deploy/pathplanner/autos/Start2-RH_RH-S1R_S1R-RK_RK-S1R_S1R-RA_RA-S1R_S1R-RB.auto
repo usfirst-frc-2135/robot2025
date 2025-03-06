@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start1-RJ"
+            "pathName": "Start2-RH"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RJ-S1R"
+            "pathName": "RH-S1R"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RL-S1R"
+            "pathName": "RK-S1R"
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RA-S1L"
+            "pathName": "RA-S1R"
           }
         },
         {

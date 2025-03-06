@@ -8,11 +8,11 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.535987279134187,
-        "y": 1.04573394181072
+        "x": 1.99875,
+        "y": 1.7824999999999998
       },
       "isLocked": false,
-      "linkedName": "S2R"
+      "linkedName": "S2L"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 3.86
       },
       "prevControl": {
-        "x": 2.7190091624166137,
-        "y": 3.1568723012288857
+        "x": 2.54475,
+        "y": 2.972
       },
       "nextControl": null,
       "isLocked": false,

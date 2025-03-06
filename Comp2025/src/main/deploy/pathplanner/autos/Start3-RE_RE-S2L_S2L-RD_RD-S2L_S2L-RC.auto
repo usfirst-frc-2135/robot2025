@@ -19,37 +19,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S2R-RC"
+            "pathName": "S2L-RD"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RC-S2R"
+            "pathName": "RD-S2L"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S2R-RB"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RB-S2R"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "S2R-RA"
+            "pathName": "S2L-RC"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "AutoPreloadCoral3",
+  "folder": "AutoPreloadCoral2",
   "choreoAuto": false
 }

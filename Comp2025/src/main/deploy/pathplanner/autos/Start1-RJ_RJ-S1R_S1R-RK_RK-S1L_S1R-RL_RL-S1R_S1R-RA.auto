@@ -7,19 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start2-RH"
+            "pathName": "Start1-RJ"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RH-S1R"
+            "pathName": "RJ-S1R"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "S1R-RK"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RK-S1R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S1R-RL"
           }
         },
         {
@@ -32,18 +44,6 @@
           "type": "path",
           "data": {
             "pathName": "S1R-RA"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RA-S1L"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "S1R-RB"
           }
         }
       ]
