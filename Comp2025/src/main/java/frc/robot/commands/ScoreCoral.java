@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts.LevelSelector;
@@ -28,14 +29,14 @@ public class ScoreCoral extends SequentialCommandGroup
 
     switch (level)
     {
-      case 1 : // Coral Level 1 - POV 90
+      case 1 : // Coral Level 1
         return LevelSelector.ONE;
-      case 2 : // Coral Level 2 - POV 180
+      case 2 : // Coral Level 2
         return LevelSelector.TWO;
-      case 3 : // Coral Level 3 - POV 270
+      case 3 : // Coral Level 3
         return LevelSelector.THREE;
       default :
-      case 4 : // Coral Level 4 - POV 0
+      case 4 : // Coral Level 4
         return LevelSelector.FOUR;
     }
   }
@@ -64,30 +65,34 @@ public class ScoreCoral extends SequentialCommandGroup
         new LogCommand(getName(),"Move Manipulator to safe position"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState),  
 
-  new LogCommand(getName(), "Move Elevator to reef height based on the level"), 
-      new SelectCommand<>( 
-        // Maps selector values to commands 
-        Map.ofEntries( 
-            Map.entry(LevelSelector.ONE, elevator.getMoveToPositionCommand(elevator::getHeightCoralL1)), 
-            Map.entry(LevelSelector.TWO, elevator.getMoveToPositionCommand(elevator::getHeightCoralL2)), 
-            Map.entry(LevelSelector.THREE, elevator.getMoveToPositionCommand(elevator::getHeightCoralL3)), 
-            Map.entry(LevelSelector.FOUR, elevator.getMoveToPositionCommand(elevator::getHeightCoralL4))), 
-        this::selectLevel), 
- 
-      new LogCommand(getName(), "Move Manipulator to reef position based on the level"), 
-      new SelectCommand<>( 
-        // Maps selector values to commands 
-        Map.ofEntries( 
-            Map.entry(LevelSelector.ONE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL1)), 
-            Map.entry(LevelSelector.TWO, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL2)), 
-            Map.entry(LevelSelector.THREE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL3)), 
-            Map.entry(LevelSelector.FOUR, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4))), 
-        this::selectLevel), 
+        new LogCommand(getName(), "Move Elevator to reef height based on the level"), 
+        new SelectCommand<>( 
+          // Maps selector values to commands 
+          Map.ofEntries( 
+                Map.entry(LevelSelector.ONE, elevator.getMoveToPositionCommand(elevator::getHeightCoralL1)), 
+                Map.entry(LevelSelector.TWO, elevator.getMoveToPositionCommand(elevator::getHeightCoralL2)), 
+                Map.entry(LevelSelector.THREE, elevator.getMoveToPositionCommand(elevator::getHeightCoralL3)), 
+                Map.entry(LevelSelector.FOUR, elevator.getMoveToPositionCommand(elevator::getHeightCoralL4))
+              ), 
+              this::selectLevel
+          ), 
+
+        new LogCommand(getName(), "Move Manipulator to reef position based on the level"), 
+        new SelectCommand<>( 
+          // Maps selector values to commands 
+          Map.ofEntries( 
+                Map.entry(LevelSelector.ONE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL1)), 
+                Map.entry(LevelSelector.TWO, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL2)), 
+                Map.entry(LevelSelector.THREE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL3)), 
+                Map.entry(LevelSelector.FOUR, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4))
+              ), 
+              this::selectLevel), 
 
         new LogCommand(getName(), "Start coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle), //level 4
 
         new LogCommand(getName(), "Wait for coral to expel"),
+        new WaitCommand(0.25),
         new WaitUntilCommand(manipulator::isCoralExpelled), // checks if coral is expelled 
       
         new LogCommand(getName(), "Stop coral rollers"), 

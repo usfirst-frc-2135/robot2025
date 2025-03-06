@@ -186,13 +186,10 @@ public final class CTREConfigs6
     wristRotaryConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
-    wristRotaryConfig.Feedback.FeedbackRemoteSensorID = ccPort;    // TODO: wrist is CANcoder referenced 
+    wristRotaryConfig.Feedback.FeedbackRemoteSensorID = ccPort;
     wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     wristRotaryConfig.Feedback.SensorToMechanismRatio = 1.0;
     wristRotaryConfig.Feedback.RotorToSensorRatio = gearRatio;
-    // wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor; // TODO: wrist is referenced to internal encoder
-    // wristRotaryConfig.Feedback.SensorToMechanismRatio = gearRatio;
-    // wristRotaryConfig.Feedback.RotorToSensorRatio = 1.0;
 
     // Hardware limit switches - NONE
     // wristRotaryConfig.HardwareLimitSwitch.*
@@ -204,7 +201,7 @@ public final class CTREConfigs6
 
     // Motor output settings
     wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
-    wristRotaryConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    wristRotaryConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     wristRotaryConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Open Loop settings
@@ -240,7 +237,7 @@ public final class CTREConfigs6
   {
     CANrangeConfiguration crConfig = new CANrangeConfiguration( );
 
-    crConfig.ProximityParams.ProximityThreshold = 0.2; // Proximity distance in meters (about 4 inches)
+    crConfig.ProximityParams.ProximityThreshold = 0.2; // Proximity distance in meters (about 8 inches)
     crConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
 
     return crConfig;
@@ -255,6 +252,7 @@ public final class CTREConfigs6
     CANrangeConfiguration crConfig = new CANrangeConfiguration( );
 
     crConfig.ProximityParams.ProximityThreshold = 0.1; // Proximity distance in meters (about 4 inches)
+    crConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
 
     return crConfig;
   }

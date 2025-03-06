@@ -52,7 +52,6 @@ public class AcquireCoral extends SequentialCommandGroup
       
         new LogCommand(getName(), "Stop coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getCurrentAngle),
-        
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)     
 
