@@ -82,7 +82,7 @@ public class RobotContainer
   private static final CommandXboxController          m_operatorPad   = new CommandXboxController(Constants.kOperatorPadPort);
 
   private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
-  private static final double                         kSlowSwerve     = 0.10;
+  private static final double                         kSlowSwerve     = 0.35;
   private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(3.0 * Math.PI); // Max 1.5 rot per second
   private static final double                         kHeadingKp      = 10.0;
   private static final double                         kHeadingKi      = 0.0;
@@ -624,8 +624,8 @@ public class RobotContainer
         .withVelocityY(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftX( )))              // Drive left with negative X (left)
         .withRotationalRate(kMaxAngularRate.times(kSlowSwerve).times(-m_driverPad.getRightX( )))                     // Drive counterclockwise with negative X (left)
     )                                                                                             //
-        .ignoringDisable(true)                                                //
-        .withName("CommandSwerveDrivetrain");
+        .ignoringDisable(false)                                                //
+        .withName("CommandSLowSwerveDrivetrain");
   }
 
   /****************************************************************************
