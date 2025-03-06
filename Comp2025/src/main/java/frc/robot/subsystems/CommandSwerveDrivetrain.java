@@ -452,6 +452,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Command getReefAlignmentCommand( )
     {
+        NetworkTable inst = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
+
+        // int scoringOffset = (int) inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( );
+        // int closestAT = findClosestReefTag( );
+
+        Pose2d targetPose = findTargetPose( );
+
         // TODO: Updates needed
         //  1) The path following command will need to have a Path created from the current robot pose and the desired pose
         //  2) So we need to get the reef offset from the publisher created in robotContainer, and
@@ -470,11 +477,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // I don't quite have the deferred command sequence figured out, you can work on all the rest of the calculations above
         //  then we can figure out how to defer the command properly
 
-        return new LogCommand(this.getName( ), "ReefAlign command");
-        //new SequentialCommandGroup(
-        //reefBranchPub.set(branch),
-        // getDrivePathToPoseCommand(m_drivetrainId, inst.getEntry(VIConsts.kReefOffsetString))
-        // );
+        return new SequentialCommandGroup(
+
+                AutoBuilder.pathfindToPoseFlipped(targetPose, kPathFindConstraints, 0.0),
+                new LogCommand("Desired Offset", String.format("Desired Offset.......................",
+                        inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( )))
+
+        );
+
     }
 
     /*

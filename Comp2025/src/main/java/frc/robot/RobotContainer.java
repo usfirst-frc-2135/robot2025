@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.xml.crypto.Data;
+
 import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -260,8 +262,8 @@ public class RobotContainer
     // Network tables publisher objects
     m_reefLevelPub =
         NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
-    m_reefOffsetPub =
-        NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
+    m_reefOffsetPub = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString)
+        .getIntegerTopic(VIConsts.kReefOffsetString).publish( );
 
     // Build autonomous chooser objects on dashboard and fill the options
     SmartDashboard.putData("AutoMode", m_autoChooser);
@@ -356,9 +358,9 @@ public class RobotContainer
    * 
    * @return instant command to Select Branch Alignment
    */
-  public Command getAlignToReefCommand(int branch)
+  public Command getAlignToReefCommand( )
   {
-    return m_drivetrain.getReefAlignmentCommand( );
+    return (m_drivetrain.getReefAlignmentCommand( ));
   }
 
   /****************************************************************************
@@ -373,8 +375,8 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
-    m_driverPad.a( ).whileTrue(m_drivetrain.getDrivePathToPoseCommand(m_drivetrain, VIConsts.kAmpPose)); // drive to amp
-    m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B"));
+    m_driverPad.a( ).onTrue(new LogCommand("driverPad", "A"));
+    m_driverPad.b( ).whileTrue(getAlignToReefCommand( ));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
 
