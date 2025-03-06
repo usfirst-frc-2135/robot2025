@@ -7,37 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start2-RH"
+            "pathName": "Start3-RE"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RH-SL1"
+            "pathName": "RE-S2L"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1L-RL"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RL-S1L"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "S1L-RA"
+            "pathName": "S2R-RC"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "AutoPreloadCoral2",
+  "folder": "AutoPreloadCoral",
   "choreoAuto": false
 }

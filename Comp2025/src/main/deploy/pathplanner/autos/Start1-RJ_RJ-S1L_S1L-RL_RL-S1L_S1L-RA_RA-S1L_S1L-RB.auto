@@ -13,25 +13,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RJ-S1L"
+            "pathName": "RJ-S1R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1L-RL"
+            "pathName": "S1R-RK"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RL-S1L"
+            "pathName": "RL-S1R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1L-RA"
+            "pathName": "S1R-RA"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S1L-RB"
+            "pathName": "S1R-RB"
           }
         }
       ]

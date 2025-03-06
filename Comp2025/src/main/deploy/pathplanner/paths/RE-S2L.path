@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.67,
-        "y": 6.75
+        "x": 5.04,
+        "y": 2.74
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5753101145038158,
-        "y": 6.670896946564885
+        "x": 5.713499999999999,
+        "y": 2.16275
       },
       "isLocked": false,
-      "linkedName": "S1L"
+      "linkedName": "RE"
     },
     {
       "anchor": {
-        "x": 3.65,
-        "y": 5.15
+        "x": 1.49,
+        "y": 0.8
       },
       "prevControl": {
-        "x": 3.525,
-        "y": 5.36650635094611
+        "x": 1.9348255289728122,
+        "y": 1.1207061737399073
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RL"
+      "linkedName": "S2L"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": -125.00000000000001
   },
   "reversed": false,
-  "folder": "FromCoralStation",
+  "folder": "FromBranch",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 125.00000000000001
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }
