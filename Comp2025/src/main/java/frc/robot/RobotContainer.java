@@ -87,6 +87,7 @@ public class RobotContainer
   private static final CommandXboxController          m_operatorPad   = new CommandXboxController(Constants.kOperatorPadPort);
 
   private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
+  private static final double                         kSlowSwerve     = 0.35;
   private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(3.0 * Math.PI); // Max 1.5 rot per second
   private static final double                         kHeadingKp      = 10.0;
   private static final double                         kHeadingKi      = 0.0;
@@ -375,8 +376,8 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
-    m_driverPad.a( ).onTrue(new LogCommand("driverPad", "A"));
     m_driverPad.b( ).whileTrue(getAlignToReefCommand( ));
+    m_driverPad.a( ).whileTrue(getSlowSwerveCommand( ));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
 
@@ -641,6 +642,23 @@ public class RobotContainer
     }
 
     return m_autoCommand;
+  }
+
+  /****************************************************************************
+   * 
+   * Use to slow down swerve drivetrain to 30 percent max speed. Drivetrain will execute this command
+   * when invoked
+   */
+
+  public Command getSlowSwerveCommand( )
+  {
+    return m_drivetrain.applyRequest(( ) -> drive                                                 // 
+        .withVelocityX(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftY( )))              // Drive forward with negative Y (forward)
+        .withVelocityY(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftX( )))              // Drive left with negative X (left)
+        .withRotationalRate(kMaxAngularRate.times(kSlowSwerve).times(-m_driverPad.getRightX( )))                     // Drive counterclockwise with negative X (left)
+    )                                                                                             //
+        .ignoringDisable(false)                                                //
+        .withName("CommandSlowSwerveDrivetrain");
   }
 
   /****************************************************************************
