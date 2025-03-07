@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.535987279134187,
-        "y": 1.04573394181072
+        "x": 2.4857253135397155,
+        "y": 1.7391014633698392
       },
       "isLocked": false,
-      "linkedName": "S2R"
+      "linkedName": "S2L"
     },
     {
       "anchor": {
-        "x": 3.1,
-        "y": 3.86
+        "x": 3.65,
+        "y": 2.9
       },
       "prevControl": {
-        "x": 2.7190091624166137,
-        "y": 3.1568723012288857
+        "x": 3.4102504568444942,
+        "y": 2.6526402771030226
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RB"
+      "linkedName": "RC"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "FromCoralStation",
