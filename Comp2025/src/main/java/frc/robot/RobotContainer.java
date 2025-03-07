@@ -400,8 +400,8 @@ public class RobotContainer
     //
     // Operator - A, B, X, Y
     //
-    m_operatorPad.a( ).onTrue(m_manipulator.getCalibrateCommand( ).ignoringDisable(true)); // TODO: manual wrist calibration command
-    m_operatorPad.b( ).onTrue(new InstantCommand(m_vision::rotateCameraStreamMode).ignoringDisable(true));
+    m_operatorPad.a( ).onTrue(new LogCommand("operPad", "A"));
+    m_operatorPad.b( ).onTrue(new LogCommand("operPad", "B"));
     m_operatorPad.x( ).onTrue(new LogCommand("operPad", "X"));
     m_operatorPad.y( ).onTrue(new LogCommand("operPad", "Y"));
 

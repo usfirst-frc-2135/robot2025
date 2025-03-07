@@ -172,7 +172,6 @@ public class Manipulator extends SubsystemBase
   private double                      m_currentDegrees          = 0.0;  // Current angle in degrees
   private double                      m_targetDegrees           = 0.0;  // Target angle in degrees
   private double                      m_ccDegrees               = 0.0;  // CANcoder angle in degrees
-  private Boolean                     m_wristCalibrated         = true;  // TODO: temporary calibration state until wrist CANcoder can be implemented
 
   // Coral detector
   private boolean                     m_coralDetectorValid;             // Health indicator for CANrange
@@ -383,8 +382,6 @@ public class Manipulator extends SubsystemBase
     SmartDashboard.putData("MNWristAlgaeProcessor",
         getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgaeProcessor));
     SmartDashboard.putData("MNWristAlgaeNet", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleAlgaeNet));
-
-    SmartDashboard.putData("MNCalibrate", getCalibrateCommand( ));  // TODO: temporary until wrist CANcoder can be installed
   }
 
   // Put methods for controlling this subsystem here. Call these from Commands.
@@ -500,15 +497,7 @@ public class Manipulator extends SubsystemBase
         m_mmWithinTolerance.calculate(false); // Reset the debounce filter
 
         double targetRotations = Units.degreesToRotations(m_targetDegrees);
-        if (m_wristCalibrated)
-        {
-          m_wristMotor.setControl(m_mmRequestVolts.withPosition(targetRotations));
-        }
-        else
-        {
-          DataLogManager
-              .log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_currentDegrees));
-        }
+        m_wristMotor.setControl(m_mmRequestVolts.withPosition(targetRotations));
         DataLogManager.log(String.format("%s: MM Position move: %.1f -> %.1f degrees (%.3f -> %.3f rot)", getSubsystem( ),
             m_currentDegrees, m_targetDegrees, Units.degreesToRotations(m_currentDegrees), targetRotations));
       }
@@ -543,10 +532,7 @@ public class Manipulator extends SubsystemBase
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
     double error = m_targetDegrees - m_currentDegrees;
 
-    if (m_wristCalibrated)
-    {
-      m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
-    }
+    m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
 
     if (holdPosition)
       return false;
@@ -621,6 +607,7 @@ public class Manipulator extends SubsystemBase
           break;
         case ALGAEHOLD :
           m_clawRequestVolts = kAlgaeSpeedHold;
+          break;
       }
 
       DataLogManager.log(String.format("%s: Claw mode is now - %s", getSubsystem( ), mode));
@@ -649,18 +636,6 @@ public class Manipulator extends SubsystemBase
   private boolean isMoveValid(double degrees)
   {
     return (degrees >= kWristAngleMin) && (degrees <= kWristAngleMax);
-  }
-
-  /****************************************************************************
-   * 
-   * Manually calibrate wrist rotary
-   */
-  private void calibrateWrist( )
-  {
-    m_currentDegrees = 8.0;
-    m_wristMotor.setPosition(Units.degreesToRotations(m_currentDegrees));
-    DataLogManager.log(String.format("%s: Subsystem calibrated! Angle Inches: %.1f", getSubsystem( ), m_currentDegrees));
-    m_wristCalibrated = true;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -824,21 +799,6 @@ public class Manipulator extends SubsystemBase
   ////////////////////////////////////////////////////////////////////////////
   ///////////////////////// COMMAND FACTORIES ////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////
-
-  /****************************************************************************
-   * 
-   * Create calibration command // TODO: temporary command until wrist CANcoder can be installed
-   * 
-   * @return instant command to set calibrated state
-   */
-  public Command getCalibrateCommand( )
-  {
-    return new InstantCommand(          // Command with init only phase declared
-        ( ) -> calibrateWrist( ),      // Init method
-        this                            // Subsytem required
-    )                                   //
-        .withName(kSubsystemName + "CalibrateWrist");
-  }
 
   /****************************************************************************
    * 
