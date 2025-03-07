@@ -116,13 +116,13 @@ public final class CTREConfigs6
     // clawRollerConfig.ClosedLoopRamps.*                           // Seconds to ramp
 
     // Current limit settings
-    clawRollerConfig.CurrentLimits.SupplyCurrentLimit = 25.0;       // Amps
-    clawRollerConfig.CurrentLimits.SupplyCurrentLowerLimit = 25.0;  // Amps
+    clawRollerConfig.CurrentLimits.SupplyCurrentLimit = 40.0;       // Amps
+    clawRollerConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0;  // Amps
     clawRollerConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;  // Seconds
     clawRollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    clawRollerConfig.CurrentLimits.StatorCurrentLimit = 100.0;      // Amps
-    clawRollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    clawRollerConfig.CurrentLimits.StatorCurrentLimit = 400.0;      // Amps
+    clawRollerConfig.CurrentLimits.StatorCurrentLimitEnable = false;
 
     // Feedback settings
     // clawRollerConfig.Feedback.*
@@ -177,30 +177,27 @@ public final class CTREConfigs6
     // wristRotaryConfig.ClosedLoopRamps.*                           // Seconds to ramp
 
     // Current limit settings
-    wristRotaryConfig.CurrentLimits.SupplyCurrentLimit = 25.0;       // Amps
-    wristRotaryConfig.CurrentLimits.SupplyCurrentLowerLimit = 25.0;  // Amps
+    wristRotaryConfig.CurrentLimits.SupplyCurrentLimit = 30.0;       // Amps
+    wristRotaryConfig.CurrentLimits.SupplyCurrentLowerLimit = 30.0;  // Amps
     wristRotaryConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;  // Seconds
     wristRotaryConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    wristRotaryConfig.CurrentLimits.StatorCurrentLimit = 100.0;      // Amps
+    wristRotaryConfig.CurrentLimits.StatorCurrentLimit = 400.0;      // Amps
     wristRotaryConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
-    // wristRotaryConfig.Feedback.FeedbackRemoteSensorID = ccPort;    // TODO: wrist is CANcoder referenced 
-    // wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    // wristRotaryConfig.Feedback.SensorToMechanismRatio = 1.0;
-    // wristRotaryConfig.Feedback.RotorToSensorRatio = gearRatio;
-    wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor; // TODO: wrist is referenced to internal encoder
-    wristRotaryConfig.Feedback.SensorToMechanismRatio = gearRatio;
-    wristRotaryConfig.Feedback.RotorToSensorRatio = 1.0;
+    wristRotaryConfig.Feedback.FeedbackRemoteSensorID = ccPort;
+    wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    wristRotaryConfig.Feedback.SensorToMechanismRatio = 1.0;
+    wristRotaryConfig.Feedback.RotorToSensorRatio = gearRatio;
 
     // Hardware limit switches - NONE
     // wristRotaryConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio // TODO: wrist is temporarily slowed until we get it tuned
-    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio / 2;  // Rotations / second
-    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio / 2;   // Rotations / second ^ 2
-    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio / 2;          // Rotations / second ^ 3
+    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio;  // Rotations / second
+    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio;   // Rotations / second ^ 2
+    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio;          // Rotations / second ^ 3
 
     // Motor output settings
     wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
@@ -219,7 +216,7 @@ public final class CTREConfigs6
     wristRotaryConfig.Slot0.kG = 0.0;                                  // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
     wristRotaryConfig.Slot0.kV = 0.1241;                               // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    wristRotaryConfig.Slot0.kP = 3.6 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    wristRotaryConfig.Slot0.kP = 0.9 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
     wristRotaryConfig.Slot0.kI = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per accumulated unit
     wristRotaryConfig.Slot0.kD = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
@@ -240,7 +237,7 @@ public final class CTREConfigs6
   {
     CANrangeConfiguration crConfig = new CANrangeConfiguration( );
 
-    crConfig.ProximityParams.ProximityThreshold = 0.2; // Proximity distance in meters (about 4 inches)
+    crConfig.ProximityParams.ProximityThreshold = 0.2; // Proximity distance in meters (about 8 inches)
     crConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
 
     return crConfig;
@@ -255,6 +252,7 @@ public final class CTREConfigs6
     CANrangeConfiguration crConfig = new CANrangeConfiguration( );
 
     crConfig.ProximityParams.ProximityThreshold = 0.1; // Proximity distance in meters (about 4 inches)
+    crConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
 
     return crConfig;
   }
@@ -271,7 +269,7 @@ public final class CTREConfigs6
     ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     ccConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
     if (Robot.isReal( ))
-      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (-0.311768 - kQuarterRotation) : (0.590 - kQuarterRotation);
+      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (-0.2372) : (0.590 - kQuarterRotation);
     else
       ccConfig.MagnetSensor.MagnetOffset = -0.25;                   // Simulated CANcoder default in rotations
 
