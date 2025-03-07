@@ -289,7 +289,7 @@ public class Elevator extends SubsystemBase
 
     // Add commands
     SmartDashboard.putData("ElRunStowed", getMoveToPositionCommand(this::getHeightStowed));
-    SmartDashboard.putData("ElRunCoralStation", getMoveToPositionCommand(this::getHeightCoralLStation));
+    SmartDashboard.putData("ElRunCoralStation", getMoveToPositionCommand(this::getHeightCoralStation));
     SmartDashboard.putData("ElRunCoralL1", getMoveToPositionCommand(this::getHeightCoralL1));
     SmartDashboard.putData("ElRunCoralL2", getMoveToPositionCommand(this::getHeightCoralL2));
     SmartDashboard.putData("ElRunCoralL3", getMoveToPositionCommand(this::getHeightCoralL3));
@@ -643,7 +643,7 @@ public class Elevator extends SubsystemBase
    * 
    * @return coral station intake state height
    */
-  public double getHeightCoralLStation( )
+  public double getHeightCoralStation( )
   {
     return kHeightCoralStation;
   }

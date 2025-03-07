@@ -33,10 +33,10 @@ public class ScoreAlgae extends SequentialCommandGroup
       default : // Algae Processor
       case 1 :
       case 2 :
-        return LevelSelector.TWO;
+        return LevelSelector.ONE;
       case 3 : // Algae Net
       case 4 :
-        return LevelSelector.ONE;
+        return LevelSelector.TWO;
     }
   }
 
