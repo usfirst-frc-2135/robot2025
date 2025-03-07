@@ -45,13 +45,13 @@ public final class CTREConfigs6
     // exConfig.ClosedLoopRamps.*
 
     // Current limit settings
-    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 80.0;        // Amps
-    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 80.0;   // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;        // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0;   // Amps
     elevatorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;   // Seconds
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    elevatorConfig.CurrentLimits.StatorCurrentLimit = 800.0;        // Amps
-    elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+    elevatorConfig.CurrentLimits.StatorCurrentLimit = 400.0;        // Amps
+    elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
     // elevatorConfig.Feedback.*
@@ -177,12 +177,12 @@ public final class CTREConfigs6
     // wristRotaryConfig.ClosedLoopRamps.*                           // Seconds to ramp
 
     // Current limit settings
-    wristRotaryConfig.CurrentLimits.SupplyCurrentLimit = 30.0;       // Amps
-    wristRotaryConfig.CurrentLimits.SupplyCurrentLowerLimit = 30.0;  // Amps
+    wristRotaryConfig.CurrentLimits.SupplyCurrentLimit = 20.0;       // Amps
+    wristRotaryConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0;  // Amps
     wristRotaryConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;  // Seconds
     wristRotaryConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    wristRotaryConfig.CurrentLimits.StatorCurrentLimit = 400.0;      // Amps
+    wristRotaryConfig.CurrentLimits.StatorCurrentLimit = 200.0;      // Amps
     wristRotaryConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
@@ -195,9 +195,9 @@ public final class CTREConfigs6
     // wristRotaryConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio // TODO: wrist is temporarily slowed until we get it tuned
-    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio;  // Rotations / second
-    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio;   // Rotations / second ^ 2
-    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio;          // Rotations / second ^ 3
+    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio * 0.75;  // Rotations / second
+    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio * 0.75;   // Rotations / second ^ 2
+    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio * 0.75;          // Rotations / second ^ 3
 
     // Motor output settings
     wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
