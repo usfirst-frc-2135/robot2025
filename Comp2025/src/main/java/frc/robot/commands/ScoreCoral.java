@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants;
 import frc.robot.Constants.CRConsts.ClawMode;
-import frc.robot.Constants.ELConsts.LevelSelector;
+import frc.robot.Constants.ELConsts;
+import frc.robot.Constants.ELConsts.ReefLevel;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
@@ -22,22 +24,22 @@ import frc.robot.subsystems.Manipulator;
 public class ScoreCoral extends SequentialCommandGroup
 {
 
-  private LevelSelector selectLevel( )
+  private ReefLevel selectLevel( )
   {
-    NetworkTable table = NetworkTableInstance.getDefault( ).getTable("robotContainer");
-    int level = (int) table.getIntegerTopic("ReefLevel").subscribe(0).get( );
+    NetworkTable table = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
+    int level = (int) table.getIntegerTopic(ELConsts.kReefLevelString).subscribe(0).get( );
 
     switch (level)
     {
       case 1 : // Coral Level 1
-        return LevelSelector.ONE;
+        return ReefLevel.ONE;
       case 2 : // Coral Level 2
-        return LevelSelector.TWO;
+        return ReefLevel.TWO;
       case 3 : // Coral Level 3
-        return LevelSelector.THREE;
+        return ReefLevel.THREE;
       default :
       case 4 : // Coral Level 4
-        return LevelSelector.FOUR;
+        return ReefLevel.FOUR;
     }
   }
 
@@ -69,10 +71,10 @@ public class ScoreCoral extends SequentialCommandGroup
         new SelectCommand<>( 
           // Maps selector values to commands 
           Map.ofEntries( 
-                Map.entry(LevelSelector.ONE, elevator.getMoveToPositionCommand(elevator::getHeightCoralL1)), 
-                Map.entry(LevelSelector.TWO, elevator.getMoveToPositionCommand(elevator::getHeightCoralL2)), 
-                Map.entry(LevelSelector.THREE, elevator.getMoveToPositionCommand(elevator::getHeightCoralL3)), 
-                Map.entry(LevelSelector.FOUR, elevator.getMoveToPositionCommand(elevator::getHeightCoralL4))
+                Map.entry(ReefLevel.ONE, elevator.getMoveToPositionCommand(elevator::getHeightCoralL1)), 
+                Map.entry(ReefLevel.TWO, elevator.getMoveToPositionCommand(elevator::getHeightCoralL2)), 
+                Map.entry(ReefLevel.THREE, elevator.getMoveToPositionCommand(elevator::getHeightCoralL3)), 
+                Map.entry(ReefLevel.FOUR, elevator.getMoveToPositionCommand(elevator::getHeightCoralL4))
               ), 
               this::selectLevel
           ), 
@@ -81,10 +83,10 @@ public class ScoreCoral extends SequentialCommandGroup
         new SelectCommand<>( 
           // Maps selector values to commands 
           Map.ofEntries( 
-                Map.entry(LevelSelector.ONE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL1)), 
-                Map.entry(LevelSelector.TWO, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL2)), 
-                Map.entry(LevelSelector.THREE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL3)), 
-                Map.entry(LevelSelector.FOUR, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4))
+                Map.entry(ReefLevel.ONE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL1)), 
+                Map.entry(ReefLevel.TWO, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL2)), 
+                Map.entry(ReefLevel.THREE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL3)), 
+                Map.entry(ReefLevel.FOUR, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4))
               ), 
               this::selectLevel), 
 

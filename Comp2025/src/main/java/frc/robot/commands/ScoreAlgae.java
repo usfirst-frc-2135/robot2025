@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CRConsts.ClawMode;
-import frc.robot.Constants.ELConsts.LevelSelector;
+import frc.robot.Constants;
+import frc.robot.Constants.ELConsts;
+import frc.robot.Constants.ELConsts.ReefLevel;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.LED;
@@ -23,20 +25,20 @@ import frc.robot.subsystems.Manipulator;
 public class ScoreAlgae extends SequentialCommandGroup
 {
 
-  private LevelSelector selectLevel( )
+  private ReefLevel selectLevel( )
   {
-    NetworkTable table = NetworkTableInstance.getDefault( ).getTable("robotContainer");
-    int level = (int) table.getIntegerTopic("ReefLevel").subscribe(0).get( );
+    NetworkTable table = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
+    int level = (int) table.getIntegerTopic(ELConsts.kReefLevelString).subscribe(0).get( );
 
     switch (level)
     {
       default : // Algae Processor
       case 1 :
       case 2 :
-        return LevelSelector.ONE;
+        return ReefLevel.ONE;
       case 3 : // Algae Net
       case 4 :
-        return LevelSelector.TWO;
+        return ReefLevel.TWO;
     }
   }
 
@@ -68,8 +70,8 @@ public class ScoreAlgae extends SequentialCommandGroup
         new SelectCommand<>( 
           // Maps selector values to commands 
           Map.ofEntries( 
-                Map.entry(LevelSelector.ONE, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor)), 
-                Map.entry(LevelSelector.TWO, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet))
+                Map.entry(ReefLevel.ONE, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor)), 
+                Map.entry(ReefLevel.TWO, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet))
               ), 
               this::selectLevel), 
  
@@ -77,8 +79,8 @@ public class ScoreAlgae extends SequentialCommandGroup
         new SelectCommand<>( 
           // Maps selector values to commands 
           Map.ofEntries( 
-                Map.entry(LevelSelector.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeProcessor)), 
-                Map.entry(LevelSelector.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet))
+                Map.entry(ReefLevel.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeProcessor)), 
+                Map.entry(ReefLevel.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet))
               ),  
               this::selectLevel), 
 
@@ -86,8 +88,8 @@ public class ScoreAlgae extends SequentialCommandGroup
         new SelectCommand<>( 
           // Maps selector values to commands 
           Map.ofEntries( 
-                Map.entry(LevelSelector.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEEXPEL, manipulator::getCurrentAngle)), 
-                Map.entry(LevelSelector.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAESHOOT, manipulator::getCurrentAngle))
+                Map.entry(ReefLevel.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEEXPEL, manipulator::getCurrentAngle)), 
+                Map.entry(ReefLevel.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAESHOOT, manipulator::getCurrentAngle))
               ),  
               this::selectLevel), 
         

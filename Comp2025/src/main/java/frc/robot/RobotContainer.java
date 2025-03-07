@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.xml.crypto.Data;
 
 import org.json.simple.parser.ParseException;
 
@@ -36,19 +39,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.CRConsts.ClawMode;
+import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
 import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoPreload;
+import frc.robot.autos.AutoPreloadAlgae;
+import frc.robot.autos.AutoPreloadAlgae2;
 import frc.robot.autos.AutoPreloadCoral;
 import frc.robot.autos.AutoPreloadCoral2;
 import frc.robot.autos.AutoPreloadCoral3;
-import frc.robot.autos.AutoPreloadAlgae;
-import frc.robot.autos.AutoPreloadAlgae2;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.AcquireAlgae;
 import frc.robot.commands.AcquireCoral;
@@ -75,7 +81,6 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer
 {
   private final boolean                               m_macOSXSim     = false;  // Enables Mac OS X controller compatibility in simulation
-  private IntegerPublisher                            m_reefLevelPub;
 
   // Gamepad controllers
   private static final CommandXboxController          m_driverPad     = new CommandXboxController(Constants.kDriverPadPort);
@@ -118,33 +123,36 @@ public class RobotContainer
   private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.createDrivetrain( );
   private final Elevator                              m_elevator      = new Elevator( );
   private final Manipulator                           m_manipulator   = new Manipulator( );
+
   // Selected autonomous command
-  private Command                                     m_autoCommand;  // Selected autonomous command
+  private Command                                     m_autoCommand;    // Selected autonomous command
+  private IntegerPublisher                            m_reefLevelPub;   // Level of the reef to score or acquire from (1-4)
+  private IntegerPublisher                            m_reefOffsetPub;  // Branch of the reef to score or acquire from (left, middle, right)
 
   /**
    * Chooser options for autonomous commands - all starting from poses 1-3
    */
   private enum AutoChooser
   {
-    AUTOSTOP,         // AutoStop - sit still, do nothing
-    AUTOLEAVE, // Leave starting line
-    AUTOPRELOAD, // Preload coral
-    AUTOPRELOADCORAL,       // Preload coral and score one more
+    AUTOSTOP,           // AutoStop - sit still, do nothing
+    AUTOLEAVE,          // Leave starting line
+    AUTOPRELOAD,        // Preload coral
+    AUTOPRELOADCORAL,   // Preload coral and score one more
     AUTOPRELOADCORAL2,  // Preload coral and score two more
-    AUTOPRELOADCORAL3, // Preload coral and score three more
-    AUTOPRELOADALGAE, // Preload coral and score one algae
-    AUTOPRELOADALGAE2, // Preload coral and score two algaes
-    AUTOTEST         // Run a selected test auto
+    AUTOPRELOADCORAL3,  // Preload coral and score three more
+    AUTOPRELOADALGAE,   // Preload coral and score one algae
+    AUTOPRELOADALGAE2,  // Preload coral and score two algaes
+    AUTOTEST            // Run a selected test auto
   }
 
   /**
-   * Chooser options for autonomous starting pose to select pose 1-3
+   * Chooser options for autonomous starting pose to select pose 1-3 (driver perspective)
    */
   private enum StartPose
   {
-    START1, // Starting pose 1 - blue left, red right (driver perspective)
-    START2, // Starting pose 2 - blue/red middle (driver perspective)
-    START3  // Starting pose 3 - blue right, red left (driver perspective)
+    START1, // Starting pose 1 - leftmost aligned with a blue cage
+    START2, // Starting pose 2 - middle aligned with reef
+    START3  // Starting pose 3 - rightmost aligned with a red cage
   }
 
   /** Dashboard chooser for auto option selection */
@@ -204,9 +212,10 @@ public class RobotContainer
   public RobotContainer( )
   {
     Robot.timeMarker("robotContainer: before DAQ thread");
-    // Swerve steer PID for facing swerve request
-    facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);  // Swerve steer PID for facing swerve request
+
+    facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);    // Swerve steer PID for facing swerve request
     facing.HeadingController.enableContinuousInput(-180.0, 180.0);
+
     // Identify the field
     DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField.toString( ),
         VIConsts.kATField.getFieldWidth( ), VIConsts.kATField.getFieldLength( )));
@@ -214,11 +223,9 @@ public class RobotContainer
     {
       DataLogManager.log(String.format("Field: ID %d %s", i, VIConsts.kATField.getTagPose(i)));
     }
-    // Add dashboard widgets for commands
-    addDashboardWidgets( );           // Add dashboard widgets for commands
-    // Configure game controller buttons
+
+    addDashboardWidgets( );           // Add some dashboard widgets for commands
     configureButtonBindings( );       // Configure game controller buttons
-    // Initialize subsystem default commands
     initDefaultCommands( );           // Initialize subsystem default commands
 
     Robot.timeMarker("robotContainer: after default commands");
@@ -244,10 +251,13 @@ public class RobotContainer
    */
   private void addDashboardWidgets( )
   {
-    NetworkTableInstance inst = NetworkTableInstance.getDefault( );
-    m_reefLevelPub = inst.getTable("robotContainer").getIntegerTopic("ReefLevel").publish( );
-
     // Network tables publisher objects
+    m_reefLevelPub =
+        NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
+    m_reefOffsetPub = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString)
+        .getIntegerTopic(VIConsts.kReefOffsetString).publish( );
+
+    // Build autonomous chooser objects on dashboard and fill the options
     SmartDashboard.putData("AutoMode", m_autoChooser);
     SmartDashboard.putData("StartPosition", m_startChooser);
     SmartDashboard.putNumber("AutoDelay", 0.0);
@@ -270,6 +280,7 @@ public class RobotContainer
     m_startChooser.addOption("START3", StartPose.START3);
     m_startChooser.onChange(this::updateStartChooserCallback);
 
+    // Add a button that allows running autonomous commands in teleop
     SmartDashboard.putData("AutoChooserRun", new InstantCommand(( ) ->
     {
       if (m_autoCommand.isScheduled( ))
@@ -282,43 +293,66 @@ public class RobotContainer
       }
     }));
 
-    // Command tab
-    // SmartDashboard.putData("PrepareToClimb", new PrepareToClimb(m_climber, m_feeder));
-
+    // Add buttons for testing HID rumble features to dashboard
     Time duration = Seconds.of(1.0);
     SmartDashboard.putData("HIDRumbleDriver",
         m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
     SmartDashboard.putData("HIDRumbleOperator",
         m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
 
-    // Network tables publisher objects
+    // Add subsystem command objects and main scheduler to dashboard
     SmartDashboard.putData("elevator", m_elevator);
     SmartDashboard.putData("manipulator", m_manipulator);
 
     SmartDashboard.putData(CommandScheduler.getInstance( ));
 
+    // Add command groups to dashboard
     SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
   }
 
-  public void setSelectLevel(int level)
+  /****************************************************************************
+   * 
+   * Create Reef Level Select Command
+   * 
+   * @return instant command to Select Reef Scoring Level
+   */
+  public Command getReefLevelSelectCommand(int level)
   {
-    m_reefLevelPub.set(level);
+    return new InstantCommand(          // Command with init only phase declared
+        ( ) ->
+        {
+          m_reefLevelPub.set(level);
+        }).withName(ELConsts.kReefLevelString);
   }
 
   /****************************************************************************
    * 
-   * Create Select Level Command
+   * Create Reef Branch Select Command
    * 
-   * @return instant command to Select Coral Scoring Level
+   * @return instant command to Select Reef Branch
    */
-  public Command getSelectLevelCommand(int level)
+
+  public Command getReefOffsetSelectCommand(int branch)
   {
     return new InstantCommand(          // Command with init only phase declared
-        ( ) -> setSelectLevel(level)      // Init method                          
-    ).withName("SelectLevel");
+        ( ) ->
+        {
+          m_reefOffsetPub.set(branch);
+        }).withName(VIConsts.kReefOffsetString);
+  }
+
+  /****************************************************************************
+   * 
+   * Create Select Branch Command
+   * 
+   * @return instant command to Select Branch Alignment
+   */
+  public Command getAlignToReefCommand( )
+  {
+    return (m_drivetrain.getReefAlignmentCommand( ));
   }
 
   /****************************************************************************
@@ -333,8 +367,8 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
+    m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getReefAlignmentCommand( ), Set.of(m_drivetrain)));
     m_driverPad.a( ).whileTrue(getSlowSwerveCommand( ));
-    m_driverPad.b( ).onTrue(new LogCommand("driverPad", "B"));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
 
@@ -353,7 +387,7 @@ public class RobotContainer
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(0.0))));
-    m_driverPad.pov(45).whileTrue(m_drivetrain.applyRequest(( ) -> facing  //
+    m_driverPad.pov(45).whileTrue(m_drivetrain.applyRequest(( ) -> facing   //
         .withVelocityX(kMaxSpeed.times(-m_driverPad.getLeftY( )))                 //
         .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                 //
         .withTargetDirection(Rotation2d.fromDegrees(-60.0))));
@@ -416,10 +450,10 @@ public class RobotContainer
     //
     // Operator - POV buttons
     //
-    m_operatorPad.pov(0).onTrue(getSelectLevelCommand(4));
-    m_operatorPad.pov(90).onTrue(getSelectLevelCommand(1));
-    m_operatorPad.pov(180).onTrue(getSelectLevelCommand(2));
-    m_operatorPad.pov(270).onTrue(getSelectLevelCommand(3));
+    m_operatorPad.pov(0).onTrue(getReefLevelSelectCommand(4));
+    m_operatorPad.pov(90).onTrue(getReefLevelSelectCommand(1));
+    m_operatorPad.pov(180).onTrue(getReefLevelSelectCommand(2));
+    m_operatorPad.pov(270).onTrue(getReefLevelSelectCommand(3));
 
     //
     // Operator Left/Right Trigger
@@ -471,7 +505,7 @@ public class RobotContainer
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
     m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
 
-    // Default command - manual mode
+    // Default command - manual mode (use these during robot bringup)
     // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
     // m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
@@ -582,10 +616,8 @@ public class RobotContainer
         m_autoCommand = new AutoPreloadAlgae2(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
         break;
       case AUTOTEST :
-        // m_autoCommand = new AutoTest(ppPathList, m_drivetrain, m_led);
         m_autoCommand = new AutoTest(ppPathList, m_drivetrain);
         break;
-
     }
 
     DataLogManager.log(String.format("getAuto: autoMode %s startOption %s (%s)", autoKey, startPose, m_autoCommand.getName( )));
@@ -623,7 +655,6 @@ public class RobotContainer
    * 
    * Gamepad joystick axis interfaces
    */
-
   public double getElevatorAxis( )
   {
     return -m_operatorPad.getLeftY( );
@@ -633,7 +664,6 @@ public class RobotContainer
    * 
    * Gamepad joystick axis interfaces
    */
-
   public double getWristAxis( )
   {
     return m_operatorPad.getRightX( );
@@ -652,8 +682,26 @@ public class RobotContainer
     m_elevator.initialize( );
     m_manipulator.initialize( );
 
-    m_vision.SetThrottleLevel(false);
+    m_vision.SetCPUThrottleLevel(false);
     m_vision.SetIMUMode( );
+  }
+
+  /****************************************************************************
+   * 
+   * Called during teleopInit to start any needed commands
+   */
+  public void autoInit( )
+  {
+    m_vision.SetCPUThrottleLevel(true);
+  }
+
+  /****************************************************************************
+   * 
+   * Called during teleopInit to start any needed commands
+   */
+  public void teleopInit( )
+  {
+    m_vision.SetCPUThrottleLevel(true);
   }
 
   /****************************************************************************
@@ -667,23 +715,5 @@ public class RobotContainer
 
     m_elevator.printFaults( );
     m_manipulator.printFaults( );
-  }
-
-  /****************************************************************************
-   * 
-   * Called during teleopInit to start any needed commands
-   */
-  public void autoInit( )
-  {
-    m_vision.SetThrottleLevel(true);
-  }
-
-  /****************************************************************************
-   * 
-   * Called during teleopInit to start any needed commands
-   */
-  public void teleopInit( )
-  {
-    m_vision.SetThrottleLevel(true);
   }
 }
