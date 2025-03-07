@@ -206,7 +206,7 @@ public class Vision extends SubsystemBase
    *          Defaults to 0. Your Limelgiht will process one frame
    *          after skipping <throttle> frames.
    */
-  public void SetThrottleLevel(boolean throttle)
+  public void SetCPUThrottleLevel(boolean throttle)
   {
     DataLogManager.log(String.format("%s: Set Throttle level to %s", getSubsystem( ), throttle));
     LimelightHelpers.SetThrottle("limelight", throttle ? 0 : 200);

@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * The Constants class provides a convenient place to hold robot-wide numerical or boolean
@@ -35,6 +36,8 @@ public class Constants
   // Phoenix firmware versions expected
   public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0);
   public static final int     kPhoenix6MajorVersion = 25;
+
+  public static final String  kRobotString          = "RobotContainer";
 
   /****************************************************************************
    * CAN IDs and PWM IDs
@@ -85,7 +88,9 @@ public class Constants
    ****************************************************************************/
   public static final class ELConsts
   {
-    public enum LevelSelector
+    public static final String kReefLevelString = "ReefLevel";
+
+    public enum ReefLevel
     {
       ONE,        // Coral Level One (Trough)
       TWO,        // Coral Level Two
@@ -122,11 +127,60 @@ public class Constants
    ****************************************************************************/
   public static final class VIConsts
   {
-    public static final AprilTagFields      kGameField = AprilTagFields.k2025ReefscapeWelded;
-    public static final AprilTagFieldLayout kATField   = AprilTagFieldLayout.loadField(kGameField);
+    public static final AprilTagFields      kGameField        = AprilTagFields.k2025ReefscapeWelded;
+    public static final AprilTagFieldLayout kATField          = AprilTagFieldLayout.loadField(kGameField);
 
     /** Destination field poses for the robot when using PathPlanner pathfinding */                   // TODO: update to desired 2025 field poses
-    public static final Pose2d              kAmpPose   = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
+    public static final Pose2d              kAmpPose          = new Pose2d(1.84, 7.77, Rotation2d.fromDegrees(-90));
+
+    public static final String              kReefOffsetString = "ReefOffset";
+
+    //** Reef branch used for alignment */
+    public enum ReefOffset
+    {
+      LEFT, RIGHT, ALGAE
+    }
+
+    /** Destination field poses for the robot when using PathPlanner pathToPose (blue side) */
+    public static final Pose2d[ ][ ] kBlueSideReefPoses =
+    {
+        { // Face 0 (CD) AT 17
+            new Pose2d(new Translation2d(3.65, 2.90), Rotation2d.fromDegrees(240.00)),  // Left branch
+            new Pose2d(new Translation2d(3.85, 2.91), Rotation2d.fromDegrees(240)),     // Algae
+            new Pose2d(new Translation2d(3.94, 2.74), Rotation2d.fromDegrees(240))      // Right branch
+        },
+
+        { // Face 1 (AB) AT 18
+            new Pose2d(new Translation2d(3.10, 4.19), Rotation2d.fromDegrees(180)),     // Left branch
+            new Pose2d(new Translation2d(3.20, 4.03), Rotation2d.fromDegrees(180)),     // Algae
+            new Pose2d(new Translation2d(3.10, 3.86), Rotation2d.fromDegrees(180))      // Right branch
+        },
+
+        { // Face 2 (LK) AT 19
+            new Pose2d(new Translation2d(3.94, 5.31), Rotation2d.fromDegrees(120)),     // Left branch
+            new Pose2d(new Translation2d(3.85, 5.14), Rotation2d.fromDegrees(120)),     // Algae
+            new Pose2d(new Translation2d(3.65, 5.15), Rotation2d.fromDegrees(120))      // Right branch
+        },
+
+        { // Face 3 (IJ) AT 20
+            new Pose2d(new Translation2d(5.33, 5.15), Rotation2d.fromDegrees(60)),      // Left branch
+            new Pose2d(new Translation2d(5.13, 5.14), Rotation2d.fromDegrees(60)),      // Algae
+            new Pose2d(new Translation2d(5.04, 5.31), Rotation2d.fromDegrees(60))       // Right branch
+        },
+
+        { // Face 4 (GH) AT 21
+            new Pose2d(new Translation2d(5.88, 3.86), Rotation2d.fromDegrees(0)),       // Left branch
+            new Pose2d(new Translation2d(5.78, 4.03), Rotation2d.fromDegrees(0)),       // Algae
+            new Pose2d(new Translation2d(5.88, 4.19), Rotation2d.fromDegrees(0))        // Right branch
+        },
+
+        { // Face 5 (EF) AT 22
+            new Pose2d(new Translation2d(5.04, 2.74), Rotation2d.fromDegrees(300)),     // Left branch
+            new Pose2d(new Translation2d(5.13, 2.91), Rotation2d.fromDegrees(300)),     // Algae
+            new Pose2d(new Translation2d(5.33, 2.90), Rotation2d.fromDegrees(300))      // Right branch
+        }
+    };
+
   }
 
   /****************************************************************************
