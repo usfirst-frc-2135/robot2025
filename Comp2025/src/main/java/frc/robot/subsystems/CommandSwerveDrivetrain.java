@@ -28,9 +28,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
@@ -42,9 +44,13 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
+import frc.robot.Constants.VIConsts;
 import frc.robot.Robot;
+import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.lib.LimelightHelpers;
 
@@ -57,16 +63,14 @@ import frc.robot.lib.LimelightHelpers;
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
     private static final boolean        m_useLimelight           = true;
 
+    /* What to publish over networktables for telemetry */
+    private final NetworkTableInstance  inst                     = NetworkTableInstance.getDefault( );
+
     /* Robot pose for field positioning */
-    private final NetworkTable          table                    = NetworkTableInstance.getDefault( ).getTable("Pose");
+    private final NetworkTable          table                    = inst.getTable("Pose");
     private final DoubleArrayPublisher  fieldPub                 = table.getDoubleArrayTopic("llPose").publish( );
     private final StringPublisher       fieldTypePub             = table.getStringTopic(".type").publish( );
-
-    // Network tables publisher objects
-    DoubleEntry                         poseXEntry;
-    DoubleEntry                         poseYEntry;
-    DoubleEntry                         poseRotEntry;
-    DoublePublisher                     shooterDistancePub;
+    private IntegerPublisher reefBranchPub = inst.getTable(Constants.kRobotString).getIntegerTopic(VIConsts.kReefOffsetString).publish( );
 
     /* Robot pathToPose constraints */
     private final PathConstraints       kPathFindConstraints     = new PathConstraints( // 
@@ -75,6 +79,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         1.5 * Math.PI,            // kMaxAngularSpeedRadiansPerSecond              (slowed from 2.0 * Math.PI for testing)  
         1.5 * Math.PI             // kMaxAngularSpeedRadiansPerSecondSquared       (slowed from 1.5 * Math.PIfor testing)  
     );
+
+    // Network tables publisher objects
+    DoubleEntry                         poseXEntry;
+    DoubleEntry                         poseYEntry;
+    DoubleEntry                         poseRotEntry;
+    DoublePublisher                     shooterDistancePub;
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -340,52 +350,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-    /**
-     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
-     * while still accounting for measurement noise.
-     *
-     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
-     * @param timestampSeconds The timestamp of the vision measurement in seconds.
-     */
-    @Override
-    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
-    }
-
-    /**
-     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
-     * while still accounting for measurement noise.
-     * <p>
-     * Note that the vision measurement standard deviations passed into this method
-     * will continue to apply to future measurements until a subsequent call to
-     * {@link #setVisionMeasurementStdDevs(Matrix)} or this method.
-     *
-     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
-     * @param timestampSeconds The timestamp of the vision measurement in seconds.
-     * @param visionMeasurementStdDevs Standard deviations of the vision pose measurement
-     *     in the form [x, y, theta]ᵀ, with units in meters and radians.
-     */
-    @Override
-    public void addVisionMeasurement(
-        Pose2d visionRobotPoseMeters,
-        double timestampSeconds,
-        Matrix<N3, N1> visionMeasurementStdDevs
-    ) {
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
-    }
-
     // @formatter:on
 
     private void initDashboard( )
     {
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
-        NetworkTable table = NetworkTableInstance.getDefault( ).getTable("swerve");
+        NetworkTableInstance inst = NetworkTableInstance.getDefault( );
+        NetworkTable table = inst.getTable("swerve");
 
         poseXEntry = table.getDoubleTopic("X").getEntry(0.0);
         poseYEntry = table.getDoubleTopic("Y").getEntry(0.0);
         poseRotEntry = table.getDoubleTopic("rotation").getEntry(0.0);
         shooterDistancePub = table.getDoubleTopic("shooterDistance").getEntry(0.0);
         SmartDashboard.putData("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
+        // TODO: This dashboard button will only run the closest AT ID selection
+        SmartDashboard.putData("FaceSelector", new InstantCommand(( ) -> findClosestReefTag( )).ignoringDisable(true));
+        // TODO: This dashboard button will run the whole command
+        SmartDashboard.putData("DriveToPoseCommand", getDrivePathToPoseCommand(this, findTargetPose( )));
     }
 
     public Command getPathCommand(PathPlannerPath ppPath)
@@ -403,7 +384,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * and changes with number of tags available.
      *
      * This example is sufficient to show that vision integration is possible, though exact
-     * implementation of how to use vision should be tuned per-robot and to the team's specification.
+     * implementation
+     * of how to use vision should be tuned per-robot and to the team's specification.
      */
     private void visionUpdate( )
     {
@@ -461,19 +443,235 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
 
-    public Command drivePathtoPose(CommandSwerveDrivetrain drivetrain, Pose2d pose)
+    public Command getDrivePathToPoseCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose)
     {
         DataLogManager.log(String.format("drivePathToPose: Alliance %s target pose %s", DriverStation.getAlliance( ), pose));
 
         return AutoBuilder.pathfindToPoseFlipped(pose, kPathFindConstraints, 0.0);
     }
 
+    public Command getReefAlignmentCommand( )
+    {
+        NetworkTable inst = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
+
+        // int scoringOffset = (int) inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( );
+        // int closestAT = findClosestReefTag( );
+
+        Pose2d targetPose = findTargetPose( );
+
+        // TODO: Updates needed
+        //  1) The path following command will need to have a Path created from the current robot pose and the desired pose
+        //  2) So we need to get the reef offset from the publisher created in robotContainer, and
+        //  3) also get the closest AT tag face
+        //  4) to create a pose that will let us score
+        //  5) Need to generate a path that starts with the current pose and ends at the target pose
+        //  6) Options:
+        //      a) PPLib FollowPath would follow this directly
+        //      b) PPLib PathFindToPose should also get to the correct destination, but may take longer
+        //      c) PPLib PathFindToPath is probably the highest accuracy, but may take more work
+        //  Get ANY of these to work, and we can always make it better, PathFindToPose worked for us last year, so that may be best for now
+
+        // Note that getReefAlignment can do all the work before returning the PPLib call we need to run the path
+
+        // I commented some of this out to test all the linkages
+        // I don't quite have the deferred command sequence figured out, you can work on all the rest of the calculations above
+        //  then we can figure out how to defer the command properly
+
+        return new SequentialCommandGroup(
+
+                AutoBuilder.pathfindToPoseFlipped(targetPose, kPathFindConstraints, 0.0),
+                new LogCommand("Desired Offset", String.format("Desired Offset.......................",
+                        inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( )))
+
+        );
+
+    }
+
+    /*
+     * Initialize the array with the reef tags and faces
+     */
+    private int[ ] blueReefTags =
+    {
+            17, 18, 19, 20, 21, 22
+    };
+
+    private int[ ] redReefTags  =
+    {
+            6, 7, 8, 9, 10, 11
+    };
+
+    /*
+     * The calculation to find the closest face tag ID to the robot and return the tag ID
+     */
+    public int findClosestReefTag( )
+    {
+        Alliance alliance = DriverStation.getAlliance( ).orElse(Alliance.Blue); // This will always return either Red or Blue and removes the optional type
+                                                                               // The orElse means "use Blue if no alliance is found"
+        int tagsToUse[];                                                        // The array to be used in the calculation
+
+        tagsToUse = (alliance.equals(Alliance.Blue)) ? blueReefTags : redReefTags; // Select the red or blue tag array
+
+        Pose2d robotPose = getState( ).Pose;                                    // Get the robot pose (2d) in a convenient local variable
+        int closestTag = 0;                                                     // Variable for saving the tag with the shortest distance (0 means none found)
+        double shortestDistance = Units.feetToMeters(57.0);                 // field length in meters - Variable for keeping track of lowest distance (54.0 means none found)
+
+        // Just one calculation for either tag set
+        for (int i = 0; i < 6; i++)                                             // Iterate through the array of selected reef tags
+        {
+            Pose2d atPose = VIConsts.kATField.getTagPose(tagsToUse[i]).get( ).toPose2d( );          // Get the AT tag in Pose2d form
+            double distance = robotPose.getTranslation( ).getDistance((atPose.getTranslation( )));  // Calculate the distance from the AT tag to the robotPose
+            DataLogManager.log(String.format("tag: %d pose: %s robot: %f", tagsToUse[i], atPose.getTranslation( ), distance));
+            if (distance < shortestDistance)                                                        // If the distance is shorter than what was saved before
+            {
+                closestTag = blueReefTags[i];                                                       // Saves cloest AT id (always in blue space)
+                shortestDistance = distance;                                                        // Update new shortest distance
+            }
+        }
+
+        DataLogManager.log(String.format("closest AT tag is %d", closestTag));
+        return closestTag;
+    }
+
+    /*
+     * We want a method that:
+     * - given a branch/face selection (left, middle, right)
+     * - finds the closest face to the robot (closest AT tag)
+     * - selects either branch left pose or right pose, or selects the algae pose
+     * - returns the target pose
+     * 
+     */
+    public Pose2d findTargetPose( )
+    {
+        int desiredReefTag = findClosestReefTag( );
+        Pose2d desiredPose2d = new Pose2d( );
+
+        NetworkTable inst = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
+        int scoringOffset = (int) inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( );
+
+        switch (desiredReefTag)
+        {
+            case 17 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[0][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[0][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[0][1];
+                }
+                break;
+            }
+
+            case 18 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[1][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[1][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[1][1];
+                }
+                break;
+            }
+            case 19 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[2][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[2][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[2][1];
+                }
+                break;
+            }
+            case 20 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[3][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[3][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[3][1];
+                }
+                break;
+            }
+            case 21 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[4][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[4][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[4][1];
+                }
+                break;
+            }
+            case 22 :
+            {
+                if (scoringOffset == 0)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[5][0];
+                }
+                else if (scoringOffset == 1)
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[5][2];
+                }
+                else
+                {
+                    desiredPose2d = VIConsts.kBlueSideReefPoses[5][1];
+                }
+                break;
+            }
+
+        }
+
+        DataLogManager.log(String.format("closest AT tag: %d desiredPose %s", desiredReefTag, desiredPose2d));
+        return desiredPose2d;
+    }
+
+    /*
+     * We want a command factory that:
+     * - given a branch/face selection (left, middle, right) done elsewhere
+     * - finds the closest face to the robot (closest AT tag)
+     * - selects either branch left pose or right pose, or selects the algae pose
+     * 
+     * This command factory will just wrap the findPathToPose method in an instant command
+     * - the pathToPose method needs to have the target branch left/right/algae pose as a parameter
+     * 
+     * This is what is hooked into a button trigger
+     */
+
     private void setOdometryFromDashboard( )
     {
-        resetPose(                                                                                              //
-                new Pose2d(                                                                                     //
-                        new Translation2d(poseXEntry.get(0.0), poseYEntry.get(0.0)),  //
-                        new Rotation2d(poseRotEntry.get(0.0)))                                     //
+        resetPose(        //
+                new Pose2d(           //
+                        new Translation2d(poseXEntry.get(0.0), poseYEntry.get(0.0)), //
+                        new Rotation2d(poseRotEntry.get(0.0)))        //
         );
     }
 
