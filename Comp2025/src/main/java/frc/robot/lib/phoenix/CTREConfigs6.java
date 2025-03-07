@@ -212,8 +212,8 @@ public final class CTREConfigs6
     //                                                                  kG = (0.40 + 0.25) / 2
     //                                                                  kS = (0.40 - 0.25) / 2
     wristRotaryConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine; // Feedforward: Mechanism is an arm and needs cosine
-    wristRotaryConfig.Slot0.kS = 0.0;                                  // Feedforward: Voltage or duty cylce to overcome static friction
-    wristRotaryConfig.Slot0.kG = 0.0;                                  // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
+    wristRotaryConfig.Slot0.kS = -0.065;                                  // Feedforward: Voltage or duty cylce to overcome static friction
+    wristRotaryConfig.Slot0.kG = -0.235;                                  // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
     wristRotaryConfig.Slot0.kV = 0.1241;                               // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
     wristRotaryConfig.Slot0.kP = 0.9 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
