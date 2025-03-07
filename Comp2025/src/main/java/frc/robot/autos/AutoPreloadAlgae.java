@@ -7,6 +7,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreCoral;
+import frc.robot.commands.AcquireAlgae;
 import frc.robot.commands.ScoreAlgae;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
@@ -37,11 +38,18 @@ public class AutoPreloadAlgae extends SequentialCommandGroup
                 // Add Commands here:
 
                 // @formatter:off
-
+                
         new LogCommand(getName(), "Drive to reef to score preloaded coral"),
         drivetrain.getPathCommand(ppPaths.get(0)),
+        new ScoreCoral(elevator, manipulator, led, hid),
+
+        new LogCommand(getName(), "Drive to face and acquire algae"),
         drivetrain.getPathCommand(ppPaths.get(1)),
-        drivetrain.getPathCommand(ppPaths.get(2))
+        new AcquireAlgae(elevator, manipulator, led, hid),
+
+        new LogCommand(getName(), "Drive to proc/net and score algae"),
+        drivetrain.getPathCommand(ppPaths.get(2)),
+        new ScoreAlgae(elevator, manipulator, led, hid)
 
         //new ScoreAlgae(elevator, manipulator, led, hid)
         

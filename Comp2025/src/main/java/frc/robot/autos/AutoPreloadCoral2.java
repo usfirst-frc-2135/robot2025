@@ -5,7 +5,9 @@ import java.util.List;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.AcquireCoral;
 import frc.robot.commands.LogCommand;
+import frc.robot.commands.ScoreCoral;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
@@ -36,12 +38,25 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
 
                 // @formatter:off
 
-        new LogCommand(getName(), "Drive a test path"),
+        new LogCommand(getName(), "Drive to branch and score L4"),
         drivetrain.getPathCommand(ppPaths.get(0)),
+        new ScoreCoral(elevator, manipulator, led, hid),
+
+        new LogCommand(getName(), "Drive to coral station and acquire coral"),
         drivetrain.getPathCommand(ppPaths.get(1)),
+        new AcquireCoral(elevator, manipulator, led, hid),
+
+        new LogCommand(getName(), "Drive to branch and score L4"),
         drivetrain.getPathCommand(ppPaths.get(2)),
+        new ScoreCoral(elevator, manipulator, led, hid),
+
+        new LogCommand(getName(), "Drive to branch and acquire coral"),
         drivetrain.getPathCommand(ppPaths.get(3)),
-        drivetrain.getPathCommand(ppPaths.get(4))
+        new AcquireCoral(elevator, manipulator, led, hid),
+
+        new LogCommand(getName(), "Drive to branch and score L4"),   
+        drivetrain.getPathCommand(ppPaths.get(4)),
+        new ScoreCoral(elevator, manipulator, led, hid)
         
         // @formatter:on
         );
