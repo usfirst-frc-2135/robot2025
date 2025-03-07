@@ -38,7 +38,7 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
 
                 // @formatter:off
 
-        new LogCommand(getName(), "Drive to nearest branch and score L4"),
+        new LogCommand(getName(), "Drive to branch and score L4"),
         drivetrain.getPathCommand(ppPaths.get(0)),
         new ScoreCoral(elevator, manipulator, led, hid),
 
@@ -46,15 +46,15 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
         drivetrain.getPathCommand(ppPaths.get(1)),
         new AcquireCoral(elevator, manipulator, led, hid),
 
-        new LogCommand(getName(), "Drive to nearest branch and score L4"),
+        new LogCommand(getName(), "Drive to branch and score L4"),
         drivetrain.getPathCommand(ppPaths.get(2)),
         new ScoreCoral(elevator, manipulator, led, hid),
 
-        new LogCommand(getName(), "Drive to nearest branch and acquire coral"),
+        new LogCommand(getName(), "Drive to branch and acquire coral"),
         drivetrain.getPathCommand(ppPaths.get(3)),
         new AcquireCoral(elevator, manipulator, led, hid),
 
-        new LogCommand(getName(), "Drive to nearest branch and score L4"),   
+        new LogCommand(getName(), "Drive to branch and score L4"),   
         drivetrain.getPathCommand(ppPaths.get(4)),
         new ScoreCoral(elevator, manipulator, led, hid)
         
