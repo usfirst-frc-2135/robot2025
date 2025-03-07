@@ -74,14 +74,14 @@ public class Manipulator extends SubsystemBase
 
   private static final DutyCycleOut kClawRollerStop      = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
 
-  private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.25).withIgnoreHardwareLimits(false);
+  private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.5).withIgnoreHardwareLimits(false);
   private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.25).withIgnoreHardwareLimits(true);
 
   private static final DutyCycleOut kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kAlgaeSpeedShoot     = new DutyCycleOut(-1.0).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kAlgaeSpeedProcessor = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kAlgaeSpeedHold      = new DutyCycleOut(0.1).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kAlgaeSpeedHold      = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
 
   private static final double       kWristGearRatio      = 49.23;
   private static final double       kWristLengthMeters   = Units.inchesToMeters(15); // Simulation
@@ -107,7 +107,7 @@ public class Manipulator extends SubsystemBase
   //      Comp     -90.0  -90         ?         ?         10.0
   //      Practice ?      ?           ?         ?         ?
   private static final double         kWristAngleMin            = -119.0; //TODO: Complete all with Correct Angles 
-  private static final double         kWristAngleMax            = 38.0;
+  private static final double         kWristAngleMax            = 52.0;
 
   private static final double         kWristAngleSafeState      = -95.0;
 
@@ -115,12 +115,12 @@ public class Manipulator extends SubsystemBase
   private static final double         kWristAngleCoralL1        = -95.0;//-90
   private static final double         kWristAngleCoralL2        = -75.0;//-75
   private static final double         kWristAngleCoralL3        = -75.0;//75
-  private static final double         kWristAngleCoralL4        = -95.0;//-45
+  private static final double         kWristAngleCoralL4        = -85.0;//-45
 
-  private static final double         kWristAngleAlgae23        = 38.0;
-  private static final double         kWristAngleAlgae34        = 38.0;
-  private static final double         kWristAngleAlgaeProcessor = 38.0;
-  private static final double         kWristAngleAlgaeNet       = 38.0;
+  private static final double         kWristAngleAlgae23        = 51.5;
+  private static final double         kWristAngleAlgae34        = 51.5;
+  private static final double         kWristAngleAlgaeProcessor = 51.5;
+  private static final double         kWristAngleAlgaeNet       = 0.0;
 
   // Device objects
   private final TalonFX               m_wristMotor              = new TalonFX(Ports.kCANID_WristRotary);
@@ -619,6 +619,8 @@ public class Manipulator extends SubsystemBase
         case CORALEXPEL :
           m_clawRequestVolts = kCoralSpeedExpel;
           break;
+        case ALGAEHOLD :
+          m_clawRequestVolts = kAlgaeSpeedHold;
       }
 
       DataLogManager.log(String.format("%s: Claw mode is now - %s", getSubsystem( ), mode));
