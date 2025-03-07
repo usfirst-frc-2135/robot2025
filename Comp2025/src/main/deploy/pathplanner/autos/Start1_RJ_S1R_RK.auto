@@ -13,31 +13,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RJ-S1L"
+            "pathName": "RJ-S1R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1L-RL"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RL-S1L"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "S1L-RA"
+            "pathName": "S1R-RK"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "AutoPreloadCoral2",
+  "folder": "AutoPreloadCoral",
   "choreoAuto": false
 }

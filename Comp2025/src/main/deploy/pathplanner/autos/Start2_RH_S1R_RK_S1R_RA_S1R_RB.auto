@@ -7,43 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start1-RJ"
+            "pathName": "Start2-RH"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RJ-S1L"
+            "pathName": "RH-S1R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1L-RL"
+            "pathName": "S1R-RK"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RL-S1L"
+            "pathName": "RK-S1R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1L-RA"
+            "pathName": "S1R-RA"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RA-S1L"
+            "pathName": "RA-S1R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1L-RB"
+            "pathName": "S1R-RB"
           }
         }
       ]

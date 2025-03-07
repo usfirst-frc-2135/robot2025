@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 1.49,
-        "y": 0.8
+        "y": 7.25
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4857253135397155,
-        "y": 1.7391014633698392
+        "x": 4.009227775721556,
+        "y": 7.694207827409884
       },
       "isLocked": false,
-      "linkedName": "S2R"
+      "linkedName": "S1R"
     },
     {
       "anchor": {
-        "x": 3.65,
-        "y": 2.9
+        "x": 3.1,
+        "y": 3.86
       },
       "prevControl": {
-        "x": 3.4102504568444942,
-        "y": 2.6526402771030226
+        "x": 3.0672899961605102,
+        "y": 4.233877054708896
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RC"
+      "linkedName": "RB"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "FromCoralStation",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -125.00000000000001
+    "rotation": 125.00000000000001
   },
   "useDefaultConstraints": true
 }
