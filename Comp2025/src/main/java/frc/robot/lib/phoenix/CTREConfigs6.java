@@ -195,13 +195,13 @@ public final class CTREConfigs6
     // wristRotaryConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio // TODO: wrist is temporarily slowed until we get it tuned
-    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio / 2;  // Rotations / second
-    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio / 2;   // Rotations / second ^ 2
-    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio / 2;          // Rotations / second ^ 3
+    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio / 3;  // Rotations / second
+    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio / 3;   // Rotations / second ^ 2
+    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio / 3;          // Rotations / second ^ 3
 
     // Motor output settings
     wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
-    wristRotaryConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    wristRotaryConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     wristRotaryConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Open Loop settings
@@ -216,7 +216,7 @@ public final class CTREConfigs6
     wristRotaryConfig.Slot0.kG = 0.0;                                  // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
     wristRotaryConfig.Slot0.kV = 0.1241;                               // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    wristRotaryConfig.Slot0.kP = 3.6 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    wristRotaryConfig.Slot0.kP = 1.8 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
     wristRotaryConfig.Slot0.kI = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per accumulated unit
     wristRotaryConfig.Slot0.kD = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
