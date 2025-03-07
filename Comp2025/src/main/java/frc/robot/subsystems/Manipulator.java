@@ -246,7 +246,7 @@ public class Manipulator extends SubsystemBase
       m_wristMotor.setPosition(ccRotations);
 
     // Simulation object initialization
-    m_wristMotorSim.Orientation = ChassisReference.CounterClockwise_Positive;
+    m_wristMotorSim.Orientation = ChassisReference.Clockwise_Positive;
     m_wristCANcoderSim.Orientation = ChassisReference.Clockwise_Positive;
 
     // Status signals
