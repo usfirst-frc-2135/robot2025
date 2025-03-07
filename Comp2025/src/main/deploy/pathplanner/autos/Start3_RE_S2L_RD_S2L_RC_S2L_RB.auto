@@ -13,37 +13,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RE-S2R"
+            "pathName": "RE-S2L"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S2R-RC"
+            "pathName": "S2L-RD"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RC-S2R"
+            "pathName": "RD-S2L"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S2R-RB"
+            "pathName": "S2L-RC"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RB-S2R"
+            "pathName": "RC-S2L"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S2R-RA"
+            "pathName": "S2L-RB"
           }
         }
       ]

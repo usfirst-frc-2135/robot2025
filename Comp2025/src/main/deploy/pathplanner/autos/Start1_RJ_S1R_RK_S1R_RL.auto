@@ -7,49 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start2-RH"
+            "pathName": "Start1-RJ"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RH-SL1"
+            "pathName": "RJ-S1R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1L-RL"
+            "pathName": "S1R-RK"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RL-S1L"
+            "pathName": "RK-S1R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1L-RA"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "RA-S1L"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "S1L-RB"
+            "pathName": "S1R-RL"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "AutoPreloadCoral3",
+  "folder": "AutoPreloadCoral2",
   "choreoAuto": false
 }
