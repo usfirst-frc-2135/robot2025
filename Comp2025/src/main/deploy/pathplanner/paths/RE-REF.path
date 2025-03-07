@@ -12,20 +12,20 @@
         "y": 2.9565063509461096
       },
       "isLocked": false,
-      "linkedName": "BranchE"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.13,
-        "y": 2.91
+        "x": 5.12,
+        "y": 2.93
       },
       "prevControl": {
-        "x": 5.005,
-        "y": 2.6934936490538908
+        "x": 4.995,
+        "y": 2.713493649053891
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AlgaeEF"
+      "linkedName": "REF"
     }
   ],
   "rotationTargets": [],

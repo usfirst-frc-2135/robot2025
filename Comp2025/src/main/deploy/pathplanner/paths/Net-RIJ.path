@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.13,
-        "y": 5.14
+        "x": 5.12,
+        "y": 5.12
       },
       "prevControl": {
-        "x": 4.13,
-        "y": 5.14
+        "x": 4.12,
+        "y": 5.12
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AlgaeIJ"
+      "linkedName": "RIJ"
     }
   ],
   "rotationTargets": [],
