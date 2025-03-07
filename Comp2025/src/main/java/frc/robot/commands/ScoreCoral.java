@@ -35,9 +35,9 @@ public class ScoreCoral extends SequentialCommandGroup
         return ReefLevel.ONE;
       case 2 : // Coral Level 2
         return ReefLevel.TWO;
+      default :
       case 3 : // Coral Level 3
         return ReefLevel.THREE;
-      default :
       case 4 : // Coral Level 4
         return ReefLevel.FOUR;
     }
