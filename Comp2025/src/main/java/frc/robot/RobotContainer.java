@@ -434,19 +434,18 @@ public class RobotContainer
     //
     // Operator - A, B, X, Y
     //
-    m_operatorPad.a( ).onTrue(m_manipulator.getCalibrateCommand( ).ignoringDisable(true)); // TODO: manual wrist calibration command
-    // m_operatorPad.a( ).onTrue(do something like score); // TODO: until wrist doesn't need manual calibration
-    m_operatorPad.b( ).onTrue(getReefOffsetSelectCommand(2));
-    m_operatorPad.x( ).onTrue(getReefOffsetSelectCommand(0));
-    m_operatorPad.y( ).onTrue(getReefOffsetSelectCommand(1));
+    m_operatorPad.a( ).onTrue(new LogCommand("operPad", "A"));
+    m_operatorPad.b( ).onTrue(new LogCommand("operPad", "B"));
+    m_operatorPad.x( ).onTrue(new LogCommand("operPad", "X"));
+    m_operatorPad.y( ).onTrue(new LogCommand("operPad", "Y"));
 
     //
     // Operator - Bumpers, start, back
     //
     m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));     // aka View button
-    m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));    // aka Menu button
+    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));                  // aka View button
+    m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));  // aka Menu button
 
     //
     // Operator - POV buttons
@@ -500,7 +499,7 @@ public class RobotContainer
 
     m_drivetrain.registerTelemetry(logger::telemeterize);
 
-    // Only one default command can be active per subsystem--use the manual modes during bring-up
+    // Note: Only one default command can be active per subsystem--use the manual modes during bring-up
 
     // Default command - Motion Magic hold
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
