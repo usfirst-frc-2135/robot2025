@@ -253,6 +253,8 @@ public class RobotContainer
         NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
     m_reefOffsetPub = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString)
         .getIntegerTopic(VIConsts.kReefOffsetString).publish( );
+    m_reefLevelPub.set(3);  // Default to level 3 during auto
+    m_reefOffsetPub.set(0); // Default to left branch
 
     // Build autonomous chooser objects on dashboard and fill the options
     SmartDashboard.putData("AutoMode", m_autoChooser);
