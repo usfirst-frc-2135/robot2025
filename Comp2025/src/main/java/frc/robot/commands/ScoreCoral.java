@@ -101,7 +101,7 @@ public class ScoreCoral extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), // Manipulator Safe State 
 
         new LogCommand(getName(), "Move Elevator to stowed height"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralL1) // coral station height
+        elevator.getMoveToPositionCommand(elevator::getHeightCoralL2) // coral station height
         
         // @formatter:on
     );
