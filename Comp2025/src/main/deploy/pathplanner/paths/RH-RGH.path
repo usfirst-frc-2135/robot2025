@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.88,
+        "x": 5.76,
         "y": 4.19
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.755,
+        "x": 5.635,
         "y": 3.9734936490538906
       },
       "isLocked": false,
@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.78,
+        "x": 5.76,
         "y": 4.03
       },
       "prevControl": {
-        "x": 5.905,
+        "x": 5.885,
         "y": 4.24650635094611
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AlgaeGH"
+      "linkedName": "RGH"
     }
   ],
   "rotationTargets": [],

@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.78,
+        "x": 5.76,
         "y": 4.03
       },
       "prevControl": {
-        "x": 6.563741427385334,
+        "x": 6.543741427385333,
         "y": 4.813741427385334
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AlgaeGH"
+      "linkedName": "RGH"
     }
   ],
   "rotationTargets": [],

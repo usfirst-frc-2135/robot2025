@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.13,
-        "y": 5.14
+        "x": 5.12,
+        "y": 5.12
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.027483014853777,
-        "y": 5.466657103166266
+        "x": 6.017483014853777,
+        "y": 5.446657103166267
       },
       "isLocked": false,
-      "linkedName": "AlgaeIJ"
+      "linkedName": "RIJ"
     },
     {
       "anchor": {
