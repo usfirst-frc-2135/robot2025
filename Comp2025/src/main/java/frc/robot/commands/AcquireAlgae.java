@@ -32,10 +32,10 @@ public class AcquireAlgae extends SequentialCommandGroup
 
     switch (level)
     {
-      default :
       case 1 : // Algae Level 23
       case 2 :
         return ReefLevel.ONE;
+      default :
       case 3 : // Algae Level 34
       case 4 :
         return ReefLevel.THREE;
