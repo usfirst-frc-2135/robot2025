@@ -101,7 +101,7 @@ public class ScoreAlgae extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), // Manipulator Safe State
         
         new LogCommand(getName(), "Move Elevator to stowed height"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralStation) // stowed
+        elevator.getMoveToPositionCommand(elevator::getHeightStowed) // stowed
         
         // @formatter:on
     );
