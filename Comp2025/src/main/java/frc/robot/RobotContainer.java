@@ -481,7 +481,6 @@ public class RobotContainer
               .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
               .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))           // Drive counterclockwise with negative X (left)
           )                                                                                   //
-              .ignoringDisable(true)                                      //
               .withName("CommandSwerveDrivetrain"));
     }
     else // When using simulation on MacOS X, XBox controllers need to be re-mapped due to an Apple bug
@@ -492,7 +491,6 @@ public class RobotContainer
               .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
               .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getLeftTriggerAxis( )))  // Drive counterclockwise with negative X (left)
           )                                                                                   //
-              .ignoringDisable(true)                                      //
               .withName("CommandSwerveDrivetrain"));
     }
 
