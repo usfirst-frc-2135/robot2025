@@ -45,8 +45,8 @@ public class AutoPreload extends SequentialCommandGroup
         getReefLevelCommand.get(),
 
         new LogCommand(getName(), "Drive to branch and score preload coral"),
-        drivetrain.getPathCommand(ppPaths.get(0))
-        // new ScoreCoral(elevator, manipulator, led, hid)
+        drivetrain.getPathCommand(ppPaths.get(0)),
+        new ScoreCoral(elevator, manipulator, led, hid)
         
         // @formatter:on
     );

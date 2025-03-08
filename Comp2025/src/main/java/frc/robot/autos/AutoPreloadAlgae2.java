@@ -51,26 +51,23 @@ public class AutoPreloadAlgae2 extends SequentialCommandGroup
 
         new LogCommand(getName(), "Drive to branch and score preload coral"),
         drivetrain.getPathCommand(ppPaths.get(0)),
-        // new ScoreCoral(elevator, manipulator, led, hid),
+        new ScoreCoral(elevator, manipulator, led, hid),
 
         new LogCommand(getName(), "Drive to face and acquire algae"),
         drivetrain.getPathCommand(ppPaths.get(1)),
-        // new AcquireAlgae(elevator, manipulator, led, hid),
+        new AcquireAlgae(elevator, manipulator, led, hid),
 
         new LogCommand(getName(), "Drive to proc/net score algae"),
         drivetrain.getPathCommand(ppPaths.get(2)),
-        // new ScoreAlgae(elevator, manipulator, led, hid),
+        new ScoreAlgae(elevator, manipulator, led, hid),
 
         new LogCommand(getName(), "Drive to face and acquire algae"),
         drivetrain.getPathCommand(ppPaths.get(3)),
-        // new AcquireAlgae(elevator, manipulator, led, hid),
+        new AcquireAlgae(elevator, manipulator, led, hid),
 
         new LogCommand(getName(), "Drive to net and score algae"),
-        drivetrain.getPathCommand(ppPaths.get(4))
-        // new ScoreAlgae(elevator, manipulator, led, hid)
-
-
-        //new ScoreCoral(elevator, manipulator, led, hid)
+        drivetrain.getPathCommand(ppPaths.get(4)),
+        new ScoreAlgae(elevator, manipulator, led, hid)
         
         // @formatter:on
     );
