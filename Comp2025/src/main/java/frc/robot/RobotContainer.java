@@ -314,48 +314,6 @@ public class RobotContainer
 
   /****************************************************************************
    * 
-   * Create Reef Level Select Command
-   * 
-   * @return instant command to Select Reef Scoring Level
-   */
-  public Command getReefLevelSelectCommand(int level)
-  {
-    return new InstantCommand(          // Command with init only phase declared
-        ( ) ->
-        {
-          m_reefLevelPub.set(level);
-        }).withName(ELConsts.kReefLevelString).ignoringDisable(true);
-  }
-
-  /****************************************************************************
-   * 
-   * Create Reef Branch Select Command
-   * 
-   * @return instant command to Select Reef Branch
-   */
-
-  public Command getReefOffsetSelectCommand(int branch)
-  {
-    return new InstantCommand(          // Command with init only phase declared
-        ( ) ->
-        {
-          m_reefOffsetPub.set(branch);
-        }).withName(VIConsts.kReefOffsetString).ignoringDisable(true);
-  }
-
-  /****************************************************************************
-   * 
-   * Create Select Branch Command
-   * 
-   * @return instant command to Select Branch Alignment
-   */
-  public Command getAlignToReefCommand( )
-  {
-    return (m_drivetrain.getReefAlignmentCommand( ));
-  }
-
-  /****************************************************************************
-   * 
    * Define button-command mappings. Triggers are created and bound to the desired commands.
    */
   private void configureButtonBindings( )
@@ -366,10 +324,10 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     //
+    m_driverPad.a( ).onTrue(new LogCommand("driverPad", "A"));
     m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getReefAlignmentCommand( ), Set.of(m_drivetrain)));
-    m_driverPad.a( ).whileTrue(getSlowSwerveCommand( ));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
-    m_driverPad.y( ).onTrue(new LogCommand("driverPad", "Y"));
+    m_driverPad.y( ).whileTrue(getSlowSwerveCommand( ));
 
     //
     // Driver - Bumpers, start, back
@@ -434,9 +392,9 @@ public class RobotContainer
     // Operator - A, B, X, Y
     //
     m_operatorPad.a( ).onTrue(new LogCommand("operPad", "A"));
-    m_operatorPad.b( ).onTrue(new LogCommand("operPad", "B"));
-    m_operatorPad.x( ).onTrue(new LogCommand("operPad", "X"));
-    m_operatorPad.y( ).onTrue(new LogCommand("operPad", "Y"));
+    m_operatorPad.b( ).onTrue(getReefOffsetSelectCommand(1));
+    m_operatorPad.x( ).onTrue(getReefOffsetSelectCommand(0));
+    m_operatorPad.y( ).onTrue(getReefOffsetSelectCommand(2));
 
     //
     // Operator - Bumpers, start, back
@@ -595,22 +553,28 @@ public class RobotContainer
         m_autoCommand = new AutoLeave(ppPathList, m_drivetrain, m_led);
         break;
       case AUTOPRELOAD :
-        m_autoCommand = new AutoPreload(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
+        m_autoCommand =
+            new AutoPreload(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADCORAL :
-        m_autoCommand = new AutoPreloadCoral(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
+        m_autoCommand =
+            new AutoPreloadCoral(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADCORAL2 :
-        m_autoCommand = new AutoPreloadCoral2(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
+        m_autoCommand =
+            new AutoPreloadCoral2(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADCORAL3 :
-        m_autoCommand = new AutoPreloadCoral3(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
+        m_autoCommand =
+            new AutoPreloadCoral3(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADALGAE :
-        m_autoCommand = new AutoPreloadAlgae(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
+        m_autoCommand =
+            new AutoPreloadAlgae(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADALGAE2 :
-        m_autoCommand = new AutoPreloadAlgae2(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid);
+        m_autoCommand =
+            new AutoPreloadAlgae2(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOTEST :
         m_autoCommand = new AutoTest(ppPathList, m_drivetrain);
@@ -636,7 +600,6 @@ public class RobotContainer
    * Use to slow down swerve drivetrain to 30 percent max speed. Drivetrain will execute this command
    * when invoked
    */
-
   public Command getSlowSwerveCommand( )
   {
     return m_drivetrain.applyRequest(( ) -> drive                                                 // 
@@ -646,6 +609,53 @@ public class RobotContainer
     )                                                                                             //
         .ignoringDisable(false)                                                //
         .withName("CommandSlowSwerveDrivetrain");
+  }
+
+  /****************************************************************************
+   * 
+   * Create Reef Level Select Command
+   * 
+   * @return instant command to Select Reef Scoring Level
+   */
+  private Command getReefLevelSelectCommand(int level)
+  {
+    return new InstantCommand(          // Command with init only phase declared
+        ( ) ->
+        {
+          m_reefLevelPub.set(level);
+        }).withName(ELConsts.kReefLevelString).ignoringDisable(true);
+  }
+
+  public Command getReefLevelCommand( ) // Command supplier to set default reef level
+  {
+    return getReefLevelSelectCommand(3);
+  }
+
+  /****************************************************************************
+   * 
+   * Create Reef Branch Select Command
+   * 
+   * @return instant command to Select Reef Branch
+   */
+
+  private Command getReefOffsetSelectCommand(int branch)
+  {
+    return new InstantCommand(          // Command with init only phase declared
+        ( ) ->
+        {
+          m_reefOffsetPub.set(branch);
+        }).withName(VIConsts.kReefOffsetString).ignoringDisable(true);
+  }
+
+  /****************************************************************************
+   * 
+   * Create Select Branch Command
+   * 
+   * @return instant command to Select Branch Alignment
+   */
+  public Command getAlignToReefCommand( )
+  {
+    return (m_drivetrain.getReefAlignmentCommand( ));
   }
 
   /****************************************************************************

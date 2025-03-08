@@ -69,6 +69,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final DoubleArrayPublisher  fieldPub                 = table.getDoubleArrayTopic("llPose").publish( );
     private final StringPublisher       fieldTypePub             = table.getStringTopic(".type").publish( );
 
+    // Network tables publisher objects
+    DoubleEntry                         poseXEntry;
+    DoubleEntry                         poseYEntry;
+    DoubleEntry                         poseRotEntry;
+
     /* Robot pathToPose constraints */
     private final PathConstraints       kPathFindConstraints     = new PathConstraints( // 
         2.5,       // kMaxVelocityMps                               (slowed from 3.0 for testing)    
@@ -76,11 +81,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         1.5 * Math.PI,            // kMaxAngularSpeedRadiansPerSecond              (slowed from 2.0 * Math.PI for testing)  
         1.5 * Math.PI             // kMaxAngularSpeedRadiansPerSecondSquared       (slowed from 1.5 * Math.PIfor testing)  
     );
-
-    // Network tables publisher objects
-    DoubleEntry                         poseXEntry;
-    DoubleEntry                         poseYEntry;
-    DoubleEntry                         poseRotEntry;
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -412,8 +412,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * and changes with number of tags available.
      *
      * This example is sufficient to show that vision integration is possible, though exact
-     * implementation
-     * of how to use vision should be tuned per-robot and to the team's specification.
+     * implementation of how to use vision should be tuned per-robot and to the team's specification.
      */
     private void visionUpdate( )
     {
