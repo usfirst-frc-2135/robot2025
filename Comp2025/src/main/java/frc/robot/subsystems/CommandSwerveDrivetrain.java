@@ -350,6 +350,40 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
+    /**
+     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
+     * while still accounting for measurement noise.
+     *
+     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
+     * @param timestampSeconds The timestamp of the vision measurement in seconds.
+     */
+    @Override
+    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    /**
+     * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
+     * while still accounting for measurement noise.
+     * <p>
+     * Note that the vision measurement standard deviations passed into this method
+     * will continue to apply to future measurements until a subsequent call to
+     * {@link #setVisionMeasurementStdDevs(Matrix)} or this method.
+     *
+     * @param visionRobotPoseMeters The pose of the robot as measured by the vision camera.
+     * @param timestampSeconds The timestamp of the vision measurement in seconds.
+     * @param visionMeasurementStdDevs Standard deviations of the vision pose measurement
+     *     in the form [x, y, theta]ᵀ, with units in meters and radians.
+     */
+    @Override
+    public void addVisionMeasurement(
+        Pose2d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs
+    ) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+    }
+
     // @formatter:on
 
     private void initDashboard( )
@@ -430,6 +464,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             {
                 doRejectUpdate = true;
             }
+            // Reject if average tag distance is greater than 5 meters away
+            if (mt2.avgTagDist > 5)
+            {
+                doRejectUpdate = true;
+            }
             if (!doRejectUpdate)
             {
                 fieldTypePub.set("Field2d");
@@ -438,6 +477,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         mt2.pose.getX( ), mt2.pose.getY( ), mt2.pose.getRotation( ).getDegrees( )
                 });
                 setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                // setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist,    // Code used by some teams to scale std devs by distance
+                //         Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
                 addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
             }
         }
