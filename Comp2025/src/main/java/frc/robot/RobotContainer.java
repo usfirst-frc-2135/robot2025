@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.xml.crypto.Data;
-
 import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -39,7 +37,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -325,7 +322,7 @@ public class RobotContainer
         ( ) ->
         {
           m_reefLevelPub.set(level);
-        }).withName(ELConsts.kReefLevelString);
+        }).withName(ELConsts.kReefLevelString).ignoringDisable(true);
   }
 
   /****************************************************************************
@@ -341,7 +338,7 @@ public class RobotContainer
         ( ) ->
         {
           m_reefOffsetPub.set(branch);
-        }).withName(VIConsts.kReefOffsetString);
+        }).withName(VIConsts.kReefOffsetString).ignoringDisable(true);
   }
 
   /****************************************************************************
