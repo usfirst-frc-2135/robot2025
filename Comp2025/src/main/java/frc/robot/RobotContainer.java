@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.xml.crypto.Data;
-
 import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -39,7 +37,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -256,6 +253,8 @@ public class RobotContainer
         NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
     m_reefOffsetPub = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString)
         .getIntegerTopic(VIConsts.kReefOffsetString).publish( );
+    m_reefLevelPub.set(3);  // Default to level 3 during auto
+    m_reefOffsetPub.set(0); // Default to left branch
 
     // Build autonomous chooser objects on dashboard and fill the options
     SmartDashboard.putData("AutoMode", m_autoChooser);
@@ -325,7 +324,7 @@ public class RobotContainer
         ( ) ->
         {
           m_reefLevelPub.set(level);
-        }).withName(ELConsts.kReefLevelString);
+        }).withName(ELConsts.kReefLevelString).ignoringDisable(true);
   }
 
   /****************************************************************************
@@ -341,7 +340,7 @@ public class RobotContainer
         ( ) ->
         {
           m_reefOffsetPub.set(branch);
-        }).withName(VIConsts.kReefOffsetString);
+        }).withName(VIConsts.kReefOffsetString).ignoringDisable(true);
   }
 
   /****************************************************************************
@@ -482,7 +481,6 @@ public class RobotContainer
               .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
               .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getRightX( )))           // Drive counterclockwise with negative X (left)
           )                                                                                   //
-              .ignoringDisable(true)                                      //
               .withName("CommandSwerveDrivetrain"));
     }
     else // When using simulation on MacOS X, XBox controllers need to be re-mapped due to an Apple bug
@@ -493,7 +491,6 @@ public class RobotContainer
               .withVelocityY(kMaxSpeed.times(-m_driverPad.getLeftX( )))                       // Drive left with negative X (left)
               .withRotationalRate(kMaxAngularRate.times(-m_driverPad.getLeftTriggerAxis( )))  // Drive counterclockwise with negative X (left)
           )                                                                                   //
-              .ignoringDisable(true)                                      //
               .withName("CommandSwerveDrivetrain"));
     }
 

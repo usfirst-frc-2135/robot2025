@@ -74,7 +74,7 @@ public class Manipulator extends SubsystemBase
   private static final DutyCycleOut kClawRollerStop      = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
 
   private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.5).withIgnoreHardwareLimits(false);
-  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.25).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.15).withIgnoreHardwareLimits(true);
 
   private static final DutyCycleOut kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
@@ -98,7 +98,7 @@ public class Manipulator extends SubsystemBase
 
   private static final double         kToleranceDegrees         = 3.0;      // PID tolerance in degrees
   private static final double         kMMDebounceTime           = 0.060;    // Seconds to debounce a final angle check
-  private static final double         kMMMoveTimeout            = 1.0;      // Seconds allowed for a Motion Magic movement
+  private static final double         kMMMoveTimeout            = 2.0;      // Seconds allowed for a Motion Magic movement
 
   // Wrist rotary angles - Motion Magic move parameters - TODO: Update for 2025 Reefscape needs
   //    Measured hardstops and pre-defined positions:
@@ -108,13 +108,13 @@ public class Manipulator extends SubsystemBase
   private static final double         kWristAngleMin            = -119.0; //TODO: Complete all with Correct Angles 
   private static final double         kWristAngleMax            = 52.0;
 
-  private static final double         kWristAngleSafeState      = -95.0;
+  private static final double         kWristAngleSafeState      = -92.0;
 
   private static final double         kWristAngleCoralStation   = -119.0;
-  private static final double         kWristAngleCoralL1        = -95.0;//-90
-  private static final double         kWristAngleCoralL2        = -75.0;//-75
-  private static final double         kWristAngleCoralL3        = -75.0;//75
-  private static final double         kWristAngleCoralL4        = -85.0;//-45
+  private static final double         kWristAngleCoralL1        = -95.0;
+  private static final double         kWristAngleCoralL2        = -95.0;
+  private static final double         kWristAngleCoralL3        = -95.0;
+  private static final double         kWristAngleCoralL4        = -85.0;
 
   private static final double         kWristAngleAlgae23        = 51.5;
   private static final double         kWristAngleAlgae34        = 51.5;
