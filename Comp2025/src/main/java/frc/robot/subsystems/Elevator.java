@@ -275,8 +275,7 @@ public class Elevator extends SubsystemBase
   private void initDashboard( )
   {
     // Get the default instance of NetworkTables that was created automatically when the robot program starts
-    NetworkTableInstance inst = NetworkTableInstance.getDefault( );
-    NetworkTable table = inst.getTable("elevator");
+    NetworkTable table = NetworkTableInstance.getDefault( ).getTable("elevator");
 
     // Initialize network tables publishers
     m_leftHeightPub = table.getDoubleTopic("leftInches").publish( );

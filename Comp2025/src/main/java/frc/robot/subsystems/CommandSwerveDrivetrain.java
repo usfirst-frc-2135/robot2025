@@ -31,8 +31,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
@@ -70,7 +68,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final NetworkTable          table                    = inst.getTable("Pose");
     private final DoubleArrayPublisher  fieldPub                 = table.getDoubleArrayTopic("llPose").publish( );
     private final StringPublisher       fieldTypePub             = table.getStringTopic(".type").publish( );
-    private IntegerPublisher reefBranchPub = inst.getTable(Constants.kRobotString).getIntegerTopic(VIConsts.kReefOffsetString).publish( );
 
     /* Robot pathToPose constraints */
     private final PathConstraints       kPathFindConstraints     = new PathConstraints( // 
@@ -84,7 +81,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     DoubleEntry                         poseXEntry;
     DoubleEntry                         poseYEntry;
     DoubleEntry                         poseRotEntry;
-    DoublePublisher                     shooterDistancePub;
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
@@ -389,13 +385,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private void initDashboard( )
     {
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
-        NetworkTableInstance inst = NetworkTableInstance.getDefault( );
-        NetworkTable table = inst.getTable("swerve");
+        NetworkTable table = NetworkTableInstance.getDefault( ).getTable("swerve");
 
         poseXEntry = table.getDoubleTopic("X").getEntry(0.0);
         poseYEntry = table.getDoubleTopic("Y").getEntry(0.0);
         poseRotEntry = table.getDoubleTopic("rotation").getEntry(0.0);
-        shooterDistancePub = table.getDoubleTopic("shooterDistance").getEntry(0.0);
         SmartDashboard.putData("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
         // TODO: This dashboard button will only run the closest AT ID selection
         SmartDashboard.putData("FaceSelector", new InstantCommand(( ) -> findClosestReefTag( )).ignoringDisable(true));
@@ -522,10 +516,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
                 AutoBuilder.pathfindToPoseFlipped(targetPose, kPathFindConstraints, 0.0),
                 new LogCommand("Desired Offset", String.format("Desired Offset.......................",
-                        inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( )))
-
-        );
-
+                        inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( ))));
     }
 
     /*

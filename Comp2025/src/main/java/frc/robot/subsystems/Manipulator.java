@@ -339,8 +339,7 @@ public class Manipulator extends SubsystemBase
   private void initDashboard( )
   {
     // Get the default instance of NetworkTables that was created automatically when the robot program starts
-    NetworkTableInstance inst = NetworkTableInstance.getDefault( );
-    NetworkTable table = inst.getTable("manipulator");
+    NetworkTable table = NetworkTableInstance.getDefault( ).getTable("manipulator");
 
     // Initialize network tables publishers
     m_clawSpeedPub = table.getDoubleTopic("clawSpeed").publish( );
