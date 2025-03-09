@@ -122,6 +122,8 @@ public class Vision extends SubsystemBase
     {
       DataLogManager.log(String.format("%s: Driver station alliance color NOT SET!", getSubsystem( )));
     }
+
+    SetIMUMode(imuMode.EXTERNAL_SEED);
   }
 
   /****************************************************************************
@@ -179,6 +181,33 @@ public class Vision extends SubsystemBase
     return maxSpeed.times(proportionalFactor);
   }
 
+  /****************************************************************************
+   * 
+   * Set priorityid and display alliance color
+   * 
+   * @param throttle
+   *          Defaults to 0. Your Limelgiht will process one frame
+   *          after skipping <throttle> frames.
+   */
+  public void SetCPUThrottleLevel(boolean throttle)
+  {
+    DataLogManager.log(String.format("%s: Set Throttle level to %s", getSubsystem( ), throttle));
+    // LimelightHelpers.SetThrottle("limelight", throttle ? 0 : 200);
+  }
+
+  /****************************************************************************
+   * 
+   * Set IMU mode as a default
+   * 
+   * @param mode
+   *          Defaults to 0. Choose the IMU mode
+   */
+  public void SetIMUMode(imuMode mode)
+  {
+    DataLogManager.log(String.format("%s: Set IMU Mode to %s", getSubsystem( ), mode));
+    LimelightHelpers.SetIMUMode("limelight", mode.value);
+  }
+
   ///////////////////////// PRIVATE HELPERS ///////////////////////////////
 
   /****************************************************************************
@@ -194,39 +223,6 @@ public class Vision extends SubsystemBase
   {
     DataLogManager.log(String.format("%s: Set AprilTag priority id %d (%s)", getSubsystem( ), id, alliance));
     LimelightHelpers.setPriorityTagID(kLLName, id);
-  }
-
-  /****************************************************************************
-   * 
-   * Set priorityid and display alliance color
-   * 
-   * @param limelightName
-   *          Name/identifier of the Limelight
-   * @param throttle
-   *          Defaults to 0. Your Limelgiht will process one frame
-   *          after skipping <throttle> frames.
-   */
-  public void SetCPUThrottleLevel(boolean throttle)
-  {
-    DataLogManager.log(String.format("%s: Set Throttle level to %s", getSubsystem( ), throttle));
-    LimelightHelpers.SetThrottle("limelight", throttle ? 0 : 200);
-  }
-
-  /****************************************************************************
-   * 
-   * Set IMU mode as a default
-   * 
-   * @param limelightName
-   *          Name/identifier of the Limelight
-   * @param mode
-   *          Defaults to 0. Choose the IMU mode
-   */
-  public void SetIMUMode( )
-  {
-    imuMode mode = imuMode.EXTERNAL_SEED;
-
-    DataLogManager.log(String.format("%s: Set IMU Mode to %s", getSubsystem( ), mode));
-    LimelightHelpers.SetIMUMode("limelight", mode.value);
   }
 
 }

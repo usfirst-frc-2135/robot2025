@@ -100,12 +100,12 @@ public class Manipulator extends SubsystemBase
   private static final double         kMMDebounceTime           = 0.060;    // Seconds to debounce a final angle check
   private static final double         kMMMoveTimeout            = 2.0;      // Seconds allowed for a Motion Magic movement
 
-  // Wrist rotary angles - Motion Magic move parameters - TODO: Update for 2025 Reefscape needs
+  // Wrist rotary angles - Motion Magic move parameters
   //    Measured hardstops and pre-defined positions:
-  //               hstop  retracted   processor deployed  hstop
-  //      Comp     -90.0  -90         ?         ?         10.0
-  //      Practice ?      ?           ?         ?         ?
-  private static final double         kWristAngleMin            = -119.0; //TODO: Complete all with Correct Angles 
+  //               hstop    hstop
+  //      Comp     -119.0   52.0
+  //      Practice -119.0   52.0
+  private static final double         kWristAngleMin            = -119.0;
   private static final double         kWristAngleMax            = 52.0;
 
   private static final double         kWristAngleSafeState      = -92.0;
@@ -290,8 +290,6 @@ public class Manipulator extends SubsystemBase
     m_targetDegreesPub.set(m_targetDegrees);
     m_coralDetectedPub.set(m_coralDetected);
     m_algaeDetectedPub.set(m_algaeDetected);
-
-    SmartDashboard.putNumber("WristPos", Units.rotationsToDegrees((m_wristMotor.getPosition( ).getValueAsDouble( ))));
   }
 
   /****************************************************************************

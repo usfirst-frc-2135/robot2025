@@ -45,12 +45,12 @@ public final class CTREConfigs6
     // exConfig.ClosedLoopRamps.*
 
     // Current limit settings
-    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;        // Amps
-    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0;   // Amps
-    elevatorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;   // Seconds
+    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;           // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0;      // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;      // Seconds
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    elevatorConfig.CurrentLimits.StatorCurrentLimit = 400.0;        // Amps
+    elevatorConfig.CurrentLimits.StatorCurrentLimit = 400.0;          // Amps
     elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
@@ -65,33 +65,125 @@ public final class CTREConfigs6
     elevatorConfig.MotionMagic.MotionMagicJerk = 2417 * 0.75;             // Rotations / second ^ 3
 
     // Motor output settings
-    elevatorConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;   // Percentage
+    elevatorConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;      // Percentage
     elevatorConfig.MotorOutput.Inverted = (inverted) ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
     elevatorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     // Open Loop settings
-    // elevatorConfig.OpenLoopRamps.*                              // Seconds to ramp
+    // elevatorConfig.OpenLoopRamps.*                                 // Seconds to ramp
 
     // Slot settings
     //                                                                Elevator Upward was 0.40 V, Elevator Downward was 0.25.
     //                                                                  kG = (0.40 + 0.25) / 2
     //                                                                  kS = (0.40 - 0.25) / 2
     elevatorConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-    elevatorConfig.Slot0.kS = 0.075;                               // Feedforward: Voltage or duty cylce to overcome static friction
-    elevatorConfig.Slot0.kG = 0.325;                               // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
-    elevatorConfig.Slot0.kV = 0.1241;                              // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
+    elevatorConfig.Slot0.kS = 0.075;                                  // Feedforward: Voltage or duty cylce to overcome static friction
+    elevatorConfig.Slot0.kG = 0.325;                                  // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
+    elevatorConfig.Slot0.kV = 0.1241;                                 // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    elevatorConfig.Slot0.kP = 9.60;                                // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
-    elevatorConfig.Slot0.kI = 0.0;                                 // Feedback: Voltage or duty cycle per accumulated unit
-    elevatorConfig.Slot0.kD = 0.0;                                 // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
+    elevatorConfig.Slot0.kP = 9.60;                                   // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    elevatorConfig.Slot0.kI = 0.0;                                    // Feedback: Voltage or duty cycle per accumulated unit
+    elevatorConfig.Slot0.kD = 0.0;                                    // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // Software limit switches
-    elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;   // Rotations
+    elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min; // Rotations
     elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = max;   // Rotations
+    elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = max; // Rotations
     elevatorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 
     return elevatorConfig;
+  }
+
+  /****************************************************************************
+   * 
+   * Manipulator wrist rotary motor - Kraken X60
+   * 
+   * @param min
+   *          minimum angle of rotation
+   * @param max
+   *          maximum angle of rotation (must be greater than min)
+   * @param ccPort
+   *          CANcoder port number
+   * @param gearRatio
+   *          gear box ratio
+   */
+  public static TalonFXConfiguration wristRotaryFXConfig(double min, double max, int ccPort, double gearRatio)
+  {
+    TalonFXConfiguration wristRotaryConfig = new TalonFXConfiguration( );
+
+    // Closed Loop settings
+    // wristRotaryConfig.ClosedLoopGeneral.*
+    // wristRotaryConfig.ClosedLoopRamps.*                            // Seconds to ramp
+
+    // Current limit settings
+    wristRotaryConfig.CurrentLimits.SupplyCurrentLimit = 40.0;        // Amps
+    wristRotaryConfig.CurrentLimits.SupplyCurrentLowerLimit = 35.0;   // Amps
+    wristRotaryConfig.CurrentLimits.SupplyCurrentLowerTime = 0.050;   // Seconds
+    wristRotaryConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    wristRotaryConfig.CurrentLimits.StatorCurrentLimit = 400.0;       // Amps
+    wristRotaryConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    // Feedback settings
+    wristRotaryConfig.Feedback.FeedbackRemoteSensorID = ccPort;
+    wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    wristRotaryConfig.Feedback.SensorToMechanismRatio = 1.0;
+    wristRotaryConfig.Feedback.RotorToSensorRatio = gearRatio;
+
+    // Hardware limit switches - NONE
+    // wristRotaryConfig.HardwareLimitSwitch.*
+
+    // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio // TODO: wrist is temporarily slowed until we get it tuned
+    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio * 0.75;  // Rotations / second
+    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio * 0.75;   // Rotations / second ^ 2
+    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio * 0.75;          // Rotations / second ^ 3
+
+    // Motor output settings
+    wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;   // Percentage
+    wristRotaryConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    wristRotaryConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    // Open Loop settings
+    // wristRotaryConfig.OpenLoopRamps.*                              // Seconds to ramp
+
+    // Slot settings - remote/fused CANcoder affects all feedback constants by the gearRatio
+    //                                                                Wrist Upward was x.x V, Elevator Downward was x.x.
+    //                                                                  kG = (0.40 + 0.25) / 2
+    //                                                                  kS = (0.40 - 0.25) / 2
+    wristRotaryConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine; // Feedforward: Mechanism is an arm and needs cosine
+    wristRotaryConfig.Slot0.kS = -0.065;                              // Feedforward: Voltage or duty cylce to overcome static friction
+    wristRotaryConfig.Slot0.kG = -0.235;                              // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
+    wristRotaryConfig.Slot0.kV = 0.1241;                              // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
+
+    wristRotaryConfig.Slot0.kP = 0.9 * gearRatio;                     // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    wristRotaryConfig.Slot0.kI = 0.0 * gearRatio;                     // Feedback: Voltage or duty cycle per accumulated unit
+    wristRotaryConfig.Slot0.kD = 0.0 * gearRatio;                     // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
+
+    // Software limit switches
+    wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;  // Rotations
+    wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = max;  // Rotations
+    wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+
+    return wristRotaryConfig;
+  }
+
+  /****************************************************************************
+   * 
+   * Manipulator wrist rotary CANcoder
+   */
+  public static CANcoderConfiguration wristRotaryCANcoderConfig( )
+  {
+    CANcoderConfiguration ccConfig = new CANcoderConfiguration( );
+
+    ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    ccConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
+    if (Robot.isReal( ))
+      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? -0.2372 : 0.0;
+    else
+      ccConfig.MagnetSensor.MagnetOffset = -0.25;                     // Simulated CANcoder default in rotations
+
+    return ccConfig;
   }
 
   /****************************************************************************
@@ -113,24 +205,21 @@ public final class CTREConfigs6
 
     // Closed Loop settings
     // clawRollerConfig.ClosedLoopGeneral.*
-    // clawRollerConfig.ClosedLoopRamps.*                           // Seconds to ramp
+    // clawRollerConfig.ClosedLoopRamps.*                             // Seconds to ramp
 
     // Current limit settings
-    clawRollerConfig.CurrentLimits.SupplyCurrentLimit = 40.0;       // Amps
-    clawRollerConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0;  // Amps
-    clawRollerConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;  // Seconds
+    clawRollerConfig.CurrentLimits.SupplyCurrentLimit = 40.0;         // Amps
+    clawRollerConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0;    // Amps
+    clawRollerConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;    // Seconds
     clawRollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    clawRollerConfig.CurrentLimits.StatorCurrentLimit = 400.0;      // Amps
+    clawRollerConfig.CurrentLimits.StatorCurrentLimit = 400.0;        // Amps
     clawRollerConfig.CurrentLimits.StatorCurrentLimitEnable = false;
 
     // Feedback settings
     // clawRollerConfig.Feedback.*
 
     // Hardware limit switches - CANrange
-    // clawRollerConfig.HardwareLimitSwitch.ForwardLimitRemoteSensorID = canRangeID;
-    // clawRollerConfig.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.RemoteCANrange;
-    // clawRollerConfig.HardwareLimitSwitch.ForwardLimitEnable = true;
     clawRollerConfig.HardwareLimitSwitch.ReverseLimitRemoteSensorID = canRangeID; // Stop coral on CANrange detection
     clawRollerConfig.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.RemoteCANrange;
     clawRollerConfig.HardwareLimitSwitch.ReverseLimitEnable = true;
@@ -157,87 +246,13 @@ public final class CTREConfigs6
 
   /****************************************************************************
    * 
-   * Manipulator wrist rotary motor - Kraken X60
-   * 
-   * @param min
-   *          minimum angle of rotation
-   * @param max
-   *          maximum angle of rotation (must be greater than min)
-   * @param ccPort
-   *          CANcoder port number
-   * @param gearRatio
-   *          gear box ratio
-   */
-  public static TalonFXConfiguration wristRotaryFXConfig(double min, double max, int ccPort, double gearRatio)
-  {
-    TalonFXConfiguration wristRotaryConfig = new TalonFXConfiguration( );
-
-    // Closed Loop settings
-    // wristRotaryConfig.ClosedLoopGeneral.*
-    // wristRotaryConfig.ClosedLoopRamps.*                           // Seconds to ramp
-
-    // Current limit settings
-    wristRotaryConfig.CurrentLimits.SupplyCurrentLimit = 20.0;       // Amps
-    wristRotaryConfig.CurrentLimits.SupplyCurrentLowerLimit = 20.0;  // Amps
-    wristRotaryConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;  // Seconds
-    wristRotaryConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-
-    wristRotaryConfig.CurrentLimits.StatorCurrentLimit = 200.0;      // Amps
-    wristRotaryConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-
-    // Feedback settings
-    wristRotaryConfig.Feedback.FeedbackRemoteSensorID = ccPort;
-    wristRotaryConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-    wristRotaryConfig.Feedback.SensorToMechanismRatio = 1.0;
-    wristRotaryConfig.Feedback.RotorToSensorRatio = gearRatio;
-
-    // Hardware limit switches - NONE
-    // wristRotaryConfig.HardwareLimitSwitch.*
-
-    // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio // TODO: wrist is temporarily slowed until we get it tuned
-    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio * 0.75;  // Rotations / second
-    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio * 0.75;   // Rotations / second ^ 2
-    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio * 0.75;          // Rotations / second ^ 3
-
-    // Motor output settings
-    wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;    // Percentage
-    wristRotaryConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    wristRotaryConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-    // Open Loop settings
-    // wristRotaryConfig.OpenLoopRamps.*                               // Seconds to ramp
-
-    // Slot settings - remote/fused CANcoder affects all feedback constants by the gearRatio
-    //                                                                Wrist Upward was x.x V, Elevator Downward was x.x.
-    //                                                                  kG = (0.40 + 0.25) / 2
-    //                                                                  kS = (0.40 - 0.25) / 2
-    wristRotaryConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine; // Feedforward: Mechanism is an arm and needs cosine
-    wristRotaryConfig.Slot0.kS = -0.065;                                  // Feedforward: Voltage or duty cylce to overcome static friction
-    wristRotaryConfig.Slot0.kG = -0.235;                                  // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
-    wristRotaryConfig.Slot0.kV = 0.1241;                               // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
-
-    wristRotaryConfig.Slot0.kP = 0.9 * gearRatio;                      // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
-    wristRotaryConfig.Slot0.kI = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per accumulated unit
-    wristRotaryConfig.Slot0.kD = 0.0 * gearRatio;                      // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
-
-    // Software limit switches
-    wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;  // Rotations
-    wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
-    wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = max;  // Rotations
-    wristRotaryConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-
-    return wristRotaryConfig;
-  }
-
-  /****************************************************************************
-   * 
    * Manipulator coral CANRange detector
    */
   public static CANrangeConfiguration coralCANRangeConfig( )
   {
     CANrangeConfiguration crConfig = new CANrangeConfiguration( );
 
-    crConfig.ProximityParams.ProximityThreshold = 0.2; // Proximity distance in meters (about 8 inches)
+    crConfig.ProximityParams.ProximityThreshold = 0.2;                // Proximity distance in meters (about 8 inches)
     crConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
 
     return crConfig;
@@ -251,29 +266,10 @@ public final class CTREConfigs6
   {
     CANrangeConfiguration crConfig = new CANrangeConfiguration( );
 
-    crConfig.ProximityParams.ProximityThreshold = 0.1; // Proximity distance in meters (about 4 inches)
+    crConfig.ProximityParams.ProximityThreshold = 0.1;                // Proximity distance in meters (about 4 inches)
     crConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
 
     return crConfig;
-  }
-
-  /****************************************************************************
-   * 
-   * Manipulator wrist rotary CANcoder
-   */
-  public static CANcoderConfiguration wristRotaryCANcoderConfig( )
-  {
-    CANcoderConfiguration ccConfig = new CANcoderConfiguration( );
-    double kQuarterRotation = 0.25;
-
-    ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
-    ccConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
-    if (Robot.isReal( ))
-      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? (-0.2372) : (0.590 - kQuarterRotation);
-    else
-      ccConfig.MagnetSensor.MagnetOffset = -0.25;                   // Simulated CANcoder default in rotations
-
-    return ccConfig;
   }
 
 }

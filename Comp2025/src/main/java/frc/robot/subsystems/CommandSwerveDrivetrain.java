@@ -480,42 +480,31 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command getDrivePathToPoseCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose)
     {
         DataLogManager.log(String.format("drivePathToPose: Alliance %s target pose %s", DriverStation.getAlliance( ), pose));
-
         return AutoBuilder.pathfindToPoseFlipped(pose, kPathFindConstraints, 0.0);
     }
 
     public Command getReefAlignmentCommand( )
     {
-        NetworkTable inst = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
-
-        // int scoringOffset = (int) inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( );
-        // int closestAT = findClosestReefTag( );
-
         Pose2d targetPose = findTargetPose( );
+        NetworkTable inst = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
 
         // TODO: Updates needed
         //  1) The path following command will need to have a Path created from the current robot pose and the desired pose
-        //  2) So we need to get the reef offset from the publisher created in robotContainer, and
-        //  3) also get the closest AT tag face
-        //  4) to create a pose that will let us score
-        //  5) Need to generate a path that starts with the current pose and ends at the target pose
+        //  2) So we need to get the reef offset from the publisher created in robotContainer, and also get the closest AT tag face
+        //  3) Create a pose that will let us score
+        //  4) Generate a path that starts with the current pose and ends at the target pose
         //  6) Options:
         //      a) PPLib FollowPath would follow this directly
         //      b) PPLib PathFindToPose should also get to the correct destination, but may take longer
         //      c) PPLib PathFindToPath is probably the highest accuracy, but may take more work
-        //  Get ANY of these to work, and we can always make it better, PathFindToPose worked for us last year, so that may be best for now
 
         // Note that getReefAlignment can do all the work before returning the PPLib call we need to run the path
 
-        // I commented some of this out to test all the linkages
-        // I don't quite have the deferred command sequence figured out, you can work on all the rest of the calculations above
-        //  then we can figure out how to defer the command properly
-
-        return new SequentialCommandGroup(
-
-                AutoBuilder.pathfindToPoseFlipped(targetPose, kPathFindConstraints, 0.0),
-                new LogCommand("Desired Offset", String.format("Desired Offset.......................",
-                        inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( ))));
+        return new SequentialCommandGroup(                                                                              //
+                AutoBuilder.pathfindToPoseFlipped(targetPose, kPathFindConstraints, 0.0),               //
+                new LogCommand("Desired Offset", String.format("Desired Offset .......................",
+                        inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( )))              //
+        );
     }
 
     /*
@@ -684,18 +673,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         DataLogManager.log(String.format("closest AT tag: %d desiredPose %s", desiredReefTag, desiredPose2d));
         return desiredPose2d;
     }
-
-    /*
-     * We want a command factory that:
-     * - given a branch/face selection (left, middle, right) done elsewhere
-     * - finds the closest face to the robot (closest AT tag)
-     * - selects either branch left pose or right pose, or selects the algae pose
-     * 
-     * This command factory will just wrap the findPathToPose method in an instant command
-     * - the pathToPose method needs to have the target branch left/right/algae pose as a parameter
-     * 
-     * This is what is hooked into a button trigger
-     */
 
     private void setOdometryFromDashboard( )
     {

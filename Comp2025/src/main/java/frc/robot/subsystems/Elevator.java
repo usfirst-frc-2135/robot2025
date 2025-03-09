@@ -65,7 +65,7 @@ public class Elevator extends SubsystemBase
   private static final String  kSubsystemName          = "Elevator";
   private static final double  kGearRatio              = 9.706;           // Gear reduction
   private static final double  kHeightInchesMin        = 0.0;             // Minimum allowable height
-  private static final double  kHeightInchesMax        = 25.62;           // Maximum allowable height
+  private static final double  kHeightInchesMax        = 25.62;           // Maximum allowable height TODO: temporary for this manipulator!
   private static final double  kSimHeightMetersMin     = Units.inchesToMeters(kHeightInchesMin - 0.1); // Make sim height range larger than useful range
   private static final double  kSimHeightMetersMax     = Units.inchesToMeters(kHeightInchesMax + 0.1);
   private static final double  kCarriageMassKg         = Units.lbsToKilograms(20.0);     // Simulation
@@ -78,7 +78,7 @@ public class Elevator extends SubsystemBase
   private static final double  kMMDebounceTime         = 0.060;           // Seconds to debounce a final position check
   private static final double  kMMMoveTimeout          = 3.0;             // Seconds allowed for a Motion Magic movement
 
-  // Elevator heights - Motion Magic config parameters                    // TODO: define desired elevator heights for 2025
+  // Elevator heights - Motion Magic config parameters
   private static final double  kHeightStowed           = 0.0;             // By definition - full down
   private static final double  kHeightCoralStation     = 0.0;             // By definition - at coral station
 
@@ -405,7 +405,7 @@ public class Elevator extends SubsystemBase
     if (holdPosition)
       newHeight = m_currentHeight;
 
-    newHeight = MathUtil.clamp(newHeight, 0.25, kHeightInchesMax);
+    newHeight = MathUtil.clamp(newHeight, 0.1, kHeightInchesMax);
 
     // Decide if a new position request
     if (holdPosition || newHeight != m_targetHeight || !MathUtil.isNear(newHeight, m_currentHeight, kToleranceInches))
@@ -594,6 +594,17 @@ public class Elevator extends SubsystemBase
 
   /****************************************************************************
    * 
+   * Return elevator height for coral station intake state
+   * 
+   * @return coral station intake state height
+   */
+  public double getHeightCoralStation( )
+  {
+    return kHeightCoralStation;
+  }
+
+  /****************************************************************************
+   * 
    * Return elevator height for coral L1 scoring state
    * 
    * @return coral L1 scoring state height
@@ -634,17 +645,6 @@ public class Elevator extends SubsystemBase
   public double getHeightCoralL4( )
   {
     return kHeightCoralL4;
-  }
-
-  /****************************************************************************
-   * 
-   * Return elevator height for coral station intake state
-   * 
-   * @return coral station intake state height
-   */
-  public double getHeightCoralStation( )
-  {
-    return kHeightCoralStation;
   }
 
   /****************************************************************************
@@ -707,6 +707,7 @@ public class Elevator extends SubsystemBase
         ( ) -> calibrateHeight( ),      // Init method
         this                            // Subsytem required
     )                                   //
+        .ignoringDisable(true) //
         .withName(kSubsystemName + "CalibrateHeight");
   }
 

@@ -33,6 +33,7 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -84,8 +85,8 @@ public class RobotContainer
   private static final CommandXboxController          m_operatorPad   = new CommandXboxController(Constants.kOperatorPadPort);
 
   private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
-  private static final double                         kSlowSwerve     = 0.35;
   private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(3.0 * Math.PI); // Max 1.5 rot per second
+  private static final double                         kSlowSwerve     = 0.35;                               // Throttle max swerve speeds for finer control
   private static final double                         kHeadingKp      = 10.0;
   private static final double                         kHeadingKi      = 0.0;
   private static final double                         kHeadingKd      = 0.0;
@@ -123,6 +124,7 @@ public class RobotContainer
 
   // Selected autonomous command
   private Command                                     m_autoCommand;    // Selected autonomous command
+  private Timer                                       m_autoTimer     = new Timer( );
   private IntegerPublisher                            m_reefLevelPub;   // Level of the reef to score or acquire from (1-4)
   private IntegerPublisher                            m_reefOffsetPub;  // Branch of the reef to score or acquire from (left, middle, right)
 
@@ -584,13 +586,13 @@ public class RobotContainer
     DataLogManager.log(String.format("getAuto: autoMode %s startOption %s (%s)", autoKey, startPose, m_autoCommand.getName( )));
 
     double delay = SmartDashboard.getNumber("AutoDelay", 0.0);
-    if (delay > 0.0)
-    {
-      m_autoCommand = new SequentialCommandGroup(                                                       //
-          new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)), //
-          new WaitCommand(delay),                                                                       //
-          m_autoCommand);
-    }
+    m_autoCommand = new SequentialCommandGroup(                                                       //
+        new InstantCommand(( ) -> Robot.timeMarker("AutoStart")),                                 //
+        new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)), //
+        new WaitCommand(delay),                                                                       //
+        m_autoCommand,                                                                                //
+        new InstantCommand(( ) -> Robot.timeMarker("AutoEnd"))                                    //
+    );
 
     return m_autoCommand;
   }
@@ -607,7 +609,6 @@ public class RobotContainer
         .withVelocityY(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftX( )))              // Drive left with negative X (left)
         .withRotationalRate(kMaxAngularRate.times(kSlowSwerve).times(-m_driverPad.getRightX( )))                     // Drive counterclockwise with negative X (left)
     )                                                                                             //
-        .ignoringDisable(false)                                                //
         .withName("CommandSlowSwerveDrivetrain");
   }
 
@@ -690,7 +691,6 @@ public class RobotContainer
     m_manipulator.initialize( );
 
     m_vision.SetCPUThrottleLevel(false);
-    m_vision.SetIMUMode( );
   }
 
   /****************************************************************************
