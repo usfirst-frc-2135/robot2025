@@ -88,20 +88,20 @@ public class ScoreCoral extends SequentialCommandGroup
                 Map.entry(ReefLevel.THREE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL3)), 
                 Map.entry(ReefLevel.FOUR, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4))
               ), 
-              this::selectLevel), 
+              this::selectLevel)
 
-        new LogCommand(getName(), "Start coral rollers"),
-        manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle), //level 4
+        // new LogCommand(getName(), "Start coral rollers"),
+        // manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle), //level 4
         
-        new LogCommand(getName(), "Wait for coral to expel"),
-        new WaitCommand(0.5),
-        new WaitUntilCommand(manipulator::isCoralExpelled), // checks if coral is expelled 
+        // new LogCommand(getName(), "Wait for coral to expel"),
+        // new WaitCommand(0.5),
+        // new WaitUntilCommand(manipulator::isCoralExpelled), // checks if coral is expelled 
       
-        new LogCommand(getName(), "Stop coral rollers"), 
-        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), // Manipulator Safe State 
+        // new LogCommand(getName(), "Stop coral rollers"), 
+        // manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), // Manipulator Safe State 
 
-        new LogCommand(getName(), "Move Elevator to stowed height"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralL2) // coral station height
+        //new LogCommand(getName(), "Move Elevator to stowed height"),
+        // elevator.getMoveToPositionCommand(elevator::getHeightCoralL2) // coral station height
         
         // @formatter:on
     );
