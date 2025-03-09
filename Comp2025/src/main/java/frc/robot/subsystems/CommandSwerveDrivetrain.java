@@ -458,7 +458,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 doRejectUpdate = true;
             }
             // Reject if average tag distance is greater than 5 meters away
-            if (mt2.avgTagDist > 5)
+            else if (mt2.avgTagDist > 5)
             {
                 doRejectUpdate = true;
             }
