@@ -67,7 +67,7 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
         drivetrain.getPathCommand(ppPaths.get(2)),
         new ScoreCoral(elevator, manipulator, led, hid),
 
-        new LogCommand(getName(), "Drive to coral station and acquire second coral"),
+        new LogCommand(getName(), "Drive to coral station and acquire third coral"),
         new ParallelCommandGroup(
           drivetrain.getPathCommand(ppPaths.get(3)),
           new AcquireCoral(elevator, manipulator, led, hid)
