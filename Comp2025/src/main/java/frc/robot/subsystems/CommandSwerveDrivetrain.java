@@ -517,7 +517,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private int[ ] redReefTags  =
     {
-            6, 7, 8, 9, 10, 11
+            8, 7, 6, 11, 10, 9
     };
 
     /*
