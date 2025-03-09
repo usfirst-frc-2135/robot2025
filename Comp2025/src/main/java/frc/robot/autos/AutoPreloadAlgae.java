@@ -59,10 +59,8 @@ public class AutoPreloadAlgae extends SequentialCommandGroup
 
         new LogCommand(getName(), "Drive to proc/net and score algae"),
         drivetrain.getPathCommand(ppPaths.get(2)),
-        new ScoreAlgae(elevator, manipulator, led, hid)
-
-        //new ScoreAlgae(elevator, manipulator, led, hid)
-        
+        new ScoreAlgae(elevator, manipulator, led, hid) 
+               
         // @formatter:on
     );
   }
