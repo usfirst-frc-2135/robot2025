@@ -385,7 +385,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private void initDashboard( )
     {
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
-        NetworkTable table = NetworkTableInstance.getDefault( ).getTable("swerve");
+        NetworkTable table = inst.getTable("swerve");
 
         poseXEntry = table.getDoubleTopic("X").getEntry(0.0);
         poseYEntry = table.getDoubleTopic("Y").getEntry(0.0);
@@ -486,7 +486,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command getReefAlignmentCommand( )
     {
         Pose2d targetPose = findTargetPose( );
-        NetworkTable inst = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
+        NetworkTable table = inst.getTable(Constants.kRobotString);
 
         // TODO: Updates needed
         //  1) The path following command will need to have a Path created from the current robot pose and the desired pose
@@ -503,7 +503,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return new SequentialCommandGroup(                                                                              //
                 AutoBuilder.pathfindToPoseFlipped(targetPose, kPathFindConstraints, 0.0),               //
                 new LogCommand("Desired Offset", String.format("Desired Offset .......................",
-                        inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( )))              //
+                        table.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( )))              //
         );
     }
 
@@ -565,8 +565,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         int desiredReefTag = findClosestReefTag( );
         Pose2d desiredPose2d = new Pose2d( );
 
-        NetworkTable inst = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
-        int scoringOffset = (int) inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( );
+        NetworkTable table = inst.getTable(Constants.kRobotString);
+        int scoringOffset = (int) table.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( );
 
         switch (desiredReefTag)
         {
