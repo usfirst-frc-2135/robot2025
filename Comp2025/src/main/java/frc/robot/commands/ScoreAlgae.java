@@ -66,7 +66,7 @@ public class ScoreAlgae extends SequentialCommandGroup
         new LogCommand(getName(),"Manipulator already at safe position - carrying algae"),
         // manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator:: getAngleAlgae23),
 
-        new LogCommand(getName(), "Move Elevator to processor/net height & move Manipulator to processor/net position"),
+        new LogCommand(getName(), "Move Elevator to processor/net height"),
         new SelectCommand<>( 
           // Maps selector values to commands 
           Map.ofEntries( 
@@ -101,7 +101,7 @@ public class ScoreAlgae extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), // Manipulator Safe State
         
         new LogCommand(getName(), "Move Elevator to stowed height"),
-        elevator.getMoveToPositionCommand(elevator::getHeightStowed) // stowed
+        elevator.getMoveToPositionCommand(elevator::getHeightStowed)
         
         // @formatter:on
     );

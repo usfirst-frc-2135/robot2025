@@ -85,8 +85,8 @@ public class AcquireAlgae extends SequentialCommandGroup
               this::selectLevel),
         
         new LogCommand(getName(), "Wait for algae to be acquired"),
-        manipulator.getMoveToPositionCommand(ClawMode.ALGAEACQUIRE, manipulator::getCurrentAngle), //level 2/3
-        new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is acquired 
+        manipulator.getMoveToPositionCommand(ClawMode.ALGAEACQUIRE, manipulator::getCurrentAngle),
+        new WaitUntilCommand(manipulator::isAlgaeDetected),
       
         new LogCommand(getName(), "Stop algae rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, manipulator::getCurrentAngle),
@@ -94,9 +94,7 @@ public class AcquireAlgae extends SequentialCommandGroup
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         
         new LogCommand(getName(), "Move Elevator to lower height - safe for algae travel"),
-        elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23), // stowed
-
-        new LogCommand(getName(), "Keep manipulator in current position while holding algae")
+        elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23)
         
         // @formatter:on
     );
