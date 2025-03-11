@@ -74,7 +74,7 @@ public class Manipulator extends SubsystemBase
   private static final DutyCycleOut kClawRollerStop      = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
 
   private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.5).withIgnoreHardwareLimits(false);
-  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.15).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.15).withIgnoreHardwareLimits(true); // TODO: faster?
 
   private static final DutyCycleOut kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
@@ -97,20 +97,20 @@ public class Manipulator extends SubsystemBase
   }
 
   private static final double         kToleranceDegrees         = 3.0;      // PID tolerance in degrees
-  private static final double         kMMDebounceTime           = 0.060;    // Seconds to debounce a final angle check
-  private static final double         kMMMoveTimeout            = 2.0;      // Seconds allowed for a Motion Magic movement
+  private static final double         kMMDebounceTime           = 0.060;    // Seconds to debounce a final angle check // TODO: shorten?
+  private static final double         kMMMoveTimeout            = 2.0;      // Seconds allowed for a Motion Magic movement // TODO: shorten?
 
   // Wrist rotary angles - Motion Magic move parameters
   //    Measured hardstops and pre-defined positions:
   //               hstop    hstop
   //      Comp     -119.0   52.0
   //      Practice -119.0   52.0
-  private static final double         kWristAngleMin            = -119.0;
-  private static final double         kWristAngleMax            = 52.0;
+  private static final double         kWristAngleMin            = -129.0;
+  private static final double         kWristAngleMax            = 51.0;
 
-  private static final double         kWristAngleSafeState      = -92.0;
+  private static final double         kWristAngleSafeState      = -100.0;
 
-  private static final double         kWristAngleCoralStation   = -119.0;
+  private static final double         kWristAngleCoralStation   = -129.0;
   private static final double         kWristAngleCoralL1        = -95.0;
   private static final double         kWristAngleCoralL2        = -95.0;
   private static final double         kWristAngleCoralL3        = -95.0;

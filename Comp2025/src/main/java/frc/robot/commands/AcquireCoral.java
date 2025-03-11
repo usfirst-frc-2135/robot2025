@@ -44,14 +44,14 @@ public class AcquireCoral extends SequentialCommandGroup
         new LogCommand(getName(), "Move Elevator to coral station height"),
         elevator.getMoveToPositionCommand(elevator::getHeightCoralStation),
 
-        new LogCommand(getName(), "Start coral rollers & move Manipulator to coral station position"),
-        manipulator.getMoveToPositionCommand(ClawMode.CORALACQUIRE, manipulator::getAngleCoralStation), // get coral from coral station
+        new LogCommand(getName(), "Start coral rollers to acquire & hold Manipulator in coral station position"),
+        manipulator.getMoveToPositionCommand(ClawMode.CORALACQUIRE, manipulator::getAngleCoralStation),
 
-        new LogCommand(getName(), "Wait for coral"),
-        new WaitUntilCommand(manipulator::isCoralDetected).withTimeout(8.0), // checks if coral is acquired 
+        new LogCommand(getName(), "Wait for coral to be acquired"),
+        new WaitUntilCommand(manipulator::isCoralDetected).withTimeout(8.0),
       
-        new LogCommand(getName(), "Stop coral rollers"),
-        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getCurrentAngle),
+        new LogCommand(getName(), "Stop coral rollers move to safe state for next Elevator raise"),
+        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),
         hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity)     
 

@@ -91,17 +91,17 @@ public class ScoreCoral extends SequentialCommandGroup
               this::selectLevel), 
 
         new LogCommand(getName(), "Start coral rollers"),
-        manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle), //level 4
+        manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle),
         
         new LogCommand(getName(), "Wait for coral to expel"),
-        new WaitCommand(0.5),
-        new WaitUntilCommand(manipulator::isCoralExpelled), // checks if coral is expelled 
+        new WaitCommand(0.5),                                   // TODO: speed up?
+        new WaitUntilCommand(manipulator::isCoralExpelled),
       
         new LogCommand(getName(), "Stop coral rollers"), 
-        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), // Manipulator Safe State 
+        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), 
 
-        new LogCommand(getName(), "Move Elevator to stowed height"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralL2) // coral station height
+        new LogCommand(getName(), "Move Elevator only to L2 height in case coral drops into robot"),
+        elevator.getMoveToPositionCommand(elevator::getHeightCoralL2)
         
         // @formatter:on
     );

@@ -33,7 +33,6 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -124,7 +123,6 @@ public class RobotContainer
 
   // Selected autonomous command
   private Command                                     m_autoCommand;    // Selected autonomous command
-  private Timer                                       m_autoTimer     = new Timer( );
   private IntegerPublisher                            m_reefLevelPub;   // Level of the reef to score or acquire from (1-4)
   private IntegerPublisher                            m_reefOffsetPub;  // Branch of the reef to score or acquire from (left, middle, right)
 
@@ -182,14 +180,14 @@ public class RobotContainer
 
       Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START1.toString( ), "Start1_RJ_S1R_RK"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RI"),
-      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RC"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RD"),
 
       Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START1.toString( ), "Start1_RJ_S1R_RK_S1R_RL"),
-      Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK_S1R_RA"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK_S1R_RL"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RD_S2L_RC"),
 
       Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START1.toString( ), "Start1_RJ_S1R_RK_S1R_RL_S1R_RA"),
-      Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK_S1R_RA_S1R_RB"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK_S1R_RL_S1R_RA"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RD_S2L_RC_S2L_RB"),
 
       Map.entry(AutoChooser.AUTOPRELOADALGAE.toString( ) + StartPose.START1.toString( ), "Start1_RJ_RIJ_Net"),
@@ -210,7 +208,7 @@ public class RobotContainer
    */
   public RobotContainer( )
   {
-    Robot.timeMarker("robotContainer: before DAQ thread");
+    Robot.timeMarker("robotContainer: before heading controller and field layout");
 
     facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);    // Swerve steer PID for facing swerve request
     facing.HeadingController.enableContinuousInput(-180.0, 180.0);
@@ -255,7 +253,7 @@ public class RobotContainer
         NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
     m_reefOffsetPub = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString)
         .getIntegerTopic(VIConsts.kReefOffsetString).publish( );
-    m_reefLevelPub.set(3);  // Default to level 3 during auto
+    m_reefLevelPub.set(3);  // Default to level 3 during auto TODO: make 4 the default!
     m_reefOffsetPub.set(0); // Default to left branch
 
     // Build autonomous chooser objects on dashboard and fill the options
@@ -329,7 +327,7 @@ public class RobotContainer
     m_driverPad.a( ).onTrue(new LogCommand("driverPad", "A"));
     m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getReefAlignmentCommand( ), Set.of(m_drivetrain)));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
-    m_driverPad.y( ).whileTrue(getSlowSwerveCommand( ));
+    m_driverPad.y( ).whileTrue(getSlowSwerveCommand( )); // Note: left lower paddle!
 
     //
     // Driver - Bumpers, start, back
@@ -403,7 +401,7 @@ public class RobotContainer
     //
     m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));                  // aka View button
+    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));   // aka View button
     m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));  // aka Menu button
 
     //
