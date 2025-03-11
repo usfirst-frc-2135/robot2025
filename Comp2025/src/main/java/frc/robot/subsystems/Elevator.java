@@ -75,8 +75,8 @@ public class Elevator extends SubsystemBase
   private static final Voltage kManualSpeedVolts       = Volts.of(3.0); // Motor voltage during manual operation (joystick)
 
   private static final double  kToleranceInches        = 0.5;             // PID tolerance in inches
-  private static final double  kMMDebounceTime         = 0.060;           // Seconds to debounce a final position check
-  private static final double  kMMMoveTimeout          = 3.0;             // Seconds allowed for a Motion Magic movement
+  private static final double  kMMDebounceTime         = 0.060;           // Seconds to debounce a final position check // TODO: shorten?
+  private static final double  kMMMoveTimeout          = 3.0;             // Seconds allowed for a Motion Magic movement  // TODO: shorten?
 
   // Elevator heights - Motion Magic config parameters
   private static final double  kHeightStowed           = 0.0;             // By definition - full down

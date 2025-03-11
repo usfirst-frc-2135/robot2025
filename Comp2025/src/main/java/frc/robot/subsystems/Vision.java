@@ -3,12 +3,9 @@
 //
 package frc.robot.subsystems;
 
-import java.util.Optional;
-
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.LimelightHelpers;
 
@@ -110,19 +107,6 @@ public class Vision extends SubsystemBase
     LimelightHelpers.setLEDMode_ForceOff(kLLName);
     LimelightHelpers.setStreamMode_PiPSecondary(kLLName);
 
-    if (DriverStation.getAlliance( ).equals(Optional.of(DriverStation.Alliance.Red)))
-    {
-      setPriorityId(4, "RED");
-    }
-    else if (DriverStation.getAlliance( ).equals(Optional.of(DriverStation.Alliance.Blue)))
-    {
-      setPriorityId(7, "BLUE");
-    }
-    else
-    {
-      DataLogManager.log(String.format("%s: Driver station alliance color NOT SET!", getSubsystem( )));
-    }
-
     SetIMUMode(imuMode.EXTERNAL_SEED);
   }
 
@@ -206,23 +190,6 @@ public class Vision extends SubsystemBase
   {
     DataLogManager.log(String.format("%s: Set IMU Mode to %s", getSubsystem( ), mode));
     LimelightHelpers.SetIMUMode("limelight", mode.value);
-  }
-
-  ///////////////////////// PRIVATE HELPERS ///////////////////////////////
-
-  /****************************************************************************
-   * 
-   * Set priorityid and display alliance color
-   * 
-   * @param id
-   *          aprilTag ID to set as priority
-   * @param alliance
-   *          alliance color string selected
-   */
-  private void setPriorityId(int id, String alliance)
-  {
-    DataLogManager.log(String.format("%s: Set AprilTag priority id %d (%s)", getSubsystem( ), id, alliance));
-    LimelightHelpers.setPriorityTagID(kLLName, id);
   }
 
 }
