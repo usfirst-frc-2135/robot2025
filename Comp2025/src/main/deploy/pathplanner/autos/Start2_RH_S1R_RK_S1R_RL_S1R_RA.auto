@@ -31,6 +31,18 @@
         {
           "type": "path",
           "data": {
+            "pathName": "S1R-RL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RL-S1R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "S1R-RA"
           }
         }
@@ -38,6 +50,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "AutoPreloadCoral2",
+  "folder": "AutoPreloadCoral3",
   "choreoAuto": false
 }

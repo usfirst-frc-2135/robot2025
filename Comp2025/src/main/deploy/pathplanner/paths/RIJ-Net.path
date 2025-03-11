@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.017483014853777,
-        "y": 5.446657103166267
+        "x": 7.12725,
+        "y": 5.18525
       },
       "isLocked": false,
       "linkedName": "RIJ"
@@ -20,8 +20,8 @@
         "y": 6.14
       },
       "prevControl": {
-        "x": 6.878062023402646,
-        "y": 5.797162613993628
+        "x": 7.08040483720247,
+        "y": 5.785331939536951
       },
       "nextControl": null,
       "isLocked": false,
