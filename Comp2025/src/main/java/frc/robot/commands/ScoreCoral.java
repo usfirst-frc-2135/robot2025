@@ -94,8 +94,8 @@ public class ScoreCoral extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle),
         
         new LogCommand(getName(), "Wait for coral to expel"),
-        new WaitCommand(0.5),                                   // TODO: speed up?
         new WaitUntilCommand(manipulator::isCoralExpelled),
+        new WaitCommand(0.2),
       
         new LogCommand(getName(), "Stop coral rollers"), 
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), 
