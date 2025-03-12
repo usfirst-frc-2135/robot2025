@@ -41,7 +41,6 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
@@ -56,6 +55,7 @@ import frc.robot.autos.AutoPreloadCoral3;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.AcquireAlgae;
 import frc.robot.commands.AcquireCoral;
+import frc.robot.commands.ExpelCoral;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreAlgae;
 import frc.robot.commands.ScoreCoral;
@@ -324,21 +324,8 @@ public class RobotContainer
     // Driver Controller Assignments
     //
     // Driver - A, B, X, Y
-    //
-    m_driverPad.a( )
-        .onTrue(new InstantCommand(( ) -> new LogCommand(getName( ), "Start coral rollers"),
-            m_manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, m_manipulator::getCurrentAngle), //level 4
-
-            //new LogCommand(getName( ), "Wait for coral to expel"), new WaitCommand(0.5),
-            new WaitUntilCommand(m_manipulator::isCoralExpelled), // checks if coral is expelled 
-
-            //new LogCommand(getName( ), "Stop coral rollers"),
-            m_manipulator.getMoveToPositionCommand(ClawMode.STOP, m_manipulator::getAngleSafeState), // Manipulator Safe State 
-
-            //new LogCommand(getName( ), "Move Elevator to stowed height"),
-            m_elevator.getMoveToPositionCommand(m_elevator::getHeightCoralL2) // coral station height));
-        ));
-
+    // 
+    m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_led, m_hid));
     m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getReefAlignmentCommand( ), Set.of(m_drivetrain)));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).whileTrue(getSlowSwerveCommand( )); // Note: left lower paddle!
@@ -405,7 +392,7 @@ public class RobotContainer
     //
     // Operator - A, B, X, Y
     //
-    m_operatorPad.a( ).onTrue(new LogCommand("operPad", "A"));
+    m_operatorPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.b( ).onTrue(getReefOffsetSelectCommand(1));
     m_operatorPad.x( ).onTrue(getReefOffsetSelectCommand(0));
     m_operatorPad.y( ).onTrue(getReefOffsetSelectCommand(2));
