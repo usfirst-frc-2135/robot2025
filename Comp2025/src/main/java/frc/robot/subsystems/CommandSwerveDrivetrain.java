@@ -469,9 +469,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 {
                         mt2.pose.getX( ), mt2.pose.getY( ), mt2.pose.getRotation( ).getDegrees( )
                 });
-                setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-                // setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist,    // Code used by some teams to scale std devs by distance
-                //         Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
+                // setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999)); // Sample code from limelight
+                // Code used by some teams to scale std devs by distance (below) and used by several teams
+                setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist,
+                        Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
                 addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
             }
         }
