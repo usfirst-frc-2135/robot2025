@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 5.99,
-        "y": 0.45
+        "y": 0.59
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.122999999999999,
-        "y": 2.06525
+        "x": 5.873267045454546,
+        "y": 2.5633096590909084
       },
       "isLocked": false,
       "linkedName": "Proc"
@@ -20,8 +20,8 @@
         "y": 4.03
       },
       "prevControl": {
-        "x": 6.1425,
-        "y": 2.962249999999999
+        "x": 5.838182625596124,
+        "y": 2.9509367563347775
       },
       "nextControl": null,
       "isLocked": false,

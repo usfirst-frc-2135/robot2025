@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.49,
-        "y": 0.8
+        "x": 1.51,
+        "y": 0.74
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.99875,
-        "y": 1.7824999999999998
+        "x": 1.9825074315458386,
+        "y": 1.585507696880291
       },
       "isLocked": false,
       "linkedName": "S2L"
@@ -20,8 +20,8 @@
         "y": 3.86
       },
       "prevControl": {
-        "x": 2.66475,
-        "y": 2.972
+        "x": 2.779885062380872,
+        "y": 3.0007817427698975
       },
       "nextControl": null,
       "isLocked": false,
