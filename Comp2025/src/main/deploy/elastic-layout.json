@@ -30,9 +30,9 @@
           {
             "title": "Alerts",
             "x": 1024.0,
-            "y": 0.0,
+            "y": 256.0,
             "width": 256.0,
-            "height": 384.0,
+            "height": 256.0,
             "type": "Alerts",
             "properties": {
               "topic": "/SmartDashboard/Alerts",
@@ -66,19 +66,6 @@
             }
           },
           {
-            "title": "AutoChooserRun",
-            "x": 768.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/AutoChooserRun",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
             "title": "AutoDelay",
             "x": 768.0,
             "y": 256.0,
@@ -94,8 +81,8 @@
           },
           {
             "title": "MatchTime",
-            "x": 0.0,
-            "y": 384.0,
+            "x": 1024.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Match Time",
@@ -110,8 +97,8 @@
           },
           {
             "title": "ReefLevel",
-            "x": 384.0,
-            "y": 384.0,
+            "x": 1024.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Large Text Display",
@@ -123,8 +110,8 @@
           },
           {
             "title": "ReefOffset",
-            "x": 512.0,
-            "y": 384.0,
+            "x": 1152.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Large Text Display",
@@ -231,8 +218,8 @@
         "containers": [
           {
             "title": "ElCalibrate",
-            "x": 768.0,
-            "y": 384.0,
+            "x": 256.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -245,7 +232,7 @@
           {
             "title": "ElRunAlgae23",
             "x": 768.0,
-            "y": 0.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -258,7 +245,7 @@
           {
             "title": "ElRunAlgae34",
             "x": 768.0,
-            "y": 128.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -309,21 +296,8 @@
           },
           {
             "title": "ElRunCoralStation",
-            "x": 512.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/ElRunCoralStation",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "ElRunCoralStation",
             "x": 256.0,
-            "y": 0.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -335,8 +309,8 @@
           },
           {
             "title": "ElRunNet",
-            "x": 256.0,
-            "y": 384.0,
+            "x": 1024.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -348,8 +322,8 @@
           },
           {
             "title": "ElRunProcessor",
-            "x": 256.0,
-            "y": 256.0,
+            "x": 1024.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -362,12 +336,25 @@
           {
             "title": "ElRunStowed",
             "x": 256.0,
-            "y": 128.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
               "topic": "/SmartDashboard/ElRunStowed",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunCoralL4",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunCoralL4",
               "period": 0.06,
               "show_type": true
             }
@@ -522,8 +509,8 @@
           },
           {
             "title": "MNWristCoralL4",
-            "x": 512.0,
-            "y": 384.0,
+            "x": 768.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -548,8 +535,8 @@
           },
           {
             "title": "MNWristAlgaeNet",
-            "x": 256.0,
-            "y": 256.0,
+            "x": 1024.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -561,8 +548,8 @@
           },
           {
             "title": "MNWristAlgaeProcessor",
-            "x": 256.0,
-            "y": 384.0,
+            "x": 1024.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -581,6 +568,32 @@
             "type": "Command",
             "properties": {
               "topic": "/SmartDashboard/MNWristCoralStation",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNWristAlgaeL23",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristAlgaeL23",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNWristAlgaeL34",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristAlgaeL34",
               "period": 0.06,
               "show_type": true
             }
@@ -735,8 +748,8 @@
           },
           {
             "title": "MNAlgaeMaintain",
-            "x": 768.0,
-            "y": 384.0,
+            "x": 256.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -748,8 +761,8 @@
           },
           {
             "title": "MNAlgaeProcessor",
-            "x": 256.0,
-            "y": 256.0,
+            "x": 1024.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -761,8 +774,8 @@
           },
           {
             "title": "MNAlgaeShoot",
-            "x": 256.0,
-            "y": 384.0,
+            "x": 1024.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -873,7 +886,7 @@
           },
           {
             "title": "AcquireAlgae",
-            "x": 384.0,
+            "x": 256.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
@@ -886,7 +899,7 @@
           },
           {
             "title": "AcquireCoral",
-            "x": 384.0,
+            "x": 256.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
@@ -899,7 +912,7 @@
           },
           {
             "title": "ScoreAlgae",
-            "x": 640.0,
+            "x": 512.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
@@ -912,7 +925,7 @@
           },
           {
             "title": "ScoreCoral",
-            "x": 640.0,
+            "x": 512.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
@@ -925,13 +938,26 @@
           },
           {
             "title": "DriveToPoseCommand",
-            "x": 896.0,
+            "x": 768.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
               "topic": "/SmartDashboard/DriveToPoseCommand",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "AutoChooserRun",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/AutoChooserRun",
               "period": 0.06,
               "show_type": true
             }
