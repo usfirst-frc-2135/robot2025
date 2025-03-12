@@ -3,13 +3,18 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.49,
-        "y": 7.25
+        "x": 1.51,
+        "y": 7.31
       },
       "prevControl": null,
       "nextControl": {
+<<<<<<< Updated upstream
         "x": 3.939,
         "y": 6.3065
+=======
+        "x": 3.617968181749509,
+        "y": 5.987071029244254
+>>>>>>> Stashed changes
       },
       "isLocked": false,
       "linkedName": "S1L"
@@ -20,8 +25,13 @@
         "y": 5.04
       },
       "prevControl": {
+<<<<<<< Updated upstream
         "x": 4.446000000000001,
         "y": 6.189500000000001
+=======
+        "x": 4.304176911627016,
+        "y": 5.600708469607325
+>>>>>>> Stashed changes
       },
       "nextControl": null,
       "isLocked": false,
