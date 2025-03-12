@@ -55,6 +55,7 @@ import frc.robot.autos.AutoPreloadCoral3;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.AcquireAlgae;
 import frc.robot.commands.AcquireCoral;
+import frc.robot.commands.ExpelCoral;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreAlgae;
 import frc.robot.commands.ScoreCoral;
@@ -323,8 +324,8 @@ public class RobotContainer
     // Driver Controller Assignments
     //
     // Driver - A, B, X, Y
-    //
-    m_driverPad.a( ).onTrue(new LogCommand("driverPad", "A"));
+    // 
+    m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_led, m_hid));
     m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getReefAlignmentCommand( ), Set.of(m_drivetrain)));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).whileTrue(getSlowSwerveCommand( )); // Note: left lower paddle!
@@ -391,7 +392,7 @@ public class RobotContainer
     //
     // Operator - A, B, X, Y
     //
-    m_operatorPad.a( ).onTrue(new LogCommand("operPad", "A"));
+    m_operatorPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.b( ).onTrue(getReefOffsetSelectCommand(1));
     m_operatorPad.x( ).onTrue(getReefOffsetSelectCommand(0));
     m_operatorPad.y( ).onTrue(getReefOffsetSelectCommand(2));
