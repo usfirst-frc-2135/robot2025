@@ -253,7 +253,7 @@ public class RobotContainer
         NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
     m_reefOffsetPub = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString)
         .getIntegerTopic(VIConsts.kReefOffsetString).publish( );
-    m_reefLevelPub.set(3);  // Default to level 3 during auto TODO: make 4 the default!
+    m_reefLevelPub.set(4);  // Default to level 4 during auto
     m_reefOffsetPub.set(0); // Default to left branch
 
     // Build autonomous chooser objects on dashboard and fill the options
@@ -627,7 +627,7 @@ public class RobotContainer
 
   public Command getReefLevelCommand( ) // Command supplier to set default reef level
   {
-    return getReefLevelSelectCommand(3);
+    return getReefLevelSelectCommand(4);
   }
 
   /****************************************************************************
