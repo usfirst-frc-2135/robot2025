@@ -65,7 +65,7 @@ public class Elevator extends SubsystemBase
   private static final String  kSubsystemName          = "Elevator";
   private static final double  kGearRatio              = 9.706;           // Gear reduction
   private static final double  kHeightInchesMin        = 0.0;             // Minimum allowable height
-  private static final double  kHeightInchesMax        = 25.62;           // Maximum allowable height TODO: temporary for this manipulator!
+  private static final double  kHeightInchesMax        = 30.5;           // Maximum allowable height TODO: temporary for this manipulator!
   private static final double  kSimHeightMetersMin     = Units.inchesToMeters(kHeightInchesMin - 0.1); // Make sim height range larger than useful range
   private static final double  kSimHeightMetersMax     = Units.inchesToMeters(kHeightInchesMax + 0.1);
   private static final double  kCarriageMassKg         = Units.lbsToKilograms(20.0);     // Simulation
@@ -75,17 +75,17 @@ public class Elevator extends SubsystemBase
   private static final Voltage kManualSpeedVolts       = Volts.of(3.0); // Motor voltage during manual operation (joystick)
 
   private static final double  kToleranceInches        = 0.5;             // PID tolerance in inches
-  private static final double  kMMDebounceTime         = 0.060;           // Seconds to debounce a final position check
-  private static final double  kMMMoveTimeout          = 3.0;             // Seconds allowed for a Motion Magic movement
+  private static final double  kMMDebounceTime         = 0.060;           // Seconds to debounce a final position check // TODO: shorten?
+  private static final double  kMMMoveTimeout          = 3.0;             // Seconds allowed for a Motion Magic movement  // TODO: shorten?
 
   // Elevator heights - Motion Magic config parameters
   private static final double  kHeightStowed           = 0.0;             // By definition - full down
   private static final double  kHeightCoralStation     = 0.0;             // By definition - at coral station
 
   private static final double  kHeightCoralL1          = 3.0;             // By definition - at L1 for scoring coral
-  private static final double  kHeightCoralL2          = 6.5;             // By definition - at L2 for scoring coral
-  private static final double  kHeightCoralL3          = 14.5;            // By definition - at L3 for scoring coral
-  private static final double  kHeightCoralL4          = 26.95;           // By definition - at L4 for scoring coral
+  private static final double  kHeightCoralL2          = 8.25;             // By definition - at L2 for scoring coral
+  private static final double  kHeightCoralL3          = 15.5;            // By definition - at L3 for scoring coral
+  private static final double  kHeightCoralL4          = 27.95;           // By definition - at L4 for scoring coral
 
   private static final double  kHeightAlgaeL23         = 12.5;            // By definition - at L23 for taking algae
   private static final double  kHeightAlgaeL34         = 20.5;            // By definition - at L34 for taking algae

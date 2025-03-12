@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.6885,
-        "y": 1.34375
+        "x": 6.122999999999999,
+        "y": 2.06525
       },
       "isLocked": false,
       "linkedName": "Proc"
@@ -20,8 +20,8 @@
         "y": 4.03
       },
       "prevControl": {
-        "x": 6.4247499999999995,
-        "y": 3.1377500000000005
+        "x": 6.1425,
+        "y": 2.962249999999999
       },
       "nextControl": null,
       "isLocked": false,

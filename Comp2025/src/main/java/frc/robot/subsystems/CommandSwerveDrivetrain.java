@@ -385,7 +385,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private void initDashboard( )
     {
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
-        NetworkTable table = NetworkTableInstance.getDefault( ).getTable("swerve");
+        NetworkTable table = inst.getTable("swerve");
 
         poseXEntry = table.getDoubleTopic("X").getEntry(0.0);
         poseYEntry = table.getDoubleTopic("Y").getEntry(0.0);
@@ -469,9 +469,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 {
                         mt2.pose.getX( ), mt2.pose.getY( ), mt2.pose.getRotation( ).getDegrees( )
                 });
-                setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-                // setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist,    // Code used by some teams to scale std devs by distance
-                //         Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
+                // setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999)); // Sample code from limelight
+                // Code used by some teams to scale std devs by distance (below) and used by several teams
+                setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist,
+                        Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
                 addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
             }
         }
@@ -486,7 +487,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command getReefAlignmentCommand( )
     {
         Pose2d targetPose = findTargetPose( );
-        NetworkTable inst = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
+        NetworkTable table = inst.getTable(Constants.kRobotString);
 
         // TODO: Updates needed
         //  1) The path following command will need to have a Path created from the current robot pose and the desired pose
@@ -503,7 +504,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return new SequentialCommandGroup(                                                                              //
                 AutoBuilder.pathfindToPoseFlipped(targetPose, kPathFindConstraints, 0.0),               //
                 new LogCommand("Desired Offset", String.format("Desired Offset .......................",
-                        inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( )))              //
+                        table.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( )))              //
         );
     }
 
@@ -517,7 +518,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private int[ ] redReefTags  =
     {
-            6, 7, 8, 9, 10, 11
+            8, 7, 6, 11, 10, 9
     };
 
     /*
@@ -565,8 +566,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         int desiredReefTag = findClosestReefTag( );
         Pose2d desiredPose2d = new Pose2d( );
 
-        NetworkTable inst = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
-        int scoringOffset = (int) inst.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( );
+        NetworkTable table = inst.getTable(Constants.kRobotString);
+        int scoringOffset = (int) table.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( );
 
         switch (desiredReefTag)
         {

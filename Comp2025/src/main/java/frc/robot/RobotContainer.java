@@ -33,7 +33,6 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -125,7 +124,6 @@ public class RobotContainer
 
   // Selected autonomous command
   private Command                                     m_autoCommand;    // Selected autonomous command
-  private Timer                                       m_autoTimer     = new Timer( );
   private IntegerPublisher                            m_reefLevelPub;   // Level of the reef to score or acquire from (1-4)
   private IntegerPublisher                            m_reefOffsetPub;  // Branch of the reef to score or acquire from (left, middle, right)
 
@@ -183,14 +181,14 @@ public class RobotContainer
 
       Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START1.toString( ), "Start1_RJ_S1R_RK"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RI"),
-      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RC"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RD"),
 
       Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START1.toString( ), "Start1_RJ_S1R_RK_S1R_RL"),
-      Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK_S1R_RA"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK_S1R_RL"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RD_S2L_RC"),
 
       Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START1.toString( ), "Start1_RJ_S1R_RK_S1R_RL_S1R_RA"),
-      Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK_S1R_RA_S1R_RB"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK_S1R_RL_S1R_RA"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RD_S2L_RC_S2L_RB"),
 
       Map.entry(AutoChooser.AUTOPRELOADALGAE.toString( ) + StartPose.START1.toString( ), "Start1_RJ_RIJ_Net"),
@@ -211,7 +209,7 @@ public class RobotContainer
    */
   public RobotContainer( )
   {
-    Robot.timeMarker("robotContainer: before DAQ thread");
+    Robot.timeMarker("robotContainer: before heading controller and field layout");
 
     facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);    // Swerve steer PID for facing swerve request
     facing.HeadingController.enableContinuousInput(-180.0, 180.0);
@@ -256,7 +254,7 @@ public class RobotContainer
         NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
     m_reefOffsetPub = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString)
         .getIntegerTopic(VIConsts.kReefOffsetString).publish( );
-    m_reefLevelPub.set(3);  // Default to level 3 during auto
+    m_reefLevelPub.set(4);  // Default to level 4 during auto
     m_reefOffsetPub.set(0); // Default to left branch
 
     // Build autonomous chooser objects on dashboard and fill the options
@@ -343,7 +341,7 @@ public class RobotContainer
 
     m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getReefAlignmentCommand( ), Set.of(m_drivetrain)));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
-    m_driverPad.y( ).whileTrue(getSlowSwerveCommand( ));
+    m_driverPad.y( ).whileTrue(getSlowSwerveCommand( )); // Note: left lower paddle!
 
     //
     // Driver - Bumpers, start, back
@@ -417,7 +415,7 @@ public class RobotContainer
     //
     m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));                  // aka View button
+    m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));   // aka View button
     m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));  // aka Menu button
 
     //
@@ -483,6 +481,28 @@ public class RobotContainer
 
   /****************************************************************************
    * 
+   * Reset odometery to initial pose in the first autonomous path
+   */
+  List<PathPlannerPath> m_ppPathList;
+  PathPlannerPath       m_initialPath;
+
+  void resetOdometryToInitialPose(PathPlannerPath initialPath)
+  {
+    // Set field centric robot position to start of auto sequence
+    try
+    {
+      Optional<Pose2d> startPose = initialPath.getStartingHolonomicPose( );
+      m_drivetrain.resetPose(startPose.get( ));
+      DataLogManager.log(String.format("getAuto: starting pose %s", startPose));
+    }
+    catch (Exception nullException)
+    {
+      DataLogManager.log(String.format("getAuto: ERROR! - starting pose is missing"));
+    }
+  }
+
+  /****************************************************************************
+   * 
    * Use this to pass the autonomous command to the main Robot class.
    *
    * @return the command to run in autonomous
@@ -493,6 +513,7 @@ public class RobotContainer
     StartPose startOption = m_startChooser.getSelected( );
     String autoKey = autoOption.toString( ) + startOption.toString( );
 
+    // Cancel any autos that were already running
     if (m_autoCommand != null)
     {
       if (m_autoCommand.isScheduled( ))
@@ -500,7 +521,7 @@ public class RobotContainer
       m_autoCommand = null;
     }
 
-    // Get auto value using created key
+    // Get auto name using created key
     String autoName = autoMap.get(autoKey);
     DataLogManager.log(String.format("===================================================================="));
     DataLogManager.log(String.format("getAuto: autoKey: %s  autoName: %s", autoKey, autoName));
@@ -513,11 +534,10 @@ public class RobotContainer
       return m_autoCommand = m_drivetrain.applyRequest(( ) -> idle);
     }
 
-    // Get list of paths within the auto
-    List<PathPlannerPath> ppPathList;
+    // Get list of paths within the auto file
     try
     {
-      ppPathList = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
+      m_ppPathList = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
     }
     catch (ParseException | IOException e)
     {
@@ -525,38 +545,20 @@ public class RobotContainer
       return m_autoCommand = m_drivetrain.applyRequest(( ) -> idle);
     }
 
-    if (ppPathList.isEmpty( ))
+    if (m_ppPathList.isEmpty( ))
     {
       DataLogManager.log(String.format("getAuto: ERROR - auto path list is empty"));
       return m_autoCommand = m_drivetrain.applyRequest(( ) -> idle);
     }
 
-    DataLogManager.log(String.format("getAuto: %s contains %s paths in list", autoName, ppPathList.size( )));
-
-    // If on red alliance, flip each path
-    PathPlannerPath initialPath = ppPathList.get(0);
-    if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
-      initialPath = initialPath.flipPath( );
+    DataLogManager.log(String.format("getAuto: %s contains %s paths in list", autoName, m_ppPathList.size( )));
 
     // {
     //   // Debug only: print states of first path
-    //   List<PathPlannerTrajectory.State> states = initialPath.getTrajectory(new ChassisSpeeds( ), new Rotation2d( )).getStates( );
+    //   List<PathPlannerTrajectory.State> states = m_initialPath.getTrajectory(new ChassisSpeeds( ), new Rotation2d( )).getStates( );
     //   for (int i = 0; i < states.size( ); i++)
     //     DataLogManager.log(String.format("autoCommand: Auto path state: (%d) %s", i, states.get(i).getTargetHolonomicPose( )));
     // }
-
-    // Set field centric robot position to start of auto sequence
-    Optional<Pose2d> startPose;
-    try
-    {
-      startPose = initialPath.getStartingHolonomicPose( );
-    }
-    catch (Exception nullException)
-    {
-      DataLogManager.log(String.format("getAuto: starting pose is missing"));
-      return m_autoCommand = m_drivetrain.applyRequest(( ) -> idle);
-    }
-    m_drivetrain.resetPose(startPose.get( ));
 
     // Create the correct base command and pass the path list
     switch (autoOption)
@@ -566,42 +568,51 @@ public class RobotContainer
         m_autoCommand = m_drivetrain.applyRequest(( ) -> idle);
         break;
       case AUTOLEAVE :
-        m_autoCommand = new AutoLeave(ppPathList, m_drivetrain, m_led);
+        m_autoCommand = new AutoLeave(m_ppPathList, m_drivetrain, m_led);
         break;
       case AUTOPRELOAD :
         m_autoCommand =
-            new AutoPreload(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreload(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADCORAL :
         m_autoCommand =
-            new AutoPreloadCoral(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreloadCoral(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADCORAL2 :
         m_autoCommand =
-            new AutoPreloadCoral2(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreloadCoral2(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADCORAL3 :
         m_autoCommand =
-            new AutoPreloadCoral3(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreloadCoral3(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADALGAE :
         m_autoCommand =
-            new AutoPreloadAlgae(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreloadAlgae(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADALGAE2 :
         m_autoCommand =
-            new AutoPreloadAlgae2(ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreloadAlgae2(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
         break;
       case AUTOTEST :
-        m_autoCommand = new AutoTest(ppPathList, m_drivetrain);
+        m_autoCommand = new AutoTest(m_ppPathList, m_drivetrain);
         break;
     }
 
-    DataLogManager.log(String.format("getAuto: autoMode %s startOption %s (%s)", autoKey, startPose, m_autoCommand.getName( )));
+    DataLogManager.log(String.format("getAuto: autoMode %s (%s)", autoKey, m_autoCommand.getName( )));
 
+    // Build the autonomous command to run
     double delay = SmartDashboard.getNumber("AutoDelay", 0.0);
     m_autoCommand = new SequentialCommandGroup(                                                       //
         new InstantCommand(( ) -> Robot.timeMarker("AutoStart")),                                 //
+        new InstantCommand(( ) ->
+        {
+          // If on red alliance, flip each path, then reset odometry
+          m_initialPath = m_ppPathList.get(0);
+          if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
+            m_initialPath = m_initialPath.flipPath( );
+          resetOdometryToInitialPose(m_initialPath);
+        }),                                                                                           //
         new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)), //
         new WaitCommand(delay),                                                                       //
         m_autoCommand,                                                                                //
@@ -643,7 +654,7 @@ public class RobotContainer
 
   public Command getReefLevelCommand( ) // Command supplier to set default reef level
   {
-    return getReefLevelSelectCommand(3);
+    return getReefLevelSelectCommand(4);
   }
 
   /****************************************************************************

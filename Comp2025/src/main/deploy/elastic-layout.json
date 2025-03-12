@@ -30,9 +30,9 @@
           {
             "title": "Alerts",
             "x": 1024.0,
-            "y": 0.0,
+            "y": 256.0,
             "width": 256.0,
-            "height": 384.0,
+            "height": 256.0,
             "type": "Alerts",
             "properties": {
               "topic": "/SmartDashboard/Alerts",
@@ -66,19 +66,6 @@
             }
           },
           {
-            "title": "AutoChooserRun",
-            "x": 768.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/AutoChooserRun",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
             "title": "AutoDelay",
             "x": 768.0,
             "y": 256.0,
@@ -94,8 +81,8 @@
           },
           {
             "title": "MatchTime",
-            "x": 0.0,
-            "y": 384.0,
+            "x": 1024.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Match Time",
@@ -107,17 +94,281 @@
               "red_start_time": 15,
               "yellow_start_time": 30
             }
+          },
+          {
+            "title": "ReefLevel",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/RobotContainer/ReefLevel",
+              "period": 0.06,
+              "data_type": "int"
+            }
+          },
+          {
+            "title": "ReefOffset",
+            "x": 1152.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/RobotContainer/ReefOffset",
+              "period": 0.06,
+              "data_type": "int"
+            }
           }
         ]
       }
     },
     {
-      "name": "Command",
+      "name": "Elevator",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "elevator",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 512.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "calibrated",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/elevator/calibrated",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "currentInches",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/elevator/currentInches",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "leftInches",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/elevator/leftInches",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "rightInches",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/elevator/rightInches",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "targetInches",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/elevator/targetInches",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "title": "ElCalibrate",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElCalibrate",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunAlgae23",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunAlgae23",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunAlgae34",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunAlgae34",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunCoralL1",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunCoralL1",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunCoralL2",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunCoralL2",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunCoralL3",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunCoralL3",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunCoralStation",
+            "x": 256.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunCoralStation",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunNet",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunNet",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunProcessor",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunProcessor",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunStowed",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunStowed",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ElRunCoralL4",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElRunCoralL4",
+              "period": 0.06,
+              "show_type": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Wrist",
       "grid_layout": {
         "layouts": [
           {
             "title": "manipulator",
-            "x": 256.0,
+            "x": 0.0,
             "y": 0.0,
             "width": 256.0,
             "height": 512.0,
@@ -214,9 +465,148 @@
                 }
               }
             ]
+          }
+        ],
+        "containers": [
+          {
+            "title": "MNWristCoralL1",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristCoralL1",
+              "period": 0.06,
+              "show_type": true
+            }
           },
           {
-            "title": "elevator",
+            "title": "MNWristCoralL2",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristCoralL2",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNWristCoralL3",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristCoralL3",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNWristCoralL4",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristCoralL4",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNWrisSafeState",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWrisSafeState",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNWristAlgaeNet",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristAlgaeNet",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNWristAlgaeProcessor",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristAlgaeProcessor",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNWristCoralStation",
+            "x": 256.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristCoralStation",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNWristAlgaeL23",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristAlgaeL23",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNWristAlgaeL34",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristAlgaeL34",
+              "period": 0.06,
+              "show_type": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Roller Claw",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "manipulator",
             "x": 0.0,
             "y": 0.0,
             "width": 256.0,
@@ -227,14 +617,14 @@
             },
             "children": [
               {
-                "title": "calibrated",
+                "title": "algaeDetected",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Boolean Box",
                 "properties": {
-                  "topic": "/elevator/calibrated",
+                  "topic": "/manipulator/algaeDetected",
                   "period": 0.06,
                   "data_type": "boolean",
                   "true_color": 4283215696,
@@ -244,56 +634,70 @@
                 }
               },
               {
-                "title": "currentInches",
+                "title": "ccDegrees",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/elevator/currentInches",
+                  "topic": "/manipulator/ccDegrees",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "leftInches",
+                "title": "clawSpeed",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/elevator/leftInches",
+                  "topic": "/manipulator/clawSpeed",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "rightInches",
+                "title": "clawSupCur",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/elevator/rightInches",
+                  "topic": "/manipulator/clawSupCur",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
                 }
               },
               {
-                "title": "targetInches",
+                "title": "targetDegrees",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/elevator/targetInches",
+                  "topic": "/manipulator/targetDegrees",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "wristDegrees",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/manipulator/wristDegrees",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -304,86 +708,86 @@
         ],
         "containers": [
           {
-            "title": "HIDRumbleDriver",
-            "x": 0.0,
-            "y": 512.0,
+            "title": "MNAlgaeAcquire",
+            "x": 768.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/HIDRumbleDriver",
+              "topic": "/SmartDashboard/MNAlgaeAcquire",
               "period": 0.06,
               "show_type": true
             }
           },
           {
-            "title": "HIDRumbleOperator",
-            "x": 256.0,
-            "y": 512.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/HIDRumbleOperator",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "MNClawExpel",
-            "x": 1024.0,
+            "title": "MNAlgaeExpel",
+            "x": 768.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/MNClawExpel",
+              "topic": "/SmartDashboard/MNAlgaeExpel",
               "period": 0.06,
               "show_type": true
             }
           },
           {
-            "title": "MNClawAcquire",
+            "title": "MNAlgaeHold",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNAlgaeHold",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNAlgaeMaintain",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNAlgaeMaintain",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNAlgaeProcessor",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNAlgaeProcessor",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNAlgaeShoot",
             "x": 1024.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/MNClawAcquire",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "MNClawHold",
-            "x": 1024.0,
-            "y": 512.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/MNClawHold",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "MNClawShoot",
-            "x": 1024.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/MNClawShoot",
+              "topic": "/SmartDashboard/MNAlgaeShoot",
               "period": 0.06,
               "show_type": true
             }
           },
           {
             "title": "MNClawStop",
-            "x": 1024.0,
+            "x": 256.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
@@ -395,131 +799,165 @@
             }
           },
           {
-            "title": "MNWristRetract",
-            "x": 768.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/MNWristRetract",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "ElRunStowed",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/ElRunStowed",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "ElRunCoralL1",
+            "title": "MNCoralAcquire",
             "x": 512.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/ElRunCoralL1",
+              "topic": "/SmartDashboard/MNCoralAcquire",
               "period": 0.06,
               "show_type": true
             }
           },
           {
-            "title": "ElRunCoralL2",
+            "title": "MNCoralExpel",
             "x": 512.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/ElRunCoralL2",
+              "topic": "/SmartDashboard/MNCoralExpel",
               "period": 0.06,
               "show_type": true
             }
           },
           {
-            "title": "ElRunCoralL4",
+            "title": "MNCoralHold",
             "x": 512.0,
-            "y": 384.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/ElRunCoralL4",
+              "topic": "/SmartDashboard/MNCoralHold",
               "period": 0.06,
               "show_type": true
             }
-          },
+          }
+        ]
+      }
+    },
+    {
+      "name": "Commands",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
           {
-            "title": "ElRunNet",
-            "x": 512.0,
-            "y": 512.0,
+            "title": "HIDRumbleDriver",
+            "x": 0.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/ElRunNet",
+              "topic": "/SmartDashboard/HIDRumbleDriver",
               "period": 0.06,
               "show_type": true
             }
           },
           {
-            "title": "MNWristAngleCoral1",
+            "title": "HIDRumbleOperator",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/HIDRumbleOperator",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "LEDSet",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/LEDSet",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "AcquireAlgae",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/AcquireAlgae",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "AcquireCoral",
+            "x": 256.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/AcquireCoral",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ScoreAlgae",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ScoreAlgae",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ScoreCoral",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ScoreCoral",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "DriveToPoseCommand",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/DriveToPoseCommand",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "AutoChooserRun",
             "x": 768.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/MNWristAngleCoral1",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "MNWristAngleCoral2",
-            "x": 768.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/MNWristAngleCoral2",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "MNWristAngleCoral4",
-            "x": 768.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/MNWristAngleCoral4",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "MNWristAngleAlgaeNet",
-            "x": 768.0,
-            "y": 512.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/MNWristAngleAlgaeNet",
+              "topic": "/SmartDashboard/AutoChooserRun",
               "period": 0.06,
               "show_type": true
             }
