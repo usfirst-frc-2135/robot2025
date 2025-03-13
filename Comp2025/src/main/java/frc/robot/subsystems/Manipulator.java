@@ -184,11 +184,11 @@ public class Manipulator extends SubsystemBase
   private boolean                     m_algaeDetected;
 
   // Manual mode config parameters
-  private VoltageOut                  m_wristRequestVolts       = new VoltageOut(Volts.of(0));
+  private VoltageOut                  m_wristRequestVolts       = new VoltageOut(Volts.of(0)).withEnableFOC(true);
   private WristMode                   m_wristMode               = WristMode.INIT;   // Manual movement mode with joysticks
 
   // Motion Magic config parameters
-  private MotionMagicVoltage          m_mmRequestVolts          = new MotionMagicVoltage(0).withSlot(0);
+  private MotionMagicVoltage          m_mmRequestVolts          = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
   private Debouncer                   m_mmWithinTolerance       = new Debouncer(kMMDebounceTime, DebounceType.kRising);
   private Timer                       m_mmMoveTimer             = new Timer( );     // Movement timer
   private boolean                     m_mmMoveIsFinished;           // Movement has completed (within tolerance)

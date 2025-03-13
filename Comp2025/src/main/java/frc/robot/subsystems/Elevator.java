@@ -137,11 +137,11 @@ public class Elevator extends SubsystemBase
   private boolean                     m_calibrated        = false;
 
   // Manual mode config parameters
-  private VoltageOut                  m_requestVolts      = new VoltageOut(Volts.of(0));
+  private VoltageOut                  m_requestVolts      = new VoltageOut(Volts.of(0)).withEnableFOC(true);
   private JoystickMode                m_mode              = JoystickMode.INIT;      // Manual movement mode with joysticks
 
   // Motion Magic mode config parameters
-  private MotionMagicVoltage          m_mmRequestVolts    = new MotionMagicVoltage(0).withSlot(0);
+  private MotionMagicVoltage          m_mmRequestVolts    = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
   private Debouncer                   m_mmWithinTolerance = new Debouncer(kMMDebounceTime, DebounceType.kRising);
   private Timer                       m_mmMoveTimer       = new Timer( );           // Movement timer
   private Voltage                     m_mmArbFeedForward  = Volts.of(0);  // Arbitrary feedforward added to counteract gravity
