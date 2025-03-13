@@ -961,6 +961,19 @@
               "period": 0.06,
               "show_type": true
             }
+          },
+          {
+            "title": "ExpelCoral",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ExpelCoral",
+              "period": 0.06,
+              "show_type": true
+            }
           }
         ]
       }
