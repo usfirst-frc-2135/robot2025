@@ -48,7 +48,7 @@ public class AcquireCoral extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(ClawMode.CORALACQUIRE, manipulator::getAngleCoralStation),
 
         new LogCommand(getName(), "Wait for coral to be acquired"),
-        new WaitUntilCommand(manipulator::isCoralDetected).withTimeout(8.0),
+        new WaitUntilCommand(manipulator::isCoralDetected),
       
         new LogCommand(getName(), "Stop coral rollers move to safe state for next Elevator raise"),
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),

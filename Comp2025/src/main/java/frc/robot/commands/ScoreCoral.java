@@ -7,8 +7,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
@@ -88,20 +86,7 @@ public class ScoreCoral extends SequentialCommandGroup
                 Map.entry(ReefLevel.THREE, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL3)), 
                 Map.entry(ReefLevel.FOUR, manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4))
               ), 
-              this::selectLevel), 
-
-        new LogCommand(getName(), "Start coral rollers"),
-        manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle),
-        
-        new LogCommand(getName(), "Wait for coral to expel"),
-        new WaitUntilCommand(manipulator::isCoralExpelled),
-        new WaitCommand(0.2),
-      
-        new LogCommand(getName(), "Stop coral rollers"), 
-        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), 
-
-        new LogCommand(getName(), "Move Elevator only to L2 height in case coral drops into robot"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralL2)
+              this::selectLevel)
         
         // @formatter:on
     );

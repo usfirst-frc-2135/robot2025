@@ -8,6 +8,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AcquireAlgae;
+import frc.robot.commands.ExpelCoral;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreAlgae;
 import frc.robot.commands.ScoreCoral;
@@ -52,6 +53,7 @@ public class AutoPreloadAlgae2 extends SequentialCommandGroup
         new LogCommand(getName(), "Drive to branch and score preload coral"),
         drivetrain.getPathCommand(ppPaths.get(0)),
         new ScoreCoral(elevator, manipulator, led, hid),
+        new ExpelCoral(elevator, manipulator, led, hid),
 
         new LogCommand(getName(), "Drive to face and acquire algae"),
         drivetrain.getPathCommand(ppPaths.get(1)),

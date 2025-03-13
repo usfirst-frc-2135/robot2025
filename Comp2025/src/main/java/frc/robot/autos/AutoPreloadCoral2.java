@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AcquireCoral;
+import frc.robot.commands.ExpelCoral;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -56,6 +57,7 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
         new LogCommand(getName(), "Drive to branch and score preload coral"),
         drivetrain.getPathCommand(ppPaths.get(0)),
         new ScoreCoral(elevator, manipulator, led, hid),
+        new ExpelCoral(elevator, manipulator, led, hid),
 
         new LogCommand(getName(), "Drive to coral station and acquire second coral"),
         new ParallelCommandGroup(
@@ -66,6 +68,7 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
         new LogCommand(getName(), "Drive to branch and score second coral"),
         drivetrain.getPathCommand(ppPaths.get(2)),
         new ScoreCoral(elevator, manipulator, led, hid),
+        new ExpelCoral(elevator, manipulator, led, hid),
 
         new LogCommand(getName(), "Drive to coral station and acquire third coral"),
         new ParallelCommandGroup(
@@ -75,7 +78,8 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
 
         new LogCommand(getName(), "Drive to branch and score third coral"),   
         drivetrain.getPathCommand(ppPaths.get(4)),
-        new ScoreCoral(elevator, manipulator, led, hid)
+        new ScoreCoral(elevator, manipulator, led, hid),
+        new ExpelCoral(elevator, manipulator, led, hid)
         
         // @formatter:on
     );
