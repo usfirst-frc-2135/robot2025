@@ -3,6 +3,7 @@
 //
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -73,6 +74,7 @@ public class Elevator extends SubsystemBase
   private static final double  kSprocketRadiusMeters   = Units.inchesToMeters(kSprocketDiameterInches) / 2;
   private static final double  kRolloutRatio           = kSprocketDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
   private static final Voltage kManualSpeedVolts       = Volts.of(3.0); // Motor voltage during manual operation (joystick)
+  private static final double  kHardStopCurrentLimit   = 15.0;
 
   private static final double  kToleranceInches        = 0.5;             // PID tolerance in inches
   private static final double  kMMDebounceTime         = 0.040;           // Seconds to debounce a final position check
@@ -229,7 +231,13 @@ public class Elevator extends SubsystemBase
       m_currentHeightPub.set(m_currentHeight);
 
       // Zero elevator when fully down with limit switch OR below minimum
-      if ((DriverStation.isDisabled( ) && !m_calibrated && !m_elevatorDown.get( )) || (m_currentHeight < kHeightInchesMin))
+      if (DriverStation.isDisabled( ) && !m_calibrated && !m_elevatorDown.get( ))
+      {
+        calibrateHeight( );
+      }
+      else if (DriverStation.isEnabled( ) && !m_elevatorDown.get( ) &&    // 
+          ((m_leftSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit)
+              || (m_rightSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit)))
       {
         calibrateHeight( );
       }
