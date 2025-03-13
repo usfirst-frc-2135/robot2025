@@ -391,10 +391,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         poseYEntry = table.getDoubleTopic("Y").getEntry(0.0);
         poseRotEntry = table.getDoubleTopic("rotation").getEntry(0.0);
         SmartDashboard.putData("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
-        // TODO: This dashboard button will only run the closest AT ID selection
         SmartDashboard.putData("FaceSelector", new InstantCommand(( ) -> findClosestReefTag( )).ignoringDisable(true));
-        // TODO: This dashboard button will run the whole command
-        SmartDashboard.putData("DriveToPoseCommand", getDrivePathToPoseCommand(this, findTargetPose( )));
+        SmartDashboard.putData("DrivePathToPoseCommand", getDrivePathToPoseCommand(this, findTargetPose( )));
     }
 
     public Command getPathCommand(PathPlannerPath ppPath)
