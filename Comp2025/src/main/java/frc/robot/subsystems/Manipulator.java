@@ -97,8 +97,8 @@ public class Manipulator extends SubsystemBase
   }
 
   private static final double         kToleranceDegrees         = 3.0;      // PID tolerance in degrees
-  private static final double         kMMDebounceTime           = 0.060;    // Seconds to debounce a final angle check // TODO: shorten?
-  private static final double         kMMMoveTimeout            = 2.0;      // Seconds allowed for a Motion Magic movement // TODO: shorten?
+  private static final double         kMMDebounceTime           = 0.040;    // Seconds to debounce a final angle check
+  private static final double         kMMMoveTimeout            = 1.5;      // Seconds allowed for a Motion Magic movement
 
   // Wrist rotary angles - Motion Magic move parameters
   //    Measured hardstops and pre-defined positions:

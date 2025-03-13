@@ -45,8 +45,8 @@ public final class CTREConfigs6
     // exConfig.ClosedLoopRamps.*
 
     // Current limit settings
-    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;           // Amps
-    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0;      // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 25.0;           // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 28.0;      // Amps
     elevatorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;      // Seconds
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
@@ -77,8 +77,8 @@ public final class CTREConfigs6
     //                                                                  kG = (0.40 + 0.25) / 2
     //                                                                  kS = (0.40 - 0.25) / 2
     elevatorConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-    elevatorConfig.Slot0.kS = 0.075;                                  // Feedforward: Voltage or duty cylce to overcome static friction
-    elevatorConfig.Slot0.kG = 0.325;                                  // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
+    elevatorConfig.Slot0.kS = 0.075;                                  // Feedforward: Voltage or duty cycle to overcome static friction
+    elevatorConfig.Slot0.kG = 0.325;                                  // Feedforward: Voltage or duty cycle to overcome gravity (arbitrary feedforward)
     elevatorConfig.Slot0.kV = 0.1241;                                 // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
     elevatorConfig.Slot0.kP = 9.60;                                   // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
@@ -214,7 +214,7 @@ public final class CTREConfigs6
     clawRollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     clawRollerConfig.CurrentLimits.StatorCurrentLimit = 400.0;        // Amps
-    clawRollerConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+    clawRollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
     // clawRollerConfig.Feedback.*
