@@ -23,11 +23,14 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleEntry;
@@ -48,7 +51,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.VIConsts;
 import frc.robot.Robot;
-import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.lib.LimelightHelpers;
 
@@ -95,6 +97,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     /** Swerve request to apply during robot-centric path following */
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    PPHolonomicDriveController m_pathToPoseDriveController = new PPHolonomicDriveController(
+                // PID constants for translation
+                    new PIDConstants(10.0, 0.0, 0.0),
+                // PID constants for rotation
+                    new PIDConstants(7.0, 0.0, 0.0)
+                );
+
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -489,22 +498,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Pose2d targetPose = findTargetPose( );
         NetworkTable table = inst.getTable(Constants.kRobotString);
 
-        // TODO: Updates needed
-        //  1) The path following command will need to have a Path created from the current robot pose and the desired pose
-        //  2) So we need to get the reef offset from the publisher created in robotContainer, and also get the closest AT tag face
-        //  3) Create a pose that will let us score
-        //  4) Generate a path that starts with the current pose and ends at the target pose
-        //  6) Options:
-        //      a) PPLib FollowPath would follow this directly
-        //      b) PPLib PathFindToPose should also get to the correct destination, but may take longer
-        //      c) PPLib PathFindToPath is probably the highest accuracy, but may take more work
-
-        // Note that getReefAlignment can do all the work before returning the PPLib call we need to run the path
-
         return new SequentialCommandGroup(                                                                              //
-                AutoBuilder.pathfindToPoseFlipped(targetPose, kPathFindConstraints, 0.0),               //
-                new LogCommand("Desired Offset", String.format("Desired Offset .......................",
-                        table.getIntegerTopic(VIConsts.kReefOffsetString).subscribe(0).get( )))              //
+                AutoBuilder.pathfindToPoseFlipped(targetPose, kPathFindConstraints, 0.0)
+
         );
     }
 
