@@ -14,8 +14,10 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANrange;
@@ -576,38 +578,50 @@ public class Manipulator extends SubsystemBase
     }
     else
     {
-      switch (mode)
+      if (mode == ClawMode.ALGAEHOLD)
       {
-        default :
-          DataLogManager.log(String.format("%s: Claw mode is invalid: %s", getSubsystem( ), mode));
-        case STOP :
-          m_clawRequestVolts = (m_algaeDetected) ? kAlgaeSpeedHold : kClawRollerStop;
-          break;
-        case ALGAEACQUIRE :
-          m_clawRequestVolts = kAlgaeSpeedAcquire;
-          break;
-        case ALGAEEXPEL :
-          m_clawRequestVolts = kAlgaeSpeedExpel;
-          break;
-        case ALGAESHOOT :
-          m_clawRequestVolts = kAlgaeSpeedShoot;
-          break;
-        case ALGAEPROCESSOR :
-          m_clawRequestVolts = kAlgaeSpeedProcessor;
-          break;
-        case CORALACQUIRE :
-          m_clawRequestVolts = kCoralSpeedAcquire;
-          break;
-        case CORALEXPEL :
-          m_clawRequestVolts = kCoralSpeedExpel;
-          break;
-        case ALGAEHOLD :
-          m_clawRequestVolts = kAlgaeSpeedHold;
-          break;
+        double rotations = m_clawMotor.getPosition( ).getValueAsDouble( );
+        Slot0Configs slot0Configs = new Slot0Configs( ).withKP(0.5);
+        m_clawMotor.getConfigurator( ).apply(slot0Configs);
+        PositionDutyCycle positionDutyCycle = new PositionDutyCycle(rotations).withSlot(0).withEnableFOC(true);
+        m_clawMotor.setControl(positionDutyCycle);
+      }
+      else
+      {
+        switch (mode)
+        {
+          default :
+            DataLogManager.log(String.format("%s: Claw mode is invalid: %s", getSubsystem( ), mode));
+          case STOP :
+            m_clawRequestVolts = (m_algaeDetected) ? kAlgaeSpeedHold : kClawRollerStop;
+            break;
+          case ALGAEACQUIRE :
+            m_clawRequestVolts = kAlgaeSpeedAcquire;
+            break;
+          case ALGAEEXPEL :
+            m_clawRequestVolts = kAlgaeSpeedExpel;
+            break;
+          case ALGAESHOOT :
+            m_clawRequestVolts = kAlgaeSpeedShoot;
+            break;
+          case ALGAEPROCESSOR :
+            m_clawRequestVolts = kAlgaeSpeedProcessor;
+            break;
+          case CORALACQUIRE :
+            m_clawRequestVolts = kCoralSpeedAcquire;
+            break;
+          case CORALEXPEL :
+            m_clawRequestVolts = kCoralSpeedExpel;
+            break;
+          case ALGAEHOLD :  // Special case above the switch - this case doesn't execute!
+            m_clawRequestVolts = kAlgaeSpeedHold;
+            break;
+        }
+
+        m_clawMotor.setControl(m_clawRequestVolts);
       }
 
       DataLogManager.log(String.format("%s: Claw mode is now - %s", getSubsystem( ), mode));
-      m_clawMotor.setControl(m_clawRequestVolts);
     }
   }
 

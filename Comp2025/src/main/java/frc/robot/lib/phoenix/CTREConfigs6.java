@@ -237,6 +237,18 @@ public final class CTREConfigs6
 
     // Slot settings - remote/fused CANcoder affects all feedback constants by the gearRatio
     // clawRollerConfig.Slot0.*                                       // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
+    // Slot settings - remote/fused CANcoder affects all feedback constants by the gearRatio
+    //                                                                Wrist Upward was x.x V, Elevator Downward was x.x.
+    //                                                                  kG = (0.40 + 0.25) / 2
+    //                                                                  kS = (0.40 - 0.25) / 2
+    // clawRollerConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine; // Feedforward: Mechanism is an arm and needs cosine
+    // clawRollerConfig.Slot0.kS = 0.0;                                  // Feedforward: Voltage or duty cycle to overcome static friction
+    // clawRollerConfig.Slot0.kG = 0.0;                                  // Feedforward: Voltage or duty cycle to overcome gravity (arbitrary feedforward)
+    // clawRollerConfig.Slot0.kV = 0.1241;                               // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
+
+    // clawRollerConfig.Slot0.kP = 0.9;                                 // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    // clawRollerConfig.Slot0.kI = 0.0;                                 // Feedback: Voltage or duty cycle per accumulated unit
+    // clawRollerConfig.Slot0.kD = 0.0;                                 // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // Software limit switches
     // clawRollerConfig.SoftwareLimitSwitch.*
