@@ -116,9 +116,9 @@ public class Manipulator extends SubsystemBase
   private static final double         kWristAngleCoralL3        = -100.0;
   private static final double         kWristAngleCoralL4        = -89.5;
 
-  private static final double         kWristAngleAlgae23        = 48.0;
-  private static final double         kWristAngleAlgae34        = 48.0;
-  private static final double         kWristAngleAlgaeProcessor = 48.0;
+  private static final double         kWristAngleAlgae23        = 29.0;
+  private static final double         kWristAngleAlgae34        = 29.0;
+  private static final double         kWristAngleAlgaeProcessor = 29.0;
   private static final double         kWristAngleAlgaeNet       = -10.0;
 
   // Device objects
