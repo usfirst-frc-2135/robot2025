@@ -3,6 +3,7 @@
 //
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -65,7 +66,7 @@ public class Elevator extends SubsystemBase
   private static final String  kSubsystemName          = "Elevator";
   private static final double  kGearRatio              = 9.706;           // Gear reduction
   private static final double  kHeightInchesMin        = 0.0;             // Minimum allowable height
-  private static final double  kHeightInchesMax        = 30.5;           // Maximum allowable height TODO: temporary for this manipulator!
+  private static final double  kHeightInchesMax        = 30.5;            // Maximum allowable height
   private static final double  kSimHeightMetersMin     = Units.inchesToMeters(kHeightInchesMin - 0.1); // Make sim height range larger than useful range
   private static final double  kSimHeightMetersMax     = Units.inchesToMeters(kHeightInchesMax + 0.1);
   private static final double  kCarriageMassKg         = Units.lbsToKilograms(20.0);     // Simulation
@@ -73,10 +74,11 @@ public class Elevator extends SubsystemBase
   private static final double  kSprocketRadiusMeters   = Units.inchesToMeters(kSprocketDiameterInches) / 2;
   private static final double  kRolloutRatio           = kSprocketDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
   private static final Voltage kManualSpeedVolts       = Volts.of(3.0); // Motor voltage during manual operation (joystick)
+  private static final double  kHardStopCurrentLimit   = 15.0;
 
   private static final double  kToleranceInches        = 0.5;             // PID tolerance in inches
-  private static final double  kMMDebounceTime         = 0.060;           // Seconds to debounce a final position check // TODO: shorten?
-  private static final double  kMMMoveTimeout          = 3.0;             // Seconds allowed for a Motion Magic movement  // TODO: shorten?
+  private static final double  kMMDebounceTime         = 0.040;           // Seconds to debounce a final position check
+  private static final double  kMMMoveTimeout          = 1.5;             // Seconds allowed for a Motion Magic movement
 
   // Elevator heights - Motion Magic config parameters
   private static final double  kHeightStowed           = 0.0;             // By definition - full down
@@ -137,11 +139,11 @@ public class Elevator extends SubsystemBase
   private boolean                     m_calibrated        = false;
 
   // Manual mode config parameters
-  private VoltageOut                  m_requestVolts      = new VoltageOut(Volts.of(0));
+  private VoltageOut                  m_requestVolts      = new VoltageOut(Volts.of(0)).withEnableFOC(true);
   private JoystickMode                m_mode              = JoystickMode.INIT;      // Manual movement mode with joysticks
 
   // Motion Magic mode config parameters
-  private MotionMagicVoltage          m_mmRequestVolts    = new MotionMagicVoltage(0).withSlot(0);
+  private MotionMagicVoltage          m_mmRequestVolts    = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
   private Debouncer                   m_mmWithinTolerance = new Debouncer(kMMDebounceTime, DebounceType.kRising);
   private Timer                       m_mmMoveTimer       = new Timer( );           // Movement timer
   private Voltage                     m_mmArbFeedForward  = Volts.of(0);  // Arbitrary feedforward added to counteract gravity
@@ -229,7 +231,13 @@ public class Elevator extends SubsystemBase
       m_currentHeightPub.set(m_currentHeight);
 
       // Zero elevator when fully down with limit switch OR below minimum
-      if ((DriverStation.isDisabled( ) && !m_calibrated && !m_elevatorDown.get( )) || (m_currentHeight < kHeightInchesMin))
+      if (DriverStation.isDisabled( ) && !m_calibrated && !m_elevatorDown.get( ))
+      {
+        calibrateHeight( );
+      }
+      else if (DriverStation.isEnabled( ) && !m_elevatorDown.get( ) &&    // 
+          ((m_leftSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit)
+              || (m_rightSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit)))
       {
         calibrateHeight( );
       }
