@@ -85,8 +85,8 @@ public class RobotContainer
   private static final CommandXboxController          m_operatorPad   = new CommandXboxController(Constants.kOperatorPadPort);
 
   private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
-  private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(3.0 * Math.PI); // Max 1.5 rot per second
-  private static final double                         kSlowSwerve     = 0.35;                               // Throttle max swerve speeds for finer control
+  private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(2.0 * Math.PI); // Max 1.5 rot per second
+  private static final double                         kSlowSwerve     = 0.30;                               // Throttle max swerve speeds for finer control
   private static final double                         kHeadingKp      = 4.0;
   private static final double                         kHeadingKi      = 0.0;
   private static final double                         kHeadingKd      = 0.0;
@@ -311,6 +311,7 @@ public class RobotContainer
     SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
     SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("ExpelCoral", new ExpelCoral(m_elevator, m_manipulator, m_led, m_hid));
   }
 
   /****************************************************************************
@@ -335,6 +336,8 @@ public class RobotContainer
     //
     m_driverPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
     m_driverPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
+    m_driverPad.rightBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.STOP, m_manipulator::getCurrentAngle));
+
     m_driverPad.back( ).whileTrue(m_drivetrain.applyRequest(( ) -> brake));                             // aka View button
     m_driverPad.start( ).onTrue(m_drivetrain.runOnce(( ) -> m_drivetrain.seedFieldCentric( )));         // aka Menu button
 
@@ -402,6 +405,8 @@ public class RobotContainer
     //
     m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
     m_operatorPad.rightBumper( ).whileTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
+    m_operatorPad.rightBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.STOP, m_manipulator::getCurrentAngle));
+
     m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));   // aka View button
     m_operatorPad.start( ).toggleOnTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));  // aka Menu button
 
