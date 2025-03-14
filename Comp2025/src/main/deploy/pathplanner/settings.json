@@ -11,15 +11,15 @@
     "FromProc"
   ],
   "autoFolders": [
-    "AutoLeave",
-    "AutoPreload",
-    "AutoPreloadAlgae",
-    "AutoPreloadCoral",
-    "AutoPreloadCoral2",
-    "AutoPreloadCoral3",
-    "AutoStop",
-    "AutoTest",
-    "AutoPreloadAlgae2"
+    "0-AutoStop",
+    "1-AutoLeave",
+    "2-AutoPreload",
+    "3-AutoPreloadCoral",
+    "4-AutoPreloadAlgae",
+    "5-AutoPreloadCoral2",
+    "6-AutoPreloadAlgae2",
+    "7-AutoPreloadCoral3",
+    "8-AutoTest"
   ],
   "defaultMaxVel": 4.275,
   "defaultMaxAccel": 3.5,

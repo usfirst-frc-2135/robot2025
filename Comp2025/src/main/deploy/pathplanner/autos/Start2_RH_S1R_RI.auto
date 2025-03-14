@@ -19,13 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S1R-RI"
+            "pathName": "S1R-RK"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "AutoPreloadCoral",
+  "folder": "3-AutoPreloadCoral",
   "choreoAuto": false
 }

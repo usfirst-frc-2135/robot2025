@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RJ-S1R"
+            "pathName": null
           }
         },
         {
@@ -50,6 +50,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "AutoPreloadCoral3",
+  "folder": "7-AutoPreloadCoral3",
   "choreoAuto": false
 }
