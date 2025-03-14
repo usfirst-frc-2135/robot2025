@@ -132,7 +132,7 @@ public class TunerConstants {
     private static final int kFrontLeftDriveMotorId = 1;
     private static final int kFrontLeftSteerMotorId = 2;
     private static final int kFrontLeftEncoderId = 3;
-    private static final Angle kFrontLeftEncoderOffset = (Robot.isComp() ? Rotations.of(0.4638671875) : Rotations.of(0.412353515625));
+    private static final Angle kFrontLeftEncoderOffset = (Robot.isComp() ? Rotations.of(0.248779296875) : Rotations.of(0.412353515625));
     private static final boolean kFrontLeftSteerMotorInverted = true;
     private static final boolean kFrontLeftEncoderInverted = false;
 
@@ -143,7 +143,7 @@ public class TunerConstants {
     private static final int kFrontRightDriveMotorId = 4;
     private static final int kFrontRightSteerMotorId = 5;
     private static final int kFrontRightEncoderId = 6;
-    private static final Angle kFrontRightEncoderOffset = (Robot.isComp() ? Rotations.of(-0.175537109375) : Rotations.of(0.04833984375));
+    private static final Angle kFrontRightEncoderOffset = (Robot.isComp() ? Rotations.of(-0.17919921875) : Rotations.of(0.04833984375));
     private static final boolean kFrontRightSteerMotorInverted = true;
     private static final boolean kFrontRightEncoderInverted = false;
 
@@ -154,7 +154,7 @@ public class TunerConstants {
     private static final int kBackLeftDriveMotorId = 7;
     private static final int kBackLeftSteerMotorId = 8;
     private static final int kBackLeftEncoderId = 9;
-    private static final Angle kBackLeftEncoderOffset = (Robot.isComp() ? Rotations.of(-0.4111328125) : Rotations.of(0.22607421875));
+    private static final Angle kBackLeftEncoderOffset = (Robot.isComp() ? Rotations.of(-0.341064453125) : Rotations.of(0.22607421875));
     private static final boolean kBackLeftSteerMotorInverted = true;
     private static final boolean kBackLeftEncoderInverted = false;
 
@@ -165,7 +165,7 @@ public class TunerConstants {
     private static final int kBackRightDriveMotorId = 10;
     private static final int kBackRightSteerMotorId = 11;
     private static final int kBackRightEncoderId = 12;
-    private static final Angle kBackRightEncoderOffset = (Robot.isComp() ? Rotations.of(0.004150390625) : Rotations.of(-0.2314453125));
+    private static final Angle kBackRightEncoderOffset = (Robot.isComp() ? Rotations.of(-0.244384765625) : Rotations.of(-0.2314453125));
     private static final boolean kBackRightSteerMotorInverted = true;
     private static final boolean kBackRightEncoderInverted = false;
 
