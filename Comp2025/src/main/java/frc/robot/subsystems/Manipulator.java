@@ -14,8 +14,10 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANrange;
@@ -97,8 +99,8 @@ public class Manipulator extends SubsystemBase
   }
 
   private static final double         kToleranceDegrees         = 3.0;      // PID tolerance in degrees
-  private static final double         kMMDebounceTime           = 0.060;    // Seconds to debounce a final angle check // TODO: shorten?
-  private static final double         kMMMoveTimeout            = 2.0;      // Seconds allowed for a Motion Magic movement // TODO: shorten?
+  private static final double         kMMDebounceTime           = 0.040;    // Seconds to debounce a final angle check
+  private static final double         kMMMoveTimeout            = 1.5;      // Seconds allowed for a Motion Magic movement
 
   // Wrist rotary angles - Motion Magic move parameters
   //    Measured hardstops and pre-defined positions:
@@ -184,11 +186,11 @@ public class Manipulator extends SubsystemBase
   private boolean                     m_algaeDetected;
 
   // Manual mode config parameters
-  private VoltageOut                  m_wristRequestVolts       = new VoltageOut(Volts.of(0));
+  private VoltageOut                  m_wristRequestVolts       = new VoltageOut(Volts.of(0)).withEnableFOC(true);
   private WristMode                   m_wristMode               = WristMode.INIT;   // Manual movement mode with joysticks
 
   // Motion Magic config parameters
-  private MotionMagicVoltage          m_mmRequestVolts          = new MotionMagicVoltage(0).withSlot(0);
+  private MotionMagicVoltage          m_mmRequestVolts          = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
   private Debouncer                   m_mmWithinTolerance       = new Debouncer(kMMDebounceTime, DebounceType.kRising);
   private Timer                       m_mmMoveTimer             = new Timer( );     // Movement timer
   private boolean                     m_mmMoveIsFinished;           // Movement has completed (within tolerance)
@@ -196,6 +198,7 @@ public class Manipulator extends SubsystemBase
   // Network tables publisher objects
   private DoublePublisher             m_clawSpeedPub;
   private DoublePublisher             m_clawSupCurPub;
+  private DoublePublisher             m_clawStatorCurPub;
   private DoublePublisher             m_wristDegreePub;
   private DoublePublisher             m_ccDegreesPub;
   private DoublePublisher             m_targetDegreesPub;
@@ -284,6 +287,7 @@ public class Manipulator extends SubsystemBase
     // // Update network table publishers
     m_clawSpeedPub.set(m_clawMotor.get( ));
     m_clawSupCurPub.set(m_clawMotor.getSupplyCurrent( ).getValueAsDouble( ));
+    m_clawStatorCurPub.set(m_clawMotor.getStatorCurrent( ).getValueAsDouble( ));
 
     m_wristDegreePub.set(m_currentDegrees);
     m_ccDegreesPub.set(m_ccDegrees);
@@ -342,6 +346,7 @@ public class Manipulator extends SubsystemBase
     // Initialize network tables publishers
     m_clawSpeedPub = table.getDoubleTopic("clawSpeed").publish( );
     m_clawSupCurPub = table.getDoubleTopic("clawSupCur").publish( );
+    m_clawStatorCurPub = table.getDoubleTopic("clawStatorCur").publish( );
 
     m_wristDegreePub = table.getDoubleTopic("wristDegrees").publish( );
     m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
@@ -576,38 +581,50 @@ public class Manipulator extends SubsystemBase
     }
     else
     {
-      switch (mode)
+      if (mode == ClawMode.ALGAEHOLD)
       {
-        default :
-          DataLogManager.log(String.format("%s: Claw mode is invalid: %s", getSubsystem( ), mode));
-        case STOP :
-          m_clawRequestVolts = (m_algaeDetected) ? kAlgaeSpeedHold : kClawRollerStop;
-          break;
-        case ALGAEACQUIRE :
-          m_clawRequestVolts = kAlgaeSpeedAcquire;
-          break;
-        case ALGAEEXPEL :
-          m_clawRequestVolts = kAlgaeSpeedExpel;
-          break;
-        case ALGAESHOOT :
-          m_clawRequestVolts = kAlgaeSpeedShoot;
-          break;
-        case ALGAEPROCESSOR :
-          m_clawRequestVolts = kAlgaeSpeedProcessor;
-          break;
-        case CORALACQUIRE :
-          m_clawRequestVolts = kCoralSpeedAcquire;
-          break;
-        case CORALEXPEL :
-          m_clawRequestVolts = kCoralSpeedExpel;
-          break;
-        case ALGAEHOLD :
-          m_clawRequestVolts = kAlgaeSpeedHold;
-          break;
+        double rotations = m_clawMotor.getPosition( ).getValueAsDouble( );
+        Slot0Configs slot0Configs = new Slot0Configs( ).withKP(25);
+        m_clawMotor.getConfigurator( ).apply(slot0Configs);
+        PositionDutyCycle positionDutyCycle = new PositionDutyCycle(rotations).withSlot(0).withEnableFOC(true);
+        m_clawMotor.setControl(positionDutyCycle);
+      }
+      else
+      {
+        switch (mode)
+        {
+          default :
+            DataLogManager.log(String.format("%s: Claw mode is invalid: %s", getSubsystem( ), mode));
+          case STOP :
+            m_clawRequestVolts = (m_algaeDetected) ? kAlgaeSpeedHold : kClawRollerStop;
+            break;
+          case ALGAEACQUIRE :
+            m_clawRequestVolts = kAlgaeSpeedAcquire;
+            break;
+          case ALGAEEXPEL :
+            m_clawRequestVolts = kAlgaeSpeedExpel;
+            break;
+          case ALGAESHOOT :
+            m_clawRequestVolts = kAlgaeSpeedShoot;
+            break;
+          case ALGAEPROCESSOR :
+            m_clawRequestVolts = kAlgaeSpeedProcessor;
+            break;
+          case CORALACQUIRE :
+            m_clawRequestVolts = kCoralSpeedAcquire;
+            break;
+          case CORALEXPEL :
+            m_clawRequestVolts = kCoralSpeedExpel;
+            break;
+          case ALGAEHOLD :  // Special case above the switch - this case doesn't execute!
+            m_clawRequestVolts = kAlgaeSpeedHold;
+            break;
+        }
+
+        m_clawMotor.setControl(m_clawRequestVolts);
       }
 
       DataLogManager.log(String.format("%s: Claw mode is now - %s", getSubsystem( ), mode));
-      m_clawMotor.setControl(m_clawRequestVolts);
     }
   }
 

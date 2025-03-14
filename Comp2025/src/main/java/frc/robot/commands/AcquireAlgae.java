@@ -94,7 +94,7 @@ public class AcquireAlgae extends SequentialCommandGroup
         hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity),
         
         new LogCommand(getName(), "Move Elevator to lower height - safe for algae travel"),
-        elevator.getMoveToPositionCommand(elevator::getHeightAlgaeL23)
+        elevator.getMoveToPositionCommand(elevator::getCurrentHeight)
         
         // @formatter:on
     );

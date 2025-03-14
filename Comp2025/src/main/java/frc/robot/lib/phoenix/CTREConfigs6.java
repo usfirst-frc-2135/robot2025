@@ -45,8 +45,8 @@ public final class CTREConfigs6
     // exConfig.ClosedLoopRamps.*
 
     // Current limit settings
-    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;           // Amps
-    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0;      // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 25.0;           // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 28.0;      // Amps
     elevatorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;      // Seconds
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
@@ -60,9 +60,9 @@ public final class CTREConfigs6
     // elevatorConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings
-    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 72.50 * 0.75;  // Rotations / second // TODO: speed up?
-    elevatorConfig.MotionMagic.MotionMagicAcceleration = 241.7 * 0.75;    // Rotations / second ^ 2
-    elevatorConfig.MotionMagic.MotionMagicJerk = 2417 * 0.75;             // Rotations / second ^ 3
+    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 72.50;  // Rotations / second
+    elevatorConfig.MotionMagic.MotionMagicAcceleration = 290.0;    // Rotations / second ^ 2
+    elevatorConfig.MotionMagic.MotionMagicJerk = 2417;             // Rotations / second ^ 3
 
     // Motor output settings
     elevatorConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;      // Percentage
@@ -77,8 +77,8 @@ public final class CTREConfigs6
     //                                                                  kG = (0.40 + 0.25) / 2
     //                                                                  kS = (0.40 - 0.25) / 2
     elevatorConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-    elevatorConfig.Slot0.kS = 0.075;                                  // Feedforward: Voltage or duty cylce to overcome static friction
-    elevatorConfig.Slot0.kG = 0.325;                                  // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
+    elevatorConfig.Slot0.kS = 0.075;                                  // Feedforward: Voltage or duty cycle to overcome static friction
+    elevatorConfig.Slot0.kG = 0.325;                                  // Feedforward: Voltage or duty cycle to overcome gravity (arbitrary feedforward)
     elevatorConfig.Slot0.kV = 0.1241;                                 // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
     elevatorConfig.Slot0.kP = 9.60;                                   // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
@@ -133,10 +133,10 @@ public final class CTREConfigs6
     // Hardware limit switches - NONE
     // wristRotaryConfig.HardwareLimitSwitch.*
 
-    // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio // TODO: wrist is temporarily slowed until we get it tuned
-    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 62.83 / gearRatio * 0.75;  // Rotations / second  // TODO: speed up?
-    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 241.7 / gearRatio * 0.75;   // Rotations / second ^ 2
-    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio * 0.75;          // Rotations / second ^ 3
+    // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio
+    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 72.50 / gearRatio; // Rotations / second
+    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 290.0 / gearRatio;   // Rotations / second ^ 2
+    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio;          // Rotations / second ^ 3
 
     // Motor output settings
     wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;   // Percentage
@@ -208,13 +208,13 @@ public final class CTREConfigs6
     // clawRollerConfig.ClosedLoopRamps.*                             // Seconds to ramp
 
     // Current limit settings
-    clawRollerConfig.CurrentLimits.SupplyCurrentLimit = 40.0;         // Amps
-    clawRollerConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0;    // Amps
-    clawRollerConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;    // Seconds
+    clawRollerConfig.CurrentLimits.SupplyCurrentLimit = 25.0;         // Amps
+    clawRollerConfig.CurrentLimits.SupplyCurrentLowerLimit = 25.0;    // Amps
+    clawRollerConfig.CurrentLimits.SupplyCurrentLowerTime = 0.100;    // Seconds
     clawRollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    clawRollerConfig.CurrentLimits.StatorCurrentLimit = 400.0;        // Amps
-    clawRollerConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+    clawRollerConfig.CurrentLimits.StatorCurrentLimit = 200.0;        // Amps
+    clawRollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
     // clawRollerConfig.Feedback.*
@@ -237,6 +237,18 @@ public final class CTREConfigs6
 
     // Slot settings - remote/fused CANcoder affects all feedback constants by the gearRatio
     // clawRollerConfig.Slot0.*                                       // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
+    // Slot settings - remote/fused CANcoder affects all feedback constants by the gearRatio
+    //                                                                Wrist Upward was x.x V, Elevator Downward was x.x.
+    //                                                                  kG = (0.40 + 0.25) / 2
+    //                                                                  kS = (0.40 - 0.25) / 2
+    // clawRollerConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine; // Feedforward: Mechanism is an arm and needs cosine
+    // clawRollerConfig.Slot0.kS = 0.0;                                  // Feedforward: Voltage or duty cycle to overcome static friction
+    // clawRollerConfig.Slot0.kG = 0.0;                                  // Feedforward: Voltage or duty cycle to overcome gravity (arbitrary feedforward)
+    // clawRollerConfig.Slot0.kV = 0.1241;                               // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
+
+    // clawRollerConfig.Slot0.kP = 0.9;                                 // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    // clawRollerConfig.Slot0.kI = 0.0;                                 // Feedback: Voltage or duty cycle per accumulated unit
+    // clawRollerConfig.Slot0.kD = 0.0;                                 // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // Software limit switches
     // clawRollerConfig.SoftwareLimitSwitch.*
