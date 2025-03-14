@@ -87,7 +87,7 @@ public class RobotContainer
   private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
   private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(3.0 * Math.PI); // Max 1.5 rot per second
   private static final double                         kSlowSwerve     = 0.35;                               // Throttle max swerve speeds for finer control
-  private static final double                         kHeadingKp      = 10.0;
+  private static final double                         kHeadingKp      = 4.0;
   private static final double                         kHeadingKi      = 0.0;
   private static final double                         kHeadingKd      = 0.0;
 

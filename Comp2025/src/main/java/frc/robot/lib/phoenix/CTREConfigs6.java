@@ -208,12 +208,12 @@ public final class CTREConfigs6
     // clawRollerConfig.ClosedLoopRamps.*                             // Seconds to ramp
 
     // Current limit settings
-    clawRollerConfig.CurrentLimits.SupplyCurrentLimit = 40.0;         // Amps
-    clawRollerConfig.CurrentLimits.SupplyCurrentLowerLimit = 40.0;    // Amps
-    clawRollerConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;    // Seconds
+    clawRollerConfig.CurrentLimits.SupplyCurrentLimit = 25.0;         // Amps
+    clawRollerConfig.CurrentLimits.SupplyCurrentLowerLimit = 25.0;    // Amps
+    clawRollerConfig.CurrentLimits.SupplyCurrentLowerTime = 0.100;    // Seconds
     clawRollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    clawRollerConfig.CurrentLimits.StatorCurrentLimit = 400.0;        // Amps
+    clawRollerConfig.CurrentLimits.StatorCurrentLimit = 200.0;        // Amps
     clawRollerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
