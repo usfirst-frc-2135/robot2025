@@ -581,15 +581,15 @@ public class Manipulator extends SubsystemBase
     }
     else
     {
-      if (mode == ClawMode.ALGAEHOLD)
-      {
-        double rotations = m_clawMotor.getPosition( ).getValueAsDouble( );
-        Slot0Configs slot0Configs = new Slot0Configs( ).withKP(25);
-        m_clawMotor.getConfigurator( ).apply(slot0Configs);
-        PositionDutyCycle positionDutyCycle = new PositionDutyCycle(rotations).withSlot(0).withEnableFOC(true);
-        m_clawMotor.setControl(positionDutyCycle);
-      }
-      else
+      // if (mode == ClawMode.ALGAEHOLD)
+      // {
+      //   double rotations = m_clawMotor.getPosition( ).getValueAsDouble( );
+      //   Slot0Configs slot0Configs = new Slot0Configs( ).withKP(25);
+      //   m_clawMotor.getConfigurator( ).apply(slot0Configs);
+      //   PositionDutyCycle positionDutyCycle = new PositionDutyCycle(rotations).withSlot(0).withEnableFOC(true);
+      //   m_clawMotor.setControl(positionDutyCycle);
+      // }
+      // else
       {
         switch (mode)
         {
