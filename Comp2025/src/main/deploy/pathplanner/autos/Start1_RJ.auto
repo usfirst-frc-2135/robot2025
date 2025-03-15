@@ -14,6 +14,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "AutoPreload",
+  "folder": "2-AutoPreload",
   "choreoAuto": false
 }
