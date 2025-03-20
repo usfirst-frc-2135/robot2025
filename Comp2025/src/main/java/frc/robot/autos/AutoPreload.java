@@ -7,7 +7,9 @@ import java.util.function.Supplier;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Robot;
 import frc.robot.commands.ExpelCoral;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreCoral;
@@ -42,13 +44,22 @@ public class AutoPreload extends SequentialCommandGroup
 
         // @formatter:off
 
+        new InstantCommand(( ) -> Robot.timeMarker("AutoPreload: AutoStart")),  
+
         new LogCommand(getName(), "Select scoring level"),
         getReefLevelCommand.get(),
 
         new LogCommand(getName(), "Drive to branch and score preload coral"),
         drivetrain.getPathCommand(ppPaths.get(0)),
+        new InstantCommand(( ) -> Robot.timeMarker("AutoPreload: Drive to branch")),  
+
         new ScoreCoral(elevator, manipulator, led, hid),
-        new ExpelCoral(elevator, manipulator, led, hid)
+        new InstantCommand(( ) -> Robot.timeMarker("AutoPreload: Score coral")),  
+
+        new ExpelCoral(elevator, manipulator, led, hid),
+        new InstantCommand(( ) -> Robot.timeMarker("AutoPreload: Expel Coral")),
+
+        new InstantCommand(( ) -> Robot.timeMarker("AutoPreload: AutoEnd"))
         
         // @formatter:on
     );
