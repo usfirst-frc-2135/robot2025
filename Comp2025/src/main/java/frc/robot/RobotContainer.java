@@ -112,7 +112,6 @@ public class RobotContainer
 
   // The robot's shared subsystems
   private final HID                                   m_hid           = new HID(m_driverPad.getHID( ), m_operatorPad.getHID( ));
-  //private final LED                                   m_led           = new LED( );
   private final Power                                 m_power         = new Power( );
   private final Vision                                m_vision        = new Vision( );
 
