@@ -63,7 +63,6 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.Power;
 import frc.robot.subsystems.Telemetry;
@@ -113,7 +112,6 @@ public class RobotContainer
 
   // The robot's shared subsystems
   private final HID                                   m_hid           = new HID(m_driverPad.getHID( ), m_operatorPad.getHID( ));
-  private final LED                                   m_led           = new LED( );
   private final Power                                 m_power         = new Power( );
   private final Vision                                m_vision        = new Vision( );
 
@@ -307,11 +305,11 @@ public class RobotContainer
     SmartDashboard.putData(CommandScheduler.getInstance( ));
 
     // Add command groups to dashboard
-    SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
-    SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
-    SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
-    SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
-    SmartDashboard.putData("ExpelCoral", new ExpelCoral(m_elevator, m_manipulator, m_led, m_hid));
+    SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_hid));
+    SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_hid));
+    SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_hid));
+    SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_hid));
+    SmartDashboard.putData("ExpelCoral", new ExpelCoral(m_elevator, m_manipulator, m_hid));
   }
 
   /****************************************************************************
@@ -326,7 +324,7 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     // 
-    m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_led, m_hid));
+    m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
     m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getReefAlignmentCommand( ), Set.of(m_drivetrain)));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).whileTrue(getSlowSwerveCommand( )); // Note: left lower paddle!
@@ -334,8 +332,8 @@ public class RobotContainer
     //
     // Driver - Bumpers, start, back
     //
-    m_driverPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
-    m_driverPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
+    m_driverPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_hid));
+    m_driverPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_hid));
     m_driverPad.rightBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.STOP, m_manipulator::getCurrentAngle));
 
     m_driverPad.back( ).whileTrue(m_drivetrain.applyRequest(( ) -> brake));                             // aka View button
@@ -383,8 +381,8 @@ public class RobotContainer
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
-    m_driverPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
-    m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
+    m_driverPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_hid));
+    m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_hid));
 
     m_driverPad.leftStick( ).onTrue(new LogCommand("driverPad", "left stick"));
     m_driverPad.rightStick( ).onTrue(new LogCommand("driverPad", "right stick"));
@@ -395,7 +393,7 @@ public class RobotContainer
     //
     // Operator - A, B, X, Y
     //
-    m_operatorPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_led, m_hid));
+    m_operatorPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
     m_operatorPad.b( ).onTrue(getReefOffsetSelectCommand(1));
     m_operatorPad.x( ).onTrue(getReefOffsetSelectCommand(0));
     m_operatorPad.y( ).onTrue(getReefOffsetSelectCommand(2));
@@ -403,8 +401,8 @@ public class RobotContainer
     //
     // Operator - Bumpers, start, back
     //
-    m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.rightBumper( ).whileTrue(new AcquireCoral(m_elevator, m_manipulator, m_led, m_hid));
+    m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_hid));
+    m_operatorPad.rightBumper( ).whileTrue(new AcquireCoral(m_elevator, m_manipulator, m_hid));
     m_operatorPad.rightBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.STOP, m_manipulator::getCurrentAngle));
 
     m_operatorPad.back( ).toggleOnTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));   // aka View button
@@ -424,8 +422,8 @@ public class RobotContainer
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
-    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_led, m_hid));
-    m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_led, m_hid));
+    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_hid));
+    m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_hid));
 
     m_operatorPad.leftStick( ).toggleOnTrue(new LogCommand("operPad", "left stick"));
     m_operatorPad.rightStick( ).toggleOnTrue(new LogCommand("operPad", "right stick"));
@@ -560,31 +558,30 @@ public class RobotContainer
         m_autoCommand = m_drivetrain.applyRequest(( ) -> idle);
         break;
       case AUTOLEAVE :
-        m_autoCommand = new AutoLeave(m_ppPathList, m_drivetrain, m_led);
+        m_autoCommand = new AutoLeave(m_ppPathList, m_drivetrain);
         break;
       case AUTOPRELOAD :
-        m_autoCommand =
-            new AutoPreload(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+        m_autoCommand = new AutoPreload(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADCORAL :
         m_autoCommand =
-            new AutoPreloadCoral(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreloadCoral(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADCORAL2 :
         m_autoCommand =
-            new AutoPreloadCoral2(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreloadCoral2(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADCORAL3 :
         m_autoCommand =
-            new AutoPreloadCoral3(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreloadCoral3(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADALGAE :
         m_autoCommand =
-            new AutoPreloadAlgae(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreloadAlgae(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADALGAE2 :
         m_autoCommand =
-            new AutoPreloadAlgae2(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_led, m_hid, this::getReefLevelCommand);
+            new AutoPreloadAlgae2(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
         break;
       case AUTOTEST :
         m_autoCommand = new AutoTest(m_ppPathList, m_drivetrain);
@@ -700,7 +697,6 @@ public class RobotContainer
    */
   public void disabledInit( )
   {
-    m_led.initialize( );
     m_power.initialize( );
     m_vision.initialize( );
 
@@ -734,7 +730,6 @@ public class RobotContainer
    */
   public void printFaults( )
   {
-    m_led.printFaults( );
     m_power.printFaults( );
 
     m_elevator.printFaults( );

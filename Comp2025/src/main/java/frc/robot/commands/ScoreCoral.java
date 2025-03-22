@@ -13,7 +13,6 @@ import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.ELConsts.ReefLevel;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 
 /**
@@ -53,7 +52,7 @@ public class ScoreCoral extends SequentialCommandGroup
    * @param led
    *          led subsystem
    */
-  public ScoreCoral(Elevator elevator, Manipulator manipulator, LED led, HID hid)
+  public ScoreCoral(Elevator elevator, Manipulator manipulator, HID hid)
   {
     setName("ScoreCoral");
 
