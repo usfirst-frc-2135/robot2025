@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 
 public class ExpelCoral extends SequentialCommandGroup

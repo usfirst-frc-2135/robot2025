@@ -14,7 +14,6 @@ import frc.robot.commands.ScoreCoral;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 
 /**
@@ -33,7 +32,7 @@ public class AutoPreload extends SequentialCommandGroup
    *          swerve drivetrain subsystem
    */
   public AutoPreload(List<PathPlannerPath> ppPaths, CommandSwerveDrivetrain drivetrain, Elevator elevator,
-      Manipulator manipulator, LED led, HID hid, Supplier<Command> getReefLevelCommand)
+      Manipulator manipulator, HID hid, Supplier<Command> getReefLevelCommand)
   {
     setName("AutoPreload");
 
@@ -47,8 +46,8 @@ public class AutoPreload extends SequentialCommandGroup
 
         new LogCommand(getName(), "Drive to branch and score preload coral"),
         drivetrain.getPathCommand(ppPaths.get(0)),
-        new ScoreCoral(elevator, manipulator, led, hid),
-        new ExpelCoral(elevator, manipulator, led, hid)
+        new ScoreCoral(elevator, manipulator, hid),
+        new ExpelCoral(elevator, manipulator, hid)
         
         // @formatter:on
     );
