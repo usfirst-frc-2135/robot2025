@@ -16,7 +16,6 @@ import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.ELConsts.ReefLevel;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 
 /**
@@ -54,7 +53,7 @@ public class AcquireAlgae extends SequentialCommandGroup
    * @param led
    *          led subsystem
    */
-  public AcquireAlgae(Elevator elevator, Manipulator manipulator, LED led, HID hid)
+  public AcquireAlgae(Elevator elevator, Manipulator manipulator, HID hid)
   {
     setName("AcquireAlgae");
 

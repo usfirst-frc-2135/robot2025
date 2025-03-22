@@ -8,7 +8,6 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.LogCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.LED;
 
 /**
  * Auto command that just leaves the starting zone
@@ -26,7 +25,7 @@ public class AutoLeave extends SequentialCommandGroup
    * @param led
    *          led subsystem
    */
-  public AutoLeave(List<PathPlannerPath> ppAuto, CommandSwerveDrivetrain drivetrain, LED led)
+  public AutoLeave(List<PathPlannerPath> ppAuto, CommandSwerveDrivetrain drivetrain)
   {
     setName("AutoLeave");
 
