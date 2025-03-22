@@ -9,7 +9,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 
 /**
@@ -29,7 +28,7 @@ public class AcquireCoral extends SequentialCommandGroup
    * @param led
    *          led subsystem
    */
-  public AcquireCoral(Elevator elevator, Manipulator manipulator, LED led, HID hid)
+  public AcquireCoral(Elevator elevator, Manipulator manipulator, HID hid)
   {
     setName("AcquireCoral");
 

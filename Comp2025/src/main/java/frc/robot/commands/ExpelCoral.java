@@ -11,7 +11,7 @@ import frc.robot.subsystems.Manipulator;
 public class ExpelCoral extends SequentialCommandGroup
 {
 
-  public ExpelCoral(Elevator elevator, Manipulator manipulator, LED led, HID hid)
+  public ExpelCoral(Elevator elevator, Manipulator manipulator, HID hid)
   {
     setName("ExpelCoral");
 
