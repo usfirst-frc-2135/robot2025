@@ -74,7 +74,7 @@ public class Elevator extends SubsystemBase
   private static final double  kSprocketRadiusMeters   = Units.inchesToMeters(kSprocketDiameterInches) / 2;
   private static final double  kRolloutRatio           = kSprocketDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
   private static final Voltage kManualSpeedVolts       = Volts.of(3.0); // Motor voltage during manual operation (joystick)
-  private static final double  kHardStopCurrentLimit   = 15.0;
+  private static final double  kHardStopCurrentLimit   = 100.0;
 
   private static final double  kToleranceInches        = 0.5;             // PID tolerance in inches
   private static final double  kMMDebounceTime         = 0.040;           // Seconds to debounce a final position check
@@ -156,6 +156,7 @@ public class Elevator extends SubsystemBase
   private DoublePublisher             m_currentHeightPub;
   private DoublePublisher             m_targetHeightPub;
   private BooleanPublisher            m_calibratedPub;
+  private BooleanPublisher            m_isDownPub;
 
   /****************************************************************************
    * 
@@ -194,7 +195,8 @@ public class Elevator extends SubsystemBase
       setPosition(m_currentHeight);
 
       // Status signals
-      BaseStatusSignal.setUpdateFrequencyForAll(50, m_leftPosition, m_rightPosition);
+      BaseStatusSignal.setUpdateFrequencyForAll(50, m_leftPosition, m_rightPosition, m_leftSupplyCur, m_rightSupplyCur,
+          m_leftStatorCur, m_rightStatorCur);
       DataLogManager.log(String.format(
           "%s: Update (Hz) leftPosition: %.1f rightPosition: %.1f leftSupplyCur: %.1f leftStatorCur: %.1f rightSupplyCur: %.1f rightStatorCur: %.1f",
           getSubsystem( ), m_leftPosition.getAppliedUpdateFrequency( ), m_rightPosition.getAppliedUpdateFrequency( ),
@@ -222,7 +224,8 @@ public class Elevator extends SubsystemBase
 
     if (m_motorsValid)
     {
-      BaseStatusSignal.refreshAll(m_leftPosition, m_rightPosition);
+      BaseStatusSignal.refreshAll(m_leftPosition, m_rightPosition, m_leftSupplyCur, m_rightSupplyCur, m_leftStatorCur,
+          m_rightStatorCur);
       double leftHeight = Conversions.rotationsToWinchInches(m_leftPosition.getValue( ).in(Rotations), kRolloutRatio);
       double rightHeight = Conversions.rotationsToWinchInches(m_rightPosition.getValue( ).in(Rotations), kRolloutRatio);
       m_leftHeightPub.set(leftHeight);
@@ -231,27 +234,30 @@ public class Elevator extends SubsystemBase
       m_currentHeightPub.set(m_currentHeight);
 
       // Zero elevator when fully down with limit switch OR below minimum
-      if (DriverStation.isDisabled( ) && !m_calibrated && !m_elevatorDown.get( ))
+      if (DriverStation.isDisabled( ) && !m_calibrated && isDown( ))
       {
         calibrateHeight( );
       }
-      else if (DriverStation.isEnabled( ) && !m_elevatorDown.get( ))
-      {
-        DataLogManager.log(String.format("Supply Current left and right"+ m_leftSupplyCur + m_rightSupplyCur));
-        if ((m_leftSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit)
-            || (m_rightSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit))
-        {
 
+      if (DriverStation.isEnabled( ) && isDown( ))
+      {
+        DataLogManager.log(String.format("Elevator: Stator left %.1f right %.1f", m_leftStatorCur.getValueAsDouble( ),
+            m_rightStatorCur.getValueAsDouble( )));
+
+        if ((m_leftStatorCur.getValueAsDouble( ) > kHardStopCurrentLimit)
+            || (m_rightStatorCur.getValueAsDouble( ) > kHardStopCurrentLimit))
+        {
           calibrateHeight( );
-          // Update network table publishers
-          m_targetHeightPub.set(m_targetHeight);
-          m_calibratedPub.set(m_calibrated);
         }
       }
+
+      // Update network table publishers
     }
+
+    m_targetHeightPub.set(m_targetHeight);
+    m_calibratedPub.set(m_calibrated);
+    m_isDownPub.set(isDown( ));
   }
-
-
 
   /****************************************************************************
    * 
@@ -296,6 +302,7 @@ public class Elevator extends SubsystemBase
     m_currentHeightPub = table.getDoubleTopic("currentInches").publish( );
     m_targetHeightPub = table.getDoubleTopic("targetInches").publish( );
     m_calibratedPub = table.getBooleanTopic("calibrated").publish( );
+    m_isDownPub = table.getBooleanTopic("isDown").publish( );
 
     SmartDashboard.putData(kSubsystemName + "Mech", m_elevatorMech);
 
@@ -565,6 +572,16 @@ public class Elevator extends SubsystemBase
   private boolean isMoveValid(double inches)
   {
     return (inches >= kHeightInchesMin) && (inches <= kHeightInchesMax);
+  }
+
+  /****************************************************************************
+   * 
+   * Check limit switch for full down position
+   * 
+   */
+  private boolean isDown( )
+  {
+    return !m_elevatorDown.get( );
   }
 
   /****************************************************************************
