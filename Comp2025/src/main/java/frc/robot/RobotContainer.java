@@ -174,7 +174,7 @@ public class RobotContainer
       Map.entry(AutoChooser.AUTOPRELOAD.toString( ) + StartPose.START3.toString( ), "Start3_RE"),
 
       Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START1.toString( ), "Start1_RJ_S1R_RK"),
-      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RI"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RD"),
 
       Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START1.toString( ), "Start1_RJ_S1R_RK_S1R_RL"),
