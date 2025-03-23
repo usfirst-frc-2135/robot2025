@@ -254,8 +254,8 @@ public class RobotContainer
     m_autoChooser.addOption("2 - AutoPreload", AutoChooser.AUTOPRELOAD);
     m_autoChooser.addOption("3 - AutoPreloadCoral", AutoChooser.AUTOPRELOADCORAL);
     m_autoChooser.addOption("4 - AutoPreloadCoral2", AutoChooser.AUTOPRELOADCORAL2);
-    m_autoChooser.addOption("6 - AutoPreloadAlgae", AutoChooser.AUTOPRELOADALGAE);
-    m_autoChooser.addOption("8 - AutoTestPath", AutoChooser.AUTOTEST);
+    m_autoChooser.addOption("5 - AutoPreloadAlgae", AutoChooser.AUTOPRELOADALGAE);
+    m_autoChooser.addOption("9 - AutoTestPath", AutoChooser.AUTOTEST);
     m_autoChooser.onChange(this::updateAutoChooserCallback);
 
     // Configure starting pose sendable chooser
