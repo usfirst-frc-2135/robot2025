@@ -3,7 +3,6 @@
 //
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -115,7 +114,8 @@ public class Elevator extends SubsystemBase
       new Alert(String.format("%s: Right motor init failed!", getSubsystem( )), AlertType.kError);
 
   // Simulation objects
-  private final TalonFXSimState       m_motorSim          = m_leftMotor.getSimState( );
+  private final TalonFXSimState       m_leftMotorSim      = m_leftMotor.getSimState( );
+  private final TalonFXSimState       m_rightMotorSim     = m_rightMotor.getSimState( );
   private final ElevatorSim           m_elevSim           = new ElevatorSim(DCMotor.getKrakenX60Foc(2), kGearRatio,
       kCarriageMassKg, kSprocketRadiusMeters, kSimHeightMetersMin, kSimHeightMetersMax, false, 0.0);
 
@@ -207,7 +207,8 @@ public class Elevator extends SubsystemBase
     DataLogManager.log(String.format("%s: Initial position %.1f inches", getSubsystem( ), m_currentHeight));
 
     // Simulation object initialization
-    m_motorSim.Orientation = ChassisReference.Clockwise_Positive;
+    m_leftMotorSim.Orientation = ChassisReference.Clockwise_Positive;
+    m_rightMotorSim.Orientation = ChassisReference.CounterClockwise_Positive;
 
     initDashboard( );
     initialize( );
@@ -250,10 +251,9 @@ public class Elevator extends SubsystemBase
           calibrateHeight( );
         }
       }
-
-      // Update network table publishers
     }
 
+    // Update network table publishers
     m_targetHeightPub.set(m_targetHeight);
     m_calibratedPub.set(m_calibrated);
     m_isDownPub.set(isDown( ));
@@ -269,16 +269,21 @@ public class Elevator extends SubsystemBase
     // This method will be called once per scheduler run during simulation
 
     // Set input motor voltage from the motor setting
-    m_motorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
-    m_elevSim.setInput(m_motorSim.getMotorVoltage( ));
+    m_leftMotorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
+    m_rightMotorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
+    m_elevSim.setInput(m_leftMotorSim.getMotorVoltage( ));
 
     // update for 20 msec loop
     m_elevSim.update(0.020);
 
     // Finally, we set our simulated encoder's readings and simulated battery voltage
-    m_motorSim.setRawRotorPosition(
+    m_leftMotorSim.setRawRotorPosition(
         Conversions.inchesToWinchRotations(Units.metersToInches(m_elevSim.getPositionMeters( )), kRolloutRatio));
-    m_motorSim.setRotorVelocity(
+    m_leftMotorSim.setRotorVelocity(
+        Conversions.inchesToWinchRotations(Units.metersToInches(m_elevSim.getVelocityMetersPerSecond( )), kRolloutRatio));
+    m_rightMotorSim.setRawRotorPosition(
+        Conversions.inchesToWinchRotations(Units.metersToInches(m_elevSim.getPositionMeters( )), kRolloutRatio));
+    m_rightMotorSim.setRotorVelocity(
         Conversions.inchesToWinchRotations(Units.metersToInches(m_elevSim.getVelocityMetersPerSecond( )), kRolloutRatio));
 
     // SimBattery estimates loaded battery voltages
