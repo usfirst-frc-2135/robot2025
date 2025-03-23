@@ -74,7 +74,7 @@ public class Elevator extends SubsystemBase
   private static final double  kSprocketRadiusMeters   = Units.inchesToMeters(kSprocketDiameterInches) / 2;
   private static final double  kRolloutRatio           = kSprocketDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
   private static final Voltage kManualSpeedVolts       = Volts.of(3.0); // Motor voltage during manual operation (joystick)
-  private static final double  kHardStopCurrentLimit   = 15.0;
+  private static final Current kHardStopCurrentLimit   = Amps.of(100.0);
 
   private static final double  kToleranceInches        = 0.5;             // PID tolerance in inches
   private static final double  kMMDebounceTime         = 0.040;           // Seconds to debounce a final position check
@@ -115,7 +115,8 @@ public class Elevator extends SubsystemBase
       new Alert(String.format("%s: Right motor init failed!", getSubsystem( )), AlertType.kError);
 
   // Simulation objects
-  private final TalonFXSimState       m_motorSim          = m_leftMotor.getSimState( );
+  private final TalonFXSimState       m_leftMotorSim      = m_leftMotor.getSimState( );
+  private final TalonFXSimState       m_rightMotorSim     = m_rightMotor.getSimState( );
   private final ElevatorSim           m_elevSim           = new ElevatorSim(DCMotor.getKrakenX60Foc(2), kGearRatio,
       kCarriageMassKg, kSprocketRadiusMeters, kSimHeightMetersMin, kSimHeightMetersMax, false, 0.0);
 
@@ -156,6 +157,7 @@ public class Elevator extends SubsystemBase
   private DoublePublisher             m_currentHeightPub;
   private DoublePublisher             m_targetHeightPub;
   private BooleanPublisher            m_calibratedPub;
+  private BooleanPublisher            m_isDownPub;
 
   /****************************************************************************
    * 
@@ -194,7 +196,8 @@ public class Elevator extends SubsystemBase
       setPosition(m_currentHeight);
 
       // Status signals
-      BaseStatusSignal.setUpdateFrequencyForAll(50, m_leftPosition, m_rightPosition);
+      BaseStatusSignal.setUpdateFrequencyForAll(50, m_leftPosition, m_rightPosition, m_leftSupplyCur, m_rightSupplyCur,
+          m_leftStatorCur, m_rightStatorCur);
       DataLogManager.log(String.format(
           "%s: Update (Hz) leftPosition: %.1f rightPosition: %.1f leftSupplyCur: %.1f leftStatorCur: %.1f rightSupplyCur: %.1f rightStatorCur: %.1f",
           getSubsystem( ), m_leftPosition.getAppliedUpdateFrequency( ), m_rightPosition.getAppliedUpdateFrequency( ),
@@ -205,7 +208,8 @@ public class Elevator extends SubsystemBase
     DataLogManager.log(String.format("%s: Initial position %.1f inches", getSubsystem( ), m_currentHeight));
 
     // Simulation object initialization
-    m_motorSim.Orientation = ChassisReference.Clockwise_Positive;
+    m_leftMotorSim.Orientation = ChassisReference.Clockwise_Positive;
+    m_rightMotorSim.Orientation = ChassisReference.CounterClockwise_Positive;
 
     initDashboard( );
     initialize( );
@@ -222,7 +226,8 @@ public class Elevator extends SubsystemBase
 
     if (m_motorsValid)
     {
-      BaseStatusSignal.refreshAll(m_leftPosition, m_rightPosition);
+      BaseStatusSignal.refreshAll(m_leftPosition, m_rightPosition, m_leftSupplyCur, m_rightSupplyCur, m_leftStatorCur,
+          m_rightStatorCur);
       double leftHeight = Conversions.rotationsToWinchInches(m_leftPosition.getValue( ).in(Rotations), kRolloutRatio);
       double rightHeight = Conversions.rotationsToWinchInches(m_rightPosition.getValue( ).in(Rotations), kRolloutRatio);
       m_leftHeightPub.set(leftHeight);
@@ -231,21 +236,24 @@ public class Elevator extends SubsystemBase
       m_currentHeightPub.set(m_currentHeight);
 
       // Zero elevator when fully down with limit switch OR below minimum
-      if (DriverStation.isDisabled( ) && !m_calibrated && !m_elevatorDown.get( ))
+      if (DriverStation.isDisabled( ) && !m_calibrated && isDown( ))
       {
         calibrateHeight( );
       }
-      else if (DriverStation.isEnabled( ) && !m_elevatorDown.get( ) &&    // 
-          ((m_leftSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit)
-              || (m_rightSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit)))
+
+      if (DriverStation.isEnabled( ) && isDown( ))
       {
-        calibrateHeight( );
+        if ((m_leftStatorCur.getValue( ).gte(kHardStopCurrentLimit)) || (m_rightStatorCur.getValue( ).gte(kHardStopCurrentLimit)))
+        {
+          calibrateHeight( );
+        }
       }
     }
 
     // Update network table publishers
     m_targetHeightPub.set(m_targetHeight);
-    m_calibratedPub.set((m_calibrated));
+    m_calibratedPub.set(m_calibrated);
+    m_isDownPub.set(isDown( ));
   }
 
   /****************************************************************************
@@ -258,16 +266,21 @@ public class Elevator extends SubsystemBase
     // This method will be called once per scheduler run during simulation
 
     // Set input motor voltage from the motor setting
-    m_motorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
-    m_elevSim.setInput(m_motorSim.getMotorVoltage( ));
+    m_leftMotorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
+    m_rightMotorSim.setSupplyVoltage(RobotController.getInputVoltage( ));
+    m_elevSim.setInput(m_leftMotorSim.getMotorVoltage( ));
 
     // update for 20 msec loop
     m_elevSim.update(0.020);
 
     // Finally, we set our simulated encoder's readings and simulated battery voltage
-    m_motorSim.setRawRotorPosition(
+    m_leftMotorSim.setRawRotorPosition(
         Conversions.inchesToWinchRotations(Units.metersToInches(m_elevSim.getPositionMeters( )), kRolloutRatio));
-    m_motorSim.setRotorVelocity(
+    m_leftMotorSim.setRotorVelocity(
+        Conversions.inchesToWinchRotations(Units.metersToInches(m_elevSim.getVelocityMetersPerSecond( )), kRolloutRatio));
+    m_rightMotorSim.setRawRotorPosition(
+        Conversions.inchesToWinchRotations(Units.metersToInches(m_elevSim.getPositionMeters( )), kRolloutRatio));
+    m_rightMotorSim.setRotorVelocity(
         Conversions.inchesToWinchRotations(Units.metersToInches(m_elevSim.getVelocityMetersPerSecond( )), kRolloutRatio));
 
     // SimBattery estimates loaded battery voltages
@@ -291,6 +304,7 @@ public class Elevator extends SubsystemBase
     m_currentHeightPub = table.getDoubleTopic("currentInches").publish( );
     m_targetHeightPub = table.getDoubleTopic("targetInches").publish( );
     m_calibratedPub = table.getBooleanTopic("calibrated").publish( );
+    m_isDownPub = table.getBooleanTopic("isDown").publish( );
 
     SmartDashboard.putData(kSubsystemName + "Mech", m_elevatorMech);
 
@@ -560,6 +574,16 @@ public class Elevator extends SubsystemBase
   private boolean isMoveValid(double inches)
   {
     return (inches >= kHeightInchesMin) && (inches <= kHeightInchesMax);
+  }
+
+  /****************************************************************************
+   * 
+   * Check limit switch for full down position
+   * 
+   */
+  private boolean isDown( )
+  {
+    return !m_elevatorDown.get( );
   }
 
   /****************************************************************************
