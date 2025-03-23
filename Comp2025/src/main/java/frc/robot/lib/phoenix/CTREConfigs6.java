@@ -60,9 +60,9 @@ public final class CTREConfigs6
     // elevatorConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings
-    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 72.50;  // Rotations / second
-    elevatorConfig.MotionMagic.MotionMagicAcceleration = 290.0;    // Rotations / second ^ 2
-    elevatorConfig.MotionMagic.MotionMagicJerk = 2417;             // Rotations / second ^ 3
+    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 77.50;  // Rotations / second
+    elevatorConfig.MotionMagic.MotionMagicAcceleration = 500.0;    // Rotations / second ^ 2
+    elevatorConfig.MotionMagic.MotionMagicJerk = 3200;             // Rotations / second ^ 3
 
     // Motor output settings
     elevatorConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;      // Percentage
@@ -81,7 +81,7 @@ public final class CTREConfigs6
     elevatorConfig.Slot0.kG = 0.325;                                  // Feedforward: Voltage or duty cycle to overcome gravity (arbitrary feedforward)
     elevatorConfig.Slot0.kV = 0.1241;                                 // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    elevatorConfig.Slot0.kP = 9.60;                                   // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    elevatorConfig.Slot0.kP = 0.2;                                   // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
     elevatorConfig.Slot0.kI = 0.0;                                    // Feedback: Voltage or duty cycle per accumulated unit
     elevatorConfig.Slot0.kD = 0.0;                                    // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
@@ -134,9 +134,9 @@ public final class CTREConfigs6
     // wristRotaryConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings - fused CANcoder affects all feedback constants by the gearRatio
-    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 72.50 / gearRatio; // Rotations / second
-    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 290.0 / gearRatio;   // Rotations / second ^ 2
-    wristRotaryConfig.MotionMagic.MotionMagicJerk = 2417.0 / gearRatio;          // Rotations / second ^ 3
+    wristRotaryConfig.MotionMagic.MotionMagicCruiseVelocity = 77.33 / gearRatio; // Rotations / second
+    wristRotaryConfig.MotionMagic.MotionMagicAcceleration = 500.0 / gearRatio;   // Rotations / second ^ 2
+    wristRotaryConfig.MotionMagic.MotionMagicJerk = 5000.0 / gearRatio;          // Rotations / second ^ 3
 
     // Motor output settings
     wristRotaryConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;   // Percentage
@@ -154,10 +154,10 @@ public final class CTREConfigs6
     wristRotaryConfig.Slot0.kS = -0.065;                              // Feedforward: Voltage or duty cycle to overcome static friction
     wristRotaryConfig.Slot0.kG = -0.235;                              // Feedforward: Voltage or duty cycle to overcome gravity (arbitrary feedforward)
     wristRotaryConfig.Slot0.kV = 0.1241;                              // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
-
-    wristRotaryConfig.Slot0.kP = 0.9 * gearRatio;                     // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+  
+    wristRotaryConfig.Slot0.kP = 1.93 * gearRatio; //0.9                    // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
     wristRotaryConfig.Slot0.kI = 0.0 * gearRatio;                     // Feedback: Voltage or duty cycle per accumulated unit
-    wristRotaryConfig.Slot0.kD = 0.0 * gearRatio;                     // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
+    wristRotaryConfig.Slot0.kD = 0.06 * gearRatio;//0.0                     // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // Software limit switches
     wristRotaryConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;  // Rotations

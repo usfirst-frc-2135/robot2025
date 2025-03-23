@@ -235,18 +235,23 @@ public class Elevator extends SubsystemBase
       {
         calibrateHeight( );
       }
-      else if (DriverStation.isEnabled( ) && !m_elevatorDown.get( ) &&    // 
-          ((m_leftSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit)
-              || (m_rightSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit)))
+      else if (DriverStation.isEnabled( ) && !m_elevatorDown.get( ))
       {
-        calibrateHeight( );
+        DataLogManager.log(String.format("Supply Current left and right"+ m_leftSupplyCur + m_rightSupplyCur));
+        if ((m_leftSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit)
+            || (m_rightSupplyCur.getValueAsDouble( ) > kHardStopCurrentLimit))
+        {
+
+          calibrateHeight( );
+          // Update network table publishers
+          m_targetHeightPub.set(m_targetHeight);
+          m_calibratedPub.set(m_calibrated);
+        }
       }
     }
-
-    // Update network table publishers
-    m_targetHeightPub.set(m_targetHeight);
-    m_calibratedPub.set((m_calibrated));
   }
+
+
 
   /****************************************************************************
    * 
