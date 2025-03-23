@@ -93,7 +93,7 @@ public class ScoreAlgae extends SequentialCommandGroup
               this::selectLevel), 
         
         new LogCommand(getName(), "Wait for algae"),
-        new WaitCommand(Seconds.of(1.0)),
+        new WaitCommand(Seconds.of(0.5)),
         // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is expelled 
       
         new LogCommand(getName(), "Stop algae rollers"),
