@@ -15,7 +15,6 @@ import frc.robot.commands.ScoreCoral;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 
 /**
@@ -42,7 +41,7 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
    *          swerve drivetrain subsystem
    */
   public AutoPreloadCoral2(List<PathPlannerPath> ppPaths, CommandSwerveDrivetrain drivetrain, Elevator elevator,
-      Manipulator manipulator, LED led, HID hid, Supplier<Command> getReefLevelCommand)
+      Manipulator manipulator, HID hid, Supplier<Command> getReefLevelCommand)
   {
     setName("AutoPreloadCoral2");
 
@@ -56,30 +55,30 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
 
         new LogCommand(getName(), "Drive to branch and score preload coral"),
         drivetrain.getPathCommand(ppPaths.get(0)),
-        new ScoreCoral(elevator, manipulator, led, hid),
-        new ExpelCoral(elevator, manipulator, led, hid),
+        new ScoreCoral(elevator, manipulator, hid),
+        new ExpelCoral(elevator, manipulator, hid),
 
         new LogCommand(getName(), "Drive to coral station and acquire second coral"),
         new ParallelCommandGroup(
           drivetrain.getPathCommand(ppPaths.get(1)),
-          new AcquireCoral(elevator, manipulator, led, hid)
+          new AcquireCoral(elevator, manipulator, hid)
         ), 
 
         new LogCommand(getName(), "Drive to branch and score second coral"),
         drivetrain.getPathCommand(ppPaths.get(2)),
-        new ScoreCoral(elevator, manipulator, led, hid),
-        new ExpelCoral(elevator, manipulator, led, hid),
+        new ScoreCoral(elevator, manipulator, hid),
+        new ExpelCoral(elevator, manipulator, hid),
 
         new LogCommand(getName(), "Drive to coral station and acquire third coral"),
         new ParallelCommandGroup(
           drivetrain.getPathCommand(ppPaths.get(3)),
-          new AcquireCoral(elevator, manipulator, led, hid)
+          new AcquireCoral(elevator, manipulator, hid)
         ), 
 
         new LogCommand(getName(), "Drive to branch and score third coral"),   
         drivetrain.getPathCommand(ppPaths.get(4)),
-        new ScoreCoral(elevator, manipulator, led, hid),
-        new ExpelCoral(elevator, manipulator, led, hid)
+        new ScoreCoral(elevator, manipulator, hid),
+        new ExpelCoral(elevator, manipulator, hid)
         
         // @formatter:on
     );

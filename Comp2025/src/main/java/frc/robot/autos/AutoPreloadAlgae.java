@@ -15,7 +15,6 @@ import frc.robot.commands.ScoreCoral;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Manipulator;
 
 /**
@@ -38,7 +37,7 @@ public class AutoPreloadAlgae extends SequentialCommandGroup
    *          swerve drivetrain subsystem
    */
   public AutoPreloadAlgae(List<PathPlannerPath> ppPaths, CommandSwerveDrivetrain drivetrain, Elevator elevator,
-      Manipulator manipulator, LED led, HID hid, Supplier<Command> getReefLevelCommand)
+      Manipulator manipulator, HID hid, Supplier<Command> getReefLevelCommand)
   {
     setName("AutoPreloadAlgae");
 
@@ -52,16 +51,16 @@ public class AutoPreloadAlgae extends SequentialCommandGroup
 
         new LogCommand(getName(), "Drive to branch and score preload coral"),
         drivetrain.getPathCommand(ppPaths.get(0)),
-        new ScoreCoral(elevator, manipulator, led, hid),
-        new ExpelCoral(elevator, manipulator, led, hid),
+        new ScoreCoral(elevator, manipulator, hid),
+        new ExpelCoral(elevator, manipulator, hid),
 
         new LogCommand(getName(), "Drive to face and acquire algae"),
         drivetrain.getPathCommand(ppPaths.get(1)),
-        new AcquireAlgae(elevator, manipulator, led, hid),
+        new AcquireAlgae(elevator, manipulator, hid),
 
         new LogCommand(getName(), "Drive to proc/net and score algae"),
         drivetrain.getPathCommand(ppPaths.get(2)),
-        new ScoreAlgae(elevator, manipulator, led, hid) 
+        new ScoreAlgae(elevator, manipulator, hid) 
                
         // @formatter:on
     );
