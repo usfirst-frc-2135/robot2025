@@ -15,7 +15,7 @@ import frc.robot.lib.LimelightHelpers;
  */
 public class Vision extends SubsystemBase
 {
-  private static final String kLLName = "limelight";
+  private static final String kLLLeftName = "limelight-left";
 
   /** Camera stream mode parameter */
   private enum streamMode
@@ -104,8 +104,8 @@ public class Vision extends SubsystemBase
   {
     DataLogManager.log(String.format("%s: Subsystem initialized!", getSubsystem( )));
 
-    LimelightHelpers.setLEDMode_ForceOff(kLLName);
-    LimelightHelpers.setStreamMode_PiPSecondary(kLLName);
+    LimelightHelpers.setLEDMode_ForceOff(kLLLeftName);
+    LimelightHelpers.setStreamMode_PiPSecondary(kLLLeftName);
 
     SetIMUMode(imuMode.EXTERNAL_SEED);
   }
@@ -121,15 +121,15 @@ public class Vision extends SubsystemBase
       default :
       case PIPSECONDARY :
         m_stream = streamMode.PIPMAIN;
-        LimelightHelpers.setStreamMode_PiPMain(kLLName);
+        LimelightHelpers.setStreamMode_PiPMain(kLLLeftName);
         break;
       case PIPMAIN :
         m_stream = streamMode.STANDARD;
-        LimelightHelpers.setStreamMode_Standard(kLLName);
+        LimelightHelpers.setStreamMode_Standard(kLLLeftName);
         break;
       case STANDARD :
         m_stream = streamMode.PIPSECONDARY;
-        LimelightHelpers.setStreamMode_PiPSecondary(kLLName);
+        LimelightHelpers.setStreamMode_PiPSecondary(kLLLeftName);
     }
 
     DataLogManager.log(String.format("%s: Set stream mode (setStreamMode_PiPxxx) %s", getSubsystem( ), m_stream));
@@ -145,7 +145,7 @@ public class Vision extends SubsystemBase
    */
   public AngularVelocity aimProportional(AngularVelocity maxAngularRate)
   {
-    double proportionalFactor = -LimelightHelpers.getTX(kLLName) * kAimingKp;
+    double proportionalFactor = -LimelightHelpers.getTX(kLLLeftName) * kAimingKp;
 
     return maxAngularRate.times(proportionalFactor);
   }
@@ -160,7 +160,7 @@ public class Vision extends SubsystemBase
    */
   public LinearVelocity rangeProportional(LinearVelocity maxSpeed)
   {
-    double proportionalFactor = LimelightHelpers.getTY(kLLName) * kDrivingKp;
+    double proportionalFactor = LimelightHelpers.getTY(kLLLeftName) * kDrivingKp;
 
     return maxSpeed.times(proportionalFactor);
   }
@@ -189,7 +189,7 @@ public class Vision extends SubsystemBase
   public void SetIMUMode(imuMode mode)
   {
     DataLogManager.log(String.format("%s: Set IMU Mode to %s", getSubsystem( ), mode));
-    LimelightHelpers.SetIMUMode("limelight", mode.value);
+    LimelightHelpers.SetIMUMode(kLLLeftName, mode.value);
   }
 
 }
