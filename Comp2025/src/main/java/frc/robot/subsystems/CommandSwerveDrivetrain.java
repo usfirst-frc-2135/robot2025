@@ -414,10 +414,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     private void visionUpdate( )
     {
-        //boolean useMegaTag2 = true; //set to false to use MegaTag1
+        boolean useMegaTag2 = DriverStation.isEnabled( ); //set to false to use MegaTag1
         boolean doRejectUpdate = false;
-        boolean useMegaTag2 = DriverStation.isEnabled( ); //Runs MegaTag2 when enabled
-        if (!useMegaTag2)
+        if (useMegaTag2 == false)
         {
             LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
 
@@ -443,7 +442,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
             }
         }
-        else if (useMegaTag2)
+        else if (useMegaTag2 == true)
         {
             LimelightHelpers.SetRobotOrientation("limelight", getState( ).Pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
             LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
