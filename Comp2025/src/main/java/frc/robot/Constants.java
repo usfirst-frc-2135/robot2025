@@ -39,6 +39,9 @@ public class Constants
 
   public static final String  kRobotString          = "RobotContainer";
 
+  public static final String  kLLLeftName           = "limelight-left";
+  public static final String  kLLRightName          = "limelight-right";
+
   /****************************************************************************
    * CAN IDs and PWM IDs
    ****************************************************************************/
