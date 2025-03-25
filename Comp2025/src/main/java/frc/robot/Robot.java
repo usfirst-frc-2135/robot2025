@@ -224,7 +224,9 @@ public class Robot extends TimedRobot
 
     DataLogManager.log(String.format("robotContainer: RoboRIO SN: %s", serialNum));
     if (serialNum == null)
+    {
       robotName = "SIMULATION";
+    }
     else if (serialNum.equals(Constants.kCompSN))
     {
       isComp = true;
