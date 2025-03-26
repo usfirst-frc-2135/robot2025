@@ -7,6 +7,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.lib.LimelightHelpers;
 
 /****************************************************************************
@@ -15,7 +16,6 @@ import frc.robot.lib.LimelightHelpers;
  */
 public class Vision extends SubsystemBase
 {
-  private static final String kLLName = "limelight";
 
   /** Camera stream mode parameter */
   private enum streamMode
@@ -104,40 +104,18 @@ public class Vision extends SubsystemBase
   {
     DataLogManager.log(String.format("%s: Subsystem initialized!", getSubsystem( )));
 
-    LimelightHelpers.setLEDMode_ForceOff(kLLName);
-    LimelightHelpers.setStreamMode_PiPSecondary(kLLName);
+    LimelightHelpers.setLEDMode_ForceOff(Constants.kLLLeftName);
+    LimelightHelpers.setLEDMode_ForceOff(Constants.kLLRightName);
+    LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLLeftName);
+    LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLRightName);
 
-    SetIMUMode(imuMode.EXTERNAL_SEED);
+    SetIMUMode(Constants.kLLLeftName, imuMode.EXTERNAL_SEED);
+    SetIMUMode(Constants.kLLRightName, imuMode.EXTERNAL_SEED);
   }
 
   /****************************************************************************
    * 
-   * rotateCameraStreamMode - rotate through different stream modes
-   */
-  public void rotateCameraStreamMode( )
-  {
-    switch (m_stream)
-    {
-      default :
-      case PIPSECONDARY :
-        m_stream = streamMode.PIPMAIN;
-        LimelightHelpers.setStreamMode_PiPMain(kLLName);
-        break;
-      case PIPMAIN :
-        m_stream = streamMode.STANDARD;
-        LimelightHelpers.setStreamMode_Standard(kLLName);
-        break;
-      case STANDARD :
-        m_stream = streamMode.PIPSECONDARY;
-        LimelightHelpers.setStreamMode_PiPSecondary(kLLName);
-    }
-
-    DataLogManager.log(String.format("%s: Set stream mode (setStreamMode_PiPxxx) %s", getSubsystem( ), m_stream));
-  }
-
-  /****************************************************************************
-   * 
-   * Limelight auto-aiming control for rotational velocity.
+   * Limelight auto-aiming control for rotational velocity. Only aligns the left Limelight.
    * 
    * @param maxAngularRate
    *          max angular rate to scale against
@@ -145,14 +123,14 @@ public class Vision extends SubsystemBase
    */
   public AngularVelocity aimProportional(AngularVelocity maxAngularRate)
   {
-    double proportionalFactor = -LimelightHelpers.getTX(kLLName) * kAimingKp;
+    double proportionalFactor = -LimelightHelpers.getTX(Constants.kLLLeftName) * kAimingKp;
 
     return maxAngularRate.times(proportionalFactor);
   }
 
   /****************************************************************************
    * 
-   * Limelight auto-ranging control for distance velocity.
+   * Limelight auto-ranging control for distance velocity. Only aligns the left Limelight.
    * 
    * @param maxSpeed
    *          max speed to scale against
@@ -160,7 +138,7 @@ public class Vision extends SubsystemBase
    */
   public LinearVelocity rangeProportional(LinearVelocity maxSpeed)
   {
-    double proportionalFactor = LimelightHelpers.getTY(kLLName) * kDrivingKp;
+    double proportionalFactor = LimelightHelpers.getTY(Constants.kLLLeftName) * kDrivingKp;
 
     return maxSpeed.times(proportionalFactor);
   }
@@ -176,7 +154,8 @@ public class Vision extends SubsystemBase
   public void SetCPUThrottleLevel(boolean throttle)
   {
     DataLogManager.log(String.format("%s: Set Throttle level to %s", getSubsystem( ), throttle));
-    // LimelightHelpers.SetThrottle("limelight", throttle ? 0 : 200);
+    // LimelightHelpers.SetThrottle(kLLLeftName, throttle ? 0 : 200);
+    // LimelightHelpers.SetThrottle(kLLRightName, throttle ? 0 : 200);
   }
 
   /****************************************************************************
@@ -186,10 +165,11 @@ public class Vision extends SubsystemBase
    * @param mode
    *          Defaults to 0. Choose the IMU mode
    */
-  public void SetIMUMode(imuMode mode)
+  public void SetIMUMode(String limelightName, imuMode mode)
   {
     DataLogManager.log(String.format("%s: Set IMU Mode to %s", getSubsystem( ), mode));
-    LimelightHelpers.SetIMUMode("limelight", mode.value);
+    LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
+    LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
   }
 
 }
