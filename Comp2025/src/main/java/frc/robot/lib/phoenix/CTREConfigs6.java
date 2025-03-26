@@ -284,4 +284,69 @@ public final class CTREConfigs6
     return crConfig;
   }
 
+  /****************************************************************************
+   * 
+   * Climber motors (2 - one for left and right) - Falcon 500
+   * 
+   * @param inverted
+   *          motor inversion request
+   * @param min
+   *          minimum deployment distance
+   * @param max
+   *          maximum deployement distance (must be greater than min)
+   */
+  public static TalonFXConfiguration climberFXConfig(boolean inverted, double min, double max)
+  {
+    TalonFXConfiguration climberConfig = new TalonFXConfiguration( );
+
+    // Closed Loop settings
+    // exConfig.ClosedLoopGeneral.*
+    // exConfig.ClosedLoopRamps.*
+
+    // Current limit settings
+    climberConfig.CurrentLimits.SupplyCurrentLimit = 80.0;        // Amps
+    climberConfig.CurrentLimits.SupplyCurrentLowerLimit = 80.0;   // Amps
+    climberConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;   // Seconds
+    climberConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+    climberConfig.CurrentLimits.StatorCurrentLimit = 800.0;        // Amps
+    climberConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+
+    // Feedback settings
+    // climberConfig.Feedback.*
+
+    // Hardware limit switches - NONE
+    // climberConfig.HardwareLimitSwitch.*
+
+    // Motion Magic settings
+    climberConfig.MotionMagic.MotionMagicCruiseVelocity = 79.75;  // Rotations / second
+    climberConfig.MotionMagic.MotionMagicAcceleration = 159.5;    // Rotations / second ^ 2
+    climberConfig.MotionMagic.MotionMagicJerk = 3544;             // Rotations / second ^ 3
+
+    // Motor output settings
+    climberConfig.MotorOutput.DutyCycleNeutralDeadband = 0.001;   // Percentage
+    climberConfig.MotorOutput.Inverted = (inverted) ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    climberConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    // Open Loop settings
+    // climberConfig.OpenLoopRamps.*                              // Seconds to ramp
+
+    // Slot settings
+    climberConfig.Slot0.kS = 0.0;                                 // Feedforward: Voltage or duty cylce to overcome static friction
+    climberConfig.Slot0.kG = 0.0;                                 // Feedforward: Voltage or duty cylce to overcome gravity (arbitrary feedforward)
+    climberConfig.Slot0.kV = 0.1129;                              // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
+
+    climberConfig.Slot0.kP = 9.60;                                // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    climberConfig.Slot0.kI = 0.0;                                 // Feedback: Voltage or duty cycle per accumulated unit
+    climberConfig.Slot0.kD = 0.0;                                 // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
+
+    // Software limit switches
+    // climberConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min;   // Rotations
+    // climberConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    // climberConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = max;   // Rotations
+    // climberConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+
+    return climberConfig;
+  }
+
 }
