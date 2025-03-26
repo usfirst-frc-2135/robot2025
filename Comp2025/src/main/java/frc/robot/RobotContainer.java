@@ -58,6 +58,7 @@ import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreAlgae;
 import frc.robot.commands.ScoreCoral;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
@@ -117,6 +118,7 @@ public class RobotContainer
   private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.createDrivetrain( );
   private final Elevator                              m_elevator      = new Elevator( );
   private final Manipulator                           m_manipulator   = new Manipulator( );
+  private final Climber                               m_climber       = new Climber( );
 
   // Selected autonomous command
   private Command                                     m_autoCommand;    // Selected autonomous command

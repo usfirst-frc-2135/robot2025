@@ -84,6 +84,9 @@ public class Constants
 
     // Digital I/Os
     public static final int    kDIO0_ElevatorDown   = 0;    // REV Magnetic Limit Switch
+
+    // PWMs
+    public static final int    kPWM_RampRelease     = 0;
   }
 
   /****************************************************************************
