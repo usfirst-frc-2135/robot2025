@@ -52,7 +52,8 @@ public class Robot extends TimedRobot
     // Forward packets from RoboRIO USB connections to ethernet
     for (int port = 5800; port <= 5809; port++)
     {
-      PortForwarder.add(port, "limelight.local", port);
+      PortForwarder.add(port, Constants.kLLLeftName + ".local", port);
+      PortForwarder.add(port, Constants.kLLRightName + ".local", port);
     }
 
     FollowPathCommand.warmupCommand( ).withName("PathPlanner - warmupCommand").schedule( ); // Recommended by PathPlanner docs
