@@ -239,7 +239,7 @@ public class RobotContainer
     m_reefLevelPub =
         NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
     m_reefOffsetPub = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString)
-        .getIntegerTopic(VIConsts.kReefOffsetString).publish( );
+        .getIntegerTopic(VIConsts.kReefBranchString).publish( );
     m_reefLevelPub.set(4);  // Default to level 4 during auto
     m_reefOffsetPub.set(0); // Default to left branch
 
@@ -271,6 +271,7 @@ public class RobotContainer
       {
         m_autoCommand.cancel( );
       }
+
       if ((m_autoCommand = getAutonomousCommand( )) != null)
       {
         m_autoCommand.schedule( );
@@ -311,7 +312,7 @@ public class RobotContainer
     // Driver - A, B, X, Y
     // 
     m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
-    m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getReefAlignmentCommand( ), Set.of(m_drivetrain)));
+    m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getAlignToReefCommand( ), Set.of(m_drivetrain)));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).whileTrue(getSlowSwerveCommand( )); // Note: left lower paddle!
 
@@ -319,7 +320,7 @@ public class RobotContainer
     // Driver - Bumpers, start, back
     //
     m_driverPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_hid));
-    m_driverPad.rightBumper( ).onTrue(new AcquireCoral(m_elevator, m_manipulator, m_hid));
+    m_driverPad.rightBumper( ).whileTrue(new AcquireCoral(m_elevator, m_manipulator, m_hid));
     m_driverPad.rightBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.STOP, m_manipulator::getCurrentAngle));
 
     m_driverPad.back( ).whileTrue(m_drivetrain.applyRequest(( ) -> brake));                             // aka View button
@@ -380,9 +381,9 @@ public class RobotContainer
     // Operator - A, B, X, Y
     //
     m_operatorPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
-    m_operatorPad.b( ).onTrue(getReefOffsetSelectCommand(1));
-    m_operatorPad.x( ).onTrue(getReefOffsetSelectCommand(0));
-    m_operatorPad.y( ).onTrue(getReefOffsetSelectCommand(2));
+    m_operatorPad.b( ).onTrue(getSelectReefBranchCommand(VIConsts.ReefBranch.RIGHT));
+    m_operatorPad.x( ).onTrue(getSelectReefBranchCommand(VIConsts.ReefBranch.LEFT));
+    m_operatorPad.y( ).onTrue(getSelectReefBranchCommand(VIConsts.ReefBranch.ALGAE));
 
     //
     // Operator - Bumpers, start, back
@@ -468,7 +469,7 @@ public class RobotContainer
     try
     {
       Optional<Pose2d> startPose = initialPath.getStartingHolonomicPose( );
-      m_drivetrain.resetPose(startPose.get( ));
+      m_drivetrain.resetPoseAndLimelight(startPose.get( ));
       DataLogManager.log(String.format("getAuto: starting pose %s", startPose));
     }
     catch (Exception nullException)
@@ -631,24 +632,13 @@ public class RobotContainer
    * @return instant command to Select Reef Branch
    */
 
-  private Command getReefOffsetSelectCommand(int branch)
+  private Command getSelectReefBranchCommand(VIConsts.ReefBranch branch)
   {
     return new InstantCommand(          // Command with init only phase declared
         ( ) ->
         {
-          m_reefOffsetPub.set(branch);
-        }).withName(VIConsts.kReefOffsetString).ignoringDisable(true);
-  }
-
-  /****************************************************************************
-   * 
-   * Create Select Branch Command
-   * 
-   * @return instant command to Select Branch Alignment
-   */
-  public Command getAlignToReefCommand( )
-  {
-    return (m_drivetrain.getReefAlignmentCommand( ));
+          m_reefOffsetPub.set(branch.value);
+        }).withName(VIConsts.kReefBranchString).ignoringDisable(true);
   }
 
   /****************************************************************************
