@@ -118,7 +118,7 @@ public class RobotContainer
   private final CommandSwerveDrivetrain               m_drivetrain    = TunerConstants.createDrivetrain( );
   private final Elevator                              m_elevator      = new Elevator( );
   private final Manipulator                           m_manipulator   = new Manipulator( );
-  private final Climber                               m_climber       = new Climber( );
+  // private final Climber                               m_climber       = new Climber( );
 
   // Selected autonomous command
   private Command                                     m_autoCommand;    // Selected autonomous command
@@ -683,6 +683,9 @@ public class RobotContainer
   public void autoInit( )
   {
     m_vision.SetCPUThrottleLevel(true);
+
+    // TODO: Implement Climber Calibration Sequence during Auto
+    // CommandScheduler.getInstance( ).schedule(m_climber.getCalibrateCommand( ));
   }
 
   /****************************************************************************
@@ -692,6 +695,9 @@ public class RobotContainer
   public void teleopInit( )
   {
     m_vision.SetCPUThrottleLevel(true);
+
+    // TODO: Implement Climber Calibration Sequence during Teleop
+    // CommandScheduler.getInstance( ).schedule(m_climber.getCalibrateCommand( ));
   }
 
   /****************************************************************************

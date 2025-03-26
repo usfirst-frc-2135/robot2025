@@ -60,7 +60,7 @@ public class Climber extends SubsystemBase
 {
   // Constants
   private static final String  kSubsystemName       = "Climber";
-  private static final double  kGearRatio           = 16.0;    // Gear reduction
+  private static final double  kGearRatio           = 236.11;    // Gear reduction
   private static final double  kClimberLengthMeters = 0.5;     // Simulation
   private static final double  kCarriageMassKg      = 2.0;     // Simulation
   private static final double  kDrumDiameterInches  = 1.375;   // Drum diameter in inches
@@ -82,7 +82,7 @@ public class Climber extends SubsystemBase
   private static final double  kLengthChain         = 8.0;     // From Mech Design height needed to reach hanging chain
 
   private static final double  kLengthMin           = 0.0;     // Climber minimum allowable length
-  private static final double  kLengthMax           = 21.0;    // Climber maximum allowable length (2" beyond high length)
+  private static final double  kLengthMax           = 12.0;    // Climber maximum allowable length (2" beyond high length)
 
   /** Climber manual move parameters */
   private enum ClimberMode
