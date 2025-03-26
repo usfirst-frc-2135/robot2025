@@ -449,6 +449,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
                 addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
             }
+
         }
         else if (useMegaTag2 == true)
         {
