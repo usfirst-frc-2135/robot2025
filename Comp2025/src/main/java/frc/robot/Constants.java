@@ -77,6 +77,9 @@ public class Constants
     public static final int    kCANID_CoralDetector = 22;   // CANrange   (Manipulator)
     public static final int    kCANID_AlgaeDetector = 23;   // CANrange   (Manipulator)
 
+    public static final int    kCANID_ClimberL      = 24;   // Kraken X60
+    public static final int    kCANID_ClimberR      = 25;   // Kraken X60
+
     public static final int    kCANID_CANdle        = 0;
 
     // Digital I/Os
