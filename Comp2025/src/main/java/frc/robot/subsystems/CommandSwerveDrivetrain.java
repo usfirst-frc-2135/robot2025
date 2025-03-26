@@ -453,7 +453,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
         else if (useMegaTag2 == true)
         {
-            LimelightHelpers.SetRobotOrientation(Constants.kLLLeftName, getState( ).Pose.getRotation( ).getDegrees( ), 0, 0, 0, 0,
+            LimelightHelpers.SetRobotOrientation(limelightName, getState( ).Pose.getRotation( ).getDegrees( ), 0, 0, 0, 0,
                     0);
             LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
 
