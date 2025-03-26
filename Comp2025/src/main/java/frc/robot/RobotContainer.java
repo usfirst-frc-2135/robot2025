@@ -672,6 +672,7 @@ public class RobotContainer
 
     m_elevator.initialize( );
     m_manipulator.initialize( );
+    // m_climber.initialize(); 
 
     m_vision.SetCPUThrottleLevel(false);
   }
@@ -710,5 +711,6 @@ public class RobotContainer
 
     m_elevator.printFaults( );
     m_manipulator.printFaults( );
+    // m_climber.printFaults( );
   }
 }
