@@ -420,20 +420,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         {
             LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
 
-            if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
-            {
-                if (mt1.rawFiducials[0].ambiguity > .7)
-                {
-                    doRejectUpdate = true;
-                }
-                if (mt1.rawFiducials[0].distToCamera > 3)
-                {
-                    doRejectUpdate = true;
-                }
-            }
-            if (mt1.tagCount == 0)
+            if (mt1 == null)
             {
                 doRejectUpdate = true;
+            }
+            else
+            {
+                if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
+                {
+                    if (mt1.rawFiducials[0].ambiguity > .7)
+                    {
+                        doRejectUpdate = true;
+                    }
+                    if (mt1.rawFiducials[0].distToCamera > 3)
+                    {
+                        doRejectUpdate = true;
+                    }
+                }
+                if (mt1.tagCount == 0)
+                {
+                    doRejectUpdate = true;
+                }
             }
 
             if (!doRejectUpdate)
@@ -441,6 +448,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
                 addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
             }
+
         }
         else if (useMegaTag2 == true)
         {
