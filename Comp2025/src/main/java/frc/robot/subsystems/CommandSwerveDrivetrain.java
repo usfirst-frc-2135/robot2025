@@ -77,7 +77,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     /* Robot pose for field positioning */
     private final NetworkTable          table                    = ntInst.getTable("Pose");
-    private final DoubleArrayPublisher  fieldPub                 = table.getDoubleArrayTopic("llPose").publish( );
+    private final DoubleArrayPublisher  fieldPubLeft             = table.getDoubleArrayTopic("llPose-left").publish( );
+    private final DoubleArrayPublisher  fieldPubRight            = table.getDoubleArrayTopic("llPose-right").publish( );
     private final StringPublisher       fieldTypePub             = table.getStringTopic(".type").publish( );
 
     // Network tables publisher objects
@@ -340,8 +341,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
         if (m_useLimelight && Robot.isReal( )) {
-            visionUpdate(Constants.kLLLeftName);
-            visionUpdate(Constants.kLLRightName);
+            visionUpdate(Constants.kLLLeftName, fieldPubLeft);
+            visionUpdate(Constants.kLLRightName, fieldPubRight);
         }
     }
 
@@ -436,7 +437,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * This example is sufficient to show that vision integration is possible, though exact
      * implementation of how to use vision should be tuned per-robot and to the team's specification.
      */
-    private void visionUpdate(String limelightName)
+    private void visionUpdate(String limelightName, DoubleArrayPublisher fieldPub)
     {
         boolean useMegaTag2 = DriverStation.isEnabled( ); //set to false to use MegaTag1
         boolean doRejectUpdate = false;
@@ -488,6 +489,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             {
                 doRejectUpdate = true;
             }
+
             if (mt2 == null || mt2.tagCount == 0)
             {
                 doRejectUpdate = true;
@@ -497,6 +499,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             {
                 doRejectUpdate = true;
             }
+
             if (!doRejectUpdate)
             {
                 fieldTypePub.set("Field2d");
