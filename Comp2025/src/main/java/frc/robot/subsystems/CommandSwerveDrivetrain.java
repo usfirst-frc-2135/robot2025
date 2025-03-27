@@ -77,7 +77,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     /* Robot pose for field positioning */
     private final NetworkTable          table                    = ntInst.getTable("Pose");
-    private final DoubleArrayPublisher  fieldPub                 = table.getDoubleArrayTopic("llPose").publish( );
+    private final DoubleArrayPublisher  fieldPubLeft             = table.getDoubleArrayTopic("llPose-left").publish( );
+    private final DoubleArrayPublisher  fieldPubRight            = table.getDoubleArrayTopic("llPose-right").publish( );
     private final StringPublisher       fieldTypePub             = table.getStringTopic(".type").publish( );
 
     // Network tables publisher objects
@@ -340,8 +341,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
         if (m_useLimelight && Robot.isReal( )) {
-            visionUpdate(Constants.kLLLeftName);
-            visionUpdate(Constants.kLLRightName);
+            visionUpdate(Constants.kLLLeftName, fieldPubLeft);
+            visionUpdate(Constants.kLLRightName, fieldPubRight);
         }
     }
 
@@ -436,7 +437,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * This example is sufficient to show that vision integration is possible, though exact
      * implementation of how to use vision should be tuned per-robot and to the team's specification.
      */
-    private void visionUpdate(String limelightName)
+    private void visionUpdate(String limelightName, DoubleArrayPublisher fieldPub)
     {
         boolean useMegaTag2 = DriverStation.isEnabled( ); //set to false to use MegaTag1
         boolean doRejectUpdate = false;
@@ -469,6 +470,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
             if (!doRejectUpdate)
             {
+                fieldTypePub.set("Field2d");
+                fieldPub.set(new double[ ]
+                {
+                        mt1.pose.getX( ), mt1.pose.getY( ), mt1.pose.getRotation( ).getDegrees( )
+                });
                 setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
                 addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
             }
@@ -476,14 +482,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
         else if (useMegaTag2 == true)
         {
-            LimelightHelpers.SetRobotOrientation(limelightName, getState( ).Pose.getRotation( ).getDegrees( ), 0, 0, 0, 0,
-                    0);
+            LimelightHelpers.SetRobotOrientation(limelightName, getState( ).Pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
             LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
 
             if (Math.abs(getPigeon2( ).getAngularVelocityZWorld( ).getValue( ).in(DegreesPerSecond)) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
             {
                 doRejectUpdate = true;
             }
+
             if (mt2 == null || mt2.tagCount == 0)
             {
                 doRejectUpdate = true;
@@ -493,6 +499,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             {
                 doRejectUpdate = true;
             }
+
             if (!doRejectUpdate)
             {
                 fieldTypePub.set("Field2d");
@@ -502,8 +509,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 });
                 // setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999)); // Sample code from limelight
                 // Code used by some teams to scale std devs by distance (below) and used by several teams
-                setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist,
-                        Math.pow(0.5, mt2.tagCount) * 2 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
+                setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 1.0 * mt2.avgTagDist,
+                        Math.pow(0.5, mt2.tagCount) * 1.0 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
                 addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
             }
         }
