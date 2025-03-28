@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -48,7 +47,6 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -58,6 +56,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
 import frc.robot.Robot;
+import frc.robot.commands.AlignToReef;
 import frc.robot.commands.DrivePIDCommand;
 import frc.robot.commands.LogCommand;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
@@ -80,6 +79,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final DoubleArrayPublisher  fieldPubLeft             = table.getDoubleArrayTopic("llPose-left").publish( );
     private final DoubleArrayPublisher  fieldPubRight            = table.getDoubleArrayTopic("llPose-right").publish( );
     private final StringPublisher       fieldTypePub             = table.getStringTopic(".type").publish( );
+
+    /* Robot pose */
 
     // Network tables publisher objects
     private DoubleEntry                         poseXEntry;
@@ -413,9 +414,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         poseRotEntry = table.getDoubleTopic("rotation").getEntry(0.0);
 
         SmartDashboard.putData("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
-        SmartDashboard.putData("GetAlignToReefCommand", new DeferredCommand(( ) -> getAlignToReefCommand( ), Set.of(this)));
-        SmartDashboard.putData("GetAlignToReefCommand2", new DeferredCommand(( ) -> getAlignToReefCommand2( ), Set.of(this)));
-        SmartDashboard.putData("GetAlignToReefCommand3", new DeferredCommand(( ) -> getAlignToReefCommand3( ), Set.of(this)));
+        SmartDashboard.putData("GetAlignToReefCommand", new AlignToReef(this, null));
+        SmartDashboard.putData("GetAlignToReefCommand2", new AlignToReef(this, null));
+        SmartDashboard.putData("GetAlignToReefCommand3", new AlignToReef(this, null));
     }
 
     /**
