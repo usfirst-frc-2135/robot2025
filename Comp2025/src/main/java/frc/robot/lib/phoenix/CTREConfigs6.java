@@ -45,12 +45,12 @@ public final class CTREConfigs6
     // exConfig.ClosedLoopRamps.*
 
     // Current limit settings
-    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 25.0;           // Amps
-    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 28.0;      // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 35.0;           // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 30.0;      // Amps
     elevatorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;      // Seconds
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    elevatorConfig.CurrentLimits.StatorCurrentLimit = 400.0;          // Amps
+    elevatorConfig.CurrentLimits.StatorCurrentLimit = 120.0;          // Amps
     elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
