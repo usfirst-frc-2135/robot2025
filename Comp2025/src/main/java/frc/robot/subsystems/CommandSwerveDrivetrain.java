@@ -440,7 +440,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private void visionUpdate(String limelightName, DoubleArrayPublisher fieldPub)
     {
         boolean useMegaTag2 = DriverStation.isEnabled( ); //set to false to use MegaTag1
-        //boolean useMegaTag2 = true;
         boolean doRejectUpdate = false;
         if (useMegaTag2 == false)
         {
