@@ -28,9 +28,12 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
-public class DrivePIDCommand extends Command
+/**
+ * Swerve drive under PID control to a target pose
+ */
+public class SwervePIDController extends Command
 {
-  public CommandSwerveDrivetrain                m_drivetrain;
+  public CommandSwerveDrivetrain                m_swerve;
   public final Pose2d                           m_goalPose;
 
   private final NetworkTableInstance            ntInst              = NetworkTableInstance.getDefault( );
@@ -57,21 +60,25 @@ public class DrivePIDCommand extends Command
   private final Debouncer                       endDebouncer        =
       new Debouncer(kEndTriggerDebounce.in(Seconds), Debouncer.DebounceType.kBoth);
   private final BooleanPublisher                endConditionLogger  =
-      NetworkTableInstance.getDefault( ).getTable("logging").getBooleanTopic("SwervePIDEndCondition").publish( );
+      ntInst.getTable("Pose").getBooleanTopic("PIDEndCondition").publish( );
 
   private boolean                               endCondition        = false;
 
-  public DrivePIDCommand(CommandSwerveDrivetrain drivetrain, Pose2d goalPose)
+  /**
+   * Swerve drive under PID control to a target pose
+   */
+  public SwervePIDController(CommandSwerveDrivetrain swerve, Pose2d goalPose)
   {
-    this.m_drivetrain = drivetrain;
+    this.m_swerve = swerve;
     this.m_goalPose = goalPose;
 
-    setName("DrivePIDCommand");
+    setName("SwervePIDController");
+    DataLogManager.log(String.format("%s: target %s", getName( ), goalPose));
   }
 
   public static Command generateCommand(CommandSwerveDrivetrain swerve, Pose2d m_goalPose, Time timeout)
   {
-    return new DrivePIDCommand(swerve, m_goalPose).withTimeout(timeout)
+    return new SwervePIDController(swerve, m_goalPose).withTimeout(timeout)
         .finallyDo(( ) -> swerve.setControl(new SwerveRequest.SwerveDriveBrake( )));
   }
 
@@ -87,7 +94,7 @@ public class DrivePIDCommand extends Command
 
     ChassisSpeeds speeds = mDriveController.calculateRobotRelativeSpeeds(drivePose.get( ), goalState);
 
-    m_drivetrain.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
+    m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
   }
 
   @Override
