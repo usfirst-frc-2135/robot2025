@@ -671,6 +671,7 @@ public class RobotContainer
     m_manipulator.initialize( );
 
     m_vision.SetCPUThrottleLevel(false);
+    m_vision.SetIMUModeExternalSeed( );
   }
 
   /****************************************************************************
@@ -680,6 +681,7 @@ public class RobotContainer
   public void autoInit( )
   {
     m_vision.SetCPUThrottleLevel(true);
+    m_vision.SetIMUModeInternal( );
   }
 
   /****************************************************************************
@@ -689,6 +691,7 @@ public class RobotContainer
   public void teleopInit( )
   {
     m_vision.SetCPUThrottleLevel(true);
+    m_vision.SetIMUModeInternal( );
   }
 
   /****************************************************************************
