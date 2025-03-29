@@ -1,9 +1,11 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CRConsts.ClawMode;
+import frc.robot.Robot;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HID;
 import frc.robot.subsystems.Manipulator;
@@ -29,15 +31,17 @@ public class ExpelCoral extends SequentialCommandGroup
 
         // @formatter:off
 
+        new InstantCommand(( ) -> Robot.timeMarker("Coral start expel")),
         new LogCommand(getName( ), "Start coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle),
 
         new LogCommand(getName( ), "Wait for coral to expel"), 
-        new WaitUntilCommand(manipulator::isCoralExpelled),
-        new WaitCommand(0.2),
+        new WaitUntilCommand(manipulator::isCoralExpelled).withTimeout(0.05),
+        new WaitCommand(0.1),
 
         new LogCommand(getName( ), "Stop coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),
+        new InstantCommand(( ) -> Robot.timeMarker("Coral end expel")),
 
         new LogCommand(getName( ), "Move Elevator only to L2 height in case coral drops into robot"),
         elevator.getMoveToPositionCommand(elevator::getHeightCoralL2)

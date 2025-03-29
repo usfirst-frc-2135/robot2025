@@ -1,13 +1,17 @@
 package frc.robot.autos;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.CRConsts.ClawMode;
+import frc.robot.Robot;
 import frc.robot.commands.AcquireCoral;
 import frc.robot.commands.ExpelCoral;
 import frc.robot.commands.LogCommand;
@@ -49,12 +53,15 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
         // Add Commands here:
 
         // @formatter:off
-
+        new InstantCommand(( ) -> Robot.timeMarker("AutoPreloadCoral: Auto Start")),
         new LogCommand(getName(), "Select scoring level"),
         getReefLevelCommand.get(),
 
         new LogCommand(getName(), "Drive to branch and score preload coral"),
-        drivetrain.getPathCommand(ppPaths.get(0)),
+        new ParallelCommandGroup (
+          drivetrain.getPathCommand(ppPaths.get(0)),
+          manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState)
+        ),
         new ScoreCoral(elevator, manipulator, hid),
         new ExpelCoral(elevator, manipulator, hid),
 
@@ -65,7 +72,10 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
         ), 
 
         new LogCommand(getName(), "Drive to branch and score second coral"),
-        drivetrain.getPathCommand(ppPaths.get(2)),
+        new ParallelCommandGroup (
+          drivetrain.getPathCommand(ppPaths.get(2)),
+          manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState)
+        ),
         new ScoreCoral(elevator, manipulator, hid),
         new ExpelCoral(elevator, manipulator, hid),
 
@@ -76,9 +86,13 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
         ), 
 
         new LogCommand(getName(), "Drive to branch and score third coral"),   
-        drivetrain.getPathCommand(ppPaths.get(4)),
+        new ParallelCommandGroup (
+          drivetrain.getPathCommand(ppPaths.get(4)),
+          manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState)
+        ),
         new ScoreCoral(elevator, manipulator, hid),
-        new ExpelCoral(elevator, manipulator, hid)
+        new ExpelCoral(elevator, manipulator, hid),
+        new InstantCommand(( ) -> Robot.timeMarker("AutoPreloadCoral: Auto End"))
         
         // @formatter:on
     );
