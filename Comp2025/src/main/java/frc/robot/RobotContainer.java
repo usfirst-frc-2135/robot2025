@@ -311,7 +311,7 @@ public class RobotContainer
     // Driver - A, B, X, Y
     // 
     m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
-    m_driverPad.b( ).whileTrue(new AlignToReef(m_drivetrain, m_hid));
+    m_driverPad.b( ).whileTrue(m_drivetrain.getAlignToReefCommand3( ));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).whileTrue(getSlowSwerveCommand( )); // Note: left lower paddle!
 

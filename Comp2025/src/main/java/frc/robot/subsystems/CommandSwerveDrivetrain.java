@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -47,18 +48,17 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
 import frc.robot.Robot;
-import frc.robot.commands.AlignToReef;
-import frc.robot.commands.DrivePIDCommand;
 import frc.robot.commands.LogCommand;
+import frc.robot.commands.SwervePIDController;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.lib.LimelightHelpers;
 
@@ -259,6 +259,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             startSimThread();
         }
         configureAutoBuilder();
+        initDashboard();
     }
 
     private void configureAutoBuilder() {
@@ -412,11 +413,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         poseXEntry = table.getDoubleTopic("X").getEntry(0.0);
         poseYEntry = table.getDoubleTopic("Y").getEntry(0.0);
         poseRotEntry = table.getDoubleTopic("rotation").getEntry(0.0);
-
         SmartDashboard.putData("SetPose", new InstantCommand(( ) -> setOdometryFromDashboard( )).ignoringDisable(true));
-        SmartDashboard.putData("GetAlignToReefCommand", new AlignToReef(this, null));
-        SmartDashboard.putData("GetAlignToReefCommand2", new AlignToReef(this, null));
-        SmartDashboard.putData("GetAlignToReefCommand3", new AlignToReef(this, null));
+
+        SmartDashboard.putData("GetAlignToReefCommand", new DeferredCommand(( ) -> getAlignToReefCommand( ), Set.of(this)));
+        SmartDashboard.putData("GetAlignToReefCommand2", new DeferredCommand(( ) -> getAlignToReefCommand2( ), Set.of(this)));
+        SmartDashboard.putData("GetAlignToReefCommand3", new DeferredCommand(( ) -> getAlignToReefCommand3( ), Set.of(this)));
     }
 
     /**
@@ -511,7 +512,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 // setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999)); // Sample code from limelight
                 // Code used by some teams to scale std devs by distance (below) and used by several teams
                 setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 1.0 * mt2.avgTagDist,
-                        Math.pow(0.5, mt2.tagCount) * 1.0 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
+                        Math.pow(0.5, mt2.tagCount) * 0.75 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
                 addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
             }
         }
@@ -546,12 +547,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     private static final int[ ] blueReefTags =
     {
-            17, 18, 19, 20, 21, 22
+            17, 18, 19, 20, 21, 22  // Must be in numerical order
     };
 
     private static final int[ ] redReefTags  =
     {
-            8, 7, 6, 11, 10, 9
+            8, 7, 6, 11, 10, 9      // Rotationally ordered the same as blue tags above
     };
 
     /**
@@ -563,11 +564,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private int findClosestReefTag(Pose2d currentPose)
     {
         Alliance alliance = DriverStation.getAlliance( ).orElse(Alliance.Blue); // Always return either Red or Blue and removes the optional type
-                                                                               // The orElse means "use Blue if no alliance is found"
 
         int tagsToUse[] = (alliance.equals(Alliance.Blue)) ? blueReefTags : redReefTags; // Select the red or blue tag array
-
-        int closestBlueTag = 0;                                                     // Variable for saving the tag with the shortest distance (0 means none found)
+        int closestBlueTag = 0;                                                 // Variable for saving the tag with the shortest distance (0 means none found)
         double shortestDistance = Units.feetToMeters(57.0);                // field length in meters - Variable for keeping track of lowest distance (57.0 means none found)
 
         // Just one calculation for either tag set
@@ -598,16 +597,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @return targetPose
      *         target pose for the reef tag passed in
      */
-    private Pose2d findTargetPose( )
+    public Pose2d findTargetPose( )
     {
         Pose2d currentPose = getState( ).Pose;
         int reefTag = findClosestReefTag(currentPose);
         int reefOffset = (int) reefBranch.get( );
 
-        int relativeReefTag = reefTag - 17;
+        int relativeReefTag = reefTag - blueReefTags[0];
         Pose2d targetPose = VIConsts.kBlueSideReefPoses[relativeReefTag][reefOffset];
 
-        if (DriverStation.getAlliance( ).orElse(Alliance.Blue).equals(Alliance.Red))
+        if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
         {
             targetPose = FlippingUtil.flipFieldPose(targetPose);
         }
@@ -632,7 +631,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return new SequentialCommandGroup(                                                                          //
                 new LogCommand("AlignToReef", String.format("ReefLevel %d ReefBranch %d target %s",   //
                         reefLevel.get( ), reefBranch.get( ), targetPose)),                                          //
-                AutoBuilder.pathfindToPose(targetPose, kPathFindConstraints, 0.0)            //
+                AutoBuilder.pathfindToPose(targetPose, kPathFindConstraints, 0.0)                   //
         );
     }
 
@@ -683,7 +682,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return new SequentialCommandGroup(                                                                          //
                 new LogCommand("AlignToReef3", String.format("ReefLevel %d ReefBranch %d target %s",     //
                         reefLevel.get( ), reefBranch.get( ), targetPose)),                                     //
-                DrivePIDCommand.generateCommand(this, targetPose, Seconds.of(2.0))                        //
+                SwervePIDController.generateCommand(this, targetPose, Seconds.of(2.5))                        //
         );
     }
 
