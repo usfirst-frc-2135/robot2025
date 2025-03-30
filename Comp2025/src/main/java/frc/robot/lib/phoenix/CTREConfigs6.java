@@ -176,10 +176,10 @@ public final class CTREConfigs6
   {
     CANcoderConfiguration ccConfig = new CANcoderConfiguration( );
 
-    ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     ccConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
     if (Robot.isReal( ))
-      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? -0.1078 : 0.0;
+      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? -0.5345 : 0.0;
     else
       ccConfig.MagnetSensor.MagnetOffset = -0.25;                     // Simulated CANcoder default in rotations
 
