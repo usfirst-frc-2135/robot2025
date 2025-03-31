@@ -76,6 +76,8 @@ public class Elevator extends SubsystemBase
   private static final Voltage kManualSpeedVolts       = Volts.of(3.0); // Motor voltage during manual operation (joystick)
   private static final Current kHardStopCurrentLimit   = Amps.of(100.0);
 
+  private static final double  kMinDownHeight          = 0.1;             // Minimum height in inches commanded during down movements
+  private static final double  kMaxDownHeight          = 0.4;             // Maximum height in inches when down limit switch is closed
   private static final double  kToleranceInches        = 0.5;             // PID tolerance in inches
   private static final double  kMMDebounceTime         = 0.040;           // Seconds to debounce a final position check
   private static final double  kMMMoveTimeout          = 1.5;             // Seconds allowed for a Motion Magic movement
@@ -85,14 +87,14 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightCoralStation     = 0.0;             // By definition - at coral station
 
   private static final double  kHeightCoralL1          = 3.0;             // By definition - at L1 for scoring coral
-  private static final double  kHeightCoralL2          = 8.25;             // By definition - at L2 for scoring coral
+  private static final double  kHeightCoralL2          = 8.0;             // By definition - at L2 for scoring coral
   private static final double  kHeightCoralL3          = 15.5;            // By definition - at L3 for scoring coral
-  private static final double  kHeightCoralL4          = 29.0;           // By definition - at L4 for scoring coral
+  private static final double  kHeightCoralL4          = 27.5;           // By definition - at L4 for scoring coral
 
   private static final double  kHeightAlgaeL23         = 11.0;            // By definition - at L23 for taking algae
-  private static final double  kHeightAlgaeL34         = 19.5;            // By definition - at L34 for taking algae
+  private static final double  kHeightAlgaeL34         = 20.5;            // By definition - at L34 for taking algae
   private static final double  kHeightAlgaeNet         = 30.75;           // By definition - at scoring algae in net
-  private static final double  kHeightAlgaeProcessor   = 4.0;             // By definition - at scoring algae in processor
+  private static final double  kHeightAlgaeProcessor   = 2.5;             // By definition - at scoring algae in processor
 
   /** Elevator manual move parameters */
   private enum JoystickMode
@@ -118,7 +120,7 @@ public class Elevator extends SubsystemBase
   private final TalonFXSimState       m_leftMotorSim      = m_leftMotor.getSimState( );
   private final TalonFXSimState       m_rightMotorSim     = m_rightMotor.getSimState( );
   private final ElevatorSim           m_elevSim           = new ElevatorSim(DCMotor.getKrakenX60Foc(2), kGearRatio,
-      kCarriageMassKg, kSprocketRadiusMeters, kSimHeightMetersMin, kSimHeightMetersMax, false, 0.0);
+      kCarriageMassKg, kSprocketRadiusMeters, kSimHeightMetersMin, kSimHeightMetersMax, true, 0.0);
 
   // Mechanism2d
   private final Mechanism2d           m_elevatorMech      = new Mechanism2d(1.0, 1.0);
@@ -241,9 +243,12 @@ public class Elevator extends SubsystemBase
         calibrateHeight( );
       }
 
+      // Re-calibrate if the elevator is jammed or too high while limit switch is engaged
       if (DriverStation.isEnabled( ) && isDown( ))
       {
-        if ((m_leftStatorCur.getValue( ).gte(kHardStopCurrentLimit)) || (m_rightStatorCur.getValue( ).gte(kHardStopCurrentLimit)))
+        if ((m_leftStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps))
+            || (m_rightStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps)) || //
+            ((leftHeight > kMaxDownHeight) || (rightHeight > kMaxDownHeight) || (m_currentHeight > kMaxDownHeight)))
         {
           calibrateHeight( );
         }
@@ -427,7 +432,7 @@ public class Elevator extends SubsystemBase
     if (holdPosition)
       newHeight = m_currentHeight;
 
-    newHeight = MathUtil.clamp(newHeight, 0.1, kHeightInchesMax);
+    newHeight = MathUtil.clamp(newHeight, kMinDownHeight, kHeightInchesMax);
 
     // Decide if a new position request
     if (holdPosition || newHeight != m_targetHeight || !MathUtil.isNear(newHeight, m_currentHeight, kToleranceInches))

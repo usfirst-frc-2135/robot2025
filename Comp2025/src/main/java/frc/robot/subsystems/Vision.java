@@ -172,4 +172,30 @@ public class Vision extends SubsystemBase
     LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
   }
 
+  /****************************************************************************
+   * 
+   * Set IMU mode to EXTERNAL_SEED mode (load the LL4 internal IMU from robot IMU)
+   * 
+   */
+  public void SetIMUModeExternalSeed( )
+  {
+    final imuMode mode = imuMode.EXTERNAL_SEED;
+    DataLogManager.log(String.format("%s: Set IMU Mode to %d (%s)", getSubsystem( ), mode.value, mode));
+    LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
+    LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
+  }
+
+  /****************************************************************************
+   * 
+   * Set IMU mode to INTERNAL mode (use the LL4 internal IMU)
+   * 
+   */
+  public void SetIMUModeInternal( )
+  {
+    final imuMode mode = imuMode.INTERNAL;
+    DataLogManager.log(String.format("%s: Set IMU Mode to %d (%s)", getSubsystem( ), mode.value, mode));
+    LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
+    LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
+  }
+
 }

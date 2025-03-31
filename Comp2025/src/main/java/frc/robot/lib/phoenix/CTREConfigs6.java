@@ -45,12 +45,12 @@ public final class CTREConfigs6
     // exConfig.ClosedLoopRamps.*
 
     // Current limit settings
-    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 25.0;           // Amps
-    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 28.0;      // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 35.0;           // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 30.0;      // Amps
     elevatorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;      // Seconds
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    elevatorConfig.CurrentLimits.StatorCurrentLimit = 400.0;          // Amps
+    elevatorConfig.CurrentLimits.StatorCurrentLimit = 120.0;          // Amps
     elevatorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     // Feedback settings
@@ -176,10 +176,10 @@ public final class CTREConfigs6
   {
     CANcoderConfiguration ccConfig = new CANcoderConfiguration( );
 
-    ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     ccConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.25;
     if (Robot.isReal( ))
-      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? -0.1078 : 0.0;
+      ccConfig.MagnetSensor.MagnetOffset = (Robot.isComp( )) ? -0.5345 : 0.0;
     else
       ccConfig.MagnetSensor.MagnetOffset = -0.25;                     // Simulated CANcoder default in rotations
 
