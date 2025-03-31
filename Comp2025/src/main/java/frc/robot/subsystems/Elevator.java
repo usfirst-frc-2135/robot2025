@@ -120,7 +120,7 @@ public class Elevator extends SubsystemBase
   private final TalonFXSimState       m_leftMotorSim      = m_leftMotor.getSimState( );
   private final TalonFXSimState       m_rightMotorSim     = m_rightMotor.getSimState( );
   private final ElevatorSim           m_elevSim           = new ElevatorSim(DCMotor.getKrakenX60Foc(2), kGearRatio,
-      kCarriageMassKg, kSprocketRadiusMeters, kSimHeightMetersMin, kSimHeightMetersMax, false, 0.0);
+      kCarriageMassKg, kSprocketRadiusMeters, kSimHeightMetersMin, kSimHeightMetersMax, true, 0.0);
 
   // Mechanism2d
   private final Mechanism2d           m_elevatorMech      = new Mechanism2d(1.0, 1.0);
