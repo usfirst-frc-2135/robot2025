@@ -76,6 +76,8 @@ public class Elevator extends SubsystemBase
   private static final Voltage kManualSpeedVolts       = Volts.of(3.0); // Motor voltage during manual operation (joystick)
   private static final Current kHardStopCurrentLimit   = Amps.of(100.0);
 
+  private static final double  kMinDownHeight          = 0.1;             // Minimum height in inches commanded during down movements
+  private static final double  kMaxDownHeight          = 0.4;             // Maximum height in inches when down limit switch is closed
   private static final double  kToleranceInches        = 0.5;             // PID tolerance in inches
   private static final double  kMMDebounceTime         = 0.040;           // Seconds to debounce a final position check
   private static final double  kMMMoveTimeout          = 1.5;             // Seconds allowed for a Motion Magic movement
@@ -241,9 +243,12 @@ public class Elevator extends SubsystemBase
         calibrateHeight( );
       }
 
+      // Re-calibrate if the elevator is jammed or too high while limit switch is engaged
       if (DriverStation.isEnabled( ) && isDown( ))
       {
-        if ((m_leftStatorCur.getValue( ).gte(kHardStopCurrentLimit)) || (m_rightStatorCur.getValue( ).gte(kHardStopCurrentLimit)))
+        if ((m_leftStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps))
+            || (m_rightStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps)) || //
+            ((leftHeight > kMaxDownHeight) || (rightHeight > kMaxDownHeight) || (m_currentHeight > kMaxDownHeight)))
         {
           calibrateHeight( );
         }
@@ -427,7 +432,7 @@ public class Elevator extends SubsystemBase
     if (holdPosition)
       newHeight = m_currentHeight;
 
-    newHeight = MathUtil.clamp(newHeight, 0.1, kHeightInchesMax);
+    newHeight = MathUtil.clamp(newHeight, kMinDownHeight, kHeightInchesMax);
 
     // Decide if a new position request
     if (holdPosition || newHeight != m_targetHeight || !MathUtil.isNear(newHeight, m_currentHeight, kToleranceInches))

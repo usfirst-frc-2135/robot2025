@@ -10,7 +10,16 @@ import frc.robot.subsystems.Manipulator;
 
 public class ExpelCoral extends SequentialCommandGroup
 {
-
+  /**
+   * Group command to use the subsystems to expel a coral onto the reef
+   * 
+   * @param elevator
+   *          elevator subsystem
+   * @param manipulator
+   *          manipulator subsystem
+   * @param hid
+   *          hid subsystem
+   */
   public ExpelCoral(Elevator elevator, Manipulator manipulator, HID hid)
   {
     setName("ExpelCoral");
