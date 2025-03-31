@@ -52,7 +52,6 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
@@ -475,7 +474,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 {
                         mt1.pose.getX( ), mt1.pose.getY( ), mt1.pose.getRotation( ).getDegrees( )
                 });
-                setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+                setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, .5));
                 addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
             }
 
@@ -509,8 +508,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 });
                 // setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999)); // Sample code from limelight
                 // Code used by some teams to scale std devs by distance (below) and used by several teams
-                setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 1.0 * mt2.avgTagDist,
-                        Math.pow(0.5, mt2.tagCount) * 1.0 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
+                setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 0.75 * mt2.avgTagDist,
+                        Math.pow(0.5, mt2.tagCount) * 0.75 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
                 addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
             }
         }
@@ -525,7 +524,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void resetPoseAndLimelight(Pose2d pose)
     {
         resetPose(pose);
-        LimelightHelpers.SetRobotOrientation("limelight", pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation("limelight-left", pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
     }
 
     /**

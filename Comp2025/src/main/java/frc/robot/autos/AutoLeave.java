@@ -22,8 +22,6 @@ public class AutoLeave extends SequentialCommandGroup
    *          list of auto paths to follow
    * @param drivetrain
    *          swerve drivetrain subsystem
-   * @param led
-   *          led subsystem
    */
   public AutoLeave(List<PathPlannerPath> ppAuto, CommandSwerveDrivetrain drivetrain)
   {
