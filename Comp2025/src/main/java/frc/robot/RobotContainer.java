@@ -51,7 +51,6 @@ import frc.robot.autos.AutoPreloadCoral2;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.AcquireAlgae;
 import frc.robot.commands.AcquireCoral;
-import frc.robot.commands.AlignToReef;
 import frc.robot.commands.ExpelCoral;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreAlgae;
@@ -579,7 +578,7 @@ public class RobotContainer
           if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
             m_initialPath = m_initialPath.flipPath( );
           resetOdometryToInitialPose(m_initialPath);
-        }),                                                                                           //
+        }, m_drivetrain),                                                                             //
         new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)), //
         new WaitCommand(delay),                                                                       //
         m_autoCommand,                                                                                //

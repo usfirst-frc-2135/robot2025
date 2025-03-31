@@ -29,62 +29,59 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 /**
- * Swerve drive under PID control to a target pose
+ * Swerve drive under PID control to a goal pose
  */
 public class SwervePIDController extends Command
 {
   public CommandSwerveDrivetrain                m_swerve;
-  public final Pose2d                           m_goalPose;
+  public Pose2d                                 m_goalPose;
 
-  private final NetworkTableInstance            ntInst              = NetworkTableInstance.getDefault( );
-  private final NetworkTable                    driveStateTable     = ntInst.getTable("DriveState");
-  private final StructSubscriber<Pose2d>        drivePose           =
-      driveStateTable.getStructTopic("Pose", Pose2d.struct).subscribe(new Pose2d( ));
-  private final StructSubscriber<ChassisSpeeds> driveSpeeds         =
-      driveStateTable.getStructTopic("Speeds", ChassisSpeeds.struct).subscribe(new ChassisSpeeds( ));
+  private final NetworkTableInstance            ntInst             = NetworkTableInstance.getDefault( );
+  private final NetworkTable                    dsTable            = ntInst.getTable("DriveState");
+  private final StructSubscriber<Pose2d>        drivePose          =
+      dsTable.getStructTopic("Pose", Pose2d.struct).subscribe(new Pose2d( ));
+  private final StructSubscriber<ChassisSpeeds> driveSpeeds        =
+      dsTable.getStructTopic("Speeds", ChassisSpeeds.struct).subscribe(new ChassisSpeeds( ));
 
-  public static final PIDConstants              kTranslationPID     = new PIDConstants(5.0, 0, 0);
-  public static final PIDConstants              kRotationPID        = new PIDConstants(5.0, 0, 0);
-  private PPHolonomicDriveController            mDriveController    =
+  public static final PIDConstants              kTranslationPID    = new PIDConstants(5.0, 0, 0);
+  public static final PIDConstants              kRotationPID       = new PIDConstants(5.0, 0, 0);
+  private PPHolonomicDriveController            mDriveController   =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
 
-  public static final Rotation2d                kRotationTolerance  = Rotation2d.fromDegrees(2.0);
-  public static final Distance                  kPositionTolerance  = Inches.of(0.8);
-  public static final LinearVelocity            kSpeedTolerance     = InchesPerSecond.of(0.25);
+  public static final Rotation2d                kRotationTolerance = Rotation2d.fromDegrees(2.0);
+  public static final Distance                  kPositionTolerance = Inches.of(0.8);
+  public static final LinearVelocity            kSpeedTolerance    = InchesPerSecond.of(0.25);
 
-  public static final Time                      kEndTriggerDebounce = Seconds.of(0.04);
-
-  public static final PathConstraints           kPathConstraints    =
-      new PathConstraints(1.25, 1.25, 1 / 2 * Math.PI, 1 * Math.PI); // The constraints for this path.
-
-  private final Debouncer                       endDebouncer        =
-      new Debouncer(kEndTriggerDebounce.in(Seconds), Debouncer.DebounceType.kBoth);
-  private final BooleanPublisher                endConditionLogger  =
+  public static final Time                      kEndDebounce       = Seconds.of(0.04);
+  private final Debouncer                       endDebouncer       =
+      new Debouncer(kEndDebounce.in(Seconds), Debouncer.DebounceType.kBoth);
+  private final BooleanPublisher                endConditionLogger =
       ntInst.getTable("Pose").getBooleanTopic("PIDEndCondition").publish( );
-
-  private boolean                               endCondition        = false;
+  private boolean                               endCondition       = false;
 
   /**
-   * Swerve drive under PID control to a target pose
+   * Swerve drive under PID control to a goal pose
    */
-  public SwervePIDController(CommandSwerveDrivetrain swerve, Pose2d goalPose)
+  public SwervePIDController(CommandSwerveDrivetrain swerve)
   {
-    this.m_swerve = swerve;
-    this.m_goalPose = goalPose;
+    m_swerve = swerve;
+    addRequirements(swerve);
 
-    setName("SwervePIDController");
-    DataLogManager.log(String.format("%s: target %s", getName( ), goalPose));
+    setName("SwervePID");
   }
 
-  public static Command generateCommand(CommandSwerveDrivetrain swerve, Pose2d m_goalPose, Time timeout)
+  public static Command generateCommand(CommandSwerveDrivetrain swerve, Time timeout)
   {
-    return new SwervePIDController(swerve, m_goalPose).withTimeout(timeout)
-        .finallyDo(( ) -> swerve.setControl(new SwerveRequest.SwerveDriveBrake( )));
+    return new SwervePIDController(swerve).withTimeout(timeout);
   }
 
   @Override
   public void initialize( )
-  {}
+  {
+    Pose2d currentPose = drivePose.get( );
+    m_goalPose = m_swerve.findGoalPose(currentPose);
+    DataLogManager.log(String.format("%s: initial current pose: %s goalPose %s", getName( ), currentPose, m_goalPose));
+  }
 
   @Override
   public void execute( )
@@ -100,8 +97,7 @@ public class SwervePIDController extends Command
   @Override
   public void end(boolean interrupted)
   {
-    DataLogManager
-        .log(String.format("%s: interrupted end trigger conditions G: %s P: %s", getName( ), m_goalPose, drivePose.get( )));
+    DataLogManager.log(String.format("%s: interrupted end conditions P: %s G: %s", getName( ), drivePose.get( ), m_goalPose));
   }
 
   @Override
@@ -116,7 +112,7 @@ public class SwervePIDController extends Command
     boolean speed = driveSpeeds.get( ).vxMetersPerSecond < kSpeedTolerance.in(MetersPerSecond)
         && driveSpeeds.get( ).vyMetersPerSecond < kSpeedTolerance.in(MetersPerSecond);
 
-    DataLogManager.log(String.format("%s: end trigger conditions R: %s P: %s S: %s", getName( ), rotation, position, speed));
+    DataLogManager.log(String.format("%s: end conditions R: %s P: %s S: %s", getName( ), rotation, position, speed));
 
     endCondition = endDebouncer.calculate(rotation && position && speed);
 
