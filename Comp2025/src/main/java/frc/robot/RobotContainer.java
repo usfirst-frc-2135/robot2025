@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.json.simple.parser.ParseException;
 
@@ -37,7 +36,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -312,7 +310,7 @@ public class RobotContainer
     // Driver - A, B, X, Y
     // 
     m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
-    m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getAlignToReefCommand( ), Set.of(m_drivetrain)));
+    m_driverPad.b( ).whileTrue(m_drivetrain.getAlignToReefCommand3( ));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).whileTrue(getSlowSwerveCommand( )); // Note: left lower paddle!
 
@@ -580,7 +578,7 @@ public class RobotContainer
           if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
             m_initialPath = m_initialPath.flipPath( );
           resetOdometryToInitialPose(m_initialPath);
-        }),                                                                                           //
+        }, m_drivetrain),                                                                             //
         new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)), //
         new WaitCommand(delay),                                                                       //
         m_autoCommand,                                                                                //
@@ -672,6 +670,7 @@ public class RobotContainer
     m_manipulator.initialize( );
 
     m_vision.SetCPUThrottleLevel(false);
+    m_vision.SetIMUModeExternalSeed( );
   }
 
   /****************************************************************************
@@ -681,6 +680,7 @@ public class RobotContainer
   public void autoInit( )
   {
     m_vision.SetCPUThrottleLevel(true);
+    m_vision.SetIMUModeInternal( );
   }
 
   /****************************************************************************
@@ -690,6 +690,7 @@ public class RobotContainer
   public void teleopInit( )
   {
     m_vision.SetCPUThrottleLevel(true);
+    m_vision.SetIMUModeInternal( );
   }
 
   /****************************************************************************
