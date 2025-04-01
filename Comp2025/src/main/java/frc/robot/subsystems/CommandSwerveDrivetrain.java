@@ -499,7 +499,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     private void visionUpdate(String limelightName, DoubleArrayPublisher fieldPub)
     {
-        boolean useMegaTag2 = DriverStation.isEnabled( ); //set to false to use MegaTag1
+        boolean useMegaTag2 = DriverStation.isEnabled( ); // set to false to use MegaTag1
         boolean doRejectUpdate = false;
         if (useMegaTag2 == false)
         {
@@ -535,7 +535,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 {
                         mt1.pose.getX( ), mt1.pose.getY( ), mt1.pose.getRotation( ).getDegrees( )
                 });
-                setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, .5));
+                setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
                 addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
             }
 
