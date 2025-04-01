@@ -35,23 +35,24 @@ public class SwervePIDController extends Command
   public CommandSwerveDrivetrain                m_swerve;
   public Pose2d                                 m_goalPose;
 
-  private final NetworkTableInstance            ntInst             = NetworkTableInstance.getDefault( );
-  private final NetworkTable                    dsTable            = ntInst.getTable("DriveState");
-  private final StructSubscriber<Pose2d>        drivePose          =
+  private static final NetworkTableInstance     ntInst             = NetworkTableInstance.getDefault( );
+  private static final NetworkTable             dsTable            = ntInst.getTable("DriveState");
+  private static final StructSubscriber<Pose2d> drivePose          =
       dsTable.getStructTopic("Pose", Pose2d.struct).subscribe(new Pose2d( ));
   private final StructSubscriber<ChassisSpeeds> driveSpeeds        =
       dsTable.getStructTopic("Speeds", ChassisSpeeds.struct).subscribe(new ChassisSpeeds( ));
 
-  public static final PIDConstants              kTranslationPID    = new PIDConstants(5.0, 0, 0);
-  public static final PIDConstants              kRotationPID       = new PIDConstants(5.0, 0, 0);
+  private static final PIDConstants             kTranslationPID    = new PIDConstants(3.5, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
+  private static final PIDConstants             kRotationPID       = new PIDConstants(5.0, 0, 0);
   private PPHolonomicDriveController            mDriveController   =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
 
-  public static final Rotation2d                kRotationTolerance = Rotation2d.fromDegrees(2.0);
-  public static final Distance                  kPositionTolerance = Inches.of(0.8);
-  public static final LinearVelocity            kSpeedTolerance    = InchesPerSecond.of(0.25);
+  private static final LinearVelocity           kMaxSpeed          = MetersPerSecond.of(3.5);     // Cap max applied velocity to 3.5 mps in either direction
+  private static final Rotation2d               kRotationTolerance = Rotation2d.fromDegrees(2.0);
+  private static final Distance                 kPositionTolerance = Inches.of(1.5);              // Was 0.8 inches which is tiny
+  private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);    // Was 0.25 inches per second which is extremely small
 
-  public static final Time                      kEndDebounce       = Seconds.of(0.04);
+  private static final Time                     kEndDebounce       = Seconds.of(0.04);
   private final Debouncer                       endDebouncer       =
       new Debouncer(kEndDebounce.in(Seconds), Debouncer.DebounceType.kBoth);
   private final BooleanPublisher                endConditionLogger =
@@ -89,6 +90,11 @@ public class SwervePIDController extends Command
     goalState.pose = m_goalPose;
 
     ChassisSpeeds speeds = mDriveController.calculateRobotRelativeSpeeds(drivePose.get( ), goalState);
+
+    speeds.vxMetersPerSecond = MathUtil.clamp(speeds.vxMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
+    speeds.vyMetersPerSecond = MathUtil.clamp(speeds.vyMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
+
+    DataLogManager.log(String.format("%s: vx %.2f vy %.2f", getName( ), speeds.vxMetersPerSecond, speeds.vyMetersPerSecond));
 
     m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
   }
