@@ -138,7 +138,7 @@ public class Constants
     //** Reef branch used for alignment */
     public enum ReefBranch
     {
-      LEFT(0), RIGHT(1), ALGAE(2);
+      LEFT(0), ALGAE(1), RIGHT(2);
 
       public final int value;
 
