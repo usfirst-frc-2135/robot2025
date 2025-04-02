@@ -109,8 +109,8 @@ public class Vision extends SubsystemBase
     LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLLeftName);
     LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLRightName);
 
-    SetIMUMode(Constants.kLLLeftName, imuMode.EXTERNAL_SEED);
-    SetIMUMode(Constants.kLLRightName, imuMode.EXTERNAL_SEED);
+    // SetIMUMode(Constants.kLLLeftName, imuMode.EXTERNAL_SEED);
+    // SetIMUMode(Constants.kLLRightName, imuMode.EXTERNAL_SEED);
   }
 
   /****************************************************************************
@@ -165,12 +165,12 @@ public class Vision extends SubsystemBase
    * @param mode
    *          Defaults to 0. Choose the IMU mode
    */
-  public void SetIMUMode(String limelightName, imuMode mode)
-  {
-    DataLogManager.log(String.format("%s: Set IMU Mode to %s", getSubsystem( ), mode));
-    LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
-    LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
-  }
+  // public void SetIMUMode(String limelightName, imuMode mode)
+  // {
+  //   DataLogManager.log(String.format("%s: Set IMU Mode to %s", getSubsystem( ), mode));
+  //   // LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
+  //   // LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
+  // }
 
   /****************************************************************************
    * 
@@ -181,8 +181,8 @@ public class Vision extends SubsystemBase
   {
     final imuMode mode = imuMode.EXTERNAL_SEED;
     DataLogManager.log(String.format("%s: Set IMU Mode to %d (%s)", getSubsystem( ), mode.value, mode));
-    LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
-    LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
+    // LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
+    // LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
   }
 
   /****************************************************************************
@@ -194,8 +194,8 @@ public class Vision extends SubsystemBase
   {
     final imuMode mode = imuMode.INTERNAL;
     DataLogManager.log(String.format("%s: Set IMU Mode to %d (%s)", getSubsystem( ), mode.value, mode));
-    LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
-    LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
+    // LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
+    // LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
   }
 
 }
