@@ -33,8 +33,8 @@ public class ExpelCoral extends SequentialCommandGroup
         manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle),
 
         new LogCommand(getName( ), "Wait for coral to expel"), 
-        new WaitUntilCommand(manipulator::isCoralExpelled),
-        new WaitCommand(0.2),
+        new WaitUntilCommand(manipulator::isCoralExpelled).withTimeout(0.1),
+        new WaitCommand(0.3),
 
         new LogCommand(getName( ), "Stop coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),
