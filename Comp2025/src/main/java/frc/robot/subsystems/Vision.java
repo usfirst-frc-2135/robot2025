@@ -109,8 +109,7 @@ public class Vision extends SubsystemBase
     LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLLeftName);
     LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLRightName);
 
-    // SetIMUMode(Constants.kLLLeftName, imuMode.EXTERNAL_SEED);
-    // SetIMUMode(Constants.kLLRightName, imuMode.EXTERNAL_SEED);
+    SetIMUModeExternalSeed( );
   }
 
   /****************************************************************************
@@ -157,20 +156,6 @@ public class Vision extends SubsystemBase
     // LimelightHelpers.SetThrottle(kLLLeftName, throttle ? 0 : 200);
     // LimelightHelpers.SetThrottle(kLLRightName, throttle ? 0 : 200);
   }
-
-  /****************************************************************************
-   * 
-   * Set IMU mode as a default
-   * 
-   * @param mode
-   *          Defaults to 0. Choose the IMU mode
-   */
-  // public void SetIMUMode(String limelightName, imuMode mode)
-  // {
-  //   DataLogManager.log(String.format("%s: Set IMU Mode to %s", getSubsystem( ), mode));
-  //   // LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
-  //   // LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
-  // }
 
   /****************************************************************************
    * 
