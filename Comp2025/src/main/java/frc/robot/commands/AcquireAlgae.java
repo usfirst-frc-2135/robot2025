@@ -50,8 +50,6 @@ public class AcquireAlgae extends SequentialCommandGroup
    *          manipulator subsystem
    * @param hid
    *          hid subsystem
-   * @param led
-   *          led subsystem
    */
   public AcquireAlgae(Elevator elevator, Manipulator manipulator, HID hid)
   {

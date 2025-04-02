@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.json.simple.parser.ParseException;
 
@@ -26,6 +25,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -119,9 +118,13 @@ public class RobotContainer
   private final Manipulator                           m_manipulator   = new Manipulator( );
 
   // Selected autonomous command
+  private final NetworkTableInstance                  ntInst          = NetworkTableInstance.getDefault( );
+  private final NetworkTable                          table           = ntInst.getTable(Constants.kRobotString);
+  private IntegerPublisher                            m_reefLevelPub  =
+      table.getIntegerTopic(ELConsts.kReefLevelString).publish( );   // Level of the reef to score or acquire from (1-4)
+  private IntegerPublisher                            m_reefBranchPub =
+      table.getIntegerTopic(VIConsts.kReefBranchString).publish( );  // Branch of the reef to score or acquire from (left, middle, right)
   private Command                                     m_autoCommand;    // Selected autonomous command
-  private IntegerPublisher                            m_reefLevelPub;   // Level of the reef to score or acquire from (1-4)
-  private IntegerPublisher                            m_reefOffsetPub;  // Branch of the reef to score or acquire from (left, middle, right)
 
   /**
    * Chooser options for autonomous commands - all starting from poses 1-3
@@ -236,12 +239,8 @@ public class RobotContainer
   private void addDashboardWidgets( )
   {
     // Network tables publisher objects
-    m_reefLevelPub =
-        NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString).getIntegerTopic(ELConsts.kReefLevelString).publish( );
-    m_reefOffsetPub = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString)
-        .getIntegerTopic(VIConsts.kReefBranchString).publish( );
     m_reefLevelPub.set(4);  // Default to level 4 during auto
-    m_reefOffsetPub.set(0); // Default to left branch
+    m_reefBranchPub.set(0); // Default to left branch
 
     // Build autonomous chooser objects on dashboard and fill the options
     SmartDashboard.putData("AutoMode", m_autoChooser);
@@ -312,7 +311,11 @@ public class RobotContainer
     // Driver - A, B, X, Y
     // 
     m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
-    m_driverPad.b( ).whileTrue(new DeferredCommand(( ) -> m_drivetrain.getAlignToReefCommand( ), Set.of(m_drivetrain)));
+    m_driverPad.b( ).whileTrue(new SequentialCommandGroup(    //
+        m_drivetrain.getAlignToReefCommand3( ), //
+        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(0.5), 0.5), //
+        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(0.5), 0.5)  //
+    ));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).whileTrue(getSlowSwerveCommand( )); // Note: left lower paddle!
 
@@ -580,7 +583,7 @@ public class RobotContainer
           if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
             m_initialPath = m_initialPath.flipPath( );
           resetOdometryToInitialPose(m_initialPath);
-        }),                                                                                           //
+        }, m_drivetrain),                                                                             //
         new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)), //
         new WaitCommand(delay),                                                                       //
         m_autoCommand,                                                                                //
@@ -637,7 +640,7 @@ public class RobotContainer
     return new InstantCommand(          // Command with init only phase declared
         ( ) ->
         {
-          m_reefOffsetPub.set(branch.value);
+          m_reefBranchPub.set(branch.value);
         }).withName(VIConsts.kReefBranchString).ignoringDisable(true);
   }
 
@@ -672,6 +675,7 @@ public class RobotContainer
     m_manipulator.initialize( );
 
     m_vision.SetCPUThrottleLevel(false);
+    m_vision.SetIMUModeExternalSeed( ); // TODO: needed?
   }
 
   /****************************************************************************
@@ -681,6 +685,7 @@ public class RobotContainer
   public void autoInit( )
   {
     m_vision.SetCPUThrottleLevel(true);
+    m_vision.SetIMUModeInternal( ); // TODO: needed?
   }
 
   /****************************************************************************
@@ -690,6 +695,7 @@ public class RobotContainer
   public void teleopInit( )
   {
     m_vision.SetCPUThrottleLevel(true);
+    m_vision.SetIMUModeInternal( ); // TODO: needed?
   }
 
   /****************************************************************************
