@@ -4,7 +4,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -12,8 +11,6 @@ import static edu.wpi.first.units.Units.Volts;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import javax.xml.crypto.Data;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
@@ -45,7 +42,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructSubscriber;
-import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -57,7 +53,6 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
@@ -377,8 +372,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-
-
     /**
      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
      * while still accounting for measurement noise.
@@ -435,21 +428,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putData("GetAlignToReefCommand2", new DeferredCommand(( ) -> getAlignToReefCommand2( ), Set.of(this)));
         SmartDashboard.putData("GetAlignToReefCommand3", SwervePIDController.generateCommand(this, Seconds.of(2.5)));
 
-        SmartDashboard.putData("setRobotPose", new InstantCommand( //
+        SmartDashboard.putData("SetRobotPose", new InstantCommand( //
                 ( ) ->
                 {
-                    DataLogManager.log("-------------------------");
                     Pose2d mt1Pos = new Pose2d(
-                            new Translation2d(SmartDashboard.getNumber("mt1X", 0), SmartDashboard.getNumber("mt1Y", 0)),
-                            new Rotation2d(Math.toRadians(SmartDashboard.getNumber("mt1Rot", 0))));
+                            new Translation2d(SmartDashboard.getNumber("mt1_X", 0), SmartDashboard.getNumber("mt1_Y", 0)),
+                            new Rotation2d(Math.toRadians(SmartDashboard.getNumber("mt1_Rot", 0))));
                     resetPose(mt1Pos);
-                    DataLogManager.log(String.format("%s", mt1Pos));
+                    DataLogManager.log(String.format("SetRobotPose: Set pose to Megatag1 pose: %s", mt1Pos));
 
                 }, this));
 
-        //SmartDashboard.putData("CommandTest", test( ));
+        // SmartDashboard.putData("CommandTest", test( ));
     }
 
+    /**
+     * Command for
+     * 
+     * testing alignment commands
+     */
     // public Command test( )
     // {
     //     return new SequentialCommandGroup(                     //
