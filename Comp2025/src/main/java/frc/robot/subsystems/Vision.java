@@ -104,10 +104,10 @@ public class Vision extends SubsystemBase
   {
     DataLogManager.log(String.format("%s: Subsystem initialized!", getSubsystem( )));
 
-    LimelightHelpers.setLEDMode_ForceOff(Constants.kLLLeftName);
-    LimelightHelpers.setLEDMode_ForceOff(Constants.kLLRightName);
-    LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLLeftName);
-    LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLRightName);
+    LimelightHelpers.setLEDMode_ForceOff(Constants.kLLLeftName);          // These work on LL3 and lower (not LL4)
+    LimelightHelpers.setLEDMode_ForceOff(Constants.kLLRightName);         // These work on LL3 and lower (not LL4)
+    LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLLeftName);   // These work on LL3 and lower (not LL4)
+    LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLRightName);  // These work on LL3 and lower (not LL4)
 
     SetIMUModeExternalSeed( );
   }
