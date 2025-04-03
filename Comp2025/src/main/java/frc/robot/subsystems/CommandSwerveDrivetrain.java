@@ -374,6 +374,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
+
+
     /**
      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
      * while still accounting for measurement noise.
@@ -585,7 +587,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void resetPoseAndLimelight(Pose2d pose)
     {
         resetPose(pose);
-        LimelightHelpers.SetRobotOrientation("limelight-left", pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(Constants.kLLLeftName, pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(Constants.kLLRightName, pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
     }
 
     /**
