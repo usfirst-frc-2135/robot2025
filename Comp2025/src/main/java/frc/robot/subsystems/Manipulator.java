@@ -621,6 +621,7 @@ public class Manipulator extends SubsystemBase
             break;
           case CORALEXPEL :
             m_clawRequestVolts = ((int) reefLevel.get() == 1) ?  kCoralSpeedExpelL1 : kCoralSpeedExpel;
+            DataLogManager.log(String.format("%s: reefLevel.get is %d", getSubsystem( ), (int)reefLevel.get()));
             break;
           case ALGAEHOLD :  // Special case above the switch - this case doesn't execute!
             m_clawRequestVolts = kAlgaeSpeedHold;
