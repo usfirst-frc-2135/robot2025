@@ -77,7 +77,7 @@ public class Manipulator extends SubsystemBase
   private static final DutyCycleOut kClawRollerStop      = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
 
   private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.75).withIgnoreHardwareLimits(false);
-  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.32).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.35).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kCoralSpeedExpelL1     = new DutyCycleOut(0.32).withIgnoreHardwareLimits(true);
 
   private static final DutyCycleOut kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
