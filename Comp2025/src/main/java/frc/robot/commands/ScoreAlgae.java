@@ -1,7 +1,6 @@
 
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.Map;
 
@@ -9,7 +8,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
@@ -79,26 +77,7 @@ public class ScoreAlgae extends SequentialCommandGroup
                 Map.entry(ReefLevel.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeProcessor)), 
                 Map.entry(ReefLevel.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet))
               ),  
-              this::selectLevel), 
-
-        new LogCommand(getName(), "Start Claw Rollers"), 
-        new SelectCommand<>( 
-          // Maps selector values to commands 
-          Map.ofEntries( 
-                Map.entry(ReefLevel.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEEXPEL, manipulator::getCurrentAngle)), 
-                Map.entry(ReefLevel.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAESHOOT, manipulator::getCurrentAngle))
-              ),  
-              this::selectLevel), 
-        
-        new LogCommand(getName(), "Wait for algae"),
-        new WaitCommand(Seconds.of(0.5)),
-        // new WaitUntilCommand(manipulator::isAlgaeDetected), // checks if algae is expelled 
-      
-        new LogCommand(getName(), "Stop algae rollers"),
-        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState), // Manipulator Safe State
-        
-        new LogCommand(getName(), "Move Elevator to stowed height"),
-        elevator.getMoveToPositionCommand(elevator::getHeightStowed)
+              this::selectLevel)
         
         // @formatter:on
     );

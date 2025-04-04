@@ -413,6 +413,7 @@ public class RobotContainer
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
     m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_hid));
+    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onFalse(new ExpelAlgae(m_elevator, m_manipulator, m_hid));    
     m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_hid));
 
     m_operatorPad.leftStick( ).toggleOnTrue(new LogCommand("operPad", "left stick"));
