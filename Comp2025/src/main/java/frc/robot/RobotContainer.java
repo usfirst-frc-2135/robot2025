@@ -52,6 +52,7 @@ import frc.robot.autos.AutoPreloadCoral2;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.AcquireAlgae;
 import frc.robot.commands.AcquireCoral;
+import frc.robot.commands.ExpelAlgae;
 import frc.robot.commands.ExpelCoral;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.ScoreAlgae;
