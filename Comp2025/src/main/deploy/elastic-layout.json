@@ -3,6 +3,13 @@
   "grid_size": 128,
   "tabs": [
     {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    },
+    {
       "name": "Autonomous",
       "grid_layout": {
         "layouts": [],
@@ -109,14 +116,14 @@
             }
           },
           {
-            "title": "ReefOffset",
+            "title": "ReefBranch",
             "x": 1152.0,
             "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Large Text Display",
             "properties": {
-              "topic": "/RobotContainer/ReefOffset",
+              "topic": "/RobotContainer/ReefBranch",
               "period": 0.06,
               "data_type": "int"
             }
