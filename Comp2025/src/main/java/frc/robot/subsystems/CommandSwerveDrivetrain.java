@@ -4,7 +4,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -54,7 +53,6 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
@@ -430,53 +428,69 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putData("GetAlignToReefCommand2", new DeferredCommand(( ) -> getAlignToReefCommand2( ), Set.of(this)));
         SmartDashboard.putData("GetAlignToReefCommand3", SwervePIDController.generateCommand(this, Seconds.of(2.5)));
 
-        SmartDashboard.putData("CommandTest", test( ));
+        SmartDashboard.putData("SetRobotPose", new InstantCommand( //
+                ( ) ->
+                {
+                    Pose2d mt1Pos = new Pose2d(
+                            new Translation2d(SmartDashboard.getNumber("mt1_X", 0), SmartDashboard.getNumber("mt1_Y", 0)),
+                            new Rotation2d(Math.toRadians(SmartDashboard.getNumber("mt1_Rot", 0))));
+                    resetPose(mt1Pos);
+                    DataLogManager.log(String.format("SetRobotPose: Set pose to Megatag1 pose: %s", mt1Pos));
+
+                }, this));
+
+        // SmartDashboard.putData("CommandTest", test( ));
     }
 
-    public Command test( )
-    {
-        return new SequentialCommandGroup(                     //
-                SwervePIDController.generateCommand(this, Seconds.of(2.5)), new InstantCommand(                     //  1
-                        ( ) -> resetPose(new Pose2d(new Translation2d(9.0, 1.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
-                getAlignToReefCommand3( ),              //
-                new WaitCommand(0.25),                   //
-                new InstantCommand(                     //  2
-                        ( ) -> resetPose(new Pose2d(new Translation2d(9.0, 4.0), new Rotation2d(Rotations.of(0.5)))), this),                          //
-                getAlignToReefCommand3( ),              //
-                new WaitCommand(0.25),                   //
-                new InstantCommand(                     //  3
-                        ( ) -> resetPose(new Pose2d(new Translation2d(9.0, 7.5), new Rotation2d(Rotations.of(0.0)))), this),                          //
-                getAlignToReefCommand3( ),              //
-                new WaitCommand(0.25),                   //
-                new InstantCommand(                     //  4
-                        ( ) -> resetPose(new Pose2d(new Translation2d(16.0, 1.0), new Rotation2d(Rotations.of(0.5)))), this),                          //
-                getAlignToReefCommand3( ),              //
-                new WaitCommand(0.25),                   //
-                new InstantCommand(                     //  5
-                        ( ) -> resetPose(new Pose2d(new Translation2d(16.0, 4.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
-                getAlignToReefCommand3( ),              //
-                new WaitCommand(0.25),                   //
-                new InstantCommand(                     //  6
-                        ( ) -> resetPose(new Pose2d(new Translation2d(16.0, 7.5), new Rotation2d(Rotations.of(0.5)))), this),                          //
-                getAlignToReefCommand3( ),              //
-                new WaitCommand(0.25),                   //
-                new InstantCommand(                     //  7
-                        ( ) -> resetPose(new Pose2d(new Translation2d(8.0, 2.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
-                getAlignToReefCommand3( ),              //
-                new WaitCommand(0.25),                   //
-                new InstantCommand(                     //  8
-                        ( ) -> resetPose(new Pose2d(new Translation2d(8.0, 7.5), new Rotation2d(Rotations.of(0.5)))), this),                          //
-                getAlignToReefCommand3( ),              //
-                new WaitCommand(0.25),                   //
-                new InstantCommand(                     //  9
-                        ( ) -> resetPose(new Pose2d(new Translation2d(15.0, 2.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
-                getAlignToReefCommand3( ),              //
-                new WaitCommand(0.25),                   //
-                new InstantCommand(                     //  10
-                        ( ) -> resetPose(new Pose2d(new Translation2d(15.0, 7.5), new Rotation2d(Rotations.of(0.5)))), this),                          //
-                getAlignToReefCommand3( )              //
-        );                                               //
-    }
+    /**
+     * Command for
+     * 
+     * testing alignment commands
+     */
+    // public Command test( )
+    // {
+    //     return new SequentialCommandGroup(                     //
+    //             SwervePIDController.generateCommand(this, Seconds.of(2.5)), new InstantCommand(                     //  1
+    //                     ( ) -> resetPose(new Pose2d(new Translation2d(9.0, 1.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
+    //             getAlignToReefCommand3( ),              //
+    //             new WaitCommand(0.25),                   //
+    //             new InstantCommand(                     //  2
+    //                     ( ) -> resetPose(new Pose2d(new Translation2d(9.0, 4.0), new Rotation2d(Rotations.of(0.5)))), this),                          //
+    //             getAlignToReefCommand3( ),              //
+    //             new WaitCommand(0.25),                   //
+    //             new InstantCommand(                     //  3
+    //                     ( ) -> resetPose(new Pose2d(new Translation2d(9.0, 7.5), new Rotation2d(Rotations.of(0.0)))), this),                          //
+    //             getAlignToReefCommand3( ),              //
+    //             new WaitCommand(0.25),                   //
+    //             new InstantCommand(                     //  4
+    //                     ( ) -> resetPose(new Pose2d(new Translation2d(16.0, 1.0), new Rotation2d(Rotations.of(0.5)))), this),                          //
+    //             getAlignToReefCommand3( ),              //
+    //             new WaitCommand(0.25),                   //
+    //             new InstantCommand(                     //  5
+    //                     ( ) -> resetPose(new Pose2d(new Translation2d(16.0, 4.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
+    //             getAlignToReefCommand3( ),              //
+    //             new WaitCommand(0.25),                   //
+    //             new InstantCommand(                     //  6
+    //                     ( ) -> resetPose(new Pose2d(new Translation2d(16.0, 7.5), new Rotation2d(Rotations.of(0.5)))), this),                          //
+    //             getAlignToReefCommand3( ),              //
+    //             new WaitCommand(0.25),                   //
+    //             new InstantCommand(                     //  7
+    //                     ( ) -> resetPose(new Pose2d(new Translation2d(8.0, 2.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
+    //             getAlignToReefCommand3( ),              //
+    //             new WaitCommand(0.25),                   //
+    //             new InstantCommand(                     //  8
+    //                     ( ) -> resetPose(new Pose2d(new Translation2d(8.0, 7.5), new Rotation2d(Rotations.of(0.5)))), this),                          //
+    //             getAlignToReefCommand3( ),              //
+    //             new WaitCommand(0.25),                   //
+    //             new InstantCommand(                     //  9
+    //                     ( ) -> resetPose(new Pose2d(new Translation2d(15.0, 2.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
+    //             getAlignToReefCommand3( ),              //
+    //             new WaitCommand(0.25),                   //
+    //             new InstantCommand(                     //  10
+    //                     ( ) -> resetPose(new Pose2d(new Translation2d(15.0, 7.5), new Rotation2d(Rotations.of(0.5)))), this),                          //
+    //             getAlignToReefCommand3( )              //
+    //     );                                               //
+    // }
 
     /**
      * Construct a path following commandand
@@ -537,6 +551,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 });
                 setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
                 addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
+
+                SmartDashboard.putNumber("mt1X", mt1.pose.getX( ));
+                SmartDashboard.putNumber("mt1Y", mt1.pose.getY( ));
+                SmartDashboard.putNumber("mt1Rot", mt1.pose.getRotation( ).getDegrees( ));
             }
 
         }
@@ -585,7 +603,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void resetPoseAndLimelight(Pose2d pose)
     {
         resetPose(pose);
-        LimelightHelpers.SetRobotOrientation("limelight-left", pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(Constants.kLLLeftName, pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(Constants.kLLRightName, pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
     }
 
     /**
