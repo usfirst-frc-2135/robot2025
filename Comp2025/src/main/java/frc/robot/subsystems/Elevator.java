@@ -86,7 +86,7 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightStowed           = 0.0;             // By definition - full down
   private static final double  kHeightCoralStation     = 0.0;             // By definition - at coral station
 
-  private static final double  kHeightCoralL1          = 3.0;             // By definition - at L1 for scoring coral
+  private static final double  kHeightCoralL1          = 11.0;             // By definition - at L1 for scoring coral
   private static final double  kHeightCoralL2          = 8.0;             // By definition - at L2 for scoring coral
   private static final double  kHeightCoralL3          = 15.5;            // By definition - at L3 for scoring coral
   private static final double  kHeightCoralL4          = 27.5;           // By definition - at L4 for scoring coral
