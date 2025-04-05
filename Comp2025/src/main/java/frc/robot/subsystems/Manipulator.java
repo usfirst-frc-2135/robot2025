@@ -83,7 +83,7 @@ public class Manipulator extends SubsystemBase
   private static final DutyCycleOut kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kAlgaeSpeedShoot     = new DutyCycleOut(-1.0).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kAlgaeSpeedProcessor = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kAlgaeSpeedProcessor = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut kAlgaeSpeedHold      = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
 
   private static final double       kWristGearRatio      = 49.23;
@@ -126,7 +126,7 @@ public class Manipulator extends SubsystemBase
 
   private static final double         kWristAngleAlgae23        = 29.0;
   private static final double         kWristAngleAlgae34        = 29.0;
-  private static final double         kWristAngleAlgaeProcessor = 29.0;
+  private static final double         kWristAngleAlgaeProcessor = 45.0;
   private static final double         kWristAngleAlgaeNet       = -10.0;
 
   // Device objects
