@@ -437,7 +437,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     resetPose(mt1Pos);
                     DataLogManager.log(String.format("SetRobotPose: Set pose to Megatag1 pose: %s", mt1Pos));
 
-                }, this));
+                }, this).ignoringDisable(true));
 
         // SmartDashboard.putData("CommandTest", test( ));
     }
