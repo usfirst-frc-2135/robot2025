@@ -552,9 +552,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
                 addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
 
-                SmartDashboard.putNumber("mt1X", mt1.pose.getX( ));
-                SmartDashboard.putNumber("mt1Y", mt1.pose.getY( ));
-                SmartDashboard.putNumber("mt1Rot", mt1.pose.getRotation( ).getDegrees( ));
+                SmartDashboard.putNumber("mt1_X", mt1.pose.getX());
+                SmartDashboard.putNumber("mt1_Y", mt1.pose.getY());
+                SmartDashboard.putNumber("mt1_Rot", mt1.pose.getRotation().getDegrees());
             }
 
         }
