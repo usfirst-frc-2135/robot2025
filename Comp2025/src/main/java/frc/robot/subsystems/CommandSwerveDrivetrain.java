@@ -4,6 +4,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -50,8 +51,10 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
@@ -427,53 +430,63 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putData("GetAlignToReefFollow", new DeferredCommand(( ) -> getAlignToReefFollowCommand( ), Set.of(this)));
         SmartDashboard.putData("GetAlignToReefPID", getAlignToReefPIDCommand( ));
 
-        // SmartDashboard.putData("CommandTest", test( ));
+        // SmartDashboard.putData("multiPIDTest", multiPIDTest( ));
     }
 
     /**
      * Command for testing alignment commands
      */
-    // public Command test( )
+    // public Command multiPIDTest( )
     // {
     //     return new SequentialCommandGroup(                     //
     //             SwervePIDController.generateCommand(this, Seconds.of(2.5)), new InstantCommand(                     //  1
-    //                     ( ) -> resetPose(new Pose2d(new Translation2d(9.0, 1.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
+    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(9.0, 1.0), new Rotation2d(Rotations.of(0.0)))),
+    //                     this),                          //
     //             getAlignToReefPIDCommand( ),              //
     //             new WaitCommand(0.25),                   //
     //             new InstantCommand(                     //  2
-    //                     ( ) -> resetPose(new Pose2d(new Translation2d(9.0, 4.0), new Rotation2d(Rotations.of(0.5)))), this),                          //
+    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(9.0, 4.0), new Rotation2d(Rotations.of(0.5)))),
+    //                     this),                          //
     //             getAlignToReefPIDCommand( ),              //
     //             new WaitCommand(0.25),                   //
     //             new InstantCommand(                     //  3
-    //                     ( ) -> resetPose(new Pose2d(new Translation2d(9.0, 7.5), new Rotation2d(Rotations.of(0.0)))), this),                          //
+    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(9.0, 7.5), new Rotation2d(Rotations.of(0.0)))),
+    //                     this),                          //
     //             getAlignToReefPIDCommand( ),              //
     //             new WaitCommand(0.25),                   //
     //             new InstantCommand(                     //  4
-    //                     ( ) -> resetPose(new Pose2d(new Translation2d(16.0, 1.0), new Rotation2d(Rotations.of(0.5)))), this),                          //
+    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(16.0, 1.0), new Rotation2d(Rotations.of(0.5)))),
+    //                     this),                          //
     //             getAlignToReefPIDCommand( ),              //
     //             new WaitCommand(0.25),                   //
     //             new InstantCommand(                     //  5
-    //                     ( ) -> resetPose(new Pose2d(new Translation2d(16.0, 4.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
+    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(16.0, 4.0), new Rotation2d(Rotations.of(0.0)))),
+    //                     this),                          //
     //             getAlignToReefPIDCommand( ),              //
     //             new WaitCommand(0.25),                   //
     //             new InstantCommand(                     //  6
-    //                     ( ) -> resetPose(new Pose2d(new Translation2d(16.0, 7.5), new Rotation2d(Rotations.of(0.5)))), this),                          //
+    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(16.0, 7.5), new Rotation2d(Rotations.of(0.5)))),
+    //                     this),                          //
     //             getAlignToReefPIDCommand( ),              //
     //             new WaitCommand(0.25),                   //
     //             new InstantCommand(                     //  7
-    //                     ( ) -> resetPose(new Pose2d(new Translation2d(8.0, 2.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
+    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(8.0, 2.0), new Rotation2d(Rotations.of(0.0)))),
+    //                     this),                          //
     //             getAlignToReefPIDCommand( ),              //
     //             new WaitCommand(0.25),                   //
     //             new InstantCommand(                     //  8
-    //                     ( ) -> resetPose(new Pose2d(new Translation2d(8.0, 7.5), new Rotation2d(Rotations.of(0.5)))), this),                          //
+    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(8.0, 7.5), new Rotation2d(Rotations.of(0.5)))),
+    //                     this),                          //
     //             getAlignToReefPIDCommand( ),              //
     //             new WaitCommand(0.25),                   //
     //             new InstantCommand(                     //  9
-    //                     ( ) -> resetPose(new Pose2d(new Translation2d(15.0, 2.0), new Rotation2d(Rotations.of(0.0)))), this),                          //
+    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(15.0, 2.0), new Rotation2d(Rotations.of(0.0)))),
+    //                     this),                          //
     //             getAlignToReefPIDCommand( ),              //
     //             new WaitCommand(0.25),                   //
     //             new InstantCommand(                     //  10
-    //                     ( ) -> resetPose(new Pose2d(new Translation2d(15.0, 7.5), new Rotation2d(Rotations.of(0.5)))), this),                          //
+    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(15.0, 7.5), new Rotation2d(Rotations.of(0.5)))),
+    //                     this),                          //
     //             getAlignToReefPIDCommand( )              //
     //     );                                               //
     // }

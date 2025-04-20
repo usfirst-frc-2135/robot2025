@@ -58,6 +58,7 @@ public class Vision extends SubsystemBase
   // Objects
 
   // Declare module variables
+  @SuppressWarnings("unused")
   private streamMode          m_stream   = streamMode.STANDARD;
 
   /****************************************************************************

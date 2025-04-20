@@ -47,7 +47,7 @@ public class SwervePIDController extends Command
   private PPHolonomicDriveController            mDriveController   =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
 
-  private static final LinearVelocity           kMaxSpeed          = MetersPerSecond.of(3.5);     // Cap max applied velocity to 3.5 mps in either direction
+  // private static final LinearVelocity           kMaxSpeed          = MetersPerSecond.of(3.5);     // Cap max applied velocity to 3.5 mps in either direction
   private static final Rotation2d               kRotationTolerance = Rotation2d.fromDegrees(2.0);
   private static final Distance                 kPositionTolerance = Inches.of(1.5);              // Was 0.8 inches which is tiny
   private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);    // Was 0.25 inches per second which is extremely small
@@ -91,10 +91,10 @@ public class SwervePIDController extends Command
 
     ChassisSpeeds speeds = mDriveController.calculateRobotRelativeSpeeds(driveStatePose.get( ), goalState);
 
-    speeds.vxMetersPerSecond = MathUtil.clamp(speeds.vxMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
-    speeds.vyMetersPerSecond = MathUtil.clamp(speeds.vyMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
+    // speeds.vxMetersPerSecond = MathUtil.clamp(speeds.vxMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
+    // speeds.vyMetersPerSecond = MathUtil.clamp(speeds.vyMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
 
-    DataLogManager.log(String.format("%s: vx %.2f vy %.2f", getName( ), speeds.vxMetersPerSecond, speeds.vyMetersPerSecond));
+    // DataLogManager.log(String.format("%s: vx %.2f vy %.2f", getName( ), speeds.vxMetersPerSecond, speeds.vyMetersPerSecond));
 
     m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
   }
