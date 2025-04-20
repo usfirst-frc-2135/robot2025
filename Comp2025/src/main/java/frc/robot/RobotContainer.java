@@ -311,7 +311,7 @@ public class RobotContainer
     // 
     m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
     m_driverPad.b( ).whileTrue(new SequentialCommandGroup(    //
-        m_drivetrain.getAlignToReefCommand3( ), //
+        m_drivetrain.getAlignToReefPIDCommand( ), //
         m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(0.5), 0.5), //
         m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(0.5), 0.5)  //
     ));
