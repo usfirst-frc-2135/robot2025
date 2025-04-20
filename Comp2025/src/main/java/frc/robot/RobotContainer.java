@@ -490,6 +490,7 @@ public class RobotContainer
   {
     AutoChooser autoOption = m_autoChooser.getSelected( );
     StartPose startOption = m_startChooser.getSelected( );
+    double delay = SmartDashboard.getNumber("AutoDelay", 0.0);
     String autoKey = autoOption.toString( ) + startOption.toString( );
 
     // Cancel any autos that were already running
@@ -573,8 +574,19 @@ public class RobotContainer
 
     DataLogManager.log(String.format("getAuto: autoMode %s (%s)", autoKey, m_autoCommand.getName( )));
 
+    // If on red alliance, flip each path, then reset odometry
+    m_initialPath = m_ppPathList.get(0);
+    if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
+    {
+      m_initialPath = m_initialPath.flipPath( );
+    }
+
+    // Set field centric robot position to start of auto sequence
+    Pose2d startPose = m_initialPath.getStartingHolonomicPose( ).get( );
+    DataLogManager.log(String.format("getAuto: starting pose %s", startPose));
+    m_drivetrain.resetPoseAndLimelight(startPose);
+
     // Build the autonomous command to run
-    double delay = SmartDashboard.getNumber("AutoDelay", 0.0);
     m_autoCommand = new SequentialCommandGroup(                                                       //
         new InstantCommand(( ) -> Robot.timeMarker("AutoStart")),                                 //
         new InstantCommand(( ) ->

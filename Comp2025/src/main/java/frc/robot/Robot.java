@@ -1,16 +1,20 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -27,7 +31,9 @@ public class Robot extends TimedRobot
   private Command              m_autonomousCommand;
   private boolean              m_faultsCleared   = false;
   private static double        m_timeMark        = Timer.getFPGATimestamp( );
-  private static boolean       m_loadAutoCommand = false;
+  private static boolean       m_loadAutoCommand = true;
+  private double               m_autoDelay       = 0.0;
+  private Optional<Alliance>   m_alliance;
 
   /****************************************************************************
    * 
@@ -37,7 +43,6 @@ public class Robot extends TimedRobot
   {
     // Starts recording to data log
     DataLogManager.start( );
-    DataLogManager.logConsoleOutput(true);
     DriverStation.startDataLog(DataLogManager.getLog( )); // Logs joystick data
     Robot.timeMarker("Robot: start");
 
@@ -94,8 +99,6 @@ public class Robot extends TimedRobot
     m_robotContainer.disabledInit( );
 
     Robot.timeMarker("disabledInit: after init");
-
-    m_loadAutoCommand = true;
   }
 
   /**
@@ -104,6 +107,20 @@ public class Robot extends TimedRobot
   @Override
   public void disabledPeriodic( )
   {
+    double autoDelay = SmartDashboard.getNumber("AutoDelay", 0.0);
+    if (autoDelay != m_autoDelay)
+    {
+      m_loadAutoCommand = true;
+      m_autoDelay = autoDelay;
+    }
+
+    Optional<Alliance> alliance = DriverStation.getAlliance( );
+    if (m_alliance != alliance)
+    {
+      m_loadAutoCommand = true;
+      m_alliance = alliance;
+    }
+
     if (m_loadAutoCommand)
     {
       m_autonomousCommand = m_robotContainer.getAutonomousCommand( );
