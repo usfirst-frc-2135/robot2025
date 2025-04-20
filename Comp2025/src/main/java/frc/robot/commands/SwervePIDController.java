@@ -36,11 +36,11 @@ public class SwervePIDController extends Command
   public Pose2d                                 m_goalPose;
 
   private static final NetworkTableInstance     ntInst             = NetworkTableInstance.getDefault( );
-  private static final NetworkTable             dsTable            = ntInst.getTable("DriveState");
-  private static final StructSubscriber<Pose2d> drivePose          =
-      dsTable.getStructTopic("Pose", Pose2d.struct).subscribe(new Pose2d( ));
+  private static final NetworkTable             driveStateTable    = ntInst.getTable("DriveState");
+  private static final StructSubscriber<Pose2d> driveStatePose     =
+      driveStateTable.getStructTopic("Pose", Pose2d.struct).subscribe(new Pose2d( ));
   private final StructSubscriber<ChassisSpeeds> driveSpeeds        =
-      dsTable.getStructTopic("Speeds", ChassisSpeeds.struct).subscribe(new ChassisSpeeds( ));
+      driveStateTable.getStructTopic("Speeds", ChassisSpeeds.struct).subscribe(new ChassisSpeeds( ));
 
   private static final PIDConstants             kTranslationPID    = new PIDConstants(3.5, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
   private static final PIDConstants             kRotationPID       = new PIDConstants(5.0, 0, 0);
@@ -78,7 +78,7 @@ public class SwervePIDController extends Command
   @Override
   public void initialize( )
   {
-    Pose2d currentPose = drivePose.get( );
+    Pose2d currentPose = driveStatePose.get( );
     m_goalPose = m_swerve.findGoalPose(currentPose);
     DataLogManager.log(String.format("%s: initial current pose: %s goalPose %s", getName( ), currentPose, m_goalPose));
   }
@@ -89,7 +89,7 @@ public class SwervePIDController extends Command
     PathPlannerTrajectoryState goalState = new PathPlannerTrajectoryState( );
     goalState.pose = m_goalPose;
 
-    ChassisSpeeds speeds = mDriveController.calculateRobotRelativeSpeeds(drivePose.get( ), goalState);
+    ChassisSpeeds speeds = mDriveController.calculateRobotRelativeSpeeds(driveStatePose.get( ), goalState);
 
     speeds.vxMetersPerSecond = MathUtil.clamp(speeds.vxMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
     speeds.vyMetersPerSecond = MathUtil.clamp(speeds.vyMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
@@ -102,13 +102,14 @@ public class SwervePIDController extends Command
   @Override
   public void end(boolean interrupted)
   {
-    DataLogManager.log(String.format("%s: interrupted end conditions P: %s G: %s", getName( ), drivePose.get( ), m_goalPose));
+    DataLogManager
+        .log(String.format("%s: interrupted end conditions P: %s G: %s", getName( ), driveStatePose.get( ), m_goalPose));
   }
 
   @Override
   public boolean isFinished( )
   {
-    Pose2d diff = drivePose.get( ).relativeTo(m_goalPose);
+    Pose2d diff = driveStatePose.get( ).relativeTo(m_goalPose);
 
     boolean rotation = MathUtil.isNear(0.0, diff.getRotation( ).getRotations( ), kRotationTolerance.getRotations( ), 0.0, 1.0);
 
