@@ -262,10 +262,10 @@ public class Robot extends TimedRobot
    */
   public static void datalogMatchBanner(String msg)
   {
-    DataLogManager.log(String.format("===================================================================="));
+    DataLogManager.log(String.format("========================================================================"));
     DataLogManager.log(String.format("%s: Match %s %s, %s Alliance", msg, DriverStation.getMatchType( ).toString( ),
         DriverStation.getMatchNumber( ), DriverStation.getAlliance( ).toString( )));
-    DataLogManager.log(String.format("===================================================================="));
+    DataLogManager.log(String.format("========================================================================"));
   }
 
   public static void reloadAutomousCommand(String optionName)

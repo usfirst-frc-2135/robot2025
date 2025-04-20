@@ -89,13 +89,11 @@ public class RobotContainer
 
   // Setting up bindings for necessary control of the swerve drive platform
   private final SwerveRequest.FieldCentric            drive           = new SwerveRequest.FieldCentric( ) //
-      .withDeadband(kMaxSpeed.times(Constants.kStickDeadband))                  //
-      .withRotationalDeadband(kMaxAngularRate.times(Constants.kStickDeadband))  //
+      .withDeadband(kMaxSpeed.times(0.1)).withRotationalDeadband(kMaxAngularRate.times(0.1))  //
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
   private final SwerveRequest.SwerveDriveBrake        brake           = new SwerveRequest.SwerveDriveBrake( );
   private final SwerveRequest.FieldCentricFacingAngle facing          = new SwerveRequest.FieldCentricFacingAngle( )  //
-      .withDeadband(kMaxSpeed.times(Constants.kStickDeadband))                  //
-      .withRotationalDeadband(kMaxAngularRate.times(Constants.kStickDeadband))  //
+      .withDeadband(kMaxSpeed.times(0.1)).withRotationalDeadband(kMaxAngularRate.times(0.1))  //
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
   @SuppressWarnings("unused")
   private final SwerveRequest.PointWheelsAt           point           = new SwerveRequest.PointWheelsAt( );
@@ -120,9 +118,9 @@ public class RobotContainer
   // Selected autonomous command
   private final NetworkTableInstance                  ntInst          = NetworkTableInstance.getDefault( );
   private final NetworkTable                          table           = ntInst.getTable(Constants.kRobotString);
-  private IntegerPublisher                            m_reefLevelPub  =
+  private final IntegerPublisher                      m_reefLevelPub  =
       table.getIntegerTopic(ELConsts.kReefLevelString).publish( );   // Level of the reef to score or acquire from (1-4)
-  private IntegerPublisher                            m_reefBranchPub =
+  private final IntegerPublisher                      m_reefBranchPub =
       table.getIntegerTopic(VIConsts.kReefBranchString).publish( );  // Branch of the reef to score or acquire from (left, middle, right)
   private Command                                     m_autoCommand;    // Selected autonomous command
 
@@ -190,7 +188,8 @@ public class RobotContainer
 
       Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START1.toString( ), "Start1_test1"),
       Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START2.toString( ), "Start2_test2"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_test3")));
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_test3")  //
+  ));
 
   /****************************************************************************
    * 
@@ -293,9 +292,9 @@ public class RobotContainer
     // Add command groups to dashboard
     SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_hid));
+    SmartDashboard.putData("ExpelCoral", new ExpelCoral(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_hid));
-    SmartDashboard.putData("ExpelCoral", new ExpelCoral(m_elevator, m_manipulator, m_hid));
   }
 
   /****************************************************************************
@@ -497,15 +496,17 @@ public class RobotContainer
     if (m_autoCommand != null)
     {
       if (m_autoCommand.isScheduled( ))
+      {
         m_autoCommand.cancel( );
+      }
       m_autoCommand = null;
     }
 
     // Get auto name using created key
     String autoName = autoMap.get(autoKey);
-    DataLogManager.log(String.format("===================================================================="));
+    DataLogManager.log(String.format("========================================================================"));
     DataLogManager.log(String.format("getAuto: autoKey: %s  autoName: %s", autoKey, autoName));
-    DataLogManager.log(String.format("===================================================================="));
+    DataLogManager.log(String.format("========================================================================"));
 
     // If auto not defined in hashmap, no path assigned so sit idle
     if (autoName == null)

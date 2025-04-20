@@ -58,7 +58,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
-import frc.robot.Constants.ELConsts.ReefLevel;
 import frc.robot.Constants.Ports;
 import frc.robot.lib.math.Conversions;
 import frc.robot.lib.phoenix.CTREConfigs6;
@@ -72,28 +71,28 @@ import frc.robot.lib.phoenix.PhoenixUtil6;
 public class Manipulator extends SubsystemBase
 {
   // Constants
-  private static final String       kSubsystemName       = "Manipulator";
+  private static final String        kSubsystemName       = "Manipulator";
 
-  private static final DutyCycleOut kClawRollerStop      = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kClawRollerStop      = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
 
-  private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.75).withIgnoreHardwareLimits(false);
-  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.35).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kCoralSpeedExpelL1     = new DutyCycleOut(0.32).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kCoralSpeedAcquire   = new DutyCycleOut(-0.75).withIgnoreHardwareLimits(false);
+  private static final DutyCycleOut  kCoralSpeedExpel     = new DutyCycleOut(-0.35).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kCoralSpeedExpelL1   = new DutyCycleOut(0.32).withIgnoreHardwareLimits(true);
 
-  private static final DutyCycleOut kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kAlgaeSpeedShoot     = new DutyCycleOut(-1.0).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kAlgaeSpeedProcessor = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kAlgaeSpeedHold      = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedShoot     = new DutyCycleOut(-1.0).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedProcessor = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedHold      = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
 
-  private static final double       kWristGearRatio      = 49.23;
-  private static final double       kWristLengthMeters   = Units.inchesToMeters(15); // Simulation
-  private static final double       kWristWeightKg       = Units.lbsToKilograms(20.0);  // Simulation
-  private static final Voltage      kWristManualVolts    = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
+  private static final double        kWristGearRatio      = 49.23;
+  private static final double        kWristLengthMeters   = Units.inchesToMeters(15); // Simulation
+  private static final double        kWristWeightKg       = Units.lbsToKilograms(20.0);  // Simulation
+  private static final Voltage       kWristManualVolts    = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
 
-  private final NetworkTableInstance  ntInst                   = NetworkTableInstance.getDefault( );
-  private final NetworkTable          robotTable = ntInst.getTable(Constants.kRobotString);
-  private IntegerSubscriber           reefLevel = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
+  private final NetworkTableInstance ntInst               = NetworkTableInstance.getDefault( );
+  private final NetworkTable         robotTable           = ntInst.getTable(Constants.kRobotString);
+  private IntegerSubscriber          reefLevel            = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
 
   /** Wrist rotary motor manual move parameters */
   private enum WristMode
@@ -620,8 +619,8 @@ public class Manipulator extends SubsystemBase
             m_clawRequestVolts = kCoralSpeedAcquire;
             break;
           case CORALEXPEL :
-            m_clawRequestVolts = ((int) reefLevel.get() == 1) ?  kCoralSpeedExpelL1 : kCoralSpeedExpel;
-            DataLogManager.log(String.format("%s: reefLevel.get is %d", getSubsystem( ), (int)reefLevel.get()));
+            m_clawRequestVolts = ((int) reefLevel.get( ) == 1) ? kCoralSpeedExpelL1 : kCoralSpeedExpel;
+            DataLogManager.log(String.format("%s: reefLevel.get is %d", getSubsystem( ), (int) reefLevel.get( )));
             break;
           case ALGAEHOLD :  // Special case above the switch - this case doesn't execute!
             m_clawRequestVolts = kAlgaeSpeedHold;
