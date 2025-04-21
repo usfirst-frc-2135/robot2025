@@ -176,7 +176,7 @@ public class Manipulator extends SubsystemBase
   private boolean                     m_wristMotorValid;                // Health indicator for motor 
   private boolean                     m_canCoderValid;                  // Health indicator for CANcoder 
   private double                      m_currentDegrees          = 0.0;  // Current angle in degrees
-  private double                      m_targetDegrees           = 0.0;  // Target angle in degrees
+  private double                      m_goalDegrees             = 0.0;  // Goal angle in degrees
   private double                      m_ccDegrees               = 0.0;  // CANcoder angle in degrees
 
   // Coral detector
@@ -206,7 +206,7 @@ public class Manipulator extends SubsystemBase
   private DoublePublisher             m_clawStatorCurPub;
   private DoublePublisher             m_wristDegreePub;
   private DoublePublisher             m_ccDegreesPub;
-  private DoublePublisher             m_targetDegreesPub;
+  private DoublePublisher             m_goalDegreesPub;
   private BooleanPublisher            m_coralDetectedPub;
   private BooleanPublisher            m_algaeDetectedPub;
 
@@ -296,7 +296,7 @@ public class Manipulator extends SubsystemBase
 
     m_wristDegreePub.set(m_currentDegrees);
     m_ccDegreesPub.set(m_ccDegrees);
-    m_targetDegreesPub.set(m_targetDegrees);
+    m_goalDegreesPub.set(m_goalDegrees);
     m_coralDetectedPub.set(m_coralDetected);
     m_algaeDetectedPub.set(m_algaeDetected);
   }
@@ -357,7 +357,7 @@ public class Manipulator extends SubsystemBase
     m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
     m_coralDetectedPub = table.getBooleanTopic("coralDetected").publish( );
     m_algaeDetectedPub = table.getBooleanTopic("algaeDetected").publish( );
-    m_targetDegreesPub = table.getDoubleTopic("targetDegrees").publish( );
+    m_goalDegreesPub = table.getDoubleTopic("goalDegrees").publish( );
 
     SmartDashboard.putData("MNWristMech", m_wristRotaryMech);
 
@@ -401,8 +401,8 @@ public class Manipulator extends SubsystemBase
     setClawMode(ClawMode.STOP);
     setWristStopped( );
 
-    m_targetDegrees = m_currentDegrees;
-    DataLogManager.log(String.format("%s: Subsystem initialized! Target Degrees: %.1f", getSubsystem( ), m_targetDegrees));
+    m_goalDegrees = m_currentDegrees;
+    DataLogManager.log(String.format("%s: Subsystem initialized! goal Degrees: %.1f", getSubsystem( ), m_goalDegrees));
   }
 
   /****************************************************************************
@@ -464,7 +464,7 @@ public class Manipulator extends SubsystemBase
           ((rangeLimited) ? " - RANGE LIMITED" : "")));
     }
 
-    m_targetDegrees = m_currentDegrees;
+    m_goalDegrees = m_currentDegrees;
 
     m_wristMotor.setControl(m_wristRequestVolts.withOutput(kWristManualVolts.times(axisValue)));
   }
@@ -493,28 +493,28 @@ public class Manipulator extends SubsystemBase
       newAngle = getCurrentAngle( );
 
     // Decide if a new position request
-    if (holdPosition || newAngle != m_targetDegrees || !MathUtil.isNear(newAngle, m_currentDegrees, kToleranceDegrees))
+    if (holdPosition || newAngle != m_goalDegrees || !MathUtil.isNear(newAngle, m_currentDegrees, kToleranceDegrees))
     {
       // Validate the position request
       if (isMoveValid(newAngle))
       {
-        m_targetDegrees = newAngle;
+        m_goalDegrees = newAngle;
         m_mmMoveIsFinished = false;
         m_mmWithinTolerance.calculate(false); // Reset the debounce filter
 
-        double targetRotations = Units.degreesToRotations(m_targetDegrees);
-        m_wristMotor.setControl(m_mmRequestVolts.withPosition(targetRotations));
+        double goalRotations = Units.degreesToRotations(m_goalDegrees);
+        m_wristMotor.setControl(m_mmRequestVolts.withPosition(goalRotations));
         DataLogManager.log(String.format("%s: MM Position move: %.1f -> %.1f degrees (%.3f -> %.3f rot)", getSubsystem( ),
-            m_currentDegrees, m_targetDegrees, Units.degreesToRotations(m_currentDegrees), targetRotations));
+            m_currentDegrees, m_goalDegrees, Units.degreesToRotations(m_currentDegrees), goalRotations));
       }
       else
-        DataLogManager.log(String.format("%s: MM Position move target %.1f degrees is OUT OF RANGE! [%.1f, %.1f deg]",
-            getSubsystem( ), m_targetDegrees, kWristAngleMin, kWristAngleMax));
+        DataLogManager.log(String.format("%s: MM Position move goal %.1f degrees is OUT OF RANGE! [%.1f, %.1f deg]",
+            getSubsystem( ), m_goalDegrees, kWristAngleMin, kWristAngleMax));
     }
     else
     {
       m_mmMoveIsFinished = true;
-      DataLogManager.log(String.format("%s: MM Position already achieved -target %s degrees", getSubsystem( ), m_targetDegrees));
+      DataLogManager.log(String.format("%s: MM Position already achieved - goal %s degrees", getSubsystem( ), m_goalDegrees));
     }
   }
 
@@ -536,9 +536,9 @@ public class Manipulator extends SubsystemBase
   public boolean moveToPositionIsFinished(boolean holdPosition)
   {
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
-    double error = m_targetDegrees - m_currentDegrees;
+    double error = m_goalDegrees - m_currentDegrees;
 
-    m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
+    m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_goalDegrees)));
 
     if (holdPosition)
       return false;

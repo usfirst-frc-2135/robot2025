@@ -138,7 +138,7 @@ public class Elevator extends SubsystemBase
   // Declare module variables
   private boolean                     m_motorsValid;      // Health indicator for Kraken motors
   private double                      m_currentHeight     = 0.0; // Current height used for decisions
-  private double                      m_targetHeight      = 0.0; // Target height in inches
+  private double                      m_goalHeight        = 0.0; // Goal height in inches
   private boolean                     m_calibrated        = false;
 
   // Manual mode config parameters
@@ -157,7 +157,7 @@ public class Elevator extends SubsystemBase
   private DoublePublisher             m_leftHeightPub;
   private DoublePublisher             m_rightHeightPub;
   private DoublePublisher             m_currentHeightPub;
-  private DoublePublisher             m_targetHeightPub;
+  private DoublePublisher             m_goalHeightPub;
   private BooleanPublisher            m_calibratedPub;
   private BooleanPublisher            m_isDownPub;
 
@@ -256,7 +256,7 @@ public class Elevator extends SubsystemBase
     }
 
     // Update network table publishers
-    m_targetHeightPub.set(m_targetHeight);
+    m_goalHeightPub.set(m_goalHeight);
     m_calibratedPub.set(m_calibrated);
     m_isDownPub.set(isDown( ));
   }
@@ -307,7 +307,7 @@ public class Elevator extends SubsystemBase
     m_leftHeightPub = table.getDoubleTopic("leftInches").publish( );
     m_rightHeightPub = table.getDoubleTopic("rightInches").publish( );
     m_currentHeightPub = table.getDoubleTopic("currentInches").publish( );
-    m_targetHeightPub = table.getDoubleTopic("targetInches").publish( );
+    m_goalHeightPub = table.getDoubleTopic("goalInches").publish( );
     m_calibratedPub = table.getBooleanTopic("calibrated").publish( );
     m_isDownPub = table.getBooleanTopic("isDown").publish( );
 
@@ -337,8 +337,8 @@ public class Elevator extends SubsystemBase
   public void initialize( )
   {
     setVoltage(Volts.of(0.0), Volts.of(0.0));
-    m_targetHeight = m_currentHeight;
-    DataLogManager.log(String.format("%s: Subsystem initialized! Target Inches: %.1f", getSubsystem( ), m_targetHeight));
+    m_goalHeight = m_currentHeight;
+    DataLogManager.log(String.format("%s: Subsystem initialized! goal Inches: %.1f", getSubsystem( ), m_goalHeight));
   }
 
   /****************************************************************************
@@ -400,7 +400,7 @@ public class Elevator extends SubsystemBase
           ((rangeLimited) ? " - RANGE LIMITED" : "")));
     }
 
-    m_targetHeight = m_currentHeight;
+    m_goalHeight = m_currentHeight;
 
     setVoltage(kManualSpeedVolts.times(axisValue), kManualSpeedVolts.times(axisValue));
   }
@@ -425,7 +425,7 @@ public class Elevator extends SubsystemBase
 
     if (!(m_calibrated))
     {
-      DataLogManager.log(String.format("%s: MM Position move target %.1f in - NOT CALIBRATED!", getSubsystem( ), m_targetHeight));
+      DataLogManager.log(String.format("%s: MM Position move goal %.1f in - NOT CALIBRATED!", getSubsystem( ), m_goalHeight));
       return;
     }
 
@@ -435,29 +435,29 @@ public class Elevator extends SubsystemBase
     newHeight = MathUtil.clamp(newHeight, kMinDownHeight, kHeightInchesMax);
 
     // Decide if a new position request
-    if (holdPosition || newHeight != m_targetHeight || !MathUtil.isNear(newHeight, m_currentHeight, kToleranceInches))
+    if (holdPosition || newHeight != m_goalHeight || !MathUtil.isNear(newHeight, m_currentHeight, kToleranceInches))
     {
       // Validate the position request
       if (isMoveValid(newHeight))
       {
-        m_targetHeight = newHeight;
+        m_goalHeight = newHeight;
         m_mmMoveIsFinished = false;
         m_mmWithinTolerance.calculate(false); // Reset the debounce filter
 
-        setMMPosition(m_targetHeight);
+        setMMPosition(m_goalHeight);
 
         DataLogManager.log(String.format("%s: MM Position move: %.1f -> %.1f inches (%.3f -> %.3f rot)", getSubsystem( ),
-            m_currentHeight, m_targetHeight, Conversions.inchesToWinchRotations(m_currentHeight, kRolloutRatio),
-            Conversions.inchesToWinchRotations(m_targetHeight, kRolloutRatio)));
+            m_currentHeight, m_goalHeight, Conversions.inchesToWinchRotations(m_currentHeight, kRolloutRatio),
+            Conversions.inchesToWinchRotations(m_goalHeight, kRolloutRatio)));
       }
       else
-        DataLogManager.log(String.format("%s: MM Position move target %.1f inches is OUT OF RANGE! [%.1f, %.1f rot]",
-            getSubsystem( ), m_targetHeight, kHeightInchesMin, kHeightInchesMax));
+        DataLogManager.log(String.format("%s: MM Position move goal %.1f inches is OUT OF RANGE! [%.1f, %.1f rot]",
+            getSubsystem( ), m_goalHeight, kHeightInchesMin, kHeightInchesMax));
     }
     else
     {
       m_mmMoveIsFinished = true;
-      DataLogManager.log(String.format("%s: MM Position already achieved - target %s inches", getSubsystem( ), m_targetHeight));
+      DataLogManager.log(String.format("%s: MM Position already achieved - goal %s inches", getSubsystem( ), m_goalHeight));
     }
   }
 
@@ -479,10 +479,10 @@ public class Elevator extends SubsystemBase
   private boolean moveToPositionIsFinished(boolean holdPosition)
   {
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
-    double error = m_targetHeight - m_currentHeight;
-    boolean hittingHardStop = (m_targetHeight <= 0.0) && (m_currentHeight <= 1.0) && (m_mmHardStopCounter++ >= 10);
+    double error = m_goalHeight - m_currentHeight;
+    boolean hittingHardStop = (m_goalHeight <= 0.0) && (m_currentHeight <= 1.0) && (m_mmHardStopCounter++ >= 10);
 
-    setMMPosition(m_targetHeight);
+    setMMPosition(m_goalHeight);
 
     if (holdPosition)
       return false;
@@ -555,14 +555,14 @@ public class Elevator extends SubsystemBase
    * 
    * Set Motion Magic setpoint based on passed height
    * 
-   * @param targetInches
+   * @param goalInches
    *          distance to move
    */
-  private void setMMPosition(double targetInches)
+  private void setMMPosition(double goalInches)
   {
     if (m_motorsValid)
     {
-      double position = Conversions.inchesToWinchRotations(targetInches, kRolloutRatio);
+      double position = Conversions.inchesToWinchRotations(goalInches, kRolloutRatio);
       m_leftMotor.setControl(m_mmRequestVolts.withPosition(position).withFeedForward(m_mmArbFeedForward));
       m_rightMotor.setControl(m_mmRequestVolts.withPosition(position).withFeedForward(m_mmArbFeedForward));
     }
@@ -770,7 +770,7 @@ public class Elevator extends SubsystemBase
    * Create motion magic base command
    * 
    * @param position
-   *          double supplier that provides the target distance
+   *          double supplier that provides the goal distance
    * @param holdPosition
    *          boolen to indicate whether the command ever finishes
    * @return continuous command that runs elevator motors to a position (Motion Magic)
@@ -791,7 +791,7 @@ public class Elevator extends SubsystemBase
    * Create motion magic move to position command
    * 
    * @param position
-   *          double supplier that provides the target distance value
+   *          double supplier that provides the goal distance value
    * @return continuous command that runs elevator motors to a position (Motion Magic)
    */
   public Command getMoveToPositionCommand(DoubleSupplier position)
@@ -804,7 +804,7 @@ public class Elevator extends SubsystemBase
    * Create motion magic hold position command
    * 
    * @param position
-   *          double supplier that provides the target distance value
+   *          double supplier that provides the goal distance value
    * @return continuous command that holds elevator motors in a position (Motion Magic)
    */
   public Command getHoldPositionCommand(DoubleSupplier position)
