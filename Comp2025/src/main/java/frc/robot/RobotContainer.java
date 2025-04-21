@@ -23,7 +23,10 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -202,19 +205,98 @@ public class RobotContainer
     facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);    // Swerve steer PID for facing swerve request
     facing.HeadingController.enableContinuousInput(-180.0, 180.0);
 
-    // Identify the field
-    DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField.toString( ),
-        VIConsts.kATField.getFieldWidth( ), VIConsts.kATField.getFieldLength( )));
-    for (int i = 1; i <= 22; i++)
-    {
-      DataLogManager.log(String.format("Field: ID %d %s", i, VIConsts.kATField.getTagPose(i)));
-    }
-
+    loadFieldPoses( );                // Identify the field
     addDashboardWidgets( );           // Add some dashboard widgets for commands
     configureButtonBindings( );       // Configure game controller buttons
     initDefaultCommands( );           // Initialize subsystem default commands
 
     Robot.timeMarker("robotContainer: after default commands");
+  }
+
+  /****************************************************************************
+   * 
+   * Print out field layout, tag ID poses, and scoring poses
+   */
+  private void loadFieldPoses( )
+  {
+
+    // Identify the field and load it (any reference loads it)
+    DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField, VIConsts.kATField.getFieldWidth( ),
+        VIConsts.kATField.getFieldLength( )));
+
+    DataLogManager.log(String.format("-----"));
+
+    for (int i = 1; i <= 22; i++)
+    {
+      DataLogManager.log(String.format("Field: ID %d %s", i, VIConsts.kATField.getTagPose(i)));
+    }
+
+    DataLogManager.log(String.format("-----"));
+
+    for (int tag = 17; tag <= 22; tag++)
+    {
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT);
+      DataLogManager.log(String.format("-----"));
+    }
+
+    for (int tag = 6; tag <= 11; tag++)
+    {
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT);
+      DataLogManager.log(String.format("-----"));
+    }
+  }
+
+  /****************************************************************************
+   * 
+   * Calculate a scoring waypoint for a given tag, offset, and robot setback
+   */
+  private static Pose2d getScoringWaypoint(String name, int tag, double offset, double setback)
+  {
+    Pose2d atPose = VIConsts.kATField.getTagPose(tag).orElse(new Pose3d( )).toPose2d( );
+    double xOffset = offset * Math.sin(atPose.getRotation( ).getRadians( ));
+    double yOffset = offset * Math.cos(atPose.getRotation( ).getRadians( ));
+    Pose2d vPose = new Pose2d(new Translation2d(atPose.getX( ) + xOffset, atPose.getY( ) - yOffset), atPose.getRotation( ));
+
+    double xSetback = setback * Math.cos(atPose.getRotation( ).getRadians( ));
+    double ySetback = setback * Math.sin(atPose.getRotation( ).getRadians( ));
+    Pose2d waypoint =
+        new Pose2d(new Translation2d(vPose.getX( ) + xSetback, vPose.getY( ) + ySetback), vPose.getRotation( ).unaryMinus( ));
+    DataLogManager.log(String.format("%s AT %d  Pose %s  waypoint %s", name, tag, atPose, waypoint));
+
+    return waypoint;
+  }
+
+  private static final double kBranchSpacing = Units.inchesToMeters(13.0);  // Distance between branches
+  private static final double kRobotLength   = Units.inchesToMeters(34.5);  // Our robot length
+  private static final double kRobotSetback  = kRobotLength / 2;                   // Distance robot is set back from branch waypoint
+
+  /****************************************************************************
+   * 
+   * Calculate a scoring waypoint for a given tag ID and branch (left, center, right)
+   */
+  public Pose2d getScoringGoalPose(int tag, VIConsts.ReefBranch branch)
+  {
+    Pose2d pose = new Pose2d( );
+
+    switch (branch)
+    {
+      case LEFT :
+        pose = getScoringWaypoint("Left  ", tag, kBranchSpacing / 2, kRobotSetback);
+        break;
+      default :
+      case ALGAE :
+        pose = getScoringWaypoint("Center", tag, 0, kRobotSetback);
+        break;
+      case RIGHT :
+        pose = getScoringWaypoint("Right ", tag, -kBranchSpacing / 2, kRobotSetback);
+        break;
+    }
+
+    return pose;
   }
 
   /****************************************************************************
