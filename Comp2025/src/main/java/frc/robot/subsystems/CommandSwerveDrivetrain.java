@@ -695,7 +695,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /**
      * Create reef align command for pathfinding
      * 
-     * 1) Get the goal pose (branch offset from nearest AprilTag and flip if needed
+     * 1) Get the current pose
+     * 2) Find the goal pose (branch offset from nearest AprilTag)
      * 2) Find a new path to the goal pose, and then follow it
      * 
      * @return reefAlignCommand
@@ -716,7 +717,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /**
      * Create reef align command for path following
      * 
-     * 1) Get the current and goal poses (branch offset from nearest AprilTag)
+     * 1) Get the current pose
+     * 2) Find the goal pose (branch offset from nearest AprilTag)
      * 2) Create list of waypoints
      * 3) Generate a new path
      * 4) Follow the path
