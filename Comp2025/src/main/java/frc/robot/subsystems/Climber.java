@@ -17,6 +17,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
+import edu.wpi.first.hal.PWMConfigDataResult;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -32,6 +33,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -44,6 +46,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -96,6 +99,7 @@ public class Climber extends SubsystemBase
   // Device objects
   private final TalonFX               m_leftMotor         = new TalonFX(Ports.kCANID_ClimberL);
   // private final TalonFX               m_rightMotor        = new TalonFX(Ports.kCANID_ClimberR);
+  private final PWM                   m_rampRelease       = new PWM(Ports.kPWM_RampRelease);
 
   // Alerts
   private final Alert                 m_leftAlert         =
@@ -106,7 +110,7 @@ public class Climber extends SubsystemBase
   // Simulation objects
   private final TalonFXSimState       m_climberSim        = m_leftMotor.getSimState( );
   private final ElevatorSim           m_elevSim           = new ElevatorSim(DCMotor.getKrakenX60(25), kGearRatio, kCarriageMassKg,
-      kDrumRadiusMeters, -kLengthMax, kLengthMax, false, 0.0); 
+      kDrumRadiusMeters, -kLengthMax, kLengthMax, false, 0.0);
 
   // Mechanism2d
   private final Mechanism2d           m_climberMech       = new Mechanism2d(1.0, 1.0);
@@ -198,6 +202,12 @@ public class Climber extends SubsystemBase
 
     DataLogManager.log(String.format("%s: Initial position %.1f inches", getSubsystem( ), m_leftLength));
 
+    PWMConfigDataResult pwmConfig = m_rampRelease.getBoundsMicroseconds( );
+    int pwmPulseTIme = m_rampRelease.getPulseTimeMicroseconds( );
+
+    DataLogManager.log(String.format("%s: Pulse time %d min %d max %d dbMin %d dbMax %d", getSubsystem( ), pwmPulseTIme,
+        pwmConfig.min, pwmConfig.max, pwmConfig.deadbandMin, pwmConfig.deadbandMax));
+
     // Simulation object initialization
     m_climberSim.Orientation = ChassisReference.Clockwise_Positive;
 
@@ -283,6 +293,9 @@ public class Climber extends SubsystemBase
     // SmartDashboard.putData("ClRunChain", getMoveToPositionCommand(this::getClimberChainLevel));
     SmartDashboard.putData("ClRunClimbed", getMoveToPositionCommand(this::getClimberClimbed));
     SmartDashboard.putData("ClCalibrate", getCalibrateCommand( ));
+
+    SmartDashboard.putData("ClRampOpen", new InstantCommand(( ) -> m_rampRelease.setPosition(0.0)));
+    SmartDashboard.putData("ClRampClose", new InstantCommand(( ) -> m_rampRelease.setPosition(1.0)));
   }
 
   // Put methods for controlling this subsystem here. Call these from Commands.
