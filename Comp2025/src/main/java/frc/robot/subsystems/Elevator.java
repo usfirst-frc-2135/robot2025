@@ -364,6 +364,9 @@ public class Elevator extends SubsystemBase
   ///////////////////////// MANUAL MOVEMENT //////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////
 
+  // private final static Voltage kManualkG = Volts.of(0.325);
+  private final static Voltage kManualkG = Volts.of(0.0);
+
   /****************************************************************************
    * 
    * Move motors proportional to a joystick axis value
@@ -402,7 +405,7 @@ public class Elevator extends SubsystemBase
 
     m_goalHeight = m_currentHeight;
 
-    setVoltage(kManualSpeedVolts.times(axisValue), kManualSpeedVolts.times(axisValue));
+    setVoltage(kManualSpeedVolts.times(axisValue).plus(kManualkG), kManualSpeedVolts.times(axisValue).plus(kManualkG));
   }
 
   ////////////////////////////////////////////////////////////////////////////

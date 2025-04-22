@@ -422,6 +422,9 @@ public class Manipulator extends SubsystemBase
   ///////////////////////// MANUAL MOVEMENT //////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////
 
+  // private final static Voltage kManualKG = Volts.of(-0.235);
+  private final static Voltage kManualKG = Volts.of(0.0);
+
   /****************************************************************************
    * 
    * Move motors proportional to a joystick axis value
@@ -460,7 +463,8 @@ public class Manipulator extends SubsystemBase
 
     m_goalDegrees = m_currentDegrees;
 
-    m_wristMotor.setControl(m_wristRequestVolts.withOutput(kWristManualVolts.times(axisValue)));
+    m_wristMotor.setControl(m_wristRequestVolts.withOutput(
+        kWristManualVolts.times(axisValue).plus(kManualKG.times(Math.sin(Units.degreesToRadians(m_currentDegrees))))));
   }
 
   ////////////////////////////////////////////////////////////////////////////
