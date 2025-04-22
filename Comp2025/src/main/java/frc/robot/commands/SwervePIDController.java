@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructSubscriber;
@@ -59,6 +60,15 @@ public class SwervePIDController extends Command
       ntInst.getTable("Pose").getBooleanTopic("PIDEndCondition").publish( );
   private boolean                               endCondition       = false;
 
+  private DoublePublisher                       vxPub              =
+      ntInst.getTable("Pose/PID").getDoubleTopic("vxMps").publish( );
+  private DoublePublisher                       vyPub              =
+      ntInst.getTable("Pose/PID").getDoubleTopic("vyMps").publish( );
+  private DoublePublisher                       omegaPub           =
+      ntInst.getTable("Pose/PID").getDoubleTopic("omegaRps").publish( );
+  private DoublePublisher                       errorPub           =
+      ntInst.getTable("Pose/PID").getDoubleTopic("error").publish( );
+
   /**
    * Swerve drive under PID control to a goal pose
    */
@@ -91,10 +101,9 @@ public class SwervePIDController extends Command
 
     ChassisSpeeds speeds = mDriveController.calculateRobotRelativeSpeeds(driveStatePose.get( ), goalState);
 
-    // speeds.vxMetersPerSecond = MathUtil.clamp(speeds.vxMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
-    // speeds.vyMetersPerSecond = MathUtil.clamp(speeds.vyMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
-
-    // DataLogManager.log(String.format("%s: vx %.2f vy %.2f", getName( ), speeds.vxMetersPerSecond, speeds.vyMetersPerSecond));
+    vxPub.set(speeds.vxMetersPerSecond);
+    vyPub.set(speeds.vyMetersPerSecond);
+    omegaPub.set(speeds.omegaRadiansPerSecond);
 
     m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
   }
@@ -110,6 +119,8 @@ public class SwervePIDController extends Command
   public boolean isFinished( )
   {
     Pose2d diff = driveStatePose.get( ).relativeTo(m_goalPose);
+
+    errorPub.set(Math.sqrt(Math.pow(diff.getX( ), 2) + Math.pow(diff.getY( ), 2)));
 
     boolean rotation = MathUtil.isNear(0.0, diff.getRotation( ).getRotations( ), kRotationTolerance.getRotations( ), 0.0, 1.0);
 
