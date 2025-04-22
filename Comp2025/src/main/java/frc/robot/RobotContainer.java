@@ -375,6 +375,7 @@ public class RobotContainer
     // Add command groups to dashboard
     SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_hid));
+    SmartDashboard.putData("ExpelAlgae", new ExpelAlgae(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("ExpelCoral", new ExpelCoral(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_hid));

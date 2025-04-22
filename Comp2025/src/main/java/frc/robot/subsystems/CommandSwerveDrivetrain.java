@@ -426,9 +426,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
         SmartDashboard.putData("SetPose", getResetOdometryCommand( ));
 
-        SmartDashboard.putData("GetAlignToReefPPFind", new DeferredCommand(( ) -> getAlignToReefPPFindCommand( ), Set.of(this)));
-        SmartDashboard.putData("GetAlignToReefFollow", new DeferredCommand(( ) -> getAlignToReefFollowCommand( ), Set.of(this)));
-        SmartDashboard.putData("GetAlignToReefPID", getAlignToReefPIDCommand( ));
+        SmartDashboard.putData("AlignToReefPPFind", new DeferredCommand(( ) -> getAlignToReefPPFindCommand( ), Set.of(this)));
+        SmartDashboard.putData("AlignToReefFollow", new DeferredCommand(( ) -> getAlignToReefFollowCommand( ), Set.of(this)));
+        SmartDashboard.putData("AlignToReefPID", getAlignToReefPIDCommand( ));
 
         // SmartDashboard.putData("multiPIDTest", multiPIDTest( ));
     }

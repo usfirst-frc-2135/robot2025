@@ -202,8 +202,6 @@ public class Manipulator extends SubsystemBase
 
   // Network tables publisher objects
   private DoublePublisher             m_clawSpeedPub;
-  private DoublePublisher             m_clawSupCurPub;
-  private DoublePublisher             m_clawStatorCurPub;
   private DoublePublisher             m_wristDegreePub;
   private DoublePublisher             m_ccDegreesPub;
   private DoublePublisher             m_goalDegreesPub;
@@ -291,8 +289,6 @@ public class Manipulator extends SubsystemBase
 
     // // Update network table publishers
     m_clawSpeedPub.set(m_clawMotor.get( ));
-    m_clawSupCurPub.set(m_clawMotor.getSupplyCurrent( ).getValueAsDouble( ));
-    m_clawStatorCurPub.set(m_clawMotor.getStatorCurrent( ).getValueAsDouble( ));
 
     m_wristDegreePub.set(m_currentDegrees);
     m_ccDegreesPub.set(m_ccDegrees);
@@ -350,8 +346,6 @@ public class Manipulator extends SubsystemBase
 
     // Initialize network tables publishers
     m_clawSpeedPub = table.getDoubleTopic("clawSpeed").publish( );
-    m_clawSupCurPub = table.getDoubleTopic("clawSupCur").publish( );
-    m_clawStatorCurPub = table.getDoubleTopic("clawStatorCur").publish( );
 
     m_wristDegreePub = table.getDoubleTopic("wristDegrees").publish( );
     m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
@@ -375,7 +369,7 @@ public class Manipulator extends SubsystemBase
     SmartDashboard.putData("MNCoralExpel", getMoveToPositionCommand(ClawMode.CORALEXPEL, this::getCurrentAngle));
     SmartDashboard.putData("MNCoralHold", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getCurrentAngle));
 
-    SmartDashboard.putData("MNWrisSafeState", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleSafeState));
+    SmartDashboard.putData("MNWristSafeState", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleSafeState));
 
     SmartDashboard.putData("MNWristCoralStation", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralStation));
     SmartDashboard.putData("MNWristCoralL1", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL1));
