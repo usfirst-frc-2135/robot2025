@@ -81,7 +81,7 @@ public final class CTREConfigs6
     elevatorConfig.Slot0.kG = 0.325;                                  // Feedforward: Voltage or duty cycle to overcome gravity (arbitrary feedforward)
     elevatorConfig.Slot0.kV = 0.1241;                                 // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    elevatorConfig.Slot0.kP = 0.3;                                    // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    elevatorConfig.Slot0.kP = 0.8;                                    // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
     elevatorConfig.Slot0.kI = 0.0;                                    // Feedback: Voltage or duty cycle per accumulated unit
     elevatorConfig.Slot0.kD = 0.0;                                    // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
