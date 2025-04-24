@@ -424,7 +424,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         });
 
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
-        SmartDashboard.putData("SetPose", getResetOdometryCommand( ));
+        SmartDashboard.putData("SetPose", getResetPoseCommand( ));
+        SmartDashboard.putData("GetModuleRotations", getModuleRotationsCommand( ));
 
         SmartDashboard.putData("AlignToReefPPFind", new DeferredCommand(( ) -> getAlignToReefPPFindCommand( ), Set.of(this)));
         SmartDashboard.putData("AlignToReefFollow", new DeferredCommand(( ) -> getAlignToReefFollowCommand( ), Set.of(this)));
@@ -603,12 +604,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /**
      * Reset robot pose from dashboard widget
      */
-    private Command getResetOdometryCommand( )
+    private Command getResetPoseCommand( )
     {
         return this
                 .runOnce(( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(setPoseSub.get( )[0], setPoseSub.get( )[1]),
                         new Rotation2d(setPoseSub.get( )[2])))) //
                 .withName("ResetOdometry").ignoringDisable(true);
+    }
+
+    /**
+     * Reset robot pose from dashboard widget
+     */
+    private Command getModuleRotationsCommand( )
+    {
+        return this
+                .runOnce(( ) -> DataLogManager.log(String.format("%s:  0: %.4f 1: %.4f 2: %.4f 3: %.4f", this.getName( ),
+                        this.getState( ).ModulePositions[0].distanceMeters, this.getState( ).ModulePositions[1].distanceMeters,
+                        this.getState( ).ModulePositions[2].distanceMeters, this.getState( ).ModulePositions[3].distanceMeters)))
+                .ignoringDisable(true);
     }
 
     ////////////////////////////////////////////////////////////////////////////
