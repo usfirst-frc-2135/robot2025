@@ -6,9 +6,7 @@
     "FromAlgae",
     "FromBranch",
     "FromCoralStation",
-    "FromNet",
-    "FromStart",
-    "FromProc"
+    "FromStart"
   ],
   "autoFolders": [
     "0-AutoStop",
@@ -19,8 +17,8 @@
     "4-AutoPreloadCoral2",
     "9-AutoTest"
   ],
-  "defaultMaxVel": 4.0,
-  "defaultMaxAccel": 3.4,
+  "defaultMaxVel": 4.2,
+  "defaultMaxAccel": 5.25,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
@@ -29,10 +27,10 @@
   "robotTrackwidth": 0.577,
   "driveWheelRadius": 0.0499,
   "driveGearing": 6.12,
-  "maxDriveSpeed": 4.3,
+  "maxDriveSpeed": 4.5,
   "driveMotorType": "krakenX60FOC",
   "driveCurrentLimit": 120.0,
-  "wheelCOF": 1.01,
+  "wheelCOF": 1.42,
   "flModuleX": 0.288,
   "flModuleY": 0.288,
   "frModuleX": 0.288,

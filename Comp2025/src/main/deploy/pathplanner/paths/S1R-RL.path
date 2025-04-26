@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0669999999999997,
-        "y": 6.66725
+        "x": 2.068624217542913,
+        "y": 6.753815457355536
       },
       "isLocked": false,
       "linkedName": "S1R"
@@ -20,8 +20,8 @@
         "y": 5.04
       },
       "prevControl": {
-        "x": 3.4027499999999997,
-        "y": 5.7410000000000005
+        "x": 2.916696299433286,
+        "y": 5.841506139710268
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.4,
+    "maxVelocity": 4.2,
+    "maxAcceleration": 5.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

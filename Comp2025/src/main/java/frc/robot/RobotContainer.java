@@ -191,9 +191,9 @@ public class RobotContainer
       Map.entry(AutoChooser.AUTOPRELOADALGAE.toString( ) + StartPose.START2.toString( ), "Start2_RH_RGH_Net"),
       Map.entry(AutoChooser.AUTOPRELOADALGAE.toString( ) + StartPose.START3.toString( ), "Start3_RE_REF_Proc"),
 
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START1.toString( ), "Start1_test1"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START2.toString( ), "Start2_test2"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_test3")  //
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START1.toString( ), "Start1_Test1"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START2.toString( ), "Start2_Test2"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_Test3")  //
   ));
 
   /****************************************************************************

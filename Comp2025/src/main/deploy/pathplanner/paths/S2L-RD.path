@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5853688524590157,
-        "y": 1.5974282786885248
+        "x": 2.5115856622413646,
+        "y": 1.574350003572051
       },
       "isLocked": false,
       "linkedName": "S2L"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 4.0,
-        "y": 2.84
+        "y": 2.8
       },
       "prevControl": {
-        "x": 3.5977499999999996,
-        "y": 2.1529999999999996
+        "x": 3.2966730690265247,
+        "y": 2.1807986659761265
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.4,
+    "maxVelocity": 4.2,
+    "maxAcceleration": 5.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

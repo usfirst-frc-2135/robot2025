@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.12725,
-        "y": 5.18525
+        "x": 6.646645330628977,
+        "y": 5.377195650413459
       },
       "isLocked": false,
       "linkedName": "RIJ"
@@ -20,8 +20,8 @@
         "y": 6.14
       },
       "prevControl": {
-        "x": 7.08040483720247,
-        "y": 5.785331939536951
+        "x": 6.80076293178953,
+        "y": 5.824158000055419
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.4,
+    "maxVelocity": 4.2,
+    "maxAcceleration": 5.25,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
