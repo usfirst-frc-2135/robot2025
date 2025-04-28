@@ -364,8 +364,7 @@ public class Elevator extends SubsystemBase
   ///////////////////////// MANUAL MOVEMENT //////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////
 
-  // private final static Voltage kManualkG = Volts.of(0.325);
-  private final static Voltage kManualkG = Volts.of(0.0);
+  private final static Voltage kManualkG = Volts.of(0.325); // Elevator kG from tuning
 
   /****************************************************************************
    * 
