@@ -54,7 +54,7 @@ public class SwervePIDController extends Command
   private final Debouncer                       endDebouncer       =
       new Debouncer(kEndDebounce.in(Seconds), Debouncer.DebounceType.kBoth);
   private final BooleanPublisher                endConditionLogger =
-      ntInst.getTable("Pose").getBooleanTopic("PIDEndCondition").publish( );
+      ntInst.getTable("swerve").getBooleanTopic("PIDEndCondition").publish( );
   private boolean                               endCondition       = false;
 
   // Network tables entries
@@ -66,13 +66,13 @@ public class SwervePIDController extends Command
       driveStateTable.getStructTopic("Speeds", ChassisSpeeds.struct).subscribe(new ChassisSpeeds( ));
 
   private DoublePublisher                       vxPub              =
-      ntInst.getTable("Pose/PID").getDoubleTopic("vxMps").publish( );
+      ntInst.getTable("swerve/PID").getDoubleTopic("vxMps").publish( );
   private DoublePublisher                       vyPub              =
-      ntInst.getTable("Pose/PID").getDoubleTopic("vyMps").publish( );
+      ntInst.getTable("swerve/PID").getDoubleTopic("vyMps").publish( );
   private DoublePublisher                       omegaPub           =
-      ntInst.getTable("Pose/PID").getDoubleTopic("omegaRps").publish( );
+      ntInst.getTable("swerve/PID").getDoubleTopic("omegaRps").publish( );
   private DoublePublisher                       errorPub           =
-      ntInst.getTable("Pose/PID").getDoubleTopic("error").publish( );
+      ntInst.getTable("swerve/PID").getDoubleTopic("error").publish( );
 
   /**
    * Swerve drive under PID control to a goal pose
