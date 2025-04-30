@@ -230,26 +230,28 @@ public class RobotContainer
 
     for (int i = 1; i <= 22; i++)
     {
-      DataLogManager.log(String.format("Field: ID %d %s", i, VIConsts.kATField.getTagPose(i)));
+      // DataLogManager.log(String.format("Field: ID %2d %s", i, VIConsts.kATField.getTagPose(i)));
     }
 
-    DataLogManager.log(String.format("-----"));
+    // DataLogManager.log(String.format("-----"));
 
     for (int tag = 17; tag <= 22; tag++)
     {
-      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT);
-      DataLogManager.log(String.format("-----"));
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
     }
+
+    // DataLogManager.log(String.format("-----"));
 
     for (int tag = 6; tag <= 11; tag++)
     {
-      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT);
-      DataLogManager.log(String.format("-----"));
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
     }
+
+    // DataLogManager.log(String.format("-----"));
   }
 
   /****************************************************************************
@@ -265,9 +267,9 @@ public class RobotContainer
 
     double xSetback = setback * Math.cos(atPose.getRotation( ).getRadians( ));
     double ySetback = setback * Math.sin(atPose.getRotation( ).getRadians( ));
-    Pose2d waypoint =
-        new Pose2d(new Translation2d(vPose.getX( ) + xSetback, vPose.getY( ) + ySetback), vPose.getRotation( ).unaryMinus( ));
-    DataLogManager.log(String.format("%s AT %d  Pose %s  waypoint %s", name, tag, atPose, waypoint));
+    Pose2d waypoint = new Pose2d(new Translation2d(vPose.getX( ) + xSetback, vPose.getY( ) + ySetback),
+        vPose.getRotation( ).rotateBy(Rotation2d.k180deg));
+    // DataLogManager.log(String.format("%s AT %2d  Pose %s  waypoint %s", name, tag, atPose, waypoint));
 
     return waypoint;
   }
@@ -280,20 +282,20 @@ public class RobotContainer
    * 
    * Calculate a scoring waypoint for a given tag ID and branch (left, center, right)
    */
-  public Pose2d getScoringGoalPose(int tag, VIConsts.ReefBranch branch)
+  public static Pose2d getScoringGoalPose(int tag, int branch)
   {
     Pose2d pose = new Pose2d( );
 
     switch (branch)
     {
-      case LEFT :
+      case 0 :  // Left
         pose = getScoringWaypoint("Left  ", tag, kBranchSpacing / 2, kRobotSetback);
         break;
       default :
-      case ALGAE :
+      case 1 :  // Algae
         pose = getScoringWaypoint("Center", tag, 0, kRobotSetback);
         break;
-      case RIGHT :
+      case 2 :  // Right
         pose = getScoringWaypoint("Right ", tag, -kBranchSpacing / 2, kRobotSetback);
         break;
     }

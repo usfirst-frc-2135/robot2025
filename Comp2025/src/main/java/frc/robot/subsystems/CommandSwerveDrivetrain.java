@@ -57,6 +57,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
+import frc.robot.RobotContainer;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.SwervePIDController;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
@@ -688,7 +689,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         int reefOffset = (int) reefBranch.get( );
 
         int relativeReefTag = reefTag - blueReefTags[0];
-        Pose2d goalPose = VIConsts.kBlueSideReefPoses[relativeReefTag][reefOffset];
+        Pose2d goalPose = RobotContainer.getScoringGoalPose(reefTag, reefOffset);
 
         if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
         {
