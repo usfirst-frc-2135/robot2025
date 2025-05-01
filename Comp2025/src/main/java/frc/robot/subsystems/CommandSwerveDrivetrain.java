@@ -424,7 +424,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
         SmartDashboard.putData("SetPose", getResetPoseCommand( ));
-        SmartDashboard.putData("GetModuleRotations", getModuleRotationsCommand( ));
 
         SmartDashboard.putData("AlignToReefPPFind", new DeferredCommand(( ) -> getAlignToReefPPFindCommand( ), Set.of(this)));
         SmartDashboard.putData("AlignToReefFollow", new DeferredCommand(( ) -> getAlignToReefFollowCommand( ), Set.of(this)));
@@ -612,7 +611,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /**
      * Reset robot pose from dashboard widget
      */
-    private Command getModuleRotationsCommand( )
+    public Command getModulePositionsCommand( )
     {
         return this
                 .runOnce(( ) -> DataLogManager.log(String.format("%s:  0: %.4f 1: %.4f 2: %.4f 3: %.4f", this.getName( ),
