@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructSubscriber;
@@ -32,32 +33,46 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
  */
 public class SwervePIDController extends Command
 {
-  public CommandSwerveDrivetrain                m_swerve;
-  public Pose2d                                 m_goalPose;
-
-  private static final NetworkTableInstance     ntInst             = NetworkTableInstance.getDefault( );
-  private static final NetworkTable             dsTable            = ntInst.getTable("DriveState");
-  private static final StructSubscriber<Pose2d> drivePose          =
-      dsTable.getStructTopic("Pose", Pose2d.struct).subscribe(new Pose2d( ));
-  private final StructSubscriber<ChassisSpeeds> driveSpeeds        =
-      dsTable.getStructTopic("Speeds", ChassisSpeeds.struct).subscribe(new ChassisSpeeds( ));
-
-  private static final PIDConstants             kTranslationPID    = new PIDConstants(3.5, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
-  private static final PIDConstants             kRotationPID       = new PIDConstants(5.0, 0, 0);
-  private PPHolonomicDriveController            mDriveController   =
-      new PPHolonomicDriveController(kTranslationPID, kRotationPID);
-
-  private static final LinearVelocity           kMaxSpeed          = MetersPerSecond.of(3.5);     // Cap max applied velocity to 3.5 mps in either direction
+  // Constants
+  // private static final LinearVelocity           kMaxSpeed          = MetersPerSecond.of(3.5);     // Cap max applied velocity to 3.5 mps in either direction
   private static final Rotation2d               kRotationTolerance = Rotation2d.fromDegrees(2.0);
   private static final Distance                 kPositionTolerance = Inches.of(1.5);              // Was 0.8 inches which is tiny
   private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);    // Was 0.25 inches per second which is extremely small
 
+  // Main objects
+  public CommandSwerveDrivetrain                m_swerve;
+  public Pose2d                                 m_goalPose;
+
+  // PID controllers
+  private static final PIDConstants             kTranslationPID    = new PIDConstants(3.5, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
+  private static final PIDConstants             kRotationPID       = new PIDConstants(5.0, 0, 0);
+  private PPHolonomicDriveController            m_DriveController  =
+      new PPHolonomicDriveController(kTranslationPID, kRotationPID);
+
+  // Debouncer debouncer
   private static final Time                     kEndDebounce       = Seconds.of(0.04);
   private final Debouncer                       endDebouncer       =
       new Debouncer(kEndDebounce.in(Seconds), Debouncer.DebounceType.kBoth);
   private final BooleanPublisher                endConditionLogger =
       ntInst.getTable("Pose").getBooleanTopic("PIDEndCondition").publish( );
   private boolean                               endCondition       = false;
+
+  // Network tables entries
+  private static final NetworkTableInstance     ntInst             = NetworkTableInstance.getDefault( );
+  private static final NetworkTable             driveStateTable    = ntInst.getTable("DriveState");
+  private static final StructSubscriber<Pose2d> driveStatePose     =
+      driveStateTable.getStructTopic("Pose", Pose2d.struct).subscribe(new Pose2d( ));
+  private final StructSubscriber<ChassisSpeeds> driveSpeeds        =
+      driveStateTable.getStructTopic("Speeds", ChassisSpeeds.struct).subscribe(new ChassisSpeeds( ));
+
+  private DoublePublisher                       vxPub              =
+      ntInst.getTable("Pose/PID").getDoubleTopic("vxMps").publish( );
+  private DoublePublisher                       vyPub              =
+      ntInst.getTable("Pose/PID").getDoubleTopic("vyMps").publish( );
+  private DoublePublisher                       omegaPub           =
+      ntInst.getTable("Pose/PID").getDoubleTopic("omegaRps").publish( );
+  private DoublePublisher                       errorPub           =
+      ntInst.getTable("Pose/PID").getDoubleTopic("error").publish( );
 
   /**
    * Swerve drive under PID control to a goal pose
@@ -70,6 +85,9 @@ public class SwervePIDController extends Command
     setName("SwervePID");
   }
 
+  /**
+   * Command factory
+   */
   public static Command generateCommand(CommandSwerveDrivetrain swerve, Time timeout)
   {
     return new SwervePIDController(swerve).withTimeout(timeout);
@@ -78,7 +96,7 @@ public class SwervePIDController extends Command
   @Override
   public void initialize( )
   {
-    Pose2d currentPose = drivePose.get( );
+    Pose2d currentPose = driveStatePose.get( );
     m_goalPose = m_swerve.findGoalPose(currentPose);
     DataLogManager.log(String.format("%s: initial current pose: %s goalPose %s", getName( ), currentPose, m_goalPose));
   }
@@ -89,12 +107,11 @@ public class SwervePIDController extends Command
     PathPlannerTrajectoryState goalState = new PathPlannerTrajectoryState( );
     goalState.pose = m_goalPose;
 
-    ChassisSpeeds speeds = mDriveController.calculateRobotRelativeSpeeds(drivePose.get( ), goalState);
+    ChassisSpeeds speeds = m_DriveController.calculateRobotRelativeSpeeds(driveStatePose.get( ), goalState);
 
-    speeds.vxMetersPerSecond = MathUtil.clamp(speeds.vxMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
-    speeds.vyMetersPerSecond = MathUtil.clamp(speeds.vyMetersPerSecond, -kMaxSpeed.magnitude( ), kMaxSpeed.magnitude( ));
-
-    DataLogManager.log(String.format("%s: vx %.2f vy %.2f", getName( ), speeds.vxMetersPerSecond, speeds.vyMetersPerSecond));
+    vxPub.set(speeds.vxMetersPerSecond);
+    vyPub.set(speeds.vyMetersPerSecond);
+    omegaPub.set(speeds.omegaRadiansPerSecond);
 
     m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
   }
@@ -102,13 +119,16 @@ public class SwervePIDController extends Command
   @Override
   public void end(boolean interrupted)
   {
-    DataLogManager.log(String.format("%s: interrupted end conditions P: %s G: %s", getName( ), drivePose.get( ), m_goalPose));
+    DataLogManager
+        .log(String.format("%s: interrupted end conditions P: %s G: %s", getName( ), driveStatePose.get( ), m_goalPose));
   }
 
   @Override
   public boolean isFinished( )
   {
-    Pose2d diff = drivePose.get( ).relativeTo(m_goalPose);
+    Pose2d diff = driveStatePose.get( ).relativeTo(m_goalPose);
+
+    errorPub.set(Math.sqrt(Math.pow(diff.getX( ), 2) + Math.pow(diff.getY( ), 2)));
 
     boolean rotation = MathUtil.isNear(0.0, diff.getRotation( ).getRotations( ), kRotationTolerance.getRotations( ), 0.0, 1.0);
 

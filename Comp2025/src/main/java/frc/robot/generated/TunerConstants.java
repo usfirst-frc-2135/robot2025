@@ -54,7 +54,7 @@ public class TunerConstants {
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
-    private static final Current kSlipCurrent = Amps.of(60.0);
+    private static final Current kSlipCurrent = Amps.of(110.0);
 
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
@@ -85,7 +85,7 @@ public class TunerConstants {
 
     private static final double kDriveGearRatio = Robot.isComp() ? 6.122448979591837 : 6.746031746031747;
     private static final double kSteerGearRatio = 21.428571428571427;
-    private static final Distance kWheelRadius = Robot.isComp() ? Inches.of(3.85/2) : Inches.of(3.65/2);
+    private static final Distance kWheelRadius = Robot.isComp() ? Inches.of(3.82/2) : Inches.of(3.65/2);
 
     private static final boolean kInvertLeftSide = false;
     private static final boolean kInvertRightSide = true;

@@ -69,7 +69,7 @@
             "title": "AutoDelay",
             "x": 768.0,
             "y": 256.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Text Display",
             "properties": {
@@ -80,25 +80,9 @@
             }
           },
           {
-            "title": "MatchTime",
-            "x": 1024.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Match Time",
-            "properties": {
-              "topic": "/SmartDashboard/MatchTime",
-              "period": 0.06,
-              "data_type": "double",
-              "time_display_mode": "Minutes and Seconds",
-              "red_start_time": 15,
-              "yellow_start_time": 30
-            }
-          },
-          {
             "title": "ReefLevel",
             "x": 1024.0,
-            "y": 128.0,
+            "y": 0.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Large Text Display",
@@ -109,9 +93,39 @@
             }
           },
           {
+            "title": "calibrated",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/elevator/calibrated",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "ElCalibrate",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ElCalibrate",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
             "title": "ReefBranch",
             "x": 1152.0,
-            "y": 128.0,
+            "y": 0.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Large Text Display",
@@ -119,47 +133,6 @@
               "topic": "/RobotContainer/ReefBranch",
               "period": 0.06,
               "data_type": "int"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Autonomous2",
-      "grid_layout": {
-        "layouts": [],
-        "containers": [
-          {
-            "title": "SetRobotPose",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/SetRobotPose",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
-            "title": "Pose",
-            "x": 256.0,
-            "y": 0.0,
-            "width": 768.0,
-            "height": 384.0,
-            "type": "Field",
-            "properties": {
-              "topic": "/Pose",
-              "period": 0.06,
-              "field_game": "Reefscape",
-              "robot_width": 0.85,
-              "robot_length": 0.85,
-              "show_other_objects": true,
-              "show_trajectories": true,
-              "field_rotation": 0.0,
-              "robot_color": 4294198070,
-              "trajectory_color": 4294967295
             }
           }
         ]
@@ -181,6 +154,23 @@
             },
             "children": [
               {
+                "title": "isDown",
+                "x": 0.0,
+                "y": 128.0,
+                "width": 256.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/elevator/isDown",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
                 "title": "calibrated",
                 "x": 0.0,
                 "y": 0.0,
@@ -195,20 +185,6 @@
                   "false_color": 4294198070,
                   "true_icon": "None",
                   "false_icon": "None"
-                }
-              },
-              {
-                "title": "currentInches",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/elevator/currentInches",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
                 }
               },
               {
@@ -240,14 +216,28 @@
                 }
               },
               {
-                "title": "targetInches",
+                "title": "currentInches",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
-                  "topic": "/elevator/targetInches",
+                  "topic": "/elevator/currentInches",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "goalInches",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/elevator/goalInches",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -419,9 +409,26 @@
             },
             "children": [
               {
-                "title": "algaeDetected",
-                "x": 0.0,
+                "title": "coralDetected",
+                "x": 128.0,
                 "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/manipulator/coralDetected",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "algaeDetected",
+                "x": 128.0,
+                "y": 384.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Boolean Box",
@@ -433,6 +440,20 @@
                   "false_color": 4294198070,
                   "true_icon": "None",
                   "false_icon": "None"
+                }
+              },
+              {
+                "title": "wristDegrees",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/manipulator/wristDegrees",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
                 }
               },
               {
@@ -450,6 +471,20 @@
                 }
               },
               {
+                "title": "goalDegrees",
+                "x": 128.0,
+                "y": 384.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/manipulator/goalDegrees",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "clawSpeed",
                 "x": 0.0,
                 "y": 0.0,
@@ -458,48 +493,6 @@
                 "type": "Text Display",
                 "properties": {
                   "topic": "/manipulator/clawSpeed",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "clawSupCur",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/manipulator/clawSupCur",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "targetDegrees",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/manipulator/targetDegrees",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "wristDegrees",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/manipulator/wristDegrees",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -658,6 +651,23 @@
             },
             "children": [
               {
+                "title": "coralDetected",
+                "x": 128.0,
+                "y": 128.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/manipulator/coralDetected",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
                 "title": "algaeDetected",
                 "x": 0.0,
                 "y": 0.0,
@@ -675,6 +685,20 @@
                 }
               },
               {
+                "title": "wristDegrees",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/manipulator/wristDegrees",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "ccDegrees",
                 "x": 0.0,
                 "y": 0.0,
@@ -689,56 +713,28 @@
                 }
               },
               {
+                "title": "goalDegrees",
+                "x": 128.0,
+                "y": 384.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/manipulator/goalDegrees",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
                 "title": "clawSpeed",
-                "x": 0.0,
-                "y": 0.0,
+                "x": 128.0,
+                "y": 384.0,
                 "width": 128.0,
                 "height": 128.0,
                 "type": "Text Display",
                 "properties": {
                   "topic": "/manipulator/clawSpeed",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "clawSupCur",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/manipulator/clawSupCur",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "targetDegrees",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/manipulator/targetDegrees",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "wristDegrees",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/manipulator/wristDegrees",
                   "period": 0.06,
                   "data_type": "double",
                   "show_submit_button": false
@@ -913,21 +909,8 @@
             }
           },
           {
-            "title": "LEDSet",
-            "x": 0.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/LEDSet",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
             "title": "AcquireAlgae",
-            "x": 256.0,
+            "x": 512.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
@@ -941,7 +924,7 @@
           {
             "title": "AcquireCoral",
             "x": 256.0,
-            "y": 128.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -954,7 +937,7 @@
           {
             "title": "ScoreAlgae",
             "x": 512.0,
-            "y": 0.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -966,7 +949,7 @@
           },
           {
             "title": "ScoreCoral",
-            "x": 512.0,
+            "x": 256.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
@@ -978,22 +961,9 @@
             }
           },
           {
-            "title": "DriveToPoseCommand",
-            "x": 768.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/DriveToPoseCommand",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
             "title": "AutoChooserRun",
-            "x": 768.0,
-            "y": 128.0,
+            "x": 0.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -1005,13 +975,65 @@
           },
           {
             "title": "ExpelCoral",
-            "x": 512.0,
+            "x": 256.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
               "topic": "/SmartDashboard/ExpelCoral",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "ExpelAlgae",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/ExpelAlgae",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "AlignToReefFollow",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/AlignToReefFollow",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "AlignToReefPID",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/AlignToReefPID",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "AlignToReefPPFind",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/AlignToReefPPFind",
               "period": 0.06,
               "show_type": true
             }

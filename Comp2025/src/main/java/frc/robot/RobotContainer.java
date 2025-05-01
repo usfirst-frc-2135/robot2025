@@ -23,7 +23,10 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -41,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
@@ -90,13 +94,11 @@ public class RobotContainer
 
   // Setting up bindings for necessary control of the swerve drive platform
   private final SwerveRequest.FieldCentric            drive           = new SwerveRequest.FieldCentric( ) //
-      .withDeadband(kMaxSpeed.times(Constants.kStickDeadband))                  //
-      .withRotationalDeadband(kMaxAngularRate.times(Constants.kStickDeadband))  //
+      .withDeadband(kMaxSpeed.times(0.1)).withRotationalDeadband(kMaxAngularRate.times(0.1))  //
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
   private final SwerveRequest.SwerveDriveBrake        brake           = new SwerveRequest.SwerveDriveBrake( );
   private final SwerveRequest.FieldCentricFacingAngle facing          = new SwerveRequest.FieldCentricFacingAngle( )  //
-      .withDeadband(kMaxSpeed.times(Constants.kStickDeadband))                  //
-      .withRotationalDeadband(kMaxAngularRate.times(Constants.kStickDeadband))  //
+      .withDeadband(kMaxSpeed.times(0.1)).withRotationalDeadband(kMaxAngularRate.times(0.1))  //
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
   @SuppressWarnings("unused")
   private final SwerveRequest.PointWheelsAt           point           = new SwerveRequest.PointWheelsAt( );
@@ -121,9 +123,9 @@ public class RobotContainer
   // Selected autonomous command
   private final NetworkTableInstance                  ntInst          = NetworkTableInstance.getDefault( );
   private final NetworkTable                          table           = ntInst.getTable(Constants.kRobotString);
-  private IntegerPublisher                            m_reefLevelPub  =
+  private final IntegerPublisher                      m_reefLevelPub  =
       table.getIntegerTopic(ELConsts.kReefLevelString).publish( );   // Level of the reef to score or acquire from (1-4)
-  private IntegerPublisher                            m_reefBranchPub =
+  private final IntegerPublisher                      m_reefBranchPub =
       table.getIntegerTopic(VIConsts.kReefBranchString).publish( );  // Branch of the reef to score or acquire from (left, middle, right)
   private Command                                     m_autoCommand;    // Selected autonomous command
 
@@ -191,7 +193,8 @@ public class RobotContainer
 
       Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START1.toString( ), "Start1_test1"),
       Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START2.toString( ), "Start2_test2"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_test3")));
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_test3")  //
+  ));
 
   /****************************************************************************
    * 
@@ -204,19 +207,98 @@ public class RobotContainer
     facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);    // Swerve steer PID for facing swerve request
     facing.HeadingController.enableContinuousInput(-180.0, 180.0);
 
-    // Identify the field
-    DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField.toString( ),
-        VIConsts.kATField.getFieldWidth( ), VIConsts.kATField.getFieldLength( )));
-    for (int i = 1; i <= 22; i++)
-    {
-      DataLogManager.log(String.format("Field: ID %d %s", i, VIConsts.kATField.getTagPose(i)));
-    }
-
+    loadFieldPoses( );                // Identify the field
     addDashboardWidgets( );           // Add some dashboard widgets for commands
     configureButtonBindings( );       // Configure game controller buttons
     initDefaultCommands( );           // Initialize subsystem default commands
 
     Robot.timeMarker("robotContainer: after default commands");
+  }
+
+  /****************************************************************************
+   * 
+   * Print out field layout, tag ID poses, and scoring poses
+   */
+  private void loadFieldPoses( )
+  {
+
+    // Identify the field and load it (any reference loads it)
+    DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField, VIConsts.kATField.getFieldWidth( ),
+        VIConsts.kATField.getFieldLength( )));
+
+    DataLogManager.log(String.format("-----"));
+
+    for (int i = 1; i <= 22; i++)
+    {
+      DataLogManager.log(String.format("Field: ID %d %s", i, VIConsts.kATField.getTagPose(i)));
+    }
+
+    DataLogManager.log(String.format("-----"));
+
+    for (int tag = 17; tag <= 22; tag++)
+    {
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT);
+      DataLogManager.log(String.format("-----"));
+    }
+
+    for (int tag = 6; tag <= 11; tag++)
+    {
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT);
+      DataLogManager.log(String.format("-----"));
+    }
+  }
+
+  /****************************************************************************
+   * 
+   * Calculate a scoring waypoint for a given tag, offset, and robot setback
+   */
+  private static Pose2d getScoringWaypoint(String name, int tag, double offset, double setback)
+  {
+    Pose2d atPose = VIConsts.kATField.getTagPose(tag).orElse(new Pose3d( )).toPose2d( );
+    double xOffset = offset * Math.sin(atPose.getRotation( ).getRadians( ));
+    double yOffset = offset * Math.cos(atPose.getRotation( ).getRadians( ));
+    Pose2d vPose = new Pose2d(new Translation2d(atPose.getX( ) + xOffset, atPose.getY( ) - yOffset), atPose.getRotation( ));
+
+    double xSetback = setback * Math.cos(atPose.getRotation( ).getRadians( ));
+    double ySetback = setback * Math.sin(atPose.getRotation( ).getRadians( ));
+    Pose2d waypoint =
+        new Pose2d(new Translation2d(vPose.getX( ) + xSetback, vPose.getY( ) + ySetback), vPose.getRotation( ).unaryMinus( ));
+    DataLogManager.log(String.format("%s AT %d  Pose %s  waypoint %s", name, tag, atPose, waypoint));
+
+    return waypoint;
+  }
+
+  private static final double kBranchSpacing = Units.inchesToMeters(13.0);  // Distance between branches
+  private static final double kRobotLength   = Units.inchesToMeters(34.5);  // Our robot length
+  private static final double kRobotSetback  = kRobotLength / 2;                   // Distance robot is set back from branch waypoint
+
+  /****************************************************************************
+   * 
+   * Calculate a scoring waypoint for a given tag ID and branch (left, center, right)
+   */
+  public Pose2d getScoringGoalPose(int tag, VIConsts.ReefBranch branch)
+  {
+    Pose2d pose = new Pose2d( );
+
+    switch (branch)
+    {
+      case LEFT :
+        pose = getScoringWaypoint("Left  ", tag, kBranchSpacing / 2, kRobotSetback);
+        break;
+      default :
+      case ALGAE :
+        pose = getScoringWaypoint("Center", tag, 0, kRobotSetback);
+        break;
+      case RIGHT :
+        pose = getScoringWaypoint("Right ", tag, -kBranchSpacing / 2, kRobotSetback);
+        break;
+    }
+
+    return pose;
   }
 
   /****************************************************************************
@@ -294,9 +376,10 @@ public class RobotContainer
     // Add command groups to dashboard
     SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_hid));
+    SmartDashboard.putData("ExpelAlgae", new ExpelAlgae(m_elevator, m_manipulator, m_hid));
+    SmartDashboard.putData("ExpelCoral", new ExpelCoral(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_hid));
-    SmartDashboard.putData("ExpelCoral", new ExpelCoral(m_elevator, m_manipulator, m_hid));
   }
 
   /****************************************************************************
@@ -313,7 +396,7 @@ public class RobotContainer
     // 
     m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
     m_driverPad.b( ).whileTrue(new SequentialCommandGroup(    //
-        m_drivetrain.getAlignToReefCommand3( ), //
+        m_drivetrain.getAlignToReefPIDCommand( ), //
         m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(0.5), 0.5), //
         m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(0.5), 0.5)  //
     ));
@@ -414,12 +497,15 @@ public class RobotContainer
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
     m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_hid));
-    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onFalse(new ExpelAlgae(m_elevator, m_manipulator, m_hid));    
+    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onFalse(new ExpelAlgae(m_elevator, m_manipulator, m_hid));
     m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_hid));
 
     m_operatorPad.leftStick( ).toggleOnTrue(new LogCommand("operPad", "left stick"));
     m_operatorPad.rightStick( ).toggleOnTrue(new LogCommand("operPad", "right stick"));
   }
+
+  private final Trigger m_elevatorTrigger = new Trigger(( ) -> (Math.abs(getElevatorAxis( )) > Constants.kStickDeadband));
+  private final Trigger m_wristTrigger    = new Trigger(( ) -> (Math.abs(getWristAxis( )) > Constants.kStickDeadband));
 
   /****************************************************************************
    * 
@@ -459,6 +545,9 @@ public class RobotContainer
     // Default command - manual mode (use these during robot bringup)
     // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
     // m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
+
+    // m_elevatorTrigger.whileTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
+    // m_wristTrigger.whileTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
 
   /****************************************************************************
@@ -493,21 +582,24 @@ public class RobotContainer
   {
     AutoChooser autoOption = m_autoChooser.getSelected( );
     StartPose startOption = m_startChooser.getSelected( );
+    double delay = SmartDashboard.getNumber("AutoDelay", 0.0);
     String autoKey = autoOption.toString( ) + startOption.toString( );
 
     // Cancel any autos that were already running
     if (m_autoCommand != null)
     {
       if (m_autoCommand.isScheduled( ))
+      {
         m_autoCommand.cancel( );
+      }
       m_autoCommand = null;
     }
 
     // Get auto name using created key
     String autoName = autoMap.get(autoKey);
-    DataLogManager.log(String.format("===================================================================="));
+    DataLogManager.log(String.format("========================================================================"));
     DataLogManager.log(String.format("getAuto: autoKey: %s  autoName: %s", autoKey, autoName));
-    DataLogManager.log(String.format("===================================================================="));
+    DataLogManager.log(String.format("========================================================================"));
 
     // If auto not defined in hashmap, no path assigned so sit idle
     if (autoName == null)
@@ -574,8 +666,19 @@ public class RobotContainer
 
     DataLogManager.log(String.format("getAuto: autoMode %s (%s)", autoKey, m_autoCommand.getName( )));
 
+    // If on red alliance, flip each path, then reset odometry
+    m_initialPath = m_ppPathList.get(0);
+    if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
+    {
+      m_initialPath = m_initialPath.flipPath( );
+    }
+
+    // Set field centric robot position to start of auto sequence
+    Pose2d startPose = m_initialPath.getStartingHolonomicPose( ).get( );
+    DataLogManager.log(String.format("getAuto: starting pose %s", startPose));
+    m_drivetrain.resetPoseAndLimelight(startPose);
+
     // Build the autonomous command to run
-    double delay = SmartDashboard.getNumber("AutoDelay", 0.0);
     m_autoCommand = new SequentialCommandGroup(                                                       //
         new InstantCommand(( ) -> Robot.timeMarker("AutoStart")),                                 //
         new InstantCommand(( ) ->
@@ -677,7 +780,7 @@ public class RobotContainer
     m_manipulator.initialize( );
 
     m_vision.SetCPUThrottleLevel(false);
-    m_vision.SetIMUModeExternalSeed( ); // TODO: needed?
+    m_vision.SetIMUModeExternalSeed( );
   }
 
   /****************************************************************************
@@ -687,7 +790,7 @@ public class RobotContainer
   public void autoInit( )
   {
     m_vision.SetCPUThrottleLevel(true);
-    m_vision.SetIMUModeInternal( ); // TODO: needed?
+    m_vision.SetIMUModeInternal( );
   }
 
   /****************************************************************************
@@ -697,7 +800,7 @@ public class RobotContainer
   public void teleopInit( )
   {
     m_vision.SetCPUThrottleLevel(true);
-    m_vision.SetIMUModeInternal( ); // TODO: needed?
+    m_vision.SetIMUModeInternal( );
   }
 
   /****************************************************************************

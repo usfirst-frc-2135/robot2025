@@ -58,7 +58,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
-import frc.robot.Constants.ELConsts.ReefLevel;
 import frc.robot.Constants.Ports;
 import frc.robot.lib.math.Conversions;
 import frc.robot.lib.phoenix.CTREConfigs6;
@@ -72,28 +71,28 @@ import frc.robot.lib.phoenix.PhoenixUtil6;
 public class Manipulator extends SubsystemBase
 {
   // Constants
-  private static final String       kSubsystemName       = "Manipulator";
+  private static final String        kSubsystemName       = "Manipulator";
 
-  private static final DutyCycleOut kClawRollerStop      = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kClawRollerStop      = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
 
-  private static final DutyCycleOut kCoralSpeedAcquire   = new DutyCycleOut(-0.75).withIgnoreHardwareLimits(false);
-  private static final DutyCycleOut kCoralSpeedExpel     = new DutyCycleOut(-0.35).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kCoralSpeedExpelL1     = new DutyCycleOut(0.32).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kCoralSpeedAcquire   = new DutyCycleOut(-0.75).withIgnoreHardwareLimits(false);
+  private static final DutyCycleOut  kCoralSpeedExpel     = new DutyCycleOut(-0.35).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kCoralSpeedExpelL1   = new DutyCycleOut(0.32).withIgnoreHardwareLimits(true);
 
-  private static final DutyCycleOut kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kAlgaeSpeedShoot     = new DutyCycleOut(-1.0).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kAlgaeSpeedProcessor = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut kAlgaeSpeedHold      = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedShoot     = new DutyCycleOut(-1.0).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedProcessor = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedHold      = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
 
-  private static final double       kWristGearRatio      = 49.23;
-  private static final double       kWristLengthMeters   = Units.inchesToMeters(15); // Simulation
-  private static final double       kWristWeightKg       = Units.lbsToKilograms(20.0);  // Simulation
-  private static final Voltage      kWristManualVolts    = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
+  private static final double        kWristGearRatio      = 49.23;
+  private static final double        kWristLengthMeters   = Units.inchesToMeters(15); // Simulation
+  private static final double        kWristWeightKg       = Units.lbsToKilograms(20.0);  // Simulation
+  private static final Voltage       kWristManualVolts    = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
 
-  private final NetworkTableInstance  ntInst                   = NetworkTableInstance.getDefault( );
-  private final NetworkTable          robotTable = ntInst.getTable(Constants.kRobotString);
-  private IntegerSubscriber           reefLevel = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
+  private final NetworkTableInstance ntInst               = NetworkTableInstance.getDefault( );
+  private final NetworkTable         robotTable           = ntInst.getTable(Constants.kRobotString);
+  private IntegerSubscriber          reefLevel            = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
 
   /** Wrist rotary motor manual move parameters */
   private enum WristMode
@@ -177,7 +176,7 @@ public class Manipulator extends SubsystemBase
   private boolean                     m_wristMotorValid;                // Health indicator for motor 
   private boolean                     m_canCoderValid;                  // Health indicator for CANcoder 
   private double                      m_currentDegrees          = 0.0;  // Current angle in degrees
-  private double                      m_targetDegrees           = 0.0;  // Target angle in degrees
+  private double                      m_goalDegrees             = 0.0;  // Goal angle in degrees
   private double                      m_ccDegrees               = 0.0;  // CANcoder angle in degrees
 
   // Coral detector
@@ -203,11 +202,9 @@ public class Manipulator extends SubsystemBase
 
   // Network tables publisher objects
   private DoublePublisher             m_clawSpeedPub;
-  private DoublePublisher             m_clawSupCurPub;
-  private DoublePublisher             m_clawStatorCurPub;
   private DoublePublisher             m_wristDegreePub;
   private DoublePublisher             m_ccDegreesPub;
-  private DoublePublisher             m_targetDegreesPub;
+  private DoublePublisher             m_goalDegreesPub;
   private BooleanPublisher            m_coralDetectedPub;
   private BooleanPublisher            m_algaeDetectedPub;
 
@@ -292,12 +289,10 @@ public class Manipulator extends SubsystemBase
 
     // // Update network table publishers
     m_clawSpeedPub.set(m_clawMotor.get( ));
-    m_clawSupCurPub.set(m_clawMotor.getSupplyCurrent( ).getValueAsDouble( ));
-    m_clawStatorCurPub.set(m_clawMotor.getStatorCurrent( ).getValueAsDouble( ));
 
     m_wristDegreePub.set(m_currentDegrees);
     m_ccDegreesPub.set(m_ccDegrees);
-    m_targetDegreesPub.set(m_targetDegrees);
+    m_goalDegreesPub.set(m_goalDegrees);
     m_coralDetectedPub.set(m_coralDetected);
     m_algaeDetectedPub.set(m_algaeDetected);
   }
@@ -351,14 +346,12 @@ public class Manipulator extends SubsystemBase
 
     // Initialize network tables publishers
     m_clawSpeedPub = table.getDoubleTopic("clawSpeed").publish( );
-    m_clawSupCurPub = table.getDoubleTopic("clawSupCur").publish( );
-    m_clawStatorCurPub = table.getDoubleTopic("clawStatorCur").publish( );
 
     m_wristDegreePub = table.getDoubleTopic("wristDegrees").publish( );
     m_ccDegreesPub = table.getDoubleTopic("ccDegrees").publish( );
     m_coralDetectedPub = table.getBooleanTopic("coralDetected").publish( );
     m_algaeDetectedPub = table.getBooleanTopic("algaeDetected").publish( );
-    m_targetDegreesPub = table.getDoubleTopic("targetDegrees").publish( );
+    m_goalDegreesPub = table.getDoubleTopic("goalDegrees").publish( );
 
     SmartDashboard.putData("MNWristMech", m_wristRotaryMech);
 
@@ -376,7 +369,7 @@ public class Manipulator extends SubsystemBase
     SmartDashboard.putData("MNCoralExpel", getMoveToPositionCommand(ClawMode.CORALEXPEL, this::getCurrentAngle));
     SmartDashboard.putData("MNCoralHold", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getCurrentAngle));
 
-    SmartDashboard.putData("MNWrisSafeState", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleSafeState));
+    SmartDashboard.putData("MNWristSafeState", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleSafeState));
 
     SmartDashboard.putData("MNWristCoralStation", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralStation));
     SmartDashboard.putData("MNWristCoralL1", getMoveToPositionCommand(ClawMode.CORALMAINTAIN, this::getAngleCoralL1));
@@ -402,8 +395,8 @@ public class Manipulator extends SubsystemBase
     setClawMode(ClawMode.STOP);
     setWristStopped( );
 
-    m_targetDegrees = m_currentDegrees;
-    DataLogManager.log(String.format("%s: Subsystem initialized! Target Degrees: %.1f", getSubsystem( ), m_targetDegrees));
+    m_goalDegrees = m_currentDegrees;
+    DataLogManager.log(String.format("%s: Subsystem initialized! goal Degrees: %.1f", getSubsystem( ), m_goalDegrees));
   }
 
   /****************************************************************************
@@ -428,6 +421,9 @@ public class Manipulator extends SubsystemBase
   ////////////////////////////////////////////////////////////////////////////
   ///////////////////////// MANUAL MOVEMENT //////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////
+
+  // private final static Voltage kManualKG = Volts.of(-0.235);
+  private final static Voltage kManualKG = Volts.of(0.0);
 
   /****************************************************************************
    * 
@@ -465,9 +461,10 @@ public class Manipulator extends SubsystemBase
           ((rangeLimited) ? " - RANGE LIMITED" : "")));
     }
 
-    m_targetDegrees = m_currentDegrees;
+    m_goalDegrees = m_currentDegrees;
 
-    m_wristMotor.setControl(m_wristRequestVolts.withOutput(kWristManualVolts.times(axisValue)));
+    m_wristMotor.setControl(m_wristRequestVolts.withOutput(
+        kWristManualVolts.times(axisValue).plus(kManualKG.times(Math.sin(Units.degreesToRadians(m_currentDegrees))))));
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -494,28 +491,28 @@ public class Manipulator extends SubsystemBase
       newAngle = getCurrentAngle( );
 
     // Decide if a new position request
-    if (holdPosition || newAngle != m_targetDegrees || !MathUtil.isNear(newAngle, m_currentDegrees, kToleranceDegrees))
+    if (holdPosition || newAngle != m_goalDegrees || !MathUtil.isNear(newAngle, m_currentDegrees, kToleranceDegrees))
     {
       // Validate the position request
       if (isMoveValid(newAngle))
       {
-        m_targetDegrees = newAngle;
+        m_goalDegrees = newAngle;
         m_mmMoveIsFinished = false;
         m_mmWithinTolerance.calculate(false); // Reset the debounce filter
 
-        double targetRotations = Units.degreesToRotations(m_targetDegrees);
-        m_wristMotor.setControl(m_mmRequestVolts.withPosition(targetRotations));
+        double goalRotations = Units.degreesToRotations(m_goalDegrees);
+        m_wristMotor.setControl(m_mmRequestVolts.withPosition(goalRotations));
         DataLogManager.log(String.format("%s: MM Position move: %.1f -> %.1f degrees (%.3f -> %.3f rot)", getSubsystem( ),
-            m_currentDegrees, m_targetDegrees, Units.degreesToRotations(m_currentDegrees), targetRotations));
+            m_currentDegrees, m_goalDegrees, Units.degreesToRotations(m_currentDegrees), goalRotations));
       }
       else
-        DataLogManager.log(String.format("%s: MM Position move target %.1f degrees is OUT OF RANGE! [%.1f, %.1f deg]",
-            getSubsystem( ), m_targetDegrees, kWristAngleMin, kWristAngleMax));
+        DataLogManager.log(String.format("%s: MM Position move goal %.1f degrees is OUT OF RANGE! [%.1f, %.1f deg]",
+            getSubsystem( ), m_goalDegrees, kWristAngleMin, kWristAngleMax));
     }
     else
     {
       m_mmMoveIsFinished = true;
-      DataLogManager.log(String.format("%s: MM Position already achieved -target %s degrees", getSubsystem( ), m_targetDegrees));
+      DataLogManager.log(String.format("%s: MM Position already achieved - goal %s degrees", getSubsystem( ), m_goalDegrees));
     }
   }
 
@@ -537,9 +534,9 @@ public class Manipulator extends SubsystemBase
   public boolean moveToPositionIsFinished(boolean holdPosition)
   {
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
-    double error = m_targetDegrees - m_currentDegrees;
+    double error = m_goalDegrees - m_currentDegrees;
 
-    m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_targetDegrees)));
+    m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_goalDegrees)));
 
     if (holdPosition)
       return false;
@@ -620,8 +617,8 @@ public class Manipulator extends SubsystemBase
             m_clawRequestVolts = kCoralSpeedAcquire;
             break;
           case CORALEXPEL :
-            m_clawRequestVolts = ((int) reefLevel.get() == 1) ?  kCoralSpeedExpelL1 : kCoralSpeedExpel;
-            DataLogManager.log(String.format("%s: reefLevel.get is %d", getSubsystem( ), (int)reefLevel.get()));
+            m_clawRequestVolts = ((int) reefLevel.get( ) == 1) ? kCoralSpeedExpelL1 : kCoralSpeedExpel;
+            DataLogManager.log(String.format("%s: reefLevel.get is %d", getSubsystem( ), (int) reefLevel.get( )));
             break;
           case ALGAEHOLD :  // Special case above the switch - this case doesn't execute!
             m_clawRequestVolts = kAlgaeSpeedHold;
