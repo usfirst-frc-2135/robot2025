@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.12,
-        "y": 5.12
+        "x": 5.13,
+        "y": 5.13
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.646645330628977,
-        "y": 5.377195650413459
+        "x": 6.656645330628977,
+        "y": 5.387195650413458
       },
       "isLocked": false,
       "linkedName": "RIJ"
@@ -35,8 +35,8 @@
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 5.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

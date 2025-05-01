@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.51,
-        "y": 0.74
+        "x": 1.5,
+        "y": 0.73
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.094850983796295,
-        "y": 1.338289207175925
+        "x": 2.0848509837962954,
+        "y": 1.328289207175925
       },
       "isLocked": false,
       "linkedName": "S2L"
     },
     {
       "anchor": {
-        "x": 3.69,
-        "y": 2.97
+        "x": 3.7,
+        "y": 2.98
       },
       "prevControl": {
-        "x": 3.2682269965277766,
-        "y": 2.482025101273148
+        "x": 3.2782265817120315,
+        "y": 2.492025459812559
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,8 +35,8 @@
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 5.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

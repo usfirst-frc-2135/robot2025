@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.51,
-        "y": 7.31
+        "x": 1.5,
+        "y": 7.32
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.068624217542913,
-        "y": 6.753815457355536
+        "x": 2.0586242175429126,
+        "y": 6.763815457355537
       },
       "isLocked": false,
       "linkedName": "S1R"
     },
     {
       "anchor": {
-        "x": 3.71,
-        "y": 5.04
+        "x": 3.7,
+        "y": 5.07
       },
       "prevControl": {
-        "x": 2.916696299433286,
-        "y": 5.841506139710268
+        "x": 2.9067007545237336,
+        "y": 5.87151054918378
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,8 +35,8 @@
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 5.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
