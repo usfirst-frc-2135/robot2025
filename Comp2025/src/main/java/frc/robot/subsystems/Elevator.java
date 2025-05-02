@@ -64,7 +64,7 @@ public class Elevator extends SubsystemBase
 {
   // Constants
   private static final String  kSubsystemName          = "Elevator";
-  private static final double  kGearRatio              = 9.706;           // Gear reduction
+  private static final double  kGearRatio              = 8.627;           // Gear reduction
   private static final double  kHeightInchesMin        = 0.0;             // Minimum allowable height
   private static final double  kHeightInchesMax        = 30.5;            // Maximum allowable height
   private static final double  kSimHeightMetersMin     = Units.inchesToMeters(kHeightInchesMin - 0.1); // Make sim height range larger than useful range
