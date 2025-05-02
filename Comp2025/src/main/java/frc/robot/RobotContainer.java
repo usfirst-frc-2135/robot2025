@@ -5,7 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.io.IOException;
@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
@@ -86,7 +87,7 @@ public class RobotContainer
   private static final CommandXboxController          m_operatorPad   = new CommandXboxController(Constants.kOperatorPadPort);
 
   private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
-  private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(2.0 * Math.PI); // Max 1.0 rot per second
+  private static final AngularVelocity                kMaxAngularRate = RotationsPerSecond.of(1.0); // Max 1.0 rot per second
   private static final double                         kSlowSwerve     = 0.30;                               // Throttle max swerve speeds for finer control
   private static final double                         kHeadingKp      = 6.0;
   private static final double                         kHeadingKi      = 0.0;
@@ -535,6 +536,11 @@ public class RobotContainer
           )                                                                                   //
               .withName("CommandSwerveDrivetrain"));
     }
+
+    // Idle while the robot is disabled. This ensures the configured
+    // neutral mode is applied to the drive motors while disabled.
+    final var idle = new SwerveRequest.Idle( );
+    RobotModeTriggers.disabled( ).whileTrue(m_drivetrain.applyRequest(( ) -> idle).ignoringDisable(true));
 
     m_drivetrain.registerTelemetry(logger::telemeterize);
 
