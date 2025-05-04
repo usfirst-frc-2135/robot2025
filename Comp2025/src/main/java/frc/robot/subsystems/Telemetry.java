@@ -32,6 +32,7 @@ public class Telemetry {
     public Telemetry(double maxSpeed) {
         MaxSpeed = maxSpeed;
         SignalLogger.start();
+        SmartDashboard.putData("Field", field);
     }
 
     /* What to publish over networktables for telemetry */
@@ -95,7 +96,6 @@ public class Telemetry {
         m_poseArray[0] = state.Pose.getX();
         m_poseArray[1] = state.Pose.getY();
         m_poseArray[2] = state.Pose.getRotation().getDegrees();
-        SmartDashboard.putData("Field", field);
 
         for (int i = 0; i < 4; ++i) {
             m_moduleStatesArray[i*2 + 0] = state.ModuleStates[i].angle.getRadians();
