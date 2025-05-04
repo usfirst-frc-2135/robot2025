@@ -55,132 +55,126 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
 
         // Drive to branch
 
-        new LogCommand(getName(), "Drive to branch and score preload coral"),
+        new LogCommand(getName(), "PRELOAD: Drive to branch and score preload coral"),
         new ParallelCommandGroup(
           drivetrain.getPathCommand(ppPaths.get(0)),
           new SequentialCommandGroup(
-            new LogCommand(getName(),"Move Manipulator to safe position"),
-            manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState)
-            // new LogCommand(getName(),"Move Elevator to L3 height to save time"),
-            // elevator.getMoveToPositionCommand(elevator::getHeightCoralL3)
+            new LogCommand(getName(),"PRELOAD: Move Manipulator to safe position"),
+            manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState),
+            // Delay some time during the path before pre-raising the elevator
+            new WaitCommand(0.8),
+            new LogCommand(getName(),"PRELOAD: Move Elevator to L4 height early to save time"),
+            elevator.getMoveToPositionCommand(elevator::getHeightCoralL4)
           )
         ),
 
         // Expel the Preload Coral
 
-        new LogCommand(getName( ), "Move Manipulator to L4 scoring state"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralL4),
+        new LogCommand(getName( ), "PRELOAD: Move Manipulator to L4 scoring state"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4),
-
-        new LogCommand(getName( ), "Start coral rollers"),
+        new LogCommand(getName( ), "PRELOAD: Start coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle),
-
-        new LogCommand(getName( ), "Wait for coral to expel"), 
+        new LogCommand(getName( ), "PRELOAD: Wait for coral to expel"), 
         new WaitUntilCommand(manipulator::isCoralExpelled).withTimeout(0.3), // Coral takes about 0.250 to pass through sensor plus some extra margin
         new WaitCommand(0.050),                                                 // Wait just a little longer to ensure it completely exits
-
-        new LogCommand(getName( ), "Stop coral rollers"),
+        new LogCommand(getName( ), "PRELOAD: Stop coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),
 
         // First Coral Station
 
-        new LogCommand(getName(), "Drive to coral station and acquire second coral"),
+        new LogCommand(getName(), "CORAL1: Drive to coral station and acquire second coral"),
         new ParallelCommandGroup(
           drivetrain.getPathCommand(ppPaths.get(1)),
           new SequentialCommandGroup(
-            new LogCommand(getName(), "Move Elevator to coral station height"),
+            new LogCommand(getName(), "CORAL1: Move Elevator to coral station height"),
             elevator.getMoveToPositionCommand(elevator::getHeightCoralStation),
-    
-            new LogCommand(getName(), "Start coral rollers to acquire & hold Manipulator in coral station position"),
-            manipulator.getMoveToPositionCommand(ClawMode.CORALACQUIRE, manipulator::getAngleCoralStation),
-    
-            new LogCommand(getName(), "Wait for coral to be acquired"),
-            new WaitUntilCommand(manipulator::isCoralDetected),
-          
-            new LogCommand(getName(), "Stop coral rollers move to safe state for next Elevator raise"),
-            manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator:: getCurrentAngle)
+            new LogCommand(getName(), "CORAL1: Start coral rollers to acquire & hold Manipulator in coral station position"),
+            manipulator.getMoveToPositionCommand(ClawMode.CORALACQUIRE, manipulator::getAngleCoralStation)
           )
         ), 
+    
+        new LogCommand(getName(), "CORAL1: Wait for coral to be acquired"),
+        new WaitUntilCommand(manipulator::isCoralDetected),
+        // new WaitUntilCommand(manipulator::isCoralDetected).withTimeout(0.3),    // Temporary for debugging
+        new LogCommand(getName(), "CORAL1: Stop coral rollers move to safe state for next Elevator raise"),
+        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator:: getCurrentAngle),
 
         // Drive to branch
 
-        new LogCommand(getName(), "Drive to branch and score second coral"),
+        new LogCommand(getName(), "CORAL1: Drive to branch and score second coral"),
         new ParallelCommandGroup(
           drivetrain.getPathCommand(ppPaths.get(2)),
           new SequentialCommandGroup(
-            new LogCommand(getName(),"Move Manipulator to safe position"),
+            new LogCommand(getName(),"CORAL1: Move Manipulator to safe position"),
             manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState), 
-            new LogCommand(getName(),"Move Elevator to L3 height to save time"),
-            elevator.getMoveToPositionCommand(elevator::getHeightCoralL3)
+            // Delay some time during the path before pre-raising the elevator
+            new WaitCommand(0.8),
+            new LogCommand(getName(),"CORAL1: Move Elevator to L4 height early to save time"),
+            elevator.getMoveToPositionCommand(elevator::getHeightCoralL4)
           )
         ),
 
         // Expel the First Coral
 
-        new LogCommand(getName( ), "Move Manipulator to L4 scoring state"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralL4),
+        new LogCommand(getName( ), "CORAL1: Move Manipulator to L4 scoring state"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4),
-
-        new LogCommand(getName( ), "Start coral rollers"),
+        new LogCommand(getName( ), "CORAL1: Start coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle),
-
-        new LogCommand(getName( ), "Wait for coral to expel"), 
+        new LogCommand(getName( ), "CORAL1: Wait for coral to expel"), 
         new WaitUntilCommand(manipulator::isCoralExpelled).withTimeout(0.3), // Coral takes about 0.250 to pass through sensor plus some extra margin
         new WaitCommand(0.050),                                                 // Wait just a little longer to ensure it completely exits
-
-        new LogCommand(getName( ), "Stop coral rollers"),
+        new LogCommand(getName( ), "CORAL1: Stop coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),
 
         // Second Coral Station
 
-        new LogCommand(getName(), "Drive to coral station and acquire third coral"),
+        new LogCommand(getName(), "CORAL2: Drive to coral station and acquire third coral"),
         new ParallelCommandGroup(
           drivetrain.getPathCommand(ppPaths.get(3)),
           new SequentialCommandGroup(
-            new LogCommand(getName(), "Move Elevator to coral station height"),
+            new LogCommand(getName(), "CORAL2: Move Elevator to coral station height"),
             elevator.getMoveToPositionCommand(elevator::getHeightCoralStation),
-    
-            new LogCommand(getName(), "Start coral rollers to acquire & hold Manipulator in coral station position"),
-            manipulator.getMoveToPositionCommand(ClawMode.CORALACQUIRE, manipulator::getAngleCoralStation),
-    
-            new LogCommand(getName(), "Wait for coral to be acquired"),
-            new WaitUntilCommand(manipulator::isCoralDetected),
-          
-            new LogCommand(getName(), "Stop coral rollers move to safe state for next Elevator raise"),
-            manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator:: getCurrentAngle)
+            new LogCommand(getName(), "CORAL2: Start coral rollers to acquire & hold Manipulator in coral station position"),
+            manipulator.getMoveToPositionCommand(ClawMode.CORALACQUIRE, manipulator::getAngleCoralStation)
           )
         ), 
+    
+        new LogCommand(getName(), "CORAL2: Wait for coral to be acquired"),
+        new WaitUntilCommand(manipulator::isCoralDetected),
+        // new WaitUntilCommand(manipulator::isCoralDetected).withTimeout(0.3),    // Temporary for debugging
+        new LogCommand(getName(), "CORAL2: Stop coral rollers move to safe state for next Elevator raise"),
+        manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator:: getCurrentAngle),
 
         // Drive to branch
 
-        new LogCommand(getName(), "Drive to branch and score third coral"),   
+        new LogCommand(getName(), "CORAL2: Drive to branch and score third coral"),   
         new ParallelCommandGroup(
           drivetrain.getPathCommand(ppPaths.get(4)),
           new SequentialCommandGroup(
-            new LogCommand(getName(),"Move Manipulator to safe position"),
+            new LogCommand(getName(),"CORAL2: Move Manipulator to safe position"),
             manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState), 
-            new LogCommand(getName(),"Move Elevator to L3 height to save time"),
-            elevator.getMoveToPositionCommand(elevator::getHeightCoralL3)
+            // Delay some time during the path before pre-raising the elevator
+            new WaitCommand(0.8),
+            new LogCommand(getName(),"CORAL2: Move Elevator to L4 height early to save time"),
+            elevator.getMoveToPositionCommand(elevator::getHeightCoralL4)
           )
         ),
 
         // Expel the Second Coral
 
-        new LogCommand(getName( ), "Move Manipulator to L4 scoring state"),
-        elevator.getMoveToPositionCommand(elevator::getHeightCoralL4),
+        new LogCommand(getName( ), "CORAL2: Move Manipulator to L4 scoring state"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleCoralL4),
-
-        new LogCommand(getName( ), "Start coral rollers"),
+        new LogCommand(getName( ), "CORAL2: Start coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.CORALEXPEL, manipulator::getCurrentAngle),
-
-        new LogCommand(getName( ), "Wait for coral to expel"), 
+        new LogCommand(getName( ), "CORAL2: Wait for coral to expel"), 
         new WaitUntilCommand(manipulator::isCoralExpelled).withTimeout(0.3), // Coral takes about 0.250 to pass through sensor plus some extra margin
         new WaitCommand(0.050),                                                 // Wait just a little longer to ensure it completely exits
-
-        new LogCommand(getName( ), "Stop coral rollers"),
+        new LogCommand(getName( ), "CORAL2: Stop coral rollers"),
         manipulator.getMoveToPositionCommand(ClawMode.STOP, manipulator::getAngleSafeState),
-      
-        new LogCommand(getName(), "Move Elevator to coral station height"),
+
+        // Return elevator down
+
+        new LogCommand(getName(), "CORAL2: Move Elevator to coral station height"),
         elevator.getMoveToPositionCommand(elevator::getHeightCoralStation)
 
         // @formatter:on
