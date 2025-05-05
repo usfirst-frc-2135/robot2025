@@ -635,9 +635,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 }
                 average /= 4;
                 DataLogManager.log(String.format("%s:  0: %.3f 1: %.3f 2: %.3f 3: %.3f average %.3f", this.getName( ),
-                        this.getState( ).ModulePositions[0].distanceMeters, this.getState( ).ModulePositions[1].distanceMeters,
-                        this.getState( ).ModulePositions[2].distanceMeters, this.getState( ).ModulePositions[3].distanceMeters,
-                        average));
+                        moduleDistances[0], moduleDistances[1], moduleDistances[2], moduleDistances[3], average));
             }
         }).ignoringDisable(true);
     }
