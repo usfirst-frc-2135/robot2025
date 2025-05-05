@@ -54,6 +54,7 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
@@ -93,6 +94,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final NetworkTable          robotTable          = ntInst.getTable(Constants.kRobotString);
     private final IntegerSubscriber     reefLevel           = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
     private final IntegerSubscriber     reefBranch          = robotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
+
+    private double [] moduleDistances = {0, 0, 0, 0};
 
     /* Robot pathToPose constraints */
     private final PathConstraints       kPathFindConstraints = new PathConstraints( // 
@@ -611,13 +614,38 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /**
      * Reset robot pose from dashboard widget
      */
-    public Command getModulePositionsCommand( )
+    public Command getModulePositionsCommand(boolean end)
     {
-        return this
-                .runOnce(( ) -> DataLogManager.log(String.format("%s:  0: %.4f 1: %.4f 2: %.4f 3: %.4f", this.getName( ),
+        return this.runOnce(( ) ->
+        {
+            if (!end)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    moduleDistances[i] = this.getState( ).ModulePositions[i].distanceMeters;
+            }
+            }
+            else
+            {
+                double average = 0;
+                for (int i = 0; i < 4; i++)
+                {
+                    moduleDistances[i] = this.getState( ).ModulePositions[i].distanceMeters - moduleDistances[i];
+                    average += Math.abs(moduleDistances[i]);
+                }
+                average /= 4;
+                DataLogManager.log(String.format("%s:  0: %.3f 1: %.3f 2: %.3f 3: %.3f average %.3f", this.getName( ),
                         this.getState( ).ModulePositions[0].distanceMeters, this.getState( ).ModulePositions[1].distanceMeters,
-                        this.getState( ).ModulePositions[2].distanceMeters, this.getState( ).ModulePositions[3].distanceMeters)))
-                .ignoringDisable(true);
+                        this.getState( ).ModulePositions[2].distanceMeters, this.getState( ).ModulePositions[3].distanceMeters,
+                        average));
+            }
+        }).ignoringDisable(true);
+    }
+
+    public Command getIdleCommand( )
+    {
+        // Create an Idle command
+        return this.applyRequest(( ) -> new SwerveRequest.Idle( )).withName("swerveIdle");
     }
 
     ////////////////////////////////////////////////////////////////////////////
