@@ -288,9 +288,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 ),
                 new PPHolonomicDriveController(
                     // PID constants for translation
-                    new PIDConstants(5, 0, 0),
+                    new PIDConstants(10, 0, 0),
                     // PID constants for rotation
-                    new PIDConstants(9, 0, 0)
+                    new PIDConstants(7, 0, 0)
                 ),
                 config,
                 // Assume the path needs to be flipped for Red vs Blue, this is normally the case
@@ -574,7 +574,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             if (!doRejectUpdate)
             {
                 final double kBase = 0.5;
-                final double kProportional = 1.0;
+                final double kProportional = 1.5;
                 fieldObject.setPose(mt2.pose.getX( ), mt2.pose.getY( ), mt2.pose.getRotation( ));
 
                 // Code used by some teams to scale std devs by distance (below) and used by several teams
@@ -623,7 +623,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 for (int i = 0; i < 4; i++)
                 {
                     moduleDistances[i] = this.getState( ).ModulePositions[i].distanceMeters;
-            }
+                }
             }
             else
             {
