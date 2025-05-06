@@ -33,8 +33,10 @@ public class AutoTest extends SequentialCommandGroup
         // @formatter:off
 
         new LogCommand(getName(), "Drive a test path"),
-        drivetrain.getPathCommand(ppPaths.get(0))
-        
+        drivetrain.getModulePositionsCommand(false),
+        drivetrain.getPathCommand(ppPaths.get(0)),
+        drivetrain.getModulePositionsCommand(true)
+
         // @formatter:on
     );
   }

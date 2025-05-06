@@ -5,7 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.io.IOException;
@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
@@ -86,7 +87,7 @@ public class RobotContainer
   private static final CommandXboxController          m_operatorPad   = new CommandXboxController(Constants.kOperatorPadPort);
 
   private static final LinearVelocity                 kMaxSpeed       = TunerConstants.kSpeedAt12Volts;     // Maximum top speed
-  private static final AngularVelocity                kMaxAngularRate = RadiansPerSecond.of(2.0 * Math.PI); // Max 1.0 rot per second
+  private static final AngularVelocity                kMaxAngularRate = RotationsPerSecond.of(1.0); // Max 1.0 rot per second
   private static final double                         kSlowSwerve     = 0.30;                               // Throttle max swerve speeds for finer control
   private static final double                         kHeadingKp      = 6.0;
   private static final double                         kHeadingKi      = 0.0;
@@ -191,9 +192,9 @@ public class RobotContainer
       Map.entry(AutoChooser.AUTOPRELOADALGAE.toString( ) + StartPose.START2.toString( ), "Start2_RH_RGH_Net"),
       Map.entry(AutoChooser.AUTOPRELOADALGAE.toString( ) + StartPose.START3.toString( ), "Start3_RE_REF_Proc"),
 
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START1.toString( ), "Start1_test1"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START2.toString( ), "Start2_test2"),
-      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_test3")  //
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START1.toString( ), "Start1_Test1"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START2.toString( ), "Start2_Test2"),
+      Map.entry(AutoChooser.AUTOTEST.toString( ) + StartPose.START3.toString( ), "Start3_Test3")  //
   ));
 
   /****************************************************************************
@@ -230,26 +231,28 @@ public class RobotContainer
 
     for (int i = 1; i <= 22; i++)
     {
-      DataLogManager.log(String.format("Field: ID %d %s", i, VIConsts.kATField.getTagPose(i)));
+      // DataLogManager.log(String.format("Field: ID %2d %s", i, VIConsts.kATField.getTagPose(i)));
     }
 
-    DataLogManager.log(String.format("-----"));
+    // DataLogManager.log(String.format("-----"));
 
     for (int tag = 17; tag <= 22; tag++)
     {
-      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT);
-      DataLogManager.log(String.format("-----"));
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
     }
+
+    // DataLogManager.log(String.format("-----"));
 
     for (int tag = 6; tag <= 11; tag++)
     {
-      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT);
-      DataLogManager.log(String.format("-----"));
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
     }
+
+    // DataLogManager.log(String.format("-----"));
   }
 
   /****************************************************************************
@@ -265,9 +268,9 @@ public class RobotContainer
 
     double xSetback = setback * Math.cos(atPose.getRotation( ).getRadians( ));
     double ySetback = setback * Math.sin(atPose.getRotation( ).getRadians( ));
-    Pose2d waypoint =
-        new Pose2d(new Translation2d(vPose.getX( ) + xSetback, vPose.getY( ) + ySetback), vPose.getRotation( ).unaryMinus( ));
-    DataLogManager.log(String.format("%s AT %d  Pose %s  waypoint %s", name, tag, atPose, waypoint));
+    Pose2d waypoint = new Pose2d(new Translation2d(vPose.getX( ) + xSetback, vPose.getY( ) + ySetback),
+        vPose.getRotation( ).rotateBy(Rotation2d.k180deg));
+    // DataLogManager.log(String.format("%s AT %2d  Pose %s  waypoint %s", name, tag, atPose, waypoint));
 
     return waypoint;
   }
@@ -280,20 +283,20 @@ public class RobotContainer
    * 
    * Calculate a scoring waypoint for a given tag ID and branch (left, center, right)
    */
-  public Pose2d getScoringGoalPose(int tag, VIConsts.ReefBranch branch)
+  public static Pose2d getScoringGoalPose(int tag, int branch)
   {
     Pose2d pose = new Pose2d( );
 
     switch (branch)
     {
-      case LEFT :
+      case 0 :  // Left
         pose = getScoringWaypoint("Left  ", tag, kBranchSpacing / 2, kRobotSetback);
         break;
       default :
-      case ALGAE :
+      case 1 :  // Algae
         pose = getScoringWaypoint("Center", tag, 0, kRobotSetback);
         break;
-      case RIGHT :
+      case 2 :  // Right
         pose = getScoringWaypoint("Right ", tag, -kBranchSpacing / 2, kRobotSetback);
         break;
     }
@@ -533,6 +536,11 @@ public class RobotContainer
           )                                                                                   //
               .withName("CommandSwerveDrivetrain"));
     }
+
+    // Idle while the robot is disabled. This ensures the configured
+    // neutral mode is applied to the drive motors while disabled.
+    final var idle = new SwerveRequest.Idle( );
+    RobotModeTriggers.disabled( ).whileTrue(m_drivetrain.applyRequest(( ) -> idle).ignoringDisable(true));
 
     m_drivetrain.registerTelemetry(logger::telemeterize);
 
