@@ -87,7 +87,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Robot set pose */
     private final NetworkTable          swerveTable         = ntInst.getTable("swerve");
     private final DoubleArrayPublisher  setPosePub          = swerveTable.getDoubleArrayTopic("setPose").publish();
-    private final DoubleArraySubscriber setPoseSub          = swerveTable.getDoubleArrayTopic("setPose").subscribe(new double[] {0,0,0});
+    private final DoubleArraySubscriber setPoseSub          = swerveTable.getDoubleArrayTopic("setPose").subscribe(new double[3]);
 
 
     // Network tables publisher objects
@@ -419,10 +419,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     private void initDashboard( )
     {
-        setPosePub.set(new double[ ]
-        {
-                0, 0, 0
-        });
+        setPosePub.set(new double[3]);
         SmartDashboard.putData("Field", field);
 
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
