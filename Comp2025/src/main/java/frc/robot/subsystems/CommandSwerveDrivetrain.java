@@ -4,7 +4,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -41,24 +40,25 @@ import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructSubscriber;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
+import frc.robot.RobotContainer;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.SwervePIDController;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
@@ -77,10 +77,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final NetworkTableInstance  ntInst                   = NetworkTableInstance.getDefault( );
 
     /* Robot pose for field positioning */
-    private final NetworkTable          poseTable           = ntInst.getTable("Pose");
-    private final DoubleArrayPublisher  fieldPubLeft        = poseTable.getDoubleArrayTopic("llPose-left").publish( );
-    private final DoubleArrayPublisher  fieldPubRight       = poseTable.getDoubleArrayTopic("llPose-right").publish( );
-    private final StringPublisher       fieldTypePub        = poseTable.getStringTopic(".type").publish( );
+    private final Field2d               field               = new Field2d();
+    private final FieldObject2d         llPoseLeft          = field.getObject("llPose-left"); 
+    private final FieldObject2d         llPoseRight         = field.getObject("llPose-right"); 
 
     private final NetworkTable              driveStateTable = ntInst.getTable("DriveState");
     private final StructSubscriber<Pose2d>  driveStatePose  = driveStateTable.getStructTopic("Pose", Pose2d.struct).subscribe(new Pose2d( ));
@@ -88,13 +87,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Robot set pose */
     private final NetworkTable          swerveTable         = ntInst.getTable("swerve");
     private final DoubleArrayPublisher  setPosePub          = swerveTable.getDoubleArrayTopic("setPose").publish();
-    private final DoubleArraySubscriber setPoseSub          = swerveTable.getDoubleArrayTopic("setPose").subscribe(new double[] {0,0,0});
+    private final DoubleArraySubscriber setPoseSub          = swerveTable.getDoubleArrayTopic("setPose").subscribe(new double[3]);
 
 
     // Network tables publisher objects
     private final NetworkTable          robotTable          = ntInst.getTable(Constants.kRobotString);
     private final IntegerSubscriber     reefLevel           = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
     private final IntegerSubscriber     reefBranch          = robotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
+
+    private double [] moduleDistances = {0, 0, 0, 0};
 
     /* Robot pathToPose constraints */
     private final PathConstraints       kPathFindConstraints = new PathConstraints( // 
@@ -354,8 +355,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         if (m_useLimelight) {
-            visionUpdate(Constants.kLLLeftName, fieldPubLeft);
-            visionUpdate(Constants.kLLRightName, fieldPubRight);
+            visionUpdate(Constants.kLLLeftName, llPoseLeft);
+            visionUpdate(Constants.kLLRightName, llPoseRight);
         }
     }
 
@@ -418,14 +419,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     private void initDashboard( )
     {
-        setPosePub.set(new double[ ]
-        {
-                0, 0, 0
-        });
+        setPosePub.set(new double[3]);
+        SmartDashboard.putData("Field", field);
 
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
         SmartDashboard.putData("SetPose", getResetPoseCommand( ));
-        SmartDashboard.putData("GetModuleRotations", getModuleRotationsCommand( ));
 
         SmartDashboard.putData("AlignToReefPPFind", new DeferredCommand(( ) -> getAlignToReefPPFindCommand( ), Set.of(this)));
         SmartDashboard.putData("AlignToReefFollow", new DeferredCommand(( ) -> getAlignToReefFollowCommand( ), Set.of(this)));
@@ -511,7 +509,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * This example is sufficient to show that vision integration is possible, though exact
      * implementation of how to use vision should be tuned per-robot and to the team's specification.
      */
-    private void visionUpdate(String limelightName, DoubleArrayPublisher fieldPub)
+    private void visionUpdate(String limelightName, FieldObject2d fieldObject)
     {
         boolean useMegaTag2 = true; // set to false to use MegaTag1
         boolean doRejectUpdate = false;
@@ -544,11 +542,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
             if (!doRejectUpdate)
             {
-                fieldTypePub.set("Field2d");
-                fieldPub.set(new double[ ]
-                {
-                        mt1.pose.getX( ), mt1.pose.getY( ), mt1.pose.getRotation( ).getDegrees( )
-                });
+                fieldObject.setPose(mt1.pose.getX( ), mt1.pose.getY( ), mt1.pose.getRotation( ));
+
                 setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
                 addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
             }
@@ -575,14 +570,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
             if (!doRejectUpdate)
             {
-                fieldTypePub.set("Field2d");
-                fieldPub.set(new double[ ]
-                {
-                        mt2.pose.getX( ), mt2.pose.getY( ), mt2.pose.getRotation( ).getDegrees( )
-                });
+                final double kBase = 0.5;
+                final double kProportional = 1.5;
+                fieldObject.setPose(mt2.pose.getX( ), mt2.pose.getY( ), mt2.pose.getRotation( ));
+
                 // Code used by some teams to scale std devs by distance (below) and used by several teams
-                setVisionMeasurementStdDevs(VecBuilder.fill(Math.pow(0.5, mt2.tagCount) * 0.75 * mt2.avgTagDist,
-                        Math.pow(0.5, mt2.tagCount) * 0.75 * mt2.avgTagDist, Double.POSITIVE_INFINITY));
+                setVisionMeasurementStdDevs(VecBuilder.fill(    //
+                        Math.pow(kBase, mt2.tagCount) * kProportional * mt2.avgTagDist, //
+                        Math.pow(kBase, mt2.tagCount) * kProportional * mt2.avgTagDist, //
+                        Double.POSITIVE_INFINITY));
                 addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
             }
         }
@@ -615,13 +611,36 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /**
      * Reset robot pose from dashboard widget
      */
-    private Command getModuleRotationsCommand( )
+    public Command getModulePositionsCommand(boolean end)
     {
-        return this
-                .runOnce(( ) -> DataLogManager.log(String.format("%s:  0: %.4f 1: %.4f 2: %.4f 3: %.4f", this.getName( ),
-                        this.getState( ).ModulePositions[0].distanceMeters, this.getState( ).ModulePositions[1].distanceMeters,
-                        this.getState( ).ModulePositions[2].distanceMeters, this.getState( ).ModulePositions[3].distanceMeters)))
-                .ignoringDisable(true);
+        return this.runOnce(( ) ->
+        {
+            if (!end)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    moduleDistances[i] = this.getState( ).ModulePositions[i].distanceMeters;
+                }
+            }
+            else
+            {
+                double average = 0;
+                for (int i = 0; i < 4; i++)
+                {
+                    moduleDistances[i] = this.getState( ).ModulePositions[i].distanceMeters - moduleDistances[i];
+                    average += Math.abs(moduleDistances[i]);
+                }
+                average /= 4;
+                DataLogManager.log(String.format("%s:  0: %.3f 1: %.3f 2: %.3f 3: %.3f average %.3f", this.getName( ),
+                        moduleDistances[0], moduleDistances[1], moduleDistances[2], moduleDistances[3], average));
+            }
+        }).ignoringDisable(true);
+    }
+
+    public Command getIdleCommand( )
+    {
+        // Create an Idle command
+        return this.applyRequest(( ) -> new SwerveRequest.Idle( )).withName("swerveIdle");
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -692,7 +711,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         int reefOffset = (int) reefBranch.get( );
 
         int relativeReefTag = reefTag - blueReefTags[0];
-        Pose2d goalPose = VIConsts.kBlueSideReefPoses[relativeReefTag][reefOffset];
+        Pose2d goalPose = RobotContainer.getScoringGoalPose(reefTag, reefOffset);
 
         if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
         {

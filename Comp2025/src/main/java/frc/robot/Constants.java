@@ -3,9 +3,6 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * The Constants class provides a convenient place to hold robot-wide numerical or boolean
@@ -147,46 +144,6 @@ public class Constants
         this.value = value;
       }
     }
-
-    /** Destination field poses for the robot when using PathPlanner pathToPose (blue side) */
-    public static final Pose2d[ ][ ] kBlueSideReefPoses =
-    {
-        { // Face 0 (CD) AT 17
-            new Pose2d(new Translation2d(3.71, 3.01), Rotation2d.fromDegrees(60)),  // Left branch - C
-            new Pose2d(new Translation2d(3.85, 2.93), Rotation2d.fromDegrees(60)),  // Algae
-            new Pose2d(new Translation2d(4.00, 2.84), Rotation2d.fromDegrees(60))   // Right branch - D
-        },
-
-        { // Face 1 (AB) AT 18
-            new Pose2d(new Translation2d(3.22, 4.19), Rotation2d.fromDegrees(0)),   // Left branch - A
-            new Pose2d(new Translation2d(3.22, 4.03), Rotation2d.fromDegrees(0)),   // Algae
-            new Pose2d(new Translation2d(3.22, 3.86), Rotation2d.fromDegrees(0))    // Right branch - B
-        },
-
-        { // Face 2 (KL) AT 19
-            new Pose2d(new Translation2d(4.00, 5.21), Rotation2d.fromDegrees(300)),   // Left branch - K
-            new Pose2d(new Translation2d(3.85, 5.12), Rotation2d.fromDegrees(300)),   // Algae
-            new Pose2d(new Translation2d(3.71, 5.04), Rotation2d.fromDegrees(300))     // Right branch - L
-        },
-
-        { // Face 3 (IJ) AT 20
-            new Pose2d(new Translation2d(5.27, 5.04), Rotation2d.fromDegrees(240)),   // Left branch - I
-            new Pose2d(new Translation2d(5.12, 5.12), Rotation2d.fromDegrees(240)),   // Algae
-            new Pose2d(new Translation2d(4.98, 5.21), Rotation2d.fromDegrees(240))    // Right branch - J
-        },
-
-        { // Face 4 (GH) AT 21
-            new Pose2d(new Translation2d(5.76, 3.86), Rotation2d.fromDegrees(180)),   // Left branch - G
-            new Pose2d(new Translation2d(5.76, 4.03), Rotation2d.fromDegrees(180)),   // Algae
-            new Pose2d(new Translation2d(5.76, 4.19), Rotation2d.fromDegrees(180))    // Right branch - H
-        },
-
-        { // Face 5 (EF) AT 22
-            new Pose2d(new Translation2d(4.98, 2.84), Rotation2d.fromDegrees(120)),   // Left branch - E
-            new Pose2d(new Translation2d(5.12, 2.93), Rotation2d.fromDegrees(120)),   // Algae
-            new Pose2d(new Translation2d(5.27, 3.01), Rotation2d.fromDegrees(120))    // Right branch - F
-        }
-    };
 
   }
 

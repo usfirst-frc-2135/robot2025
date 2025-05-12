@@ -1,19 +1,22 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // @formatter:off
 
@@ -29,6 +32,7 @@ public class Telemetry {
     public Telemetry(double maxSpeed) {
         MaxSpeed = maxSpeed;
         SignalLogger.start();
+        SmartDashboard.putData("Field", field);
     }
 
     /* What to publish over networktables for telemetry */
@@ -45,9 +49,7 @@ public class Telemetry {
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
 
     /* Robot pose for field positioning */
-    private final NetworkTable poseTable = inst.getTable("Pose");
-    private final DoubleArrayPublisher fieldPub = poseTable.getDoubleArrayTopic("robotPose").publish();
-    private final StringPublisher fieldTypePub = poseTable.getStringTopic(".type").publish();
+    private final Field2d field = new Field2d();
 
     // /* Mechanisms to represent the swerve module states */
     // private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] {
@@ -94,6 +96,7 @@ public class Telemetry {
         m_poseArray[0] = state.Pose.getX();
         m_poseArray[1] = state.Pose.getY();
         m_poseArray[2] = state.Pose.getRotation().getDegrees();
+
         for (int i = 0; i < 4; ++i) {
             m_moduleStatesArray[i*2 + 0] = state.ModuleStates[i].angle.getRadians();
             m_moduleStatesArray[i*2 + 1] = state.ModuleStates[i].speedMetersPerSecond;
@@ -107,8 +110,7 @@ public class Telemetry {
         SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
 
         /* Telemeterize the pose to a Field2d */
-        fieldTypePub.set("Field2d");
-        fieldPub.set(m_poseArray);
+        field.setRobotPose(m_poseArray[0], m_poseArray[1], new Rotation2d(Degrees.of(m_poseArray[2])));
 
         // /* Telemeterize the module states to a Mechanism2d */
         // for (int i = 0; i < 4; ++i) {
