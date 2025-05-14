@@ -389,6 +389,20 @@
               "period": 0.06,
               "show_type": true
             }
+          },
+          {
+            "title": "ELMoveTime",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/ELMoveTime",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
           }
         ]
       }
@@ -555,21 +569,8 @@
             }
           },
           {
-            "title": "MNWrisSafeState",
-            "x": 256.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/MNWrisSafeState",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
             "title": "MNWristAlgaeNet",
-            "x": 1024.0,
+            "x": 256.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
@@ -596,7 +597,7 @@
           {
             "title": "MNWristCoralStation",
             "x": 256.0,
-            "y": 128.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Command",
@@ -630,6 +631,33 @@
               "topic": "/SmartDashboard/MNWristAlgaeL34",
               "period": 0.06,
               "show_type": true
+            }
+          },
+          {
+            "title": "MNWristSafeState",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/MNWristSafeState",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "MNMoveTime",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/MNMoveTime",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]
