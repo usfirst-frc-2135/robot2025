@@ -547,8 +547,8 @@ public class RobotContainer
     // Note: Only one default command can be active per subsystem--use the manual modes during bring-up
 
     // Default command - Motion Magic hold
-    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
-    m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
+    // m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
+    // m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
 
     // Default command - manual mode (use these during robot bringup)
     // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
@@ -799,6 +799,8 @@ public class RobotContainer
   {
     m_vision.SetCPUThrottleLevel(true);
     m_vision.SetIMUModeInternal( );
+    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
+    m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
   }
 
   /****************************************************************************
@@ -809,6 +811,8 @@ public class RobotContainer
   {
     m_vision.SetCPUThrottleLevel(true);
     m_vision.SetIMUModeInternal( );
+    m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
+    m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
   }
 
   /****************************************************************************
