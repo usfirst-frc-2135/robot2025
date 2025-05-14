@@ -498,6 +498,8 @@ public class Elevator extends SubsystemBase
             .log(String.format("%s: MM Position move finished - Current inches: %.1f (difference %.1f) - Time: %.3f sec %s",
                 getSubsystem( ), m_currentHeight, error, m_mmMoveTimer.get( ), (timedOut) ? "- Warning: TIMED OUT!" : ""));
 
+      SmartDashboard.putNumber("ElMoveTime", m_mmMoveTimer.get( ) - kMMDebounceTime);
+
       m_mmMoveIsFinished = true;
     }
 

@@ -46,9 +46,9 @@ public final class CTREConfigs6
     // exConfig.ClosedLoopRamps.*
 
     // Current limit settings
-    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 35.0;           // Amps
+    elevatorConfig.CurrentLimits.SupplyCurrentLimit = 45.0;           // Amps
     elevatorConfig.CurrentLimits.SupplyCurrentLowerLimit = 30.0;      // Amps
-    elevatorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.001;      // Seconds
+    elevatorConfig.CurrentLimits.SupplyCurrentLowerTime = 0.080;      // Seconds
     elevatorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
     elevatorConfig.CurrentLimits.StatorCurrentLimit = 120.0;          // Amps
@@ -61,8 +61,8 @@ public final class CTREConfigs6
     // elevatorConfig.HardwareLimitSwitch.*
 
     // Motion Magic settings
-    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 77.50;     // Rotations / second
-    elevatorConfig.MotionMagic.MotionMagicAcceleration = 500.0;       // Rotations / second ^ 2
+    elevatorConfig.MotionMagic.MotionMagicCruiseVelocity = 82.17;     // Rotations / second
+    elevatorConfig.MotionMagic.MotionMagicAcceleration = 300.0;       // Rotations / second ^ 2
     elevatorConfig.MotionMagic.MotionMagicJerk = 3200;                // Rotations / second ^ 3
 
     // Motor output settings
@@ -78,13 +78,14 @@ public final class CTREConfigs6
     //                                                                  kG = (0.40 + 0.25) / 2
     //                                                                  kS = (0.40 - 0.25) / 2
     elevatorConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+    elevatorConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
     elevatorConfig.Slot0.kS = 0.075;                                  // Feedforward: Voltage or duty cycle to overcome static friction
     elevatorConfig.Slot0.kG = 0.325;                                  // Feedforward: Voltage or duty cycle to overcome gravity (arbitrary feedforward)
     elevatorConfig.Slot0.kV = 0.1241;                                 // Feedforward: Voltage or duty cycle per requested RPS (velocity modes)
 
-    elevatorConfig.Slot0.kP = 0.8;                                    // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
+    elevatorConfig.Slot0.kP = 0.75;                                   // Feedback: Voltage or duty cycle per velocity unit (velocity modes)
     elevatorConfig.Slot0.kI = 0.0;                                    // Feedback: Voltage or duty cycle per accumulated unit
-    elevatorConfig.Slot0.kD = 0.0;                                    // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
+    elevatorConfig.Slot0.kD = 0.09;                                   // Feedback: Voltage or duty cycle per unit of acceleration unit (velocity modes)
 
     // Software limit switches
     elevatorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = min; // Rotations
