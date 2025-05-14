@@ -237,21 +237,18 @@ public class Elevator extends SubsystemBase
       m_currentHeight = leftHeight;
       m_currentHeightPub.set(m_currentHeight);
 
-      // Zero elevator when fully down with limit switch OR below minimum
-      if (DriverStation.isDisabled( ) && !m_calibrated && isDown( ))
-      {
-        calibrateHeight( );
-      }
+      // Calibrate if elevator is full down and not already calibrated
+      boolean normalCalibrate = !m_calibrated && isDown( );
+      // Reset motor positions if full down, but do not change calibrate state (chain slip)
+      boolean fullDownOutOfSync = isDown( ) && (leftHeight > kHeightInchesMin || rightHeight > kHeightInchesMin);
+      // Detect overcurrent when jammed
+      boolean overcurrent = (m_leftStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps))
+          || (m_rightStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps)); // TODO: no overcurrent detection? 
 
-      // Re-calibrate if the elevator is jammed or too high while limit switch is engaged
-      if (DriverStation.isEnabled( ) && isDown( ))
+      // Handle height reset and calibration
+      if (normalCalibrate || fullDownOutOfSync)
       {
-        if ((m_leftStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps))
-            || (m_rightStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps)) || //
-            ((leftHeight > kMaxDownHeight) || (rightHeight > kMaxDownHeight) || (m_currentHeight > kMaxDownHeight)))
-        {
-          calibrateHeight( );
-        }
+        resetHeight(normalCalibrate);
       }
     }
 
@@ -600,11 +597,12 @@ public class Elevator extends SubsystemBase
    * Calibrate height
    * 
    */
-  private void calibrateHeight( )
+  private void resetHeight(boolean calibrate)
   {
     setPosition(0);
     DataLogManager.log(String.format("%s: Subsystem calibrated! Height Inches: %.1f", getSubsystem( ), m_currentHeight));
-    m_calibrated = true;
+    if (calibrate)
+      m_calibrated = true;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -745,7 +743,7 @@ public class Elevator extends SubsystemBase
   public Command getCalibrateHeightCommand( )
   {
     return new InstantCommand(          // Command with init only phase declared
-        ( ) -> calibrateHeight( ),      // Init method
+        ( ) -> resetHeight(true),       // Init method
         this                            // Subsytem required
     )                                   //
         .ignoringDisable(true) //
