@@ -86,8 +86,8 @@ public class Manipulator extends SubsystemBase
   private static final DutyCycleOut  kAlgaeSpeedHold      = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
 
   private static final double        kWristGearRatio      = 49.23;
-  private static final double        kWristLengthMeters   = Units.inchesToMeters(15); // Simulation
-  private static final double        kWristWeightKg       = Units.lbsToKilograms(20.0);  // Simulation
+  private static final double        kWristLengthMeters   = Units.inchesToMeters(13); // Simulation
+  private static final double        kWristWeightKg       = Units.lbsToKilograms(8.0);  // Simulation
   private static final Voltage       kWristManualVolts    = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
 
   private final NetworkTableInstance ntInst               = NetworkTableInstance.getDefault( );

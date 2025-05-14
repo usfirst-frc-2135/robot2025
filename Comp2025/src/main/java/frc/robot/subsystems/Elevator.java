@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightInchesMax        = 30.5;            // Maximum allowable height
   private static final double  kSimHeightMetersMin     = Units.inchesToMeters(kHeightInchesMin - 0.1); // Make sim height range larger than useful range
   private static final double  kSimHeightMetersMax     = Units.inchesToMeters(kHeightInchesMax + 0.1);
-  private static final double  kCarriageMassKg         = Units.lbsToKilograms(20.0);     // Simulation
+  private static final double  kCarriageMassKg         = Units.lbsToKilograms(32.0);     // Simulation
   private static final double  kSprocketDiameterInches = 1.751;           // Sprocket diameter in inches (22T * 0.25"/T / Pi)
   private static final double  kSprocketRadiusMeters   = Units.inchesToMeters(kSprocketDiameterInches) / 2;
   private static final double  kRolloutRatio           = kSprocketDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
@@ -495,7 +495,7 @@ public class Elevator extends SubsystemBase
             .log(String.format("%s: MM Position move finished - Current inches: %.1f (difference %.1f) - Time: %.3f sec %s",
                 getSubsystem( ), m_currentHeight, error, m_mmMoveTimer.get( ), (timedOut) ? "- Warning: TIMED OUT!" : ""));
 
-      SmartDashboard.putNumber("ElMoveTime", m_mmMoveTimer.get( ) - kMMDebounceTime);
+      SmartDashboard.putNumber("ELMoveTime", m_mmMoveTimer.get( ) - kMMDebounceTime);
 
       m_mmMoveIsFinished = true;
     }
