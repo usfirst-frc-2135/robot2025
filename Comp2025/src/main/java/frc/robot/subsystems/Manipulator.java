@@ -422,8 +422,7 @@ public class Manipulator extends SubsystemBase
   ///////////////////////// MANUAL MOVEMENT //////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////
 
-  // private final static Voltage kManualKG = Volts.of(-0.235);
-  private final static Voltage kManualKG = Volts.of(0.0);
+  private final static Voltage kManualKG = Volts.of(-0.25);
 
   /****************************************************************************
    * 
@@ -464,7 +463,7 @@ public class Manipulator extends SubsystemBase
     m_goalDegrees = m_currentDegrees;
 
     m_wristMotor.setControl(m_wristRequestVolts.withOutput(
-        kWristManualVolts.times(axisValue).plus(kManualKG.times(Math.sin(Units.degreesToRadians(m_currentDegrees))))));
+        kWristManualVolts.times(axisValue).plus(kManualKG.times(Math.cos(Units.degreesToRadians(m_currentDegrees))))));
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -547,6 +546,7 @@ public class Manipulator extends SubsystemBase
         DataLogManager
             .log(String.format("%s: MM Position move finished - Current degrees: %.1f (difference %.1f) - Time: %.3f sec %s",
                 getSubsystem( ), m_currentDegrees, error, m_mmMoveTimer.get( ), (timedOut) ? "- Warning: TIMED OUT!" : ""));
+      SmartDashboard.putNumber("MNMoveTime", m_mmMoveTimer.get( ) - kMMDebounceTime);
 
       m_mmMoveIsFinished = true;
     }
