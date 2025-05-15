@@ -45,7 +45,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
@@ -510,8 +509,8 @@ public class RobotContainer
     m_operatorPad.rightStick( ).toggleOnTrue(new LogCommand("operPad", "right stick"));
   }
 
-  private final Trigger m_elevatorTrigger = new Trigger(( ) -> (Math.abs(getElevatorAxis( )) > Constants.kStickDeadband));
-  private final Trigger m_wristTrigger    = new Trigger(( ) -> (Math.abs(getWristAxis( )) > Constants.kStickDeadband));
+  // private final Trigger m_elevatorTrigger = new Trigger(( ) -> (Math.abs(getElevatorAxis( )) > Constants.kStickDeadband));
+  // private final Trigger m_wristTrigger    = new Trigger(( ) -> (Math.abs(getWristAxis( )) > Constants.kStickDeadband));
 
   /****************************************************************************
    * 
