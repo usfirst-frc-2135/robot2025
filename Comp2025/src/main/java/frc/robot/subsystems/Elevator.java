@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightInchesMax        = 30.5;            // Maximum allowable height
   private static final double  kSimHeightMetersMin     = Units.inchesToMeters(kHeightInchesMin - 0.1); // Make sim height range larger than useful range
   private static final double  kSimHeightMetersMax     = Units.inchesToMeters(kHeightInchesMax + 0.1);
-  private static final double  kCarriageMassKg         = Units.lbsToKilograms(20.0);     // Simulation
+  private static final double  kCarriageMassKg         = Units.lbsToKilograms(32.0);     // Simulation
   private static final double  kSprocketDiameterInches = 1.751;           // Sprocket diameter in inches (22T * 0.25"/T / Pi)
   private static final double  kSprocketRadiusMeters   = Units.inchesToMeters(kSprocketDiameterInches) / 2;
   private static final double  kRolloutRatio           = kSprocketDiameterInches * Math.PI / kGearRatio; // inches per shaft rotation
@@ -237,21 +237,21 @@ public class Elevator extends SubsystemBase
       m_currentHeight = leftHeight;
       m_currentHeightPub.set(m_currentHeight);
 
-      // Zero elevator when fully down with limit switch OR below minimum
-      if (DriverStation.isDisabled( ) && !m_calibrated && isDown( ))
-      {
-        calibrateHeight( );
-      }
+      // Calibrate if elevator is full down and not already calibrated
+      boolean normalCalibrate = !m_calibrated && isDown( );
+      // Reset motor positions if either left or right are significantly negative (probably restarted while still is up)
+      boolean restartOutOfSync = DriverStation.isDisabled( ) && (leftHeight < -0.25 || rightHeight < -0.25);
+      // Reset motor positions if full down, but do not change calibrate state (chain slip) -- set larger height to lower height // TODO
+      // boolean fullDownOutOfSync = isDown( )
+      //     && (!MathUtil.isNear(leftHeight, kHeightInchesMin, 0.25) || !MathUtil.isNear(rightHeight, kHeightInchesMin, 0.25));
+      // Detect overcurrent when jammed // TODO
+      // boolean overcurrent = isDown( ) && ((m_leftStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps))
+      //     || (m_rightStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps)));
 
-      // Re-calibrate if the elevator is jammed or too high while limit switch is engaged
-      if (DriverStation.isEnabled( ) && isDown( ))
+      // Handle height reset and calibration
+      if (normalCalibrate || restartOutOfSync)
       {
-        if ((m_leftStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps))
-            || (m_rightStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps)) || //
-            ((leftHeight > kMaxDownHeight) || (rightHeight > kMaxDownHeight) || (m_currentHeight > kMaxDownHeight)))
-        {
-          calibrateHeight( );
-        }
+        resetHeight(normalCalibrate);
       }
     }
 
@@ -498,6 +498,8 @@ public class Elevator extends SubsystemBase
             .log(String.format("%s: MM Position move finished - Current inches: %.1f (difference %.1f) - Time: %.3f sec %s",
                 getSubsystem( ), m_currentHeight, error, m_mmMoveTimer.get( ), (timedOut) ? "- Warning: TIMED OUT!" : ""));
 
+      SmartDashboard.putNumber("ELMoveTime", m_mmMoveTimer.get( ) - kMMDebounceTime);
+
       m_mmMoveIsFinished = true;
     }
 
@@ -598,11 +600,12 @@ public class Elevator extends SubsystemBase
    * Calibrate height
    * 
    */
-  private void calibrateHeight( )
+  private void resetHeight(boolean calibrate)
   {
     setPosition(0);
     DataLogManager.log(String.format("%s: Subsystem calibrated! Height Inches: %.1f", getSubsystem( ), m_currentHeight));
-    m_calibrated = true;
+    if (calibrate)
+      m_calibrated = true;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -743,7 +746,7 @@ public class Elevator extends SubsystemBase
   public Command getCalibrateHeightCommand( )
   {
     return new InstantCommand(          // Command with init only phase declared
-        ( ) -> calibrateHeight( ),      // Init method
+        ( ) -> resetHeight(true),       // Init method
         this                            // Subsytem required
     )                                   //
         .ignoringDisable(true) //

@@ -80,14 +80,14 @@ public class Manipulator extends SubsystemBase
   private static final DutyCycleOut  kCoralSpeedExpelL1   = new DutyCycleOut(0.32).withIgnoreHardwareLimits(true);
 
   private static final DutyCycleOut  kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut  kAlgaeSpeedExpel     = new DutyCycleOut(-0.4).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut  kAlgaeSpeedExpel     = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut  kAlgaeSpeedShoot     = new DutyCycleOut(-1.0).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut  kAlgaeSpeedProcessor = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
   private static final DutyCycleOut  kAlgaeSpeedHold      = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
 
   private static final double        kWristGearRatio      = 49.23;
-  private static final double        kWristLengthMeters   = Units.inchesToMeters(15); // Simulation
-  private static final double        kWristWeightKg       = Units.lbsToKilograms(20.0);  // Simulation
+  private static final double        kWristLengthMeters   = Units.inchesToMeters(13); // Simulation
+  private static final double        kWristWeightKg       = Units.lbsToKilograms(8.0);  // Simulation
   private static final Voltage       kWristManualVolts    = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
 
   private final NetworkTableInstance ntInst               = NetworkTableInstance.getDefault( );
@@ -125,7 +125,7 @@ public class Manipulator extends SubsystemBase
 
   private static final double         kWristAngleAlgae23        = 29.0;
   private static final double         kWristAngleAlgae34        = 29.0;
-  private static final double         kWristAngleAlgaeProcessor = 45.0;
+  private static final double         kWristAngleAlgaeProcessor = 50.0;
   private static final double         kWristAngleAlgaeNet       = -10.0;
 
   // Device objects
@@ -422,8 +422,7 @@ public class Manipulator extends SubsystemBase
   ///////////////////////// MANUAL MOVEMENT //////////////////////////////////
   ////////////////////////////////////////////////////////////////////////////
 
-  // private final static Voltage kManualKG = Volts.of(-0.235);
-  private final static Voltage kManualKG = Volts.of(0.0);
+  private final static Voltage kManualKG = Volts.of(-0.25);
 
   /****************************************************************************
    * 
@@ -464,7 +463,7 @@ public class Manipulator extends SubsystemBase
     m_goalDegrees = m_currentDegrees;
 
     m_wristMotor.setControl(m_wristRequestVolts.withOutput(
-        kWristManualVolts.times(axisValue).plus(kManualKG.times(Math.sin(Units.degreesToRadians(m_currentDegrees))))));
+        kWristManualVolts.times(axisValue).plus(kManualKG.times(Math.cos(Units.degreesToRadians(m_currentDegrees))))));
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -547,6 +546,7 @@ public class Manipulator extends SubsystemBase
         DataLogManager
             .log(String.format("%s: MM Position move finished - Current degrees: %.1f (difference %.1f) - Time: %.3f sec %s",
                 getSubsystem( ), m_currentDegrees, error, m_mmMoveTimer.get( ), (timedOut) ? "- Warning: TIMED OUT!" : ""));
+      SmartDashboard.putNumber("MNMoveTime", m_mmMoveTimer.get( ) - kMMDebounceTime);
 
       m_mmMoveIsFinished = true;
     }
