@@ -571,7 +571,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             if (!doRejectUpdate)
             {
                 final double kBase = 0.5;
-                final double kProportional = 1.5;
+                final double kProportional = 0.9;
                 fieldObject.setPose(mt2.pose.getX( ), mt2.pose.getY( ), mt2.pose.getRotation( ));
 
                 // Code used by some teams to scale std devs by distance (below) and used by several teams
