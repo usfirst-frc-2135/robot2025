@@ -239,14 +239,17 @@ public class Elevator extends SubsystemBase
 
       // Calibrate if elevator is full down and not already calibrated
       boolean normalCalibrate = !m_calibrated && isDown( );
-      // Reset motor positions if full down, but do not change calibrate state (chain slip)
-      boolean fullDownOutOfSync = isDown( ) && (leftHeight > kHeightInchesMin || rightHeight > kHeightInchesMin);
-      // Detect overcurrent when jammed
-      boolean overcurrent = (m_leftStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps))
-          || (m_rightStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps)); // TODO: no overcurrent detection? 
+      // Reset motor positions if either left or right are significantly negative (probably restarted while still is up)
+      boolean restartOutOfSync = DriverStation.isDisabled( ) && (leftHeight < -0.25 || rightHeight < -0.25);
+      // Reset motor positions if full down, but do not change calibrate state (chain slip) -- set larger height to lower height // TODO
+      // boolean fullDownOutOfSync = isDown( )
+      //     && (!MathUtil.isNear(leftHeight, kHeightInchesMin, 0.25) || !MathUtil.isNear(rightHeight, kHeightInchesMin, 0.25));
+      // Detect overcurrent when jammed // TODO
+      // boolean overcurrent = isDown( ) && ((m_leftStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps))
+      //     || (m_rightStatorCur.getValue( ).abs(Amps) > kHardStopCurrentLimit.in(Amps)));
 
       // Handle height reset and calibration
-      if (normalCalibrate || fullDownOutOfSync)
+      if (normalCalibrate || restartOutOfSync)
       {
         resetHeight(normalCalibrate);
       }
