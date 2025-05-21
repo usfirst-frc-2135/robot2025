@@ -62,7 +62,7 @@ public class AutoPreloadCoral2 extends SequentialCommandGroup
             new LogCommand(getName(),"PRELOAD: Move Manipulator to safe position"),
             manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState),
             // Delay some time during the path before pre-raising the elevator
-            new WaitCommand(0.8),
+            new WaitCommand(0.7),
             new LogCommand(getName(),"PRELOAD: Move Elevator to L4 height early to save time"),
             elevator.getMoveToPositionCommand(elevator::getHeightCoralL4)
           )

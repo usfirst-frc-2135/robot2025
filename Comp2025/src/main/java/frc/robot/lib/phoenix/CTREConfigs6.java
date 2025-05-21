@@ -268,7 +268,7 @@ public final class CTREConfigs6
   {
     CANrangeConfiguration crConfig = new CANrangeConfiguration( );
 
-    crConfig.ProximityParams.ProximityThreshold = 0.2;                // Proximity distance in meters (about 8 inches)
+    crConfig.ProximityParams.ProximityThreshold = 0.1;                // Proximity distance in meters (about 8 inches)
     crConfig.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
 
     return crConfig;
