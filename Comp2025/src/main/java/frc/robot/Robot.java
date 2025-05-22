@@ -137,7 +137,9 @@ public class Robot extends TimedRobot
       }
     }
     else
+    {
       m_faultsCleared = false;
+    }
   }
 
   /****************************************************************************

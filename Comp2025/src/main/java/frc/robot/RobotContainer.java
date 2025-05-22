@@ -94,19 +94,21 @@ public class RobotContainer
 
   // Setting up bindings for necessary control of the swerve drive platform
   private final SwerveRequest.FieldCentric            drive           = new SwerveRequest.FieldCentric( ) //
-      .withDeadband(kMaxSpeed.times(0.1)).withRotationalDeadband(kMaxAngularRate.times(0.1))  //
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
+      .withDeadband(kMaxSpeed.times(0.1))                 //
+      .withRotationalDeadband(kMaxAngularRate.times(0.1)) //
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);       // We want field-centric driving in open loop
   private final SwerveRequest.SwerveDriveBrake        brake           = new SwerveRequest.SwerveDriveBrake( );
   private final SwerveRequest.FieldCentricFacingAngle facing          = new SwerveRequest.FieldCentricFacingAngle( )  //
-      .withDeadband(kMaxSpeed.times(0.1)).withRotationalDeadband(kMaxAngularRate.times(0.1))  //
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
+      .withDeadband(kMaxSpeed.times(0.1))                 //
+      .withRotationalDeadband(kMaxAngularRate.times(0.1)) //
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);       // We want field-centric driving in open loop
   @SuppressWarnings("unused")
   private final SwerveRequest.PointWheelsAt           point           = new SwerveRequest.PointWheelsAt( );
   // private final SwerveRequest.RobotCentric            aim             = new SwerveRequest.RobotCentric( );
   private final SwerveRequest.Idle                    idle            = new SwerveRequest.Idle( );
   @SuppressWarnings("unused")
-  private final SwerveRequest.RobotCentric            forwardStraight =
-      new SwerveRequest.RobotCentric( ).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  private final SwerveRequest.RobotCentric            forwardStraight = new SwerveRequest.RobotCentric( )     //
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   private final Telemetry                             logger          = new Telemetry(kMaxSpeed.in(MetersPerSecond));
 

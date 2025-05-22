@@ -31,7 +31,6 @@ public class Constants
   public static final double  kRumbleIntensity      = 0.5;  // 0.0 is low, 1.0 is high
 
   // Phoenix firmware versions expected
-  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0);
   public static final int     kPhoenix6MajorVersion = 25;
 
   public static final String  kRobotString          = "RobotContainer";
