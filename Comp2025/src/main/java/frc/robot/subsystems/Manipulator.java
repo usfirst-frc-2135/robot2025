@@ -71,134 +71,126 @@ import frc.robot.lib.phoenix.PhoenixUtil6;
 public class Manipulator extends SubsystemBase
 {
   // Constants
-  private static final String        kSubsystemName       = "Manipulator";
+  private static final String       kSubsystemName            = "Manipulator";
+  private static final double       kWristGearRatio           = 49.23;
+  private static final double       kWristLengthMeters        = Units.inchesToMeters(13); // Simulation
+  private static final double       kWristWeightKg            = Units.lbsToKilograms(8.0);  // Simulation
+  private static final Voltage      kWristManualVolts         = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
 
-  private static final DutyCycleOut  kClawRollerStop      = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
-
-  private static final DutyCycleOut  kCoralSpeedAcquire   = new DutyCycleOut(-0.75).withIgnoreHardwareLimits(false);
-  private static final DutyCycleOut  kCoralSpeedExpel     = new DutyCycleOut(-0.42).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut  kCoralSpeedExpelL1   = new DutyCycleOut(0.32).withIgnoreHardwareLimits(true);
-
-  private static final DutyCycleOut  kAlgaeSpeedAcquire   = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut  kAlgaeSpeedExpel     = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut  kAlgaeSpeedShoot     = new DutyCycleOut(-1.0).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut  kAlgaeSpeedProcessor = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
-  private static final DutyCycleOut  kAlgaeSpeedHold      = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
-
-  private static final double        kWristGearRatio      = 49.23;
-  private static final double        kWristLengthMeters   = Units.inchesToMeters(13); // Simulation
-  private static final double        kWristWeightKg       = Units.lbsToKilograms(8.0);  // Simulation
-  private static final Voltage       kWristManualVolts    = Volts.of(3.5);         // Motor voltage during manual operation (joystick)
-
-  private final NetworkTableInstance ntInst               = NetworkTableInstance.getDefault( );
-  private final NetworkTable         robotTable           = ntInst.getTable(Constants.kRobotString);
-  private IntegerSubscriber          reefLevel            = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
-
-  /** Wrist rotary motor manual move parameters */
-  private enum WristMode
-  {
-    INIT,    // Initialize rotary
-    INBOARD, // Wrist moving into the robot
-    STOPPED, // Wrist stop and hold angle
-    OUTBOARD // Wrist moving out of the robot
-  }
-
-  private static final double         kToleranceDegrees         = 3.0;      // PID tolerance in degrees
-  private static final double         kMMDebounceTime           = 0.040;    // Seconds to debounce a final angle check
-  private static final double         kMMMoveTimeout            = 1.5;      // Seconds allowed for a Motion Magic movement
+  private static final double       kToleranceDegrees         = 3.0;      // PID tolerance in degrees
+  private static final double       kMMDebounceTime           = 0.040;    // Seconds to debounce a final angle check
+  private static final double       kMMMoveTimeout            = 1.0;      // Seconds allowed for a Motion Magic movement
 
   // Wrist rotary angles - Motion Magic move parameters
   //    Measured hardstops and pre-defined positions:
   //               hstop    hstop
-  //      Comp     -119.0   52.0
-  //      Practice -119.0   52.0
-  private static final double         kWristAngleMin            = -129.0;
-  private static final double         kWristAngleMax            = 51.0;
+  //      Comp     -129.9   51.0
+  //      Practice -129.9   51.0
+  private static final double       kWristAngleMin            = -129.0;
+  private static final double       kWristAngleMax            = 51.0;
 
-  private static final double         kWristAngleSafeState      = -103.0;
+  private static final double       kWristAngleSafeState      = -103.0;
 
-  private static final double         kWristAngleCoralStation   = -129.0;
-  private static final double         kWristAngleCoralL1        = 29.0;
-  private static final double         kWristAngleCoralL2        = -103.0;
-  private static final double         kWristAngleCoralL3        = -103.0;
-  private static final double         kWristAngleCoralL4        = -87.5;
+  private static final double       kWristAngleCoralStation   = -129.0;
+  private static final double       kWristAngleCoralL1        = 29.0;
+  private static final double       kWristAngleCoralL2        = -103.0;
+  private static final double       kWristAngleCoralL3        = -103.0;
+  private static final double       kWristAngleCoralL4        = -87.5;
 
-  private static final double         kWristAngleAlgae23        = 29.0;
-  private static final double         kWristAngleAlgae34        = 29.0;
-  private static final double         kWristAngleAlgaeProcessor = 50.0;
-  private static final double         kWristAngleAlgaeNet       = -10.0;
+  private static final double       kWristAngleAlgae23        = 29.0;
+  private static final double       kWristAngleAlgae34        = 29.0;
+  private static final double       kWristAngleAlgaeProcessor = 50.0;
+  private static final double       kWristAngleAlgaeNet       = -10.0;
+
+  // Claw roller speeds
+  private static final DutyCycleOut kClawRollerStop           = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
+
+  private static final DutyCycleOut kCoralSpeedAcquire        = new DutyCycleOut(-0.75).withIgnoreHardwareLimits(false);
+  private static final DutyCycleOut kCoralSpeedExpel          = new DutyCycleOut(-0.42).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kCoralSpeedExpelL1        = new DutyCycleOut(0.32).withIgnoreHardwareLimits(true);
+
+  private static final DutyCycleOut kAlgaeSpeedAcquire        = new DutyCycleOut(0.5).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kAlgaeSpeedExpel          = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kAlgaeSpeedShoot          = new DutyCycleOut(-1.0).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kAlgaeSpeedProcessor      = new DutyCycleOut(-0.27).withIgnoreHardwareLimits(true);
+  private static final DutyCycleOut kAlgaeSpeedHold           = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
+
+  /** Wrist rotary motor manual move parameters */
+  private enum JoystickMode
+  {
+    INIT,     // Initialize rotary
+    INBOARD,  // Wrist moving into the robot
+    STOP,     // Wrist stop and hold angle
+    OUTBOARD  // Wrist moving out of the robot
+  }
 
   // Device objects
-  private final TalonFX               m_wristMotor              = new TalonFX(Ports.kCANID_WristRotary);
-  private final CANcoder              m_wristCANcoder           = new CANcoder(Ports.kCANID_WristCANcoder);
-  private final TalonFX               m_clawMotor               = new TalonFX(Ports.kCANID_ClawRoller);
-  private final CANrange              m_coralDetector           = new CANrange(Ports.kCANID_CoralDetector);
-  private final CANrange              m_algaeDetector           = new CANrange(Ports.kCANID_AlgaeDetector);
+  private final TalonFX               m_wristMotor        = new TalonFX(Ports.kCANID_WristRotary);
+  private final CANcoder              m_wristCANcoder     = new CANcoder(Ports.kCANID_WristCANcoder);
+  private final TalonFX               m_clawMotor         = new TalonFX(Ports.kCANID_ClawRoller);
+  private final CANrange              m_coralDetector     = new CANrange(Ports.kCANID_CoralDetector);
+  private final CANrange              m_algaeDetector     = new CANrange(Ports.kCANID_AlgaeDetector);
 
   // Alerts
-  private final Alert                 m_rotaryAlert             =
+  private final Alert                 m_rotaryAlert       =
       new Alert(String.format("%s: Wrist rotary motor init failed!", getSubsystem( )), AlertType.kError);
-  private final Alert                 m_canCoderAlert           =
+  private final Alert                 m_canCoderAlert     =
       new Alert(String.format("%s: Wrist CANcoder init failed!", getSubsystem( )), AlertType.kError);
-  private final Alert                 m_clawAlert               =
+  private final Alert                 m_clawAlert         =
       new Alert(String.format("%s: Claw roller motor init failed!", getSubsystem( )), AlertType.kError);
-  private final Alert                 m_coralCRAlert            =
+  private final Alert                 m_coralCRAlert      =
       new Alert(String.format("%s: Coral detector init failed!", getSubsystem( )), AlertType.kError);
-  private final Alert                 m_algaeCRAlert            =
+  private final Alert                 m_algaeCRAlert      =
       new Alert(String.format("%s: Algae detector init failed!", getSubsystem( )), AlertType.kError);
 
   // Simulation objects
-  private final TalonFXSimState       m_wristMotorSim           = m_wristMotor.getSimState( );
-  private final CANcoderSimState      m_wristCANcoderSim        = m_wristCANcoder.getSimState( );
-  private final SingleJointedArmSim   m_armSim                  =
-      new SingleJointedArmSim(DCMotor.getKrakenX60Foc(1), kWristGearRatio,
-          SingleJointedArmSim.estimateMOI(kWristLengthMeters, kWristWeightKg), kWristLengthMeters, -Math.PI, Math.PI, false, 0.0);
-  private final TalonFXSimState       m_clawMotorSim            = m_clawMotor.getSimState( );
-  private final CANrangeSimState      m_coralDetectedSim        = m_coralDetector.getSimState( );
+  private final TalonFXSimState       m_wristMotorSim     = m_wristMotor.getSimState( );
+  private final CANcoderSimState      m_wristCANcoderSim  = m_wristCANcoder.getSimState( );
+  private final SingleJointedArmSim   m_armSim            = new SingleJointedArmSim(DCMotor.getKrakenX60Foc(1), kWristGearRatio,
+      SingleJointedArmSim.estimateMOI(kWristLengthMeters, kWristWeightKg), kWristLengthMeters, -Math.PI, Math.PI, false, 0.0);
+  private final TalonFXSimState       m_clawMotorSim      = m_clawMotor.getSimState( );
+  private final CANrangeSimState      m_coralDetectedSim  = m_coralDetector.getSimState( );
 
   // Mechanism2d
-  private final Mechanism2d           m_wristRotaryMech         = new Mechanism2d(1.0, 1.0);
-  private final MechanismLigament2d   m_mechLigament            = m_wristRotaryMech.getRoot("Wrist", 0.5, 0.5)
+  private final Mechanism2d           m_wristRotaryMech   = new Mechanism2d(1.0, 1.0);
+  private final MechanismLigament2d   m_mechLigament      = m_wristRotaryMech.getRoot("Wrist", 0.5, 0.5)
       .append(new MechanismLigament2d(kSubsystemName, 0.5, 0.0, 6, new Color8Bit(Color.kPurple)));
 
-  // Status signals
+  // Status signals for sensors
   private final StatusSignal<Angle>   m_wristMotorPosition; // Default 50Hz (20ms)
   private final StatusSignal<Angle>   m_ccPosition;         // Default 100Hz (10ms)
   private final StatusSignal<Boolean> m_coralIsDetected;    // Default 50Hz (20ms)
   private final StatusSignal<Boolean> m_algaeIsDetected;    // Default 50Hz (20ms)
 
   // Declare module variables
-
-  // Claw variables
-  private boolean                     m_clawMotorValid;                 // Health indicator for motor 
-
-  // Wrist variables
+  // Wrist rotary
   private boolean                     m_wristMotorValid;                // Health indicator for motor 
   private boolean                     m_canCoderValid;                  // Health indicator for CANcoder 
-  private double                      m_currentDegrees          = 0.0;  // Current angle in degrees
-  private double                      m_goalDegrees             = 0.0;  // Goal angle in degrees
-  private double                      m_ccDegrees               = 0.0;  // CANcoder angle in degrees
+  private boolean                     m_clawMotorValid;                 // Health indicator for motor 
+  private double                      m_currentDegrees    = 0.0;  // Current angle in degrees
+  private double                      m_goalDegrees       = 0.0;  // Goal angle in degrees
+  private double                      m_ccDegrees         = 0.0;  // CANcoder angle in degrees
 
   // Coral detector
   private boolean                     m_coralDetectorValid;             // Health indicator for CANrange
   private boolean                     m_coralDetected;
 
-  //Claw Roller Parameters
-  private DutyCycleOut                m_clawRequestVolts        = kClawRollerStop;
-
   // Algae detector
   private boolean                     m_algaeDetectorValid;             // Health indicator for CANrange
   private boolean                     m_algaeDetected;
 
+  // Claw Roller
+  private DutyCycleOut                m_clawRequestVolts  = kClawRollerStop;
+
   // Manual mode config parameters
-  private VoltageOut                  m_wristRequestVolts       = new VoltageOut(Volts.of(0)).withEnableFOC(true);
-  private WristMode                   m_wristMode               = WristMode.INIT;   // Manual movement mode with joysticks
+  private VoltageOut                  m_wristRequestVolts = new VoltageOut(Volts.of(0)).withEnableFOC(true);
+  private JoystickMode                m_manualMode        = JoystickMode.INIT;   // Manual movement mode with joysticks
 
   // Motion Magic config parameters
-  private MotionMagicVoltage          m_mmRequestVolts          = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
-  private Debouncer                   m_mmWithinTolerance       = new Debouncer(kMMDebounceTime, DebounceType.kRising);
-  private Timer                       m_mmMoveTimer             = new Timer( );     // Movement timer
-  private boolean                     m_mmMoveIsFinished;           // Movement has completed (within tolerance)
+  private MotionMagicVoltage          m_mmRequestVolts    = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
+  private Debouncer                   m_mmWithinTolerance = new Debouncer(kMMDebounceTime, DebounceType.kRising);
+  private Timer                       m_mmMoveTimer       = new Timer( );     // Movement timer
+  private boolean                     m_mmMoveIsFinished  = true;             // Movement has completed (within tolerance)
 
   // Network tables publisher objects
   private DoublePublisher             m_clawSpeedPub;
@@ -207,6 +199,11 @@ public class Manipulator extends SubsystemBase
   private DoublePublisher             m_goalDegreesPub;
   private BooleanPublisher            m_coralDetectedPub;
   private BooleanPublisher            m_algaeDetectedPub;
+
+  // Network tables subscriber objects
+  private final NetworkTableInstance  ntInst              = NetworkTableInstance.getDefault( );
+  private final NetworkTable          robotTable          = ntInst.getTable(Constants.kRobotString);
+  private IntegerSubscriber           reefLevel           = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
 
   /****************************************************************************
    * 
@@ -243,30 +240,40 @@ public class Manipulator extends SubsystemBase
     m_coralIsDetected = m_coralDetector.getIsDetected( );
     m_algaeIsDetected = m_algaeDetector.getIsDetected( );
 
-    // Initialize the elevator status signals
+    // Initialize the motor status signals
     Double ccRotations = (m_canCoderValid) ? m_ccPosition.refresh( ).getValue( ).in(Rotations) : 0.0;
     m_currentDegrees = Units.rotationsToDegrees(ccRotations);
     DataLogManager.log(String.format("%s: CANcoder initial degrees %.1f", getSubsystem( ), m_currentDegrees));
+
     if (m_wristMotorValid)
+    {
       m_wristMotor.setPosition(ccRotations);
+
+      // Status signals
+      m_wristMotorPosition.setUpdateFrequency(50);
+      StatusSignal<Current> m_wristSupplyCur = m_wristMotor.getSupplyCurrent( ); // Default 4Hz (250ms)
+      StatusSignal<Current> m_wristStatorCur = m_wristMotor.getStatorCurrent( ); // Default 4Hz (250ms)
+      BaseStatusSignal.setUpdateFrequencyForAll(10, m_wristSupplyCur, m_wristStatorCur);
+
+      DataLogManager.log(
+          String.format("%s: Update (Hz) wristPosition: %.1f wristSupplyCur: %.1f wristStatorCur: %.1f canCoderPosition: %.1f",
+              getSubsystem( ), m_wristMotorPosition.getAppliedUpdateFrequency( ), m_wristSupplyCur.getAppliedUpdateFrequency( ),
+              m_wristStatorCur.getAppliedUpdateFrequency( ), m_ccPosition.getAppliedUpdateFrequency( )));
+    }
+
+    if (m_coralDetectorValid && m_algaeDetectorValid)
+    {
+      BaseStatusSignal.setUpdateFrequencyForAll(100, m_coralIsDetected, m_algaeIsDetected);
+
+      DataLogManager.log(String.format("%s: Update (Hz) coralIsDetected: %s algaeIsDetected: %s", getSubsystem( ),
+          m_coralIsDetected.getAppliedUpdateFrequency( ), m_algaeIsDetected.getAppliedUpdateFrequency( )));
+    }
+
+    DataLogManager.log(String.format("%s: Initial position %.1f degrees", getSubsystem( ), m_currentDegrees));
 
     // Simulation object initialization
     m_wristMotorSim.Orientation = ChassisReference.Clockwise_Positive;
     m_wristCANcoderSim.Orientation = ChassisReference.CounterClockwise_Positive;
-
-    // Status signals
-    m_wristMotorPosition.setUpdateFrequency(50);
-    StatusSignal<Current> m_wristSupplyCur = m_wristMotor.getSupplyCurrent( ); // Default 4Hz (250ms)
-    StatusSignal<Current> m_wristStatorCur = m_wristMotor.getStatorCurrent( ); // Default 4Hz (250ms)
-    BaseStatusSignal.setUpdateFrequencyForAll(10, m_wristSupplyCur, m_wristStatorCur);
-    BaseStatusSignal.setUpdateFrequencyForAll(100, m_coralIsDetected, m_algaeIsDetected);
-
-    DataLogManager
-        .log(String.format("%s: Update (Hz) wristPosition: %.1f wristSupplyCur: %.1f wristStatorCur: %.1f canCoderPosition: %.1f",
-            getSubsystem( ), m_wristMotorPosition.getAppliedUpdateFrequency( ), m_wristSupplyCur.getAppliedUpdateFrequency( ),
-            m_wristStatorCur.getAppliedUpdateFrequency( ), m_ccPosition.getAppliedUpdateFrequency( )));
-    DataLogManager.log(String.format("%s: Update (Hz) coralIsDetected: %s algaeIsDetected: %s", getSubsystem( ),
-        m_coralIsDetected.getAppliedUpdateFrequency( ), m_algaeIsDetected.getAppliedUpdateFrequency( )));
 
     initDashboard( );
     initialize( );
@@ -325,9 +332,6 @@ public class Manipulator extends SubsystemBase
 
     m_clawMotorSim.setRawRotorPosition((5300 / 60 / 50) * m_clawMotor.get( ));
     m_clawMotorSim.setRotorVelocity((5300 / 60) * m_clawMotor.get( ));
-
-    // NOTE: debugging trick for testing CANrange in simulation
-    // m_coralDetectedSim.setDistance(RobotController.getUserButton( ) ? Inches.of(2) : Inches.of(20));
 
     // SimBattery estimates loaded battery voltages
     RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_armSim.getCurrentDrawAmps( )));
@@ -435,17 +439,17 @@ public class Manipulator extends SubsystemBase
   {
     double axisValue = getAxis.getAsDouble( );
     boolean rangeLimited = false;
-    WristMode newMode = WristMode.INIT;
+    JoystickMode newMode = JoystickMode.STOP;
 
     axisValue = MathUtil.applyDeadband(axisValue, Constants.kStickDeadband);
 
     if ((axisValue < 0.0) && (m_currentDegrees > kWristAngleMin))
     {
-      newMode = WristMode.INBOARD;
+      newMode = JoystickMode.INBOARD;
     }
     else if ((axisValue > 0.0) && (m_currentDegrees < kWristAngleMax))
     {
-      newMode = WristMode.OUTBOARD;
+      newMode = JoystickMode.OUTBOARD;
     }
     else
     {
@@ -453,11 +457,11 @@ public class Manipulator extends SubsystemBase
       axisValue = 0.0;
     }
 
-    if (newMode != m_wristMode)
+    if (newMode != m_manualMode)
     {
-      m_wristMode = newMode;
-      DataLogManager.log(String.format("%s: Manual move mode %s %.1f deg %s", getSubsystem( ), m_wristMode, getCurrentAngle( ),
-          ((rangeLimited) ? " - RANGE LIMITED" : "")));
+      m_manualMode = newMode;
+      DataLogManager.log(String.format("%s: Manual move mode %s now %.1f deg %s", getSubsystem( ), m_manualMode,
+          getCurrentAngle( ), ((rangeLimited) ? " - RANGE LIMITED" : "")));
     }
 
     m_goalDegrees = m_currentDegrees;
@@ -481,13 +485,15 @@ public class Manipulator extends SubsystemBase
    * @param holdPosition
    *          hold previous position if true
    */
-  public void moveToPositionInit(ClawMode mode, double newAngle, boolean holdPosition)
+  private void moveToPositionInit(ClawMode mode, double newAngle, boolean holdPosition)
   {
     setClawMode(mode);
     m_mmMoveTimer.restart( );
 
     if (holdPosition)
+    {
       newAngle = getCurrentAngle( );
+    }
 
     // Decide if a new position request
     if (holdPosition || newAngle != m_goalDegrees || !MathUtil.isNear(newAngle, m_currentDegrees, kToleranceDegrees))
@@ -505,8 +511,10 @@ public class Manipulator extends SubsystemBase
             m_currentDegrees, m_goalDegrees, Units.degreesToRotations(m_currentDegrees), goalRotations));
       }
       else
+      {
         DataLogManager.log(String.format("%s: MM Position move goal %.1f degrees is OUT OF RANGE! [%.1f, %.1f deg]",
             getSubsystem( ), m_goalDegrees, kWristAngleMin, kWristAngleMax));
+      }
     }
     else
     {
@@ -519,7 +527,7 @@ public class Manipulator extends SubsystemBase
    * 
    * Continuously update Motion Magic setpoint
    */
-  public void moveToPositionExecute( )
+  private void moveToPositionExecute( )
   {}
 
   /****************************************************************************
@@ -530,7 +538,7 @@ public class Manipulator extends SubsystemBase
    *          hold the current position
    * @return true when movement has completed
    */
-  public boolean moveToPositionIsFinished(boolean holdPosition)
+  private boolean moveToPositionIsFinished(boolean holdPosition)
   {
     boolean timedOut = m_mmMoveTimer.hasElapsed(kMMMoveTimeout);
     double error = m_goalDegrees - m_currentDegrees;
@@ -538,14 +546,18 @@ public class Manipulator extends SubsystemBase
     m_wristMotor.setControl(m_mmRequestVolts.withPosition(Units.degreesToRotations(m_goalDegrees)));
 
     if (holdPosition)
+    {
       return false;
+    }
 
     if (m_mmWithinTolerance.calculate(Math.abs(error) < kToleranceDegrees) || timedOut)
     {
       if (!m_mmMoveIsFinished)
+      {
         DataLogManager
             .log(String.format("%s: MM Position move finished - Current degrees: %.1f (difference %.1f) - Time: %.3f sec %s",
                 getSubsystem( ), m_currentDegrees, error, m_mmMoveTimer.get( ), (timedOut) ? "- Warning: TIMED OUT!" : ""));
+      }
       SmartDashboard.putNumber("MNMoveTime", m_mmMoveTimer.get( ) - kMMDebounceTime);
 
       m_mmMoveIsFinished = true;
@@ -558,7 +570,7 @@ public class Manipulator extends SubsystemBase
    * 
    * Wrap up a Motion Magic movement
    */
-  public void moveToPositionEnd( )
+  private void moveToPositionEnd( )
   {
     m_mmMoveTimer.stop( );
   }

@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
-import frc.robot.RobotContainer;
 import frc.robot.lib.LimelightHelpers;
 
 /****************************************************************************
@@ -92,7 +91,7 @@ public class Vision extends SubsystemBase
     setName("Vision");
     setSubsystem("Vision");
 
-    loadFieldPoses( );       // Identify the field and print useful poses
+    loadFieldAndDisplayPoses( );       // Identify the field and print useful poses
 
     initialize( );
   }
@@ -132,7 +131,20 @@ public class Vision extends SubsystemBase
     LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLLeftName);   // These work on LL3 and lower (not LL4)
     LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLRightName);  // These work on LL3 and lower (not LL4)
 
+    SetCPUThrottleLevel(true);
     SetIMUModeExternalSeed( );
+  }
+
+  /****************************************************************************
+   * 
+   * Run vision subsystem during auto and teleop
+   */
+  public void run( )
+  {
+    DataLogManager.log(String.format("%s: Subsystem running!", getSubsystem( )));
+
+    SetCPUThrottleLevel(false);
+    SetIMUModeInternal( );
   }
 
   /****************************************************************************
@@ -214,7 +226,7 @@ public class Vision extends SubsystemBase
    * 
    * Print out field layout, tag ID poses, and scoring poses
    */
-  private void loadFieldPoses( )
+  private void loadFieldAndDisplayPoses( )
   {
 
     // Identify the field and load it (any reference loads it)
@@ -299,39 +311,29 @@ public class Vision extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Calculate a scoring waypoint for a given tag, offset, and robot setback
-   */
-  private static Pose2d getScoringWaypoint(String name, int tag, Transform2d branchOffset)
-  {
-    Pose2d atPose = VIConsts.kATField.getTagPose(tag).orElse(new Pose3d( )).toPose2d( );
-    Pose2d waypoint = atPose.transformBy(branchOffset);
-    DataLogManager.log(String.format("%6s AT %2d  Pose %s  waypoint %s", name, tag, atPose, waypoint));
-
-    return waypoint;
-  }
-
-  /****************************************************************************
-   * 
    * Calculate a scoring waypoint for a given tag ID and branch (left, center, right)
    */
-  public static Pose2d getScoringGoalPose(int tag, int branch)
+  private static Pose2d getScoringGoalPose(int tag, int branch)
   {
-    Pose2d pose = new Pose2d( );
+    Pose2d atPose = VIConsts.kATField.getTagPose(tag).orElse(new Pose3d( )).toPose2d( );
+    Transform2d branchOffset;
 
     switch (branch)
     {
       case 0 :  // Left
-        pose = getScoringWaypoint("Left", tag, Constants.kBranchScoreLeft);
+        branchOffset = Constants.kBranchScoreLeft;
         break;
       default :
       case 1 :  // Algae
-        pose = getScoringWaypoint("Center", tag, Constants.kBranchScoreCenter);
+        branchOffset = Constants.kBranchScoreCenter;
         break;
       case 2 :  // Right
-        pose = getScoringWaypoint("Right", tag, Constants.kBranchScoreRight);
+        branchOffset = Constants.kBranchScoreRight;
         break;
     }
 
+    Pose2d pose = atPose.transformBy(branchOffset);
+    DataLogManager.log(String.format("AT %2d Pose %-79s waypoint %-79s", tag, atPose, pose));
     return pose;
   }
 
@@ -363,7 +365,6 @@ public class Vision extends SubsystemBase
     }
 
     DataLogManager.log(String.format("Vision: branch: %d goal tag: %d goal pose %s", reefLevel.get( ), reefTag, goalPose));
-
     return goalPose;
   }
 }

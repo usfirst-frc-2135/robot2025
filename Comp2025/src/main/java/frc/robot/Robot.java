@@ -133,7 +133,7 @@ public class Robot extends TimedRobot
       if (!m_faultsCleared)
       {
         m_faultsCleared = true;
-        m_robotContainer.printFaults( );
+        m_robotContainer.printAllFaults( );
       }
     }
     else
@@ -279,7 +279,7 @@ public class Robot extends TimedRobot
    * 
    * Display a mode change banner for the match type and number
    */
-  public static void datalogMatchBanner(String msg)
+  private static void datalogMatchBanner(String msg)
   {
     DataLogManager.log(String.format("========================================================================"));
     DataLogManager.log(String.format("%s: Match %s %s, %s Alliance", msg, DriverStation.getMatchType( ).toString( ),
@@ -287,19 +287,27 @@ public class Robot extends TimedRobot
     DataLogManager.log(String.format("========================================================================"));
   }
 
-  public static void reloadAutomousCommand(String optionName)
-  {
-    DataLogManager.log(String.format("Auto change! - %s", optionName));
-    m_loadAutoCommand = true;
-  }
-
-  public void cancelOldAutonomousCommand( )
+  /****************************************************************************
+   * 
+   * Cancel any active autonomous commands
+   */
+  private void cancelOldAutonomousCommand( )
   {
     if (m_autonomousCommand != null && m_autonomousCommand.isScheduled( ))
     {
       m_autonomousCommand.cancel( );
       m_autonomousCommand = null;
     }
+  }
+
+  /****************************************************************************
+   * 
+   * Signal autonomous command to reload
+   */
+  public static void reloadAutomousCommand(String optionName)
+  {
+    DataLogManager.log(String.format("Auto change! - %s", optionName));
+    m_loadAutoCommand = true;
   }
 
 }

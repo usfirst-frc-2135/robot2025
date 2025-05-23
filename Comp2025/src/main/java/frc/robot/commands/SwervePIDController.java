@@ -41,8 +41,8 @@ public class SwervePIDController extends Command
   private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);    // Was 0.25 inches per second which is extremely small
 
   // Main objects
-  public CommandSwerveDrivetrain                m_swerve;
-  public Pose2d                                 m_goalPose;
+  private CommandSwerveDrivetrain               m_swerve;
+  private Pose2d                                m_goalPose;
 
   // PID controllers
   private static final PIDConstants             kTranslationPID    = new PIDConstants(5.0, 0, 0); // Was 5.0 mps for a 1 m offset (too large)

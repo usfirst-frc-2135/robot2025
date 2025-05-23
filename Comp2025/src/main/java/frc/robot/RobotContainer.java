@@ -5,7 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
@@ -24,17 +23,12 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -222,12 +216,12 @@ public class RobotContainer
    * 
    * Callbacks used by dashboard autonomous choosers to reload when an onChange event occurs
    */
-  public void updateAutoChooserCallback(AutoChooser option)
+  private void updateAutoChooserCallback(AutoChooser option)
   {
     Robot.reloadAutomousCommand(option.toString( ));
   }
 
-  public void updateStartChooserCallback(StartPose option)
+  private void updateStartChooserCallback(StartPose option)
   {
     Robot.reloadAutomousCommand(option.toString( ));
   }
@@ -278,11 +272,10 @@ public class RobotContainer
     }));
 
     // Add buttons for testing HID rumble features to dashboard
-    Time duration = Seconds.of(1.0);
     SmartDashboard.putData("HIDRumbleDriver",
-        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity));
     SmartDashboard.putData("HIDRumbleOperator",
-        m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+        m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity));
 
     // Add subsystem command objects and main scheduler to dashboard
     SmartDashboard.putData("elevator", m_elevator);
@@ -471,6 +464,7 @@ public class RobotContainer
     // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
     // m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
 
+    // New method to enable manual mode when joysticks are deflected -- no button needed
     // m_elevatorTrigger.whileTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
     // m_wristTrigger.whileTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
@@ -628,12 +622,12 @@ public class RobotContainer
    * Use to slow down swerve drivetrain to 30 percent max speed. Drivetrain will execute this command
    * when invoked
    */
-  public Command getSlowSwerveCommand( )
+  private Command getSlowSwerveCommand( )
   {
     return m_drivetrain.applyRequest(( ) -> drive                                                 // 
         .withVelocityX(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftY( )))              // Drive forward with negative Y (forward)
         .withVelocityY(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftX( )))              // Drive left with negative X (left)
-        .withRotationalRate(kMaxAngularRate.times(kSlowSwerve).times(-m_driverPad.getRightX( )))                     // Drive counterclockwise with negative X (left)
+        .withRotationalRate(kMaxAngularRate.times(kSlowSwerve).times(-m_driverPad.getRightX( )))  // Drive counterclockwise with negative X (left)
     )                                                                                             //
         .withName("CommandSlowSwerveDrivetrain");
   }
@@ -678,7 +672,7 @@ public class RobotContainer
    * 
    * Gamepad joystick axis interfaces
    */
-  public double getElevatorAxis( )
+  private double getElevatorAxis( )
   {
     return -m_operatorPad.getLeftY( );
   }
@@ -687,7 +681,7 @@ public class RobotContainer
    * 
    * Gamepad joystick axis interfaces
    */
-  public double getWristAxis( )
+  private double getWristAxis( )
   {
     return m_operatorPad.getRightX( );
   }
@@ -703,9 +697,6 @@ public class RobotContainer
 
     m_elevator.initialize( );
     m_manipulator.initialize( );
-
-    m_vision.SetCPUThrottleLevel(false);
-    m_vision.SetIMUModeExternalSeed( );
   }
 
   /****************************************************************************
@@ -714,8 +705,8 @@ public class RobotContainer
    */
   public void autoInit( )
   {
-    m_vision.SetCPUThrottleLevel(true);
-    m_vision.SetIMUModeInternal( );
+    m_vision.run( );
+
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
     m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
   }
@@ -726,8 +717,8 @@ public class RobotContainer
    */
   public void teleopInit( )
   {
-    m_vision.SetCPUThrottleLevel(true);
-    m_vision.SetIMUModeInternal( );
+    m_vision.run( );
+
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
     m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
   }
@@ -736,7 +727,7 @@ public class RobotContainer
    * 
    * Called when user button is pressed - place subsystem fault dumps here
    */
-  public void printFaults( )
+  public void printAllFaults( )
   {
     m_power.printFaults( );
 

@@ -566,16 +566,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     /****************************************************************************
      *
-     * Construct a swerve idle command
-     */
-    public Command getIdleCommand( )
-    {
-        // Create an Idle command
-        return this.applyRequest(( ) -> new SwerveRequest.Idle( )).withName("SwerveIdle");
-    }
-
-    /****************************************************************************
-     *
      * Construct a path following command used in autonomous
      */
     public Command getPathCommand(PathPlannerPath ppPath)
@@ -609,7 +599,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @return reefAlignCommand
      *         command to align to a reef scoring position
      */
-    public Command getAlignToReefFollowCommand( )
+    private Command getAlignToReefFollowCommand( )
     {
         Pose2d currentPose = driveStatePose.get( );
         Pose2d goalPose = Vision.findGoalPose(currentPose);
@@ -637,7 +627,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @return reefAlignCommand
      *         command to align to a reef scoring position
      */
-    public Command getAlignToReefPPFindCommand( )
+    private Command getAlignToReefPPFindCommand( )
     {
         Pose2d currentPose = driveStatePose.get( );
         Pose2d goalPose = Vision.findGoalPose(currentPose);
