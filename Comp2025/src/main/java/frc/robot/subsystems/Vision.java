@@ -3,11 +3,25 @@
 //
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.util.FlippingUtil;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.IntegerSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ELConsts;
+import frc.robot.Constants.VIConsts;
+import frc.robot.RobotContainer;
 import frc.robot.lib.LimelightHelpers;
 
 /****************************************************************************
@@ -52,14 +66,22 @@ public class Vision extends SubsystemBase
   };
 
   // Constants
-  private static final double kAimingKp  = 0.01;
-  private static final double kDrivingKp = 0.06;
+  private static final double               kAimingKp  = 0.01;
+  private static final double               kDrivingKp = 0.06;
 
   // Objects
 
+  /* What to publish over networktables for telemetry */
+  private static final NetworkTableInstance ntInst     = NetworkTableInstance.getDefault( );
+
+  // Network tables publisher objects
+  private static final NetworkTable         robotTable = ntInst.getTable(Constants.kRobotString);
+  private static final IntegerSubscriber    reefLevel  = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
+  private static final IntegerSubscriber    reefBranch = robotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
+
   // Declare module variables
   @SuppressWarnings("unused")
-  private streamMode          m_stream   = streamMode.STANDARD;
+  private streamMode                        m_stream   = streamMode.STANDARD;
 
   /****************************************************************************
    * 
@@ -70,7 +92,7 @@ public class Vision extends SubsystemBase
     setName("Vision");
     setSubsystem("Vision");
 
-    // Get the Network table reference once for all methods
+    loadFieldPoses( );       // Identify the field and print useful poses
 
     initialize( );
   }
@@ -184,4 +206,164 @@ public class Vision extends SubsystemBase
     // LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
   }
 
+  ////////////////////////////////////////////////////////////////////////////
+  /////////////////////// AUTO-ALIGN HELPERS /////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////
+
+  /****************************************************************************
+   * 
+   * Print out field layout, tag ID poses, and scoring poses
+   */
+  private void loadFieldPoses( )
+  {
+
+    // Identify the field and load it (any reference loads it)
+    DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField, VIConsts.kATField.getFieldWidth( ),
+        VIConsts.kATField.getFieldLength( )));
+
+    DataLogManager.log(String.format("-----"));
+
+    for (int i = 1; i <= 22; i++)
+    {
+      // DataLogManager.log(String.format("Field: ID %2d %s", i, VIConsts.kATField.getTagPose(i)));
+    }
+
+    // DataLogManager.log(String.format("-----"));
+
+    for (int tag = 17; tag <= 22; tag++)
+    {
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
+    }
+
+    // DataLogManager.log(String.format("-----"));
+
+    for (int tag = 6; tag <= 11; tag++)
+    {
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
+    }
+
+    // DataLogManager.log(String.format("-----"));
+  }
+
+  /****************************************************************************
+   *
+   * Initialize the arrays with the reef AprilTags
+   */
+  private static final int[ ] blueReefTags =
+  {
+      17, 18, 19, 20, 21, 22  // Must be in numerical order
+  };
+
+  private static final int[ ] redReefTags  =
+  {
+      8, 7, 6, 11, 10, 9      // Rotationally ordered the same as blue tags above
+  };
+
+  /****************************************************************************
+   *
+   * Find the closest AprilTag ID to the robot and return it (always returns blue side tags only)
+   * 
+   * @return closestBlueTag
+   *         AprilTag closest to current pose
+   */
+  private static int findClosestReefTag(Pose2d currentPose)
+  {
+    if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
+    {
+      currentPose = FlippingUtil.flipFieldPose(currentPose);
+    }
+
+    int closestBlueTag = 0;                                                 // Variable for saving the tag with the shortest distance (0 means none found)
+    double shortestDistance = Units.feetToMeters(57.0);                // field length in meters - Variable for keeping track of lowest distance (57.0 means none found)
+
+    // Just one calculation for either tag set
+    for (int i = 0; i < 6; i++)                                             // Iterate through the array of selected reef tags
+    {
+      Pose2d atPose = VIConsts.kATField.getTagPose(blueReefTags[i]).get( ).toPose2d( );         // Get the AT tag in Pose2d form
+      double distance = currentPose.getTranslation( ).getDistance((atPose.getTranslation( )));  // Calculate the distance from the AT tag to the robotPose
+      DataLogManager.log(String.format("Vision: Possible tag: %d pose: %s distance: %f", blueReefTags[i], atPose, distance));
+      if (distance < shortestDistance)                                                          // If the distance is shorter than what was saved before
+      {
+        closestBlueTag = blueReefTags[i];                                                       // Saves cloest AT id (always in blue space)
+        shortestDistance = distance;                                                            // Update new shortest distance
+      }
+    }
+
+    DataLogManager.log(String.format("Vision: closest tag: %d current pose: %s - FOUND!", closestBlueTag, currentPose));
+    return closestBlueTag;
+  }
+
+  /****************************************************************************
+   * 
+   * Calculate a scoring waypoint for a given tag, offset, and robot setback
+   */
+  private static Pose2d getScoringWaypoint(String name, int tag, Transform2d branchOffset)
+  {
+    Pose2d atPose = VIConsts.kATField.getTagPose(tag).orElse(new Pose3d( )).toPose2d( );
+    Pose2d waypoint = atPose.transformBy(branchOffset);
+    DataLogManager.log(String.format("%6s AT %2d  Pose %s  waypoint %s", name, tag, atPose, waypoint));
+
+    return waypoint;
+  }
+
+  /****************************************************************************
+   * 
+   * Calculate a scoring waypoint for a given tag ID and branch (left, center, right)
+   */
+  public static Pose2d getScoringGoalPose(int tag, int branch)
+  {
+    Pose2d pose = new Pose2d( );
+
+    switch (branch)
+    {
+      case 0 :  // Left
+        pose = getScoringWaypoint("Left", tag, Constants.kBranchScoreLeft);
+        break;
+      default :
+      case 1 :  // Algae
+        pose = getScoringWaypoint("Center", tag, Constants.kBranchScoreCenter);
+        break;
+      case 2 :  // Right
+        pose = getScoringWaypoint("Right", tag, Constants.kBranchScoreRight);
+        break;
+    }
+
+    return pose;
+  }
+
+  /****************************************************************************
+   * 
+   * * Find Goal Pose for a given blue reef AprilTag ID
+   * 
+   * 1) Get the closest reef AprilTag
+   * 2) Retrive the a branch/face offset selection (left, middle (algae), right)
+   * 3) Use the closest blue AprilTag ID and branch offset to find goal pose
+   * 4) Return the goal pose (blue side only)
+   * 
+   * @return goalPose
+   *         goal pose for the reef tag passed in
+   */
+  public static Pose2d findGoalPose(Pose2d currentPose)
+  {
+    int reefTag = findClosestReefTag(currentPose);
+
+    int reefOffset = (int) reefBranch.get( );
+
+    int relativeReefTag = reefTag - blueReefTags[0];
+    Pose2d goalPose = getScoringGoalPose(reefTag, reefOffset);
+
+    if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
+    {
+      goalPose = FlippingUtil.flipFieldPose(goalPose);
+      reefTag = redReefTags[relativeReefTag];
+    }
+
+    DataLogManager.log(String.format("Vision: branch: %d goal tag: %d goal pose %s", reefLevel.get( ), reefTag, goalPose));
+
+    return goalPose;
+  }
 }
