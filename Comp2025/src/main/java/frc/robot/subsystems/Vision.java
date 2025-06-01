@@ -228,17 +228,16 @@ public class Vision extends SubsystemBase
    */
   private void loadFieldAndDisplayPoses( )
   {
-
     // Identify the field and load it (any reference loads it)
     DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField, VIConsts.kATField.getFieldWidth( ),
         VIConsts.kATField.getFieldLength( )));
 
-    DataLogManager.log(String.format("-----"));
+    // DataLogManager.log(String.format("-----"));
 
-    for (int i = 1; i <= 22; i++)
-    {
-      // DataLogManager.log(String.format("Field: ID %2d %s", i, VIConsts.kATField.getTagPose(i)));
-    }
+    // for (int i = 1; i <= 22; i++)
+    // {
+    //   DataLogManager.log(String.format("Field: ID %2d %s", i, VIConsts.kATField.getTagPose(i)));
+    // }
 
     // DataLogManager.log(String.format("-----"));
 
@@ -251,12 +250,12 @@ public class Vision extends SubsystemBase
 
     // DataLogManager.log(String.format("-----"));
 
-    for (int tag = 6; tag <= 11; tag++)
-    {
-      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
-    }
+    // for (int tag = 6; tag <= 11; tag++)
+    // {
+    //   getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
+    //   getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
+    //   getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
+    // }
 
     // DataLogManager.log(String.format("-----"));
   }
