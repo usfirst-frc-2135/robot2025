@@ -27,6 +27,7 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Vision;
 
 /**
  * Swerve drive under PID control to a goal pose
@@ -40,8 +41,8 @@ public class SwervePIDController extends Command
   private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);    // Was 0.25 inches per second which is extremely small
 
   // Main objects
-  public CommandSwerveDrivetrain                m_swerve;
-  public Pose2d                                 m_goalPose;
+  private CommandSwerveDrivetrain               m_swerve;
+  private Pose2d                                m_goalPose;
 
   // PID controllers
   private static final PIDConstants             kTranslationPID    = new PIDConstants(5.0, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
@@ -97,7 +98,7 @@ public class SwervePIDController extends Command
   public void initialize( )
   {
     Pose2d currentPose = driveStatePose.get( );
-    m_goalPose = m_swerve.findGoalPose(currentPose);
+    m_goalPose = Vision.findGoalPose(currentPose);
     DataLogManager.log(String.format("%s: initial current pose: %s goalPose %s", getName( ), currentPose, m_goalPose));
   }
 

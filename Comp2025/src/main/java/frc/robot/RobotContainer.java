@@ -23,16 +23,12 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -94,19 +90,21 @@ public class RobotContainer
 
   // Setting up bindings for necessary control of the swerve drive platform
   private final SwerveRequest.FieldCentric            drive           = new SwerveRequest.FieldCentric( ) //
-      .withDeadband(kMaxSpeed.times(0.1)).withRotationalDeadband(kMaxAngularRate.times(0.1))  //
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
+      .withDeadband(kMaxSpeed.times(0.1))                 //
+      .withRotationalDeadband(kMaxAngularRate.times(0.1)) //
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);       // We want field-centric driving in open loop
   private final SwerveRequest.SwerveDriveBrake        brake           = new SwerveRequest.SwerveDriveBrake( );
   private final SwerveRequest.FieldCentricFacingAngle facing          = new SwerveRequest.FieldCentricFacingAngle( )  //
-      .withDeadband(kMaxSpeed.times(0.1)).withRotationalDeadband(kMaxAngularRate.times(0.1))  //
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);                  // We want field-centric driving in open loop
+      .withDeadband(kMaxSpeed.times(0.1))                 //
+      .withRotationalDeadband(kMaxAngularRate.times(0.1)) //
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);       // We want field-centric driving in open loop
   @SuppressWarnings("unused")
   private final SwerveRequest.PointWheelsAt           point           = new SwerveRequest.PointWheelsAt( );
   // private final SwerveRequest.RobotCentric            aim             = new SwerveRequest.RobotCentric( );
   private final SwerveRequest.Idle                    idle            = new SwerveRequest.Idle( );
   @SuppressWarnings("unused")
-  private final SwerveRequest.RobotCentric            forwardStraight =
-      new SwerveRequest.RobotCentric( ).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  private final SwerveRequest.RobotCentric            forwardStraight = new SwerveRequest.RobotCentric( )     //
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   private final Telemetry                             logger          = new Telemetry(kMaxSpeed.in(MetersPerSecond));
 
@@ -207,7 +205,6 @@ public class RobotContainer
     facing.HeadingController = new PhoenixPIDController(kHeadingKp, kHeadingKi, kHeadingKd);    // Swerve steer PID for facing swerve request
     facing.HeadingController.enableContinuousInput(-180.0, 180.0);
 
-    loadFieldPoses( );                // Identify the field
     addDashboardWidgets( );           // Add some dashboard widgets for commands
     configureButtonBindings( );       // Configure game controller buttons
     initDefaultCommands( );           // Initialize subsystem default commands
@@ -217,102 +214,14 @@ public class RobotContainer
 
   /****************************************************************************
    * 
-   * Print out field layout, tag ID poses, and scoring poses
-   */
-  private void loadFieldPoses( )
-  {
-
-    // Identify the field and load it (any reference loads it)
-    DataLogManager.log(String.format("Field: %s width %.2f length %.2f", VIConsts.kGameField, VIConsts.kATField.getFieldWidth( ),
-        VIConsts.kATField.getFieldLength( )));
-
-    DataLogManager.log(String.format("-----"));
-
-    for (int i = 1; i <= 22; i++)
-    {
-      // DataLogManager.log(String.format("Field: ID %2d %s", i, VIConsts.kATField.getTagPose(i)));
-    }
-
-    // DataLogManager.log(String.format("-----"));
-
-    for (int tag = 17; tag <= 22; tag++)
-    {
-      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
-    }
-
-    // DataLogManager.log(String.format("-----"));
-
-    for (int tag = 6; tag <= 11; tag++)
-    {
-      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
-    }
-
-    // DataLogManager.log(String.format("-----"));
-  }
-
-  /****************************************************************************
-   * 
-   * Calculate a scoring waypoint for a given tag, offset, and robot setback
-   */
-  private static Pose2d getScoringWaypoint(String name, int tag, double offset, double setback)
-  {
-    Pose2d atPose = VIConsts.kATField.getTagPose(tag).orElse(new Pose3d( )).toPose2d( );
-    double xOffset = offset * Math.sin(atPose.getRotation( ).getRadians( ));
-    double yOffset = offset * Math.cos(atPose.getRotation( ).getRadians( ));
-    Pose2d vPose = new Pose2d(new Translation2d(atPose.getX( ) + xOffset, atPose.getY( ) - yOffset), atPose.getRotation( ));
-
-    double xSetback = setback * Math.cos(atPose.getRotation( ).getRadians( ));
-    double ySetback = setback * Math.sin(atPose.getRotation( ).getRadians( ));
-    Pose2d waypoint = new Pose2d(new Translation2d(vPose.getX( ) + xSetback, vPose.getY( ) + ySetback),
-        vPose.getRotation( ).rotateBy(Rotation2d.k180deg));
-    // DataLogManager.log(String.format("%s AT %2d  Pose %s  waypoint %s", name, tag, atPose, waypoint));
-
-    return waypoint;
-  }
-
-  private static final double kBranchSpacing = Units.inchesToMeters(13.0);  // Distance between branches
-  private static final double kRobotLength   = Units.inchesToMeters(34.5);  // Our robot length
-  private static final double kRobotSetback  = kRobotLength / 2;                   // Distance robot is set back from branch waypoint
-
-  /****************************************************************************
-   * 
-   * Calculate a scoring waypoint for a given tag ID and branch (left, center, right)
-   */
-  public static Pose2d getScoringGoalPose(int tag, int branch)
-  {
-    Pose2d pose = new Pose2d( );
-
-    switch (branch)
-    {
-      case 0 :  // Left
-        pose = getScoringWaypoint("Left  ", tag, kBranchSpacing / 2, kRobotSetback);
-        break;
-      default :
-      case 1 :  // Algae
-        pose = getScoringWaypoint("Center", tag, 0, kRobotSetback);
-        break;
-      case 2 :  // Right
-        pose = getScoringWaypoint("Right ", tag, -kBranchSpacing / 2, kRobotSetback);
-        break;
-    }
-
-    return pose;
-  }
-
-  /****************************************************************************
-   * 
    * Callbacks used by dashboard autonomous choosers to reload when an onChange event occurs
    */
-  public void updateAutoChooserCallback(AutoChooser option)
+  private void updateAutoChooserCallback(AutoChooser option)
   {
     Robot.reloadAutomousCommand(option.toString( ));
   }
 
-  public void updateStartChooserCallback(StartPose option)
+  private void updateStartChooserCallback(StartPose option)
   {
     Robot.reloadAutomousCommand(option.toString( ));
   }
@@ -363,11 +272,10 @@ public class RobotContainer
     }));
 
     // Add buttons for testing HID rumble features to dashboard
-    Time duration = Seconds.of(1.0);
     SmartDashboard.putData("HIDRumbleDriver",
-        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity));
     SmartDashboard.putData("HIDRumbleOperator",
-        m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, duration, Constants.kRumbleIntensity));
+        m_hid.getHIDRumbleOperatorCommand(Constants.kRumbleOn, Seconds.of(1.0), Constants.kRumbleIntensity));
 
     // Add subsystem command objects and main scheduler to dashboard
     SmartDashboard.putData("elevator", m_elevator);
@@ -556,6 +464,7 @@ public class RobotContainer
     // m_elevator.setDefaultCommand(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
     // m_manipulator.setDefaultCommand(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
 
+    // New method to enable manual mode when joysticks are deflected -- no button needed
     // m_elevatorTrigger.whileTrue(m_elevator.getJoystickCommand(( ) -> getElevatorAxis( )));
     // m_wristTrigger.whileTrue(m_manipulator.getJoystickCommand(( ) -> getWristAxis( )));
   }
@@ -713,12 +622,12 @@ public class RobotContainer
    * Use to slow down swerve drivetrain to 30 percent max speed. Drivetrain will execute this command
    * when invoked
    */
-  public Command getSlowSwerveCommand( )
+  private Command getSlowSwerveCommand( )
   {
     return m_drivetrain.applyRequest(( ) -> drive                                                 // 
         .withVelocityX(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftY( )))              // Drive forward with negative Y (forward)
         .withVelocityY(kMaxSpeed.times(kSlowSwerve).times(-m_driverPad.getLeftX( )))              // Drive left with negative X (left)
-        .withRotationalRate(kMaxAngularRate.times(kSlowSwerve).times(-m_driverPad.getRightX( )))                     // Drive counterclockwise with negative X (left)
+        .withRotationalRate(kMaxAngularRate.times(kSlowSwerve).times(-m_driverPad.getRightX( )))  // Drive counterclockwise with negative X (left)
     )                                                                                             //
         .withName("CommandSlowSwerveDrivetrain");
   }
@@ -763,7 +672,7 @@ public class RobotContainer
    * 
    * Gamepad joystick axis interfaces
    */
-  public double getElevatorAxis( )
+  private double getElevatorAxis( )
   {
     return -m_operatorPad.getLeftY( );
   }
@@ -772,7 +681,7 @@ public class RobotContainer
    * 
    * Gamepad joystick axis interfaces
    */
-  public double getWristAxis( )
+  private double getWristAxis( )
   {
     return m_operatorPad.getRightX( );
   }
@@ -788,9 +697,6 @@ public class RobotContainer
 
     m_elevator.initialize( );
     m_manipulator.initialize( );
-
-    m_vision.SetCPUThrottleLevel(false);
-    m_vision.SetIMUModeExternalSeed( );
   }
 
   /****************************************************************************
@@ -799,8 +705,8 @@ public class RobotContainer
    */
   public void autoInit( )
   {
-    m_vision.SetCPUThrottleLevel(true);
-    m_vision.SetIMUModeInternal( );
+    m_vision.run( );
+
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
     m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
   }
@@ -811,8 +717,8 @@ public class RobotContainer
    */
   public void teleopInit( )
   {
-    m_vision.SetCPUThrottleLevel(true);
-    m_vision.SetIMUModeInternal( );
+    m_vision.run( );
+
     m_elevator.setDefaultCommand(m_elevator.getHoldPositionCommand(m_elevator::getCurrentHeight));
     m_manipulator.setDefaultCommand(m_manipulator.getHoldPositionCommand(ClawMode.CORALMAINTAIN, m_manipulator::getCurrentAngle));
   }
@@ -821,7 +727,7 @@ public class RobotContainer
    * 
    * Called when user button is pressed - place subsystem fault dumps here
    */
-  public void printFaults( )
+  public void printAllFaults( )
   {
     m_power.printFaults( );
 
