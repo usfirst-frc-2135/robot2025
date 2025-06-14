@@ -84,14 +84,14 @@ public class Manipulator extends SubsystemBase
   // Wrist rotary angles - Motion Magic move parameters
   //    Measured hardstops and pre-defined positions:
   //               hstop    hstop
-  //      Comp     -129.9   51.0
-  //      Practice -129.9   51.0
-  private static final double       kWristAngleMin            = -129.0;
+  //      Comp     -119.0   52.0
+  //      Practice -119.0   52.0
+  private static final double       kWristAngleMin            = -130.4;
   private static final double       kWristAngleMax            = 51.0;
 
   private static final double       kWristAngleSafeState      = -103.0;
 
-  private static final double       kWristAngleCoralStation   = -129.0;
+  private static final double       kWristAngleCoralStation   = -130.4;
   private static final double       kWristAngleCoralL1        = 29.0;
   private static final double       kWristAngleCoralL2        = -103.0;
   private static final double       kWristAngleCoralL3        = -103.0;
