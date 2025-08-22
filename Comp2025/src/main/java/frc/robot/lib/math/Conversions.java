@@ -184,31 +184,31 @@ public class Conversions
   //
 
   /**
-   * Calculate distance (inches) through a winch gearbox given input motor rotations
+   * Calculate distance (rollout) through a winch gearbox given input motor rotations
    * 
    * @param rotations
    *          Input motor rotations
    * @param rolloutRatio
-   *          Winch rollout ratio
-   * @return Linear winch distance
+   *          Winch rollout ratio in the desired distance units
+   * @return Linear winch distance (rollout)
    */
-  public static double rotationsToWinchInches(double rotations, double rolloutRatio)
+  public static double rotationsToWinchRollout(double rotations, double rolloutRatio)
   {
     return rotations * rolloutRatio;
   }
 
   /**
-   * Calculate input motor rotations through a winch gearbox given a rope distance (inches)
+   * Calculate input motor rotations through a winch gearbox given a rope distance (rollout)
    * 
-   * @param inches
-   *          Linear winch distance
+   * @param distance
+   *          Linear winch distance (rollout)
    * @param rolloutRatio
-   *          Winch rollout ratio
+   *          Winch rollout ratio in the desired distance units
    * @return Input motor rotations
    */
-  public static double inchesToWinchRotations(double inches, double rolloutRatio)
+  public static double rolloutToWinchRotations(double distance, double rolloutRatio)
   {
-    return inches / rolloutRatio;
+    return distance / rolloutRatio;
   }
 
 }

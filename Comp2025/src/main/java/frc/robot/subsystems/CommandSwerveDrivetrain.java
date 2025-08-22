@@ -25,7 +25,6 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
-import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -34,10 +33,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
-import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructSubscriber;
@@ -54,11 +51,7 @@ import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
 import frc.robot.Constants;
-import frc.robot.Constants.ELConsts;
-import frc.robot.Constants.VIConsts;
-import frc.robot.RobotContainer;
 import frc.robot.commands.LogCommand;
 import frc.robot.commands.SwervePIDController;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
@@ -89,11 +82,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final DoubleArrayPublisher  setPosePub          = swerveTable.getDoubleArrayTopic("setPose").publish();
     private final DoubleArraySubscriber setPoseSub          = swerveTable.getDoubleArrayTopic("setPose").subscribe(new double[3]);
 
-
-    // Network tables publisher objects
-    private final NetworkTable          robotTable          = ntInst.getTable(Constants.kRobotString);
-    private final IntegerSubscriber     reefLevel           = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
-    private final IntegerSubscriber     reefBranch          = robotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
 
     private double [] moduleDistances = {0, 0, 0, 0};
 
@@ -425,81 +413,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
         SmartDashboard.putData("SetPose", getResetPoseCommand( ));
 
-        SmartDashboard.putData("AlignToReefPPFind", new DeferredCommand(( ) -> getAlignToReefPPFindCommand( ), Set.of(this)));
-        SmartDashboard.putData("AlignToReefFollow", new DeferredCommand(( ) -> getAlignToReefFollowCommand( ), Set.of(this)));
         SmartDashboard.putData("AlignToReefPID", getAlignToReefPIDCommand( ));
-
-        // SmartDashboard.putData("multiPIDTest", multiPIDTest( ));
+        SmartDashboard.putData("AlignToReefFollow", new DeferredCommand(( ) -> getAlignToReefFollowCommand( ), Set.of(this)));
+        SmartDashboard.putData("AlignToReefPPFind", new DeferredCommand(( ) -> getAlignToReefPPFindCommand( ), Set.of(this)));
     }
 
-    /**
-     * Command for testing alignment commands
-     */
-    // public Command multiPIDTest( )
-    // {
-    //     return new SequentialCommandGroup(                     //
-    //             SwervePIDController.generateCommand(this, Seconds.of(2.5)), new InstantCommand(                     //  1
-    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(9.0, 1.0), new Rotation2d(Rotations.of(0.0)))),
-    //                     this),                          //
-    //             getAlignToReefPIDCommand( ),              //
-    //             new WaitCommand(0.25),                   //
-    //             new InstantCommand(                     //  2
-    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(9.0, 4.0), new Rotation2d(Rotations.of(0.5)))),
-    //                     this),                          //
-    //             getAlignToReefPIDCommand( ),              //
-    //             new WaitCommand(0.25),                   //
-    //             new InstantCommand(                     //  3
-    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(9.0, 7.5), new Rotation2d(Rotations.of(0.0)))),
-    //                     this),                          //
-    //             getAlignToReefPIDCommand( ),              //
-    //             new WaitCommand(0.25),                   //
-    //             new InstantCommand(                     //  4
-    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(16.0, 1.0), new Rotation2d(Rotations.of(0.5)))),
-    //                     this),                          //
-    //             getAlignToReefPIDCommand( ),              //
-    //             new WaitCommand(0.25),                   //
-    //             new InstantCommand(                     //  5
-    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(16.0, 4.0), new Rotation2d(Rotations.of(0.0)))),
-    //                     this),                          //
-    //             getAlignToReefPIDCommand( ),              //
-    //             new WaitCommand(0.25),                   //
-    //             new InstantCommand(                     //  6
-    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(16.0, 7.5), new Rotation2d(Rotations.of(0.5)))),
-    //                     this),                          //
-    //             getAlignToReefPIDCommand( ),              //
-    //             new WaitCommand(0.25),                   //
-    //             new InstantCommand(                     //  7
-    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(8.0, 2.0), new Rotation2d(Rotations.of(0.0)))),
-    //                     this),                          //
-    //             getAlignToReefPIDCommand( ),              //
-    //             new WaitCommand(0.25),                   //
-    //             new InstantCommand(                     //  8
-    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(8.0, 7.5), new Rotation2d(Rotations.of(0.5)))),
-    //                     this),                          //
-    //             getAlignToReefPIDCommand( ),              //
-    //             new WaitCommand(0.25),                   //
-    //             new InstantCommand(                     //  9
-    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(15.0, 2.0), new Rotation2d(Rotations.of(0.0)))),
-    //                     this),                          //
-    //             getAlignToReefPIDCommand( ),              //
-    //             new WaitCommand(0.25),                   //
-    //             new InstantCommand(                     //  10
-    //                     ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(15.0, 7.5), new Rotation2d(Rotations.of(0.5)))),
-    //                     this),                          //
-    //             getAlignToReefPIDCommand( )              //
-    //     );                                               //
-    // }
-
-    /**
-     * Construct a path following command
-     */
-    public Command getPathCommand(PathPlannerPath ppPath)
-    {
-        // Create a path following command using AutoBuilder. This will also trigger event markers.
-        return AutoBuilder.followPath(ppPath).withName("swerveFollowPath");
-    }
-
-    /**
+    /****************************************************************************
+     * 
      * Limelight MegaTag example code for vision processing
      *
      * This example of adding Limelight is very simple and may not be sufficient for on-field use.
@@ -584,7 +504,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
 
-    /**
+    /****************************************************************************
+     * 
      * Resets swerve pose and limelight orientation
      * 
      * @param pose
@@ -597,7 +518,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         LimelightHelpers.SetRobotOrientation(Constants.kLLRightName, pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
     }
 
-    /**
+    ////////////////////////////////////////////////////////////////////////////
+    /////////////////////// COMMAND FACTORIES //////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /****************************************************************************
+     *
      * Reset robot pose from dashboard widget
      */
     private Command getResetPoseCommand( )
@@ -608,8 +534,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 .withName("ResetOdometry").ignoringDisable(true);
     }
 
-    /**
-     * Reset robot pose from dashboard widget
+    /****************************************************************************
+     *
+     * Log current module positions and calculate an average distance if requested
      */
     public Command getModulePositionsCommand(boolean end)
     {
@@ -637,116 +564,30 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }).ignoringDisable(true);
     }
 
-    public Command getIdleCommand( )
+    /****************************************************************************
+     *
+     * Construct a path following command used in autonomous
+     */
+    public Command getPathCommand(PathPlannerPath ppPath)
     {
-        // Create an Idle command
-        return this.applyRequest(( ) -> new SwerveRequest.Idle( )).withName("swerveIdle");
+        // Create a path following command using AutoBuilder. This will also trigger event markers.
+        return AutoBuilder.followPath(ppPath).withName("SwerveFollowPath");
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    /////////////////////// AUTO-ALIGN HELPERS /////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Initialize the arrays with the reef AprilTags
-     */
-    private static final int[ ] blueReefTags =
-    {
-            17, 18, 19, 20, 21, 22  // Must be in numerical order
-    };
-
-    private static final int[ ] redReefTags  =
-    {
-            8, 7, 6, 11, 10, 9      // Rotationally ordered the same as blue tags above
-    };
-
-    /**
-     * Find the closest AprilTag ID to the robot and return it (always returns blue side tags only)
-     * 
-     * @return closestBlueTag
-     *         AprilTag closest to current pose
-     */
-    private int findClosestReefTag(Pose2d currentPose)
-    {
-        if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
-        {
-            currentPose = FlippingUtil.flipFieldPose(currentPose);
-        }
-
-        int closestBlueTag = 0;                                                 // Variable for saving the tag with the shortest distance (0 means none found)
-        double shortestDistance = Units.feetToMeters(57.0);                // field length in meters - Variable for keeping track of lowest distance (57.0 means none found)
-
-        // Just one calculation for either tag set
-        for (int i = 0; i < 6; i++)                                             // Iterate through the array of selected reef tags
-        {
-            Pose2d atPose = VIConsts.kATField.getTagPose(blueReefTags[i]).get( ).toPose2d( );              // Get the AT tag in Pose2d form
-            double distance = currentPose.getTranslation( ).getDistance((atPose.getTranslation( )));    // Calculate the distance from the AT tag to the robotPose
-            DataLogManager.log(String.format("Possible tag: %d pose: %s distance: %f", blueReefTags[i], atPose, distance));
-            if (distance < shortestDistance)                                                            // If the distance is shorter than what was saved before
-            {
-                closestBlueTag = blueReefTags[i];                                                       // Saves cloest AT id (always in blue space)
-                shortestDistance = distance;                                                            // Update new shortest distance
-            }
-        }
-
-        DataLogManager.log(String.format("closest tag: %d current pose: %s - FOUND!", closestBlueTag, currentPose));
-        return closestBlueTag;
-    }
-
-    /**
-     * Find Goal Pose for a given blue reef AprilTag ID
-     * 
-     * 1) Get the closest reef AprilTag
-     * 2) Retrive the a branch/face offset selection (left, middle (algae), right)
-     * 3) Use the closest blue AprilTag ID and branch offset to find goal pose
-     * 4) Return the goal pose (blue side only)
-     * 
-     * @return goalPose
-     *         goal pose for the reef tag passed in
-     */
-    public Pose2d findGoalPose(Pose2d currentPose)
-    {
-        int reefTag = findClosestReefTag(currentPose);
-
-        int reefOffset = (int) reefBranch.get( );
-
-        int relativeReefTag = reefTag - blueReefTags[0];
-        Pose2d goalPose = RobotContainer.getScoringGoalPose(reefTag, reefOffset);
-
-        if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
-        {
-            goalPose = FlippingUtil.flipFieldPose(goalPose);
-            reefTag = redReefTags[relativeReefTag];
-        }
-
-        DataLogManager.log(String.format("goal tag: %d goal pose %s", reefTag, goalPose));
-
-        return goalPose;
-    }
-
-    /**
-     * Create reef align command for pathfinding
-     * 
-     * 1) Get the current pose
-     * 2) Find the goal pose (branch offset from nearest AprilTag)
-     * 2) Find a new path to the goal pose, and then follow it
+    /****************************************************************************
+     *
+     * Create reef align command for PID driving
      * 
      * @return reefAlignCommand
      *         command to align to a reef scoring position
      */
-    public Command getAlignToReefPPFindCommand( )
+    public Command getAlignToReefPIDCommand( )
     {
-        Pose2d currentPose = driveStatePose.get( );
-        Pose2d goalPose = findGoalPose(currentPose);
-
-        return new SequentialCommandGroup(                                                                                  //
-                new LogCommand("AlignReefPPFind", String.format("Reef Level %d Branch %d current %s goal %s", //
-                        reefLevel.get( ), reefBranch.get( ), currentPose, goalPose)),                                       //
-                AutoBuilder.pathfindToPose(goalPose, kPathFindConstraints, 0.0)                             //
-        ).withName("AlignToReefPPFind");
+        return SwervePIDController.generateCommand(this, Seconds.of(2.5)).withName("AlignToReefPID");
     }
 
-    /**
+    /****************************************************************************
+     *
      * Create reef align command for path following
      * 
      * 1) Get the current pose
@@ -758,10 +599,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @return reefAlignCommand
      *         command to align to a reef scoring position
      */
-    public Command getAlignToReefFollowCommand( )
+    private Command getAlignToReefFollowCommand( )
     {
         Pose2d currentPose = driveStatePose.get( );
-        Pose2d goalPose = findGoalPose(currentPose);
+        Pose2d goalPose = Vision.findGoalPose(currentPose);
 
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(currentPose, goalPose);
 
@@ -770,24 +611,30 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         path.preventFlipping = true;
 
         return new SequentialCommandGroup(                                                                                     //
-                new LogCommand("AlignReefFollow", String.format("Reef Level %d Branch %d current %s goal %s",    //
-                        reefLevel.get( ), reefBranch.get( ), currentPose, goalPose)),                                          //
+                new LogCommand("AlignReefFollow", String.format("current %s goal %s", currentPose, goalPose)),   //
                 AutoBuilder.followPath(path)                                                                                   //
         ).withName("AlignToReefFollow");
     }
 
-    /**
-     * Create reef align command for PID driving
+    /****************************************************************************
+     *
+     * Create reef align command for pathfinding
+     * 
+     * 1) Get the current pose
+     * 2) Find the goal pose (branch offset from nearest AprilTag)
+     * 2) Find a new path to the goal pose, and then follow it
      * 
      * @return reefAlignCommand
      *         command to align to a reef scoring position
      */
-    public Command getAlignToReefPIDCommand( )
+    private Command getAlignToReefPPFindCommand( )
     {
-        return new SequentialCommandGroup(                                                                                                   //
-                new LogCommand("AlignReefPID", String.format("Reef Level %d Branch %d", reefLevel.get( ), reefBranch.get( ))), //
-                SwervePIDController.generateCommand(this, Seconds.of(2.5))                                                         //
-        ).withName("AlignToReefPID");
-    }
+        Pose2d currentPose = driveStatePose.get( );
+        Pose2d goalPose = Vision.findGoalPose(currentPose);
 
+        return new SequentialCommandGroup(                                                                                      //
+                new LogCommand("AlignReefPPFind", String.format("current %s goal %s", currentPose, goalPose)),    //
+                AutoBuilder.pathfindToPose(goalPose, kPathFindConstraints, 0.0)                                 //
+        ).withName("AlignToReefPPFind");
+    }
 }
