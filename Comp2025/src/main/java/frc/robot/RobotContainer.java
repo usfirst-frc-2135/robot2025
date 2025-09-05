@@ -317,7 +317,7 @@ public class RobotContainer
     // Driver - Bumpers, start, back
     //
     m_driverPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_hid));
-    m_driverPad.leftBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, m_manipulator::getCurrentAngle));
+    // m_driverPad.leftBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, m_manipulator::getCurrentAngle));
     m_driverPad.rightBumper( ).whileTrue(new AcquireCoral(m_elevator, m_manipulator, m_hid));
     m_driverPad.rightBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.STOP, m_manipulator::getCurrentAngle));
 
@@ -387,8 +387,8 @@ public class RobotContainer
     // Operator - Bumpers, start, back
     //
     m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_hid));
-    m_operatorPad.leftBumper( )
-        .onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, m_manipulator::getCurrentAngle));
+    // m_operatorPad.leftBumper( )
+        // .onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, m_manipulator::getCurrentAngle));
     m_operatorPad.rightBumper( ).whileTrue(new AcquireCoral(m_elevator, m_manipulator, m_hid));
     m_operatorPad.rightBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.STOP, m_manipulator::getCurrentAngle));
 
