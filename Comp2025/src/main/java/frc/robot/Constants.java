@@ -3,6 +3,9 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place to hold robot-wide numerical or boolean
@@ -16,28 +19,39 @@ import edu.wpi.first.apriltag.AprilTagFields;
 public class Constants
 {
   // bot serial nums
-  public static final String  kCompSN               = "03260A3A";
-  public static final String  kPracticeSN           = "03238074";
+  public static final String      kCompSN               = "03260A3A";
+  public static final String      kPracticeSN           = "03238074";
 
   // Game controller definitions
-  public static final int     kDriverPadPort        = 0;
-  public static final int     kOperatorPadPort      = 1;
+  public static final int         kDriverPadPort        = 0;
+  public static final int         kOperatorPadPort      = 1;
 
-  public static final double  kStickDeadband        = 0.15;
-  public static final double  kTriggerThreshold     = 0.25;
+  public static final double      kStickDeadband        = 0.15;
+  public static final double      kTriggerThreshold     = 0.25;
 
-  public static final boolean kRumbleOn             = true;
-  public static final boolean kRumbleOff            = false;
-  public static final double  kRumbleIntensity      = 0.5;  // 0.0 is low, 1.0 is high
+  public static final boolean     kRumbleOn             = true;
+  public static final boolean     kRumbleOff            = false;
+  public static final double      kRumbleIntensity      = 0.5;  // 0.0 is low, 1.0 is high
 
   // Phoenix firmware versions expected
-  public static final int     kPhoenix5MajorVersion = ((22 * 256) + 0);
-  public static final int     kPhoenix6MajorVersion = 25;
+  public static final int         kPhoenix6MajorVersion = 25;
 
-  public static final String  kRobotString          = "RobotContainer";
+  public static final String      kRobotString          = "RobotContainer";
 
-  public static final String  kLLLeftName           = "limelight-left";
-  public static final String  kLLRightName          = "limelight-right";
+  public static final String      kLLLeftName           = "limelight-left";
+  public static final String      kLLRightName          = "limelight-right";
+
+  // Robot physical dimensions
+
+  public static final double      kBranchSpacing        = Units.inchesToMeters(13.0);  // Distance between branches
+  public static final double      kRobotLength          = Units.inchesToMeters(34.5);  // Our robot length
+  public static final double      kRobotSetback         = kRobotLength / 2;                   // Distance robot is set back from branch to score
+
+  // Scoring poses relative to an AprilTag (X - robot setback, Y - left, center, right)
+
+  public static final Transform2d kBranchScoreLeft      = new Transform2d(kRobotSetback, -kBranchSpacing / 2, Rotation2d.k180deg);
+  public static final Transform2d kBranchScoreCenter    = new Transform2d(kRobotSetback, 0, Rotation2d.k180deg);
+  public static final Transform2d kBranchScoreRight     = new Transform2d(kRobotSetback, +kBranchSpacing / 2, Rotation2d.k180deg);
 
   /****************************************************************************
    * CAN IDs and PWM IDs
