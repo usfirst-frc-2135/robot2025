@@ -102,7 +102,7 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
   public AutoPreloadCoral3(List<PathPlannerPath> ppPaths, CommandSwerveDrivetrain drivetrain, Elevator elevator,
       Manipulator manipulator, HID hid, Supplier<Command> getReefLevelCommand)
   {
-    setName("AutoPreloadCoral2");
+    setName("AutoPreloadCoral3");
 
     addCommands(
         // Add Commands here:
