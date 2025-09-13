@@ -7,6 +7,7 @@ import java.util.Map;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -61,8 +62,11 @@ public class AcquireAlgae extends SequentialCommandGroup
         // @formatter:off
 
         new LogCommand(getName(),"Move Manipulator to safe position"),
-        manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState),
-          
+        //manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState),
+        new ConditionalCommand(new LogCommand(getName(), "Algae is detected, do not do anything"),
+            manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleSafeState), 
+            ()->manipulator.isAlgaeDetected()
+        ),
         new LogCommand(getName(), "Move Elevator to reef level based on the level"), 
         new SelectCommand<>( 
           // Maps selector values to commands 
