@@ -34,7 +34,7 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
             new SequentialCommandGroup(                                                     //
                 man.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, man::getAngleSafeState), // ~275 msec
                 // Delay some time during the path before pre-raising the elevator
-                new WaitCommand(0.8),                                               //
+                new WaitCommand(0.55),                                               //
                 elev.getMoveToPositionCommand(elev::getHeightCoralL4))                      // ~900 msec
         )                                                                                   //
     );
@@ -115,10 +115,11 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
         // Score preloaded coral
 
         driveToScore("PRELOAD", ppPaths.get(0), drivetrain, elevator, manipulator),
-        expelCoral("PRELOAD", elevator, manipulator),
+        expelCoral("PRELOAD", elevator, manipulator)
 
         // First Coral Station
 
+        /* 
         driveToAcquire("CORAL1", ppPaths.get(1), drivetrain, elevator, manipulator),
         acquireCoral("CORAL1", manipulator),
         driveToScore("CORAL1", ppPaths.get(2), drivetrain, elevator, manipulator),
@@ -135,7 +136,7 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
 
         driveToAcquire("CORAL3", ppPaths.get(5), drivetrain, elevator, manipulator),
         acquireCoral("CORAL3", manipulator)
-
+        */
         // @formatter:on
     );
   }
