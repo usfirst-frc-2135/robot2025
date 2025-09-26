@@ -82,8 +82,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final DoubleArrayPublisher  setPosePub          = swerveTable.getDoubleArrayTopic("setPose").publish();
     private final DoubleArraySubscriber setPoseSub          = swerveTable.getDoubleArrayTopic("setPose").subscribe(new double[3]);
 
-    private int leftVisionUpdateCounter = 0; 
-    private int rightVisionUpdateCounter = 0; 
+    private int leftUpdateCounter = 0; 
+    private int rightUpdateCounter = 0; 
 
     private double [] moduleDistances = {0, 0, 0, 0};
 
@@ -345,8 +345,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         if (m_useLimelight) {
-            visionUpdate(Constants.kLLLeftName, llPoseLeft, leftVisionUpdateCounter);
-            visionUpdate(Constants.kLLRightName, llPoseRight,rightVisionUpdateCounter);
+            visionUpdate(Constants.kLLLeftName, llPoseLeft, leftUpdateCounter);
+            visionUpdate(Constants.kLLRightName, llPoseRight,rightUpdateCounter);
         }
     }
 
@@ -418,8 +418,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putData("AlignToReefPID", getAlignToReefPIDCommand( ));
         SmartDashboard.putData("AlignToReefFollow", new DeferredCommand(( ) -> getAlignToReefFollowCommand( ), Set.of(this)));
         SmartDashboard.putData("AlignToReefPPFind", new DeferredCommand(( ) -> getAlignToReefPPFindCommand( ), Set.of(this)));
-        SmartDashboard.putNumber("LeftVisionUpdateCounter", leftVisionUpdateCounter);
-        SmartDashboard.putNumber("RightVisionUpdateCounter", rightVisionUpdateCounter);
+        SmartDashboard.putNumber("LeftVisionUpdateCounter", leftUpdateCounter);
+        SmartDashboard.putNumber("RightVisionUpdateCounter", rightUpdateCounter);
     }
 
     /****************************************************************************
@@ -433,7 +433,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * This example is sufficient to show that vision integration is possible, though exact
      * implementation of how to use vision should be tuned per-robot and to the team's specification.
      */
-    private void visionUpdate(String limelightName, FieldObject2d fieldObject, int visionUpdateCounter)
+    private void visionUpdate(String limelightName, FieldObject2d fieldObject, int updateCounter)
     {
         boolean useMegaTag2 = true; // set to false to use MegaTag1
         boolean doRejectUpdate = false;
@@ -497,7 +497,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 final double kBase = 0.5;
                 final double kProportional = 0.9;
                 fieldObject.setPose(mt2.pose.getX( ), mt2.pose.getY( ), mt2.pose.getRotation( ));
-                visionUpdateCounter++;
+                updateCounter++;
 
                 // Code used by some teams to scale std devs by distance (below) and used by several teams
                 setVisionMeasurementStdDevs(VecBuilder.fill(    //
