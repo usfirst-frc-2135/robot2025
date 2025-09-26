@@ -119,7 +119,7 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
 
         // First Coral Station
 
-        /* 
+        
         driveToAcquire("CORAL1", ppPaths.get(1), drivetrain, elevator, manipulator),
         acquireCoral("CORAL1", manipulator),
         driveToScore("CORAL1", ppPaths.get(2), drivetrain, elevator, manipulator),
@@ -136,7 +136,7 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
 
         driveToAcquire("CORAL3", ppPaths.get(5), drivetrain, elevator, manipulator),
         acquireCoral("CORAL3", manipulator)
-        */
+  
         // @formatter:on
     );
   }
