@@ -62,7 +62,7 @@ public class AcquireAlgae extends SequentialCommandGroup
         // @formatter:off
 
         new LogCommand(getName(),"Move Manipulator to safe position"),
-        //manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator:: getAngleSafeState),
+        
         new ConditionalCommand(new LogCommand(getName(), "Algae is detected, do not do anything"),
             manipulator.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, manipulator::getAngleSafeState), 
             ()->manipulator.isAlgaeDetected()
