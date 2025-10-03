@@ -345,11 +345,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         if (m_useLimelight) {
-            if (visionUpdate(Constants.kLLLeftName, llPoseLeft, leftUpdateCounter) == true) {
-                leftUpdateCounter++; 
+            if (visionUpdate(Constants.kLLLeftName, llPoseLeft, leftUpdateCounter)) {
+                leftUpdateCounter++;
+                SmartDashboard.putNumber("LeftVisionUpdateCounter", leftUpdateCounter);        
             }
-            if (visionUpdate(Constants.kLLRightName, llPoseRight,rightUpdateCounter) == true) {
+            if (visionUpdate(Constants.kLLRightName, llPoseRight,rightUpdateCounter)) {
                 rightUpdateCounter++; 
+                SmartDashboard.putNumber("RightVisionUpdateCounter", rightUpdateCounter);
             }
         }
     }
@@ -424,6 +426,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putData("AlignToReefPPFind", new DeferredCommand(( ) -> getAlignToReefPPFindCommand( ), Set.of(this)));
         SmartDashboard.putNumber("LeftVisionUpdateCounter", leftUpdateCounter);
         SmartDashboard.putNumber("RightVisionUpdateCounter", rightUpdateCounter);
+
     }
 
     /****************************************************************************
