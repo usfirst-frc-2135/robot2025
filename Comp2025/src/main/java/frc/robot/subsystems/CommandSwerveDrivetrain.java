@@ -345,8 +345,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         if (m_useLimelight) {
-            visionUpdate(Constants.kLLLeftName, llPoseLeft, leftUpdateCounter);
-            visionUpdate(Constants.kLLRightName, llPoseRight,rightUpdateCounter);
+            if (visionUpdate(Constants.kLLLeftName, llPoseLeft, leftUpdateCounter) == true) {
+                leftUpdateCounter++; 
+            }
+            if (visionUpdate(Constants.kLLRightName, llPoseRight,rightUpdateCounter) == true) {
+                rightUpdateCounter++; 
+            }
         }
     }
 
@@ -433,7 +437,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * This example is sufficient to show that vision integration is possible, though exact
      * implementation of how to use vision should be tuned per-robot and to the team's specification.
      */
-    private void visionUpdate(String limelightName, FieldObject2d fieldObject, int updateCounter)
+    private boolean visionUpdate(String limelightName, FieldObject2d fieldObject, int updateCounter)
     {
         boolean useMegaTag2 = true; // set to false to use MegaTag1
         boolean doRejectUpdate = false;
@@ -497,7 +501,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 final double kBase = 0.5;
                 final double kProportional = 0.9;
                 fieldObject.setPose(mt2.pose.getX( ), mt2.pose.getY( ), mt2.pose.getRotation( ));
-                updateCounter++;
 
                 // Code used by some teams to scale std devs by distance (below) and used by several teams
                 setVisionMeasurementStdDevs(VecBuilder.fill(    //
@@ -507,6 +510,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
             }
         }
+
+        return !doRejectUpdate;
     }
 
     /****************************************************************************
