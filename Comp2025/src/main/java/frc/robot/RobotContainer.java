@@ -48,7 +48,7 @@ import frc.robot.autos.AutoLeave;
 import frc.robot.autos.AutoPreload;
 import frc.robot.autos.AutoPreloadAlgae;
 import frc.robot.autos.AutoPreloadCoral;
-import frc.robot.autos.AutoPreloadCoral2;
+import frc.robot.autos.AutoPreloadCoral3;
 import frc.robot.autos.AutoTest;
 import frc.robot.commands.AcquireAlgae;
 import frc.robot.commands.AcquireCoral;
@@ -136,7 +136,7 @@ public class RobotContainer
     AUTOLEAVE,          // Leave starting line
     AUTOPRELOAD,        // Preload coral
     AUTOPRELOADCORAL,   // Preload coral and score one more
-    AUTOPRELOADCORAL2,  // Preload coral and score two more
+    AUTOPRELOADCORAL3,  // Preload coral and score two more
     AUTOPRELOADALGAE,   // Preload coral and score one algae
     AUTOTEST            // Run a selected test auto
   }
@@ -181,9 +181,9 @@ public class RobotContainer
       Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK"),
       Map.entry(AutoChooser.AUTOPRELOADCORAL.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RD"),
 
-      Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START1.toString( ), "Start1_RJ_S1R_RK_S1R_RL"),
-      Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK_S1R_RL"),
-      Map.entry(AutoChooser.AUTOPRELOADCORAL2.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RD_S2L_RC"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START1.toString( ), "Start1_RJ_S1R_RK_S1R_RL_S1R"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START2.toString( ), "Start2_RH_S1R_RK_S1R_RL_S1R"),
+      Map.entry(AutoChooser.AUTOPRELOADCORAL3.toString( ) + StartPose.START3.toString( ), "Start3_RE_S2L_RD_S2L_RC_S2L"),
 
       Map.entry(AutoChooser.AUTOPRELOADALGAE.toString( ) + StartPose.START1.toString( ), "Start1_RJ_RIJ_Net"),
       Map.entry(AutoChooser.AUTOPRELOADALGAE.toString( ) + StartPose.START2.toString( ), "Start2_RH_RGH_Net"),
@@ -246,7 +246,7 @@ public class RobotContainer
     m_autoChooser.addOption("1 - AutoLeave", AutoChooser.AUTOLEAVE);
     m_autoChooser.addOption("2 - AutoPreload", AutoChooser.AUTOPRELOAD);
     m_autoChooser.addOption("3 - AutoPreloadCoral", AutoChooser.AUTOPRELOADCORAL);
-    m_autoChooser.addOption("4 - AutoPreloadCoral2", AutoChooser.AUTOPRELOADCORAL2);
+    m_autoChooser.addOption("4 - AutoPreloadCoral3", AutoChooser.AUTOPRELOADCORAL3);
     m_autoChooser.addOption("5 - AutoPreloadAlgae", AutoChooser.AUTOPRELOADALGAE);
     m_autoChooser.addOption("9 - AutoTestPath", AutoChooser.AUTOTEST);
     m_autoChooser.onChange(this::updateAutoChooserCallback);
@@ -317,7 +317,6 @@ public class RobotContainer
     // Driver - Bumpers, start, back
     //
     m_driverPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_hid));
-    m_driverPad.leftBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, m_manipulator::getCurrentAngle));
     m_driverPad.rightBumper( ).whileTrue(new AcquireCoral(m_elevator, m_manipulator, m_hid));
     m_driverPad.rightBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.STOP, m_manipulator::getCurrentAngle));
 
@@ -387,8 +386,6 @@ public class RobotContainer
     // Operator - Bumpers, start, back
     //
     m_operatorPad.leftBumper( ).onTrue(new AcquireAlgae(m_elevator, m_manipulator, m_hid));
-    m_operatorPad.leftBumper( )
-        .onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.ALGAEHOLD, m_manipulator::getCurrentAngle));
     m_operatorPad.rightBumper( ).whileTrue(new AcquireCoral(m_elevator, m_manipulator, m_hid));
     m_operatorPad.rightBumper( ).onFalse(m_manipulator.getMoveToPositionCommand(ClawMode.STOP, m_manipulator::getCurrentAngle));
 
@@ -570,9 +567,9 @@ public class RobotContainer
         m_autoCommand =
             new AutoPreloadCoral(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
         break;
-      case AUTOPRELOADCORAL2 :
+      case AUTOPRELOADCORAL3 :
         m_autoCommand =
-            new AutoPreloadCoral2(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
+            new AutoPreloadCoral3(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADALGAE :
         m_autoCommand =
