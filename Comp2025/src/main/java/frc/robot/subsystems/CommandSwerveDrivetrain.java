@@ -28,11 +28,13 @@ import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
@@ -82,8 +84,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final DoubleArrayPublisher  setPosePub          = swerveTable.getDoubleArrayTopic("setPose").publish();
     private final DoubleArraySubscriber setPoseSub          = swerveTable.getDoubleArrayTopic("setPose").subscribe(new double[3]);
 
-    private int leftUpdateCounter = 0; 
-    private int rightUpdateCounter = 0; 
+    private MedianFilter leftFilter = new MedianFilter(5);
+    private MedianFilter rightFilter = new MedianFilter(5);
+
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("swerve");
+
+    private BooleanPublisher leftUpdate = table.getBooleanTopic("LeftUpdate").publish();
+    private BooleanPublisher rightUpdate = table.getBooleanTopic("RightUpdate").publish();
 
     private double [] moduleDistances = {0, 0, 0, 0};
 
@@ -345,14 +352,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         if (m_useLimelight) {
-            if (visionUpdate(Constants.kLLLeftName, llPoseLeft, leftUpdateCounter)) {
-                leftUpdateCounter++;
-                SmartDashboard.putNumber("LeftVisionUpdateCounter", leftUpdateCounter);        
-            }
-            if (visionUpdate(Constants.kLLRightName, llPoseRight,rightUpdateCounter)) {
-                rightUpdateCounter++; 
-                SmartDashboard.putNumber("RightVisionUpdateCounter", rightUpdateCounter);
-            }
+            double left = (visionUpdate(Constants.kLLLeftName, llPoseLeft)) ? 1.0 : 0.0;
+            leftUpdate.set(leftFilter.calculate(left) > 0.5);
+
+            double right = (visionUpdate(Constants.kLLRightName, llPoseRight)) ? 1.0 : 0.0;
+            rightUpdate.set(rightFilter.calculate(right) > 0.5);
         }
     }
 
@@ -424,9 +428,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putData("AlignToReefPID", getAlignToReefPIDCommand( ));
         SmartDashboard.putData("AlignToReefFollow", new DeferredCommand(( ) -> getAlignToReefFollowCommand( ), Set.of(this)));
         SmartDashboard.putData("AlignToReefPPFind", new DeferredCommand(( ) -> getAlignToReefPPFindCommand( ), Set.of(this)));
-        SmartDashboard.putNumber("LeftVisionUpdateCounter", leftUpdateCounter);
-        SmartDashboard.putNumber("RightVisionUpdateCounter", rightUpdateCounter);
-
     }
 
     /****************************************************************************
@@ -440,7 +441,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * This example is sufficient to show that vision integration is possible, though exact
      * implementation of how to use vision should be tuned per-robot and to the team's specification.
      */
-    private boolean visionUpdate(String limelightName, FieldObject2d fieldObject, int updateCounter)
+    private boolean visionUpdate(String limelightName, FieldObject2d fieldObject)
     {
         boolean useMegaTag2 = true; // set to false to use MegaTag1
         boolean doRejectUpdate = false;
