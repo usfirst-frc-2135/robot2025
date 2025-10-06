@@ -188,8 +188,8 @@ public class Vision extends SubsystemBase
   public void SetCPUThrottleLevel(boolean throttle)
   {
     DataLogManager.log(String.format("%s: Set Throttle level to %s", getSubsystem( ), throttle));
-    // LimelightHelpers.SetThrottle(kLLLeftName, throttle ? 0 : 200);
-    // LimelightHelpers.SetThrottle(kLLRightName, throttle ? 0 : 200);
+    LimelightHelpers.SetThrottle(Constants.kLLLeftName, throttle ? 0 : 100);
+    LimelightHelpers.SetThrottle(Constants.kLLRightName, throttle ? 0 : 100);
   }
 
   /****************************************************************************
