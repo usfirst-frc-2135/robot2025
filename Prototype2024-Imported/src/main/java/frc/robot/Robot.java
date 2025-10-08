@@ -20,6 +20,7 @@ public class Robot extends TimedRobot
     kStopped, kFixedSpeed, kJoystickControl, kClosedLoop
   }
 
+  private final static RobotContainer               m_container     = new RobotContainer( );
   private final static XboxController               m_controller    = new XboxController(0);
   private final static ExampleSmartMotorController  m_motor1        = new ExampleSmartMotorController(5, kEncoderCPR);
   private final static ExampleSmartMotorController  m_motor2        = new ExampleSmartMotorController(6, kEncoderCPR);
