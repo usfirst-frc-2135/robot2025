@@ -146,6 +146,9 @@ public class Constants
 
     public static final String              kReefBranchString = "ReefBranch";
 
+    public static final double              TX                = 500.0;
+    public static final double              TY                = 350.0;
+
     //** Reef branch used for alignment */
     public enum ReefBranch
     {

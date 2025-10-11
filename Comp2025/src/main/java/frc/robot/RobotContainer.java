@@ -303,7 +303,7 @@ public class RobotContainer
     // Driver Controller Assignments
     //
     // Driver - A, B, X, Y
-    // 
+    // tx and  ty - 500*350
     m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
     m_driverPad.b( ).whileTrue(new SequentialCommandGroup(    //
         m_drivetrain.getAlignToReefPIDCommand( ), //

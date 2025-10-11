@@ -82,7 +82,6 @@ public class SwervePIDVisionTarget extends Command
   {
     m_swerve = swerve;
     addRequirements(swerve);
-
     setName("SwervePIDVisionTarget");
   }
 
