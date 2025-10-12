@@ -96,6 +96,9 @@ public class SwervePIDVisionTarget extends Command
   @Override
   public void initialize( )
   {
+    // get the reefbranch setting from network tables
+    //will let us choose left or right limelight to use to align with
+    //won't use the pose but leave log message
     Pose2d currentPose = driveStatePose.get( );
     m_goalPose = Vision.findGoalPose(currentPose);
     DataLogManager.log(String.format("%s: initial current pose: %s goalPose %s", getName( ), currentPose, m_goalPose));
@@ -104,6 +107,7 @@ public class SwervePIDVisionTarget extends Command
   @Override
   public void execute( )
   {
+    // need to get tx and ty from proper camera, use aim proportional and range proportional methods to get chassis speeds, will go into setControl
     PathPlannerTrajectoryState goalState = new PathPlannerTrajectoryState( );
     goalState.pose = m_goalPose;
 
@@ -119,6 +123,7 @@ public class SwervePIDVisionTarget extends Command
   @Override
   public void end(boolean interrupted)
   {
+    //print what tx and ty are
     DataLogManager.log(String.format("%s: interrupted end conditions for SwervePIDVisionTarget P: %s G: %s", getName( ),
         driveStatePose.get( ), m_goalPose));
   }
@@ -126,6 +131,7 @@ public class SwervePIDVisionTarget extends Command
   @Override
   public boolean isFinished( )
   {
+    //tx and ty are where we want them to be
     Pose2d diff = driveStatePose.get( ).relativeTo(m_goalPose);
 
     errorPub.set(Math.sqrt(Math.pow(diff.getX( ), 2) + Math.pow(diff.getY( ), 2)));
