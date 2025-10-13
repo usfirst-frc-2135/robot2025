@@ -96,7 +96,10 @@ public class SwervePIDVisionTarget extends Command
   @Override
   public void initialize( )
   {
-    // get the reefbranch setting from network tables
+    // TODO: get the reefbranch setting from network tables (see line 79 in Vision.java for an example of subscribe)
+    // TODO: save the reefBranch value in a class member variable within THIS class so it stays unchaged during the command
+    // TODO: remove the lines of code below that get the current pose and the goal pose, because we won't use them
+    // TODO: update the log message to print the reefBranch in use
     //will let us choose left or right limelight to use to align with
     //won't use the pose but leave log message
     Pose2d currentPose = driveStatePose.get( );
@@ -107,6 +110,11 @@ public class SwervePIDVisionTarget extends Command
   @Override
   public void execute( )
   {
+    // TODO: Use the member variable holding the reefBranch (left or right)
+    // TODO: Call the aimProportional and rangeProportional methods in the vision calls and pass in the left/right (or center) variable
+    // TODO:    these should return the translation and angular velocit speeds that get put into the setControl
+    // TODO: Remove the lines of code that get the goal pose, calculate the speeds, publish them
+    // TODO: Comment out the swerve drive (but KEEP) setControl call until we can update it with the correct one
     // need to get tx and ty from proper camera, use aim proportional and range proportional methods to get chassis speeds, will go into setControl
     PathPlannerTrajectoryState goalState = new PathPlannerTrajectoryState( );
     goalState.pose = m_goalPose;
@@ -123,6 +131,7 @@ public class SwervePIDVisionTarget extends Command
   @Override
   public void end(boolean interrupted)
   {
+    // TODO: Update this logging call to make sense for our use - display the left/right, and end speeds
     //print what tx and ty are
     DataLogManager.log(String.format("%s: interrupted end conditions for SwervePIDVisionTarget P: %s G: %s", getName( ),
         driveStatePose.get( ), m_goalPose));
@@ -131,6 +140,9 @@ public class SwervePIDVisionTarget extends Command
   @Override
   public boolean isFinished( )
   {
+    // TODO: We'll need a new vision method that 'does the work' to return whether tx/ty are close enough to the desired location
+    // TODO: Remove all of the pose references, keep a log message that prints only when the command is done
+    // TODO: Our end condition will be the vision check plus the drive speed checks below
     //tx and ty are where we want them to be
     Pose2d diff = driveStatePose.get( ).relativeTo(m_goalPose);
 

@@ -574,6 +574,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return AutoBuilder.followPath(ppPath).withName("SwerveFollowPath");
     }
 
+    // NOTE: We should make a copy of getAlignToReefPIDCommand method for our new getAlignToReefTargetCommand
+    // NOTE: Change getAlignToReefPIDCommand back to what it was
+    // NOTE: Connect our new method in robotContainer
+
     /****************************************************************************
      *
      * Create reef align command for PID driving

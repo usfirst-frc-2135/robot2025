@@ -303,6 +303,8 @@ public class RobotContainer
     // Driver Controller Assignments
     //
     // Driver - A, B, X, Y
+    // TODO: These constants don't really belong here--they should only be referenced in Vision class (from constant file)
+    // TODO: So this is probably just a comment that will never be updated
     // tx and  ty - 500*350
     m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
     m_driverPad.b( ).whileTrue(new SequentialCommandGroup(    //

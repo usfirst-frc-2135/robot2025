@@ -155,6 +155,8 @@ public class Vision extends SubsystemBase
    *          max angular rate to scale against
    * @return desired proportional angular velocity to rotate the chassis
    */
+  // TODO: This should take a left/right/center parameter to decide how to select the correct camera
+  // TODO: The "offset" from the 0,0 tx/ty origin should be added/subracted here
   public AngularVelocity aimProportional(AngularVelocity maxAngularRate)
   {
     double proportionalFactor = -LimelightHelpers.getTX(Constants.kLLLeftName) * kAimingKp;
@@ -170,6 +172,8 @@ public class Vision extends SubsystemBase
    *          max speed to scale against
    * @return desired proportional linear velocity in chassis forward direction
    */
+  // TODO: This should take a left/right/center parameter to decide how to select the correct camera
+  // TODO: The "offset" from the 0,0 tx/ty origin should be added/subracted here
   public LinearVelocity rangeProportional(LinearVelocity maxSpeed)
   {
     double proportionalFactor = LimelightHelpers.getTY(Constants.kLLLeftName) * kDrivingKp;
