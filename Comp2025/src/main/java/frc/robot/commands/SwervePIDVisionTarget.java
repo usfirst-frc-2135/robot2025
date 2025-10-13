@@ -42,9 +42,9 @@ public class SwervePIDVisionTarget extends Command
 
   // Main objects
   private CommandSwerveDrivetrain               m_swerve;
-  private Pose2d                                m_goalPose;
+  private Pose2d                                m_goalPose; // NOTE: Don't need goal pose tracking
 
-  // PID controllers
+  // PID controllers - NOTE: Our PID controllers are in the vision class, so we don't need these
   private static final PIDConstants             kTranslationPID    = new PIDConstants(5.0, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
   private static final PIDConstants             kRotationPID       = new PIDConstants(5.0, 0, 0);
   private PPHolonomicDriveController            m_DriveController  =
