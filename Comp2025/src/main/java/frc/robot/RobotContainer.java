@@ -308,7 +308,7 @@ public class RobotContainer
     // tx and  ty - 500*350
     m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
     m_driverPad.b( ).whileTrue(new SequentialCommandGroup(    //
-        m_drivetrain.getAlignToReefPIDCommand( ), //
+        m_drivetrain.getAlignToReefVisionTarget(m_vision), //
         m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(0.5), 0.5), //
         m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(0.5), 0.5)  //
     ));

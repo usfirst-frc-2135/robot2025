@@ -2,18 +2,13 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
-
-import java.lang.reflect.Method;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -30,10 +25,10 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
+import frc.robot.Constants.VIConsts;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
-import frc.robot.Constants.VIConsts;
-import frc.robot.Constants;
 
 /**
  * Swerve drive under PID control to a goal pose
@@ -41,13 +36,14 @@ import frc.robot.Constants;
 public class SwervePIDVisionTarget extends Command
 {
   // Constants
-  // private static final LinearVelocity           kMaxSpeed          = MetersPerSecond.of(3.5);     // Cap max applied velocity to 3.5 mps in either direction
+  private static final LinearVelocity           kMaxSpeed          = MetersPerSecond.of(3.5);     // Cap max applied velocity to 3.5 mps in either direction
   private static final Rotation2d               kRotationTolerance = Rotation2d.fromDegrees(2.0);
   private static final Distance                 kPositionTolerance = Inches.of(1.5);              // Was 0.8 inches which is tiny
   private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);    // Was 0.25 inches per second which is extremely small
 
   // Main objects
-  //private CommandSwerveDrivetrain               m_swerve;
+  private CommandSwerveDrivetrain               m_swerve;
+  private Vision                                m_vision;
   private Pose2d                                m_goalPose; // NOTE: Don't need goal pose tracking
 
   // PID controllers - NOTE: Our PID controllers are in the vision class, so we don't need these
@@ -82,16 +78,19 @@ public class SwervePIDVisionTarget extends Command
       ntInst.getTable("swerve/PIDVisionTarget").getDoubleTopic("error").publish( );
 
   private static final NetworkTable             robotTable         = ntInst.getTable(Constants.kRobotString);
-
   private static final IntegerSubscriber        reefBranch         =
       robotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
 
   /**
    * Swerve drive under PID control to a goal pose
    */
-  public SwervePIDVisionTarget(CommandSwerveDrivetrain swerve)
+  public SwervePIDVisionTarget(CommandSwerveDrivetrain swerve, Vision vision)
   {
-    //*m_swerve = swerve;
+    // TODO: Since we will be commanding the swerve subsystem to drive to where we want to go,
+    // TODO: we MUST pass in a reference to call setControl with the desired speeds
+    // TODO: I uncommented where you had commented it out, since it needs to come back
+    m_swerve = swerve;
+    m_vision = vision;
     addRequirements(swerve);
     setName("SwervePIDVisionTarget");
   }
@@ -99,9 +98,9 @@ public class SwervePIDVisionTarget extends Command
   /**
    * Command factory
    */
-  public static Command generateCommand(CommandSwerveDrivetrain swerve, Time timeout)
+  public static Command generateCommand(CommandSwerveDrivetrain swerve, Vision vision, Time timeout)
   {
-    return new SwervePIDVisionTarget(swerve).withTimeout(timeout);
+    return new SwervePIDVisionTarget(swerve, vision).withTimeout(timeout);
   }
 
   @Override
@@ -109,11 +108,12 @@ public class SwervePIDVisionTarget extends Command
   {
 
     // TODO: update the log message to print the reefBranch in use
-    //will let us choose left or right limelight to use to align with
-    //won't use the pose but leave log message
+    // TODO: it will let us choose left or right limelight to use to align with
+    // TODO: but won't use the pose but leave log message
     // Pose2d currentPose = driveStatePose.get( );
     // m_goalPose = Vision.findGoalPose(currentPose);
 
+    // TODO: I think when we use the IntegerSubscriber, we need to use reefBranch.get() below (and anywhere else)
     DataLogManager.log(String.format("%s: initial reefBranch: %s ", getName( ), reefBranch));
   }
 
@@ -133,22 +133,29 @@ public class SwervePIDVisionTarget extends Command
     // vyPub.set(speeds.vyMetersPerSecond);
     // omegaPub.set(speeds.omegaRadiansPerSecond);
 
+    // TODO: We can't create a new vision class here, but we can pass it in when the class is created (like the swerve subsystem) in m_vision
     Vision m_rangeProportionall = new Vision( );
+    // TODO: Use the kMaxSpeed constant above to pass into ...rangeProportional
     LinearVelocity maxSpeed;
+    // TODO: declare a LinearVelocity variable "speed" and set it to the return value from ...rangeProportional which returns a speed
     //*m_rangeProportionall.rangeProportional(maxSpeed);
 
+    // TODO: We can't create a new vision class here, but we can pass it in when the class is created (like the swerve subsystem) in m_vision
     Vision m_aimProportionall = new Vision( );
+    // TODO: Use the kMaxAngularRate constant above to pass into ...aimProportional
     AngularVelocity kMaxAngularRate;
+    // TODO: declare an AngularVelocity variable "rps" and set it to the return value from ...aimProportional which returns rotations per second
     //*m_aimProportionall.aimProportional(kMaxAngularRate);
 
-    //*m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
+    // TODO: We need a new m_swerve method that will take the linear speed (in chassis X direction) and rotations per second (like Apollo's code)
+    // m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
   }
 
   @Override
   public void end(boolean interrupted)
   {
     // TODO: Update this logging call to make sense for our use - display the left/right, and end speeds
-    //print what tx and ty are
+    // TODO: print what tx and ty are
     DataLogManager.log(String.format("%s: interrupted end conditions for SwervePIDVisionTarget L: %s R: %s EndSpeeds: %s",
         getName( ), driveStatePose.get( ), m_goalPose));
   }

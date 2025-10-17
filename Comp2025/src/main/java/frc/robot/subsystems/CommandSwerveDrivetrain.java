@@ -53,6 +53,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.commands.LogCommand;
+import frc.robot.commands.SwervePIDController;
 import frc.robot.commands.SwervePIDVisionTarget;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.lib.LimelightHelpers;
@@ -585,9 +586,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @return reefAlignCommand
      *         command to align to a reef scoring position
      */
+    public Command getAlignToReefVisionTarget(Vision vision)
+    {
+        return SwervePIDVisionTarget.generateCommand(this, vision, Seconds.of(2.5)).withName("AlignToReefVisionTarget");
+    }
+
+    /****************************************************************************
+     *
+     * Create reef align command for PID driving
+     * 
+     * @return reefAlignCommand
+     *         command to align to a reef scoring position
+     */
     public Command getAlignToReefPIDCommand( )
     {
-        return SwervePIDVisionTarget.generateCommand(this, Seconds.of(2.5)).withName("AlignToReefPID");
+        return SwervePIDController.generateCommand(this, Seconds.of(2.5)).withName("AlignToReefPID");
     }
 
     /****************************************************************************
