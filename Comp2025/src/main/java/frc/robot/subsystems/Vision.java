@@ -174,7 +174,7 @@ public class Vision extends SubsystemBase
    */
   // TODO: This should take a left/right/center parameter to decide how to select the correct camera
   // TODO: The "offset" from the 0,0 tx/ty origin should be added/subracted here
-  public LinearVelocity rangeProportional(LinearVelocity maxSpeed)
+  public LinearVelocity rangeProportional(LinearVelocity maxSpeed, String kLLLeftName, String kLLRightName)
   {
     double proportionalFactor = LimelightHelpers.getTY(Constants.kLLLeftName) * kDrivingKp;
 
