@@ -42,8 +42,8 @@ public class SwervePIDVisionTarget extends Command
   private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);    // Was 0.25 inches per second which is extremely small
 
   // Main objects
-  //private CommandSwerveDrivetrain               m_swerve;
-  private Vision                                m_vision; // NOTE: Don't need goal pose tracking
+  private CommandSwerveDrivetrain               m_swerve;
+  private Vision                                m_vision;
   private Pose2d                                m_goalPose; // NOTE: Don't need goal pose tracking
 
   // PID controllers - NOTE: Our PID controllers are in the vision class, so we don't need these // Was 5.0 mps for a 1 m offset (too large)
@@ -133,15 +133,19 @@ public class SwervePIDVisionTarget extends Command
     // vyPub.set(speeds.vyMetersPerSecond);
     // omegaPub.set(speeds.omegaRadiansPerSecond);
 
-    Vision m_rangeProportionall = m_vision( );
+    // TODO: We can't create a new vision class here, but we can pass it in when the class is created (like the swerve subsystem) in m_vision
+    Vision m_rangeProportionall = new Vision( );
+    // TODO: Use the kMaxSpeed constant above to pass into ...rangeProportional
     LinearVelocity maxSpeed;
-    m_rangeProportionall.rangeProportionalLeft(maxSpeed);
-    m_rangeProportionall.rangeProportionalRight(maxSpeed);
+    // TODO: declare a LinearVelocity variable "speed" and set it to the return value from ...rangeProportional which returns a speed
+    //*m_rangeProportionall.rangeProportional(maxSpeed);
 
-    Vision m_aimProportionall = m_vision( );
+    // TODO: We can't create a new vision class here, but we can pass it in when the class is created (like the swerve subsystem) in m_vision
+    Vision m_aimProportionall = new Vision( );
+    // TODO: Use the kMaxAngularRate constant above to pass into ...aimProportional
     AngularVelocity kMaxAngularRate;
-    m_aimProportionall.aimProportionalLeft(kMaxAngularRate);
-    m_aimProportionall.aimProportionalRight(kMaxAngularRate);
+    // TODO: declare an AngularVelocity variable "rps" and set it to the return value from ...aimProportional which returns rotations per second
+    //*m_aimProportionall.aimProportional(kMaxAngularRate);
 
     // TODO: We need a new m_swerve method that will take the linear speed (in chassis X direction) and rotations per second (like Apollo's code)
     // m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
