@@ -153,14 +153,43 @@ public class Vision extends SubsystemBase
    * 
    * @param maxAngularRate
    *          max angular rate to scale against
+   * @param left
+   * 
+   * @param right
+   * 
+   * @param center
+   * 
    * @return desired proportional angular velocity to rotate the chassis
    */
   // TODO: This should take a left/right/center parameter to decide how to select the correct camera
   // TODO: The "offset" from the 0,0 tx/ty origin should be added/subracted here
   // TODO: pseudo code of the logic:
   //
-  // public LinearVelocity aimProportional(LinearVelocity maxSpeed, integer selectedBranch)
-  // {
+  public AngularVelocity aimProportional(LinearVelocity maxSpeed, int selectedBranch, AngularVelocity maxAngularRate)
+  {
+    double limelightTX;
+    double TX;
+    double TXdesired = 0;
+    if (selectedBranch == 0)
+    {
+      limelightTX = LimelightHelpers.getTX(Constants.kLLLeftName);
+      if (limelightTX == 0)
+      {
+        TX = limelightTX - TXdesired;
+      }
+    }
+    else if (selectedBranch == 2)
+    {
+      limelightTX = LimelightHelpers.getTX(Constants.kLLRightName);
+      if (limelightTX == 0)
+      {
+        TX = limelightTX - TXdesired;
+      }
+    }
+    double proportionalFactor = -LimelightHelpers.getTX(Constants.kLLLeftName) * kAimingKp;
+    return maxAngularRate.times(proportionalFactor);
+  }
+
   //    declare a double named limelightTX;
   //    if (selectedBranch == 0)
   //    {
@@ -176,17 +205,16 @@ public class Vision extends SubsystemBase
   //    The proporitional factor should use limelightTX * KP value
   //    return the maxSpeed multiplied by the proportional factor 
   // }
-  //
-  public AngularVelocity aimProportional(AngularVelocity maxAngularRate)
-  {
-    double proportionalFactor = -LimelightHelpers.getTX(Constants.kLLLeftName) * kAimingKp;
-
-    return maxAngularRate.times(proportionalFactor);
-  }
 
   /****************************************************************************
    * 
    * Limelight auto-ranging control for distance velocity. Only aligns the left Limelight.
+   * 
+   * @param left
+   * 
+   * @param right
+   * 
+   * @param center
    * 
    * @param maxSpeed
    *          max speed to scale against
@@ -196,8 +224,30 @@ public class Vision extends SubsystemBase
   // TODO: The "offset" from the 0,0 tx/ty origin should be added/subracted here
   // TODO: pseudo code of the logic:
   //
-  // public LinearVelocity rangeProportional(LinearVelocity maxSpeed, integer selectedBranch)
-  // {
+  public LinearVelocity rangeProportional(LinearVelocity maxSpeed, int selectedBranch)
+  {
+    double TY;
+    double limelightTY;
+    double TYdesired = 0;
+    if (selectedBranch == 0)
+    {
+      limelightTY = LimelightHelpers.getTY(Constants.kLLLeftName);
+      if (limelightTY == 0)
+      {
+        TY = limelightTY - TYdesired;
+      }
+    }
+    else if (selectedBranch == 2)
+    {
+      limelightTY = LimelightHelpers.getTY(Constants.kLLRightName);
+      if (limelightTY == 0)
+      {
+        TY = limelightTY - TYdesired;
+      }
+    }
+    double proportionalFactor = LimelightHelpers.getTY(Constants.kLLLeftName) * kDrivingKp;
+    return maxSpeed.times(proportionalFactor);
+  }
   //    declare a double named limelightTY;
   //    if (selectedBranch == 0)
   //    {
@@ -214,12 +264,10 @@ public class Vision extends SubsystemBase
   //    return the maxSpeed multiplied by the proportional factor 
   // }
   //
-  public LinearVelocity rangeProportional(LinearVelocity maxSpeed, String kLLLeftName, String kLLRightName)
-  {
-    double proportionalFactor = LimelightHelpers.getTY(Constants.kLLLeftName) * kDrivingKp;
+  // public LinearVelocity rangeProportional(LinearVelocity maxSpeed, String kLLLeftName, String kLLRightName)
+  // {
 
-    return maxSpeed.times(proportionalFactor);
-  }
+  // }
 
   /****************************************************************************
    * 
