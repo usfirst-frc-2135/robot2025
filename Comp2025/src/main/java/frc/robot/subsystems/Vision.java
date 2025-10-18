@@ -125,7 +125,6 @@ public class Vision extends SubsystemBase
   public void initialize( )
   {
     DataLogManager.log(String.format("%s: Subsystem initialized!", getSubsystem( )));
-
     LimelightHelpers.setLEDMode_ForceOff(Constants.kLLLeftName);          // These work on LL3 and lower (not LL4)
     LimelightHelpers.setLEDMode_ForceOff(Constants.kLLRightName);         // These work on LL3 and lower (not LL4)
     LimelightHelpers.setStreamMode_PiPSecondary(Constants.kLLLeftName);   // These work on LL3 and lower (not LL4)
@@ -165,46 +164,20 @@ public class Vision extends SubsystemBase
   // TODO: The "offset" from the 0,0 tx/ty origin should be added/subracted here
   // TODO: pseudo code of the logic:
   //
-  public AngularVelocity aimProportional(LinearVelocity maxSpeed, int selectedBranch, AngularVelocity maxAngularRate)
+  public AngularVelocity aimProportional(int selectedBranch, AngularVelocity maxAngularRate)
   {
-    double limelightTX;
-    double TX;
-    double TXdesired = 0;
+    double TX = 0;
     if (selectedBranch == 0)
     {
-      limelightTX = LimelightHelpers.getTX(Constants.kLLLeftName);
-      if (limelightTX == 0)
-      {
-        TX = limelightTX - TXdesired;
-      }
+      TX = LimelightHelpers.getTX(Constants.kLLLeftName) - VIConsts.TX;
     }
     else if (selectedBranch == 2)
     {
-      limelightTX = LimelightHelpers.getTX(Constants.kLLRightName);
-      if (limelightTX == 0)
-      {
-        TX = limelightTX - TXdesired;
-      }
+      TX = LimelightHelpers.getTX(Constants.kLLRightName) - VIConsts.TX;
     }
-    double proportionalFactor = -LimelightHelpers.getTX(Constants.kLLLeftName) * kAimingKp;
+    double proportionalFactor = TX * kAimingKp;
     return maxAngularRate.times(proportionalFactor);
   }
-
-  //    declare a double named limelightTX;
-  //    if (selectedBranch == 0)
-  //    {
-  //      limelightTX = Get LL TX using LEFT LL name;
-  //      Subtract the TX offset when the tag is in the desired position on the LEFT LL (to put the desired tag TX, TY at the origin)
-  //    }
-  //    else if (selectedBranch == 2)
-  //    {
-  //      limelightTX = Get LL TX using RIGHT LL name;
-  //      Subtract the TX offset when the tag is in the desired position on the RIGHT LL (to put the desired tag TX, TY at the origin)
-  //    }
-  //    The rest of the code should follow the existing lines below
-  //    The proporitional factor should use limelightTX * KP value
-  //    return the maxSpeed multiplied by the proportional factor 
-  // }
 
   /****************************************************************************
    * 
@@ -224,50 +197,20 @@ public class Vision extends SubsystemBase
   // TODO: The "offset" from the 0,0 tx/ty origin should be added/subracted here
   // TODO: pseudo code of the logic:
   //
-  public LinearVelocity rangeProportional(LinearVelocity maxSpeed, int selectedBranch)
+  public LinearVelocity rangeProportional(int selectedBranch, LinearVelocity maxSpeed)
   {
-    double TY;
-    double limelightTY;
-    double TYdesired = 0;
+    double TY = 0;
     if (selectedBranch == 0)
     {
-      limelightTY = LimelightHelpers.getTY(Constants.kLLLeftName);
-      if (limelightTY == 0)
-      {
-        TY = limelightTY - TYdesired;
-      }
+      TY = LimelightHelpers.getTY(Constants.kLLLeftName) - VIConsts.TY;
     }
     else if (selectedBranch == 2)
     {
-      limelightTY = LimelightHelpers.getTY(Constants.kLLRightName);
-      if (limelightTY == 0)
-      {
-        TY = limelightTY - TYdesired;
-      }
+      TY = LimelightHelpers.getTY(Constants.kLLRightName) - VIConsts.TY;
     }
-    double proportionalFactor = LimelightHelpers.getTY(Constants.kLLLeftName) * kDrivingKp;
+    double proportionalFactor = TY * kDrivingKp;
     return maxSpeed.times(proportionalFactor);
   }
-  //    declare a double named limelightTY;
-  //    if (selectedBranch == 0)
-  //    {
-  //      limelightTY = Get LL TY using LEFT LL name;
-  //      Subtract the TY offset when the tag is in the desired position on the LEFT LL (to put the desired tag TX, TY at the origin)
-  //    }
-  //    else if (selectedBranch == 2)
-  //    {
-  //      limelightTY = Get LL TY using RIGHT LL name;
-  //      Subtract the TY offset when the tag is in the desired position on the RIGHT LL (to put the desired tag TX, TY at the origin)
-  //    }
-  //    The rest of the code should follow the existing lines below
-  //    The proporitional factor should use limelightTY * KP value
-  //    return the maxSpeed multiplied by the proportional factor 
-  // }
-  //
-  // public LinearVelocity rangeProportional(LinearVelocity maxSpeed, String kLLLeftName, String kLLRightName)
-  // {
-
-  // }
 
   /****************************************************************************
    * 
@@ -458,4 +401,29 @@ public class Vision extends SubsystemBase
     DataLogManager.log(String.format("Vision: branch: %d goal tag: %d goal pose %s", reefLevel.get( ), reefTag, goalPose));
     return goalPose;
   }
+
+  public void rangeProportionalLeft(LinearVelocity maxSpeed)
+  {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'rangeProportionalLeft'");
+  }
+
+  public void aimProportionalRight(AngularVelocity kMaxAngularRate)
+  {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'aimProportionalRight'");
+  }
+
+  public void rangeProportionalRight(LinearVelocity maxSpeed)
+  {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'rangeProportionalRight'");
+  }
+
+  public void aimProportionalLeft(AngularVelocity kMaxAngularRate)
+  {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'aimProportionalLeft'");
+  }
+
 }
