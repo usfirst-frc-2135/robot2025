@@ -46,7 +46,7 @@ public class SwervePIDVisionTarget extends Command
   private Vision                                m_vision;
   private Pose2d                                m_goalPose; // NOTE: Don't need goal pose tracking
 
-  // PID controllers - NOTE: Our PID controllers are in the vision class, so we don't need these
+  // PID controllers - NOTE: Our PID controllers are in the vision class, so we don't need these // Was 5.0 mps for a 1 m offset (too large)
   private static final PIDConstants             kTranslationPID    = new PIDConstants(5.0, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
   private static final PIDConstants             kRotationPID       = new PIDConstants(5.0, 0, 0);
   private PPHolonomicDriveController            m_DriveController  =
@@ -151,6 +151,12 @@ public class SwervePIDVisionTarget extends Command
     // m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
   }
 
+  private Vision m_vision( )
+  {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'm_vision'");
+  }
+
   @Override
   public void end(boolean interrupted)
   {
@@ -177,11 +183,13 @@ public class SwervePIDVisionTarget extends Command
     boolean speed = driveSpeeds.get( ).vxMetersPerSecond < kSpeedTolerance.in(MetersPerSecond)
         && driveSpeeds.get( ).vyMetersPerSecond < kSpeedTolerance.in(MetersPerSecond);
 
-    //*DataLogManager.log(String.format("%s: end conditions for SwervePIDVisionTarget  R: %s P: %s S: %s", getName( ), rotation, position, speed));
+    DataLogManager.log(String.format("%s: end conditions for SwervePIDVisionTarget S: %s", getName( ), speed));
 
-    //*endCondition = endDebouncer.calculate(rotation && position && speed);
+    endCondition = endDebouncer.calculate(speed);
 
     endConditionLogger.accept(endCondition);
+
+    DataLogManager.log(String.format("End condition: ", endCondition));
 
     return endCondition;
   }
