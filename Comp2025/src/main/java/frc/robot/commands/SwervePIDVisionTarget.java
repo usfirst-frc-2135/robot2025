@@ -42,11 +42,11 @@ public class SwervePIDVisionTarget extends Command
   private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);    // Was 0.25 inches per second which is extremely small
 
   // Main objects
-  private CommandSwerveDrivetrain               m_swerve;
-  private Vision                                m_vision;
+  //private CommandSwerveDrivetrain               m_swerve;
+  private Vision                                m_vision; // NOTE: Don't need goal pose tracking
   private Pose2d                                m_goalPose; // NOTE: Don't need goal pose tracking
 
-  // PID controllers - NOTE: Our PID controllers are in the vision class, so we don't need these
+  // PID controllers - NOTE: Our PID controllers are in the vision class, so we don't need these // Was 5.0 mps for a 1 m offset (too large)
   private static final PIDConstants             kTranslationPID    = new PIDConstants(5.0, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
   private static final PIDConstants             kRotationPID       = new PIDConstants(5.0, 0, 0);
   private PPHolonomicDriveController            m_DriveController  =
@@ -133,22 +133,24 @@ public class SwervePIDVisionTarget extends Command
     // vyPub.set(speeds.vyMetersPerSecond);
     // omegaPub.set(speeds.omegaRadiansPerSecond);
 
-    // TODO: We can't create a new vision class here, but we can pass it in when the class is created (like the swerve subsystem) in m_vision
-    Vision m_rangeProportionall = new Vision( );
-    // TODO: Use the kMaxSpeed constant above to pass into ...rangeProportional
+    Vision m_rangeProportionall = m_vision( );
     LinearVelocity maxSpeed;
-    // TODO: declare a LinearVelocity variable "speed" and set it to the return value from ...rangeProportional which returns a speed
-    //*m_rangeProportionall.rangeProportional(maxSpeed);
+    m_rangeProportionall.rangeProportionalLeft(maxSpeed);
+    m_rangeProportionall.rangeProportionalRight(maxSpeed);
 
-    // TODO: We can't create a new vision class here, but we can pass it in when the class is created (like the swerve subsystem) in m_vision
-    Vision m_aimProportionall = new Vision( );
-    // TODO: Use the kMaxAngularRate constant above to pass into ...aimProportional
+    Vision m_aimProportionall = m_vision( );
     AngularVelocity kMaxAngularRate;
-    // TODO: declare an AngularVelocity variable "rps" and set it to the return value from ...aimProportional which returns rotations per second
-    //*m_aimProportionall.aimProportional(kMaxAngularRate);
+    m_aimProportionall.aimProportionalLeft(kMaxAngularRate);
+    m_aimProportionall.aimProportionalRight(kMaxAngularRate);
 
     // TODO: We need a new m_swerve method that will take the linear speed (in chassis X direction) and rotations per second (like Apollo's code)
     // m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
+  }
+
+  private Vision m_vision( )
+  {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'm_vision'");
   }
 
   @Override
@@ -177,11 +179,13 @@ public class SwervePIDVisionTarget extends Command
     boolean speed = driveSpeeds.get( ).vxMetersPerSecond < kSpeedTolerance.in(MetersPerSecond)
         && driveSpeeds.get( ).vyMetersPerSecond < kSpeedTolerance.in(MetersPerSecond);
 
-    //*DataLogManager.log(String.format("%s: end conditions for SwervePIDVisionTarget  R: %s P: %s S: %s", getName( ), rotation, position, speed));
+    DataLogManager.log(String.format("%s: end conditions for SwervePIDVisionTarget S: %s", getName( ), speed));
 
-    //*endCondition = endDebouncer.calculate(rotation && position && speed);
+    endCondition = endDebouncer.calculate(speed);
 
     endConditionLogger.accept(endCondition);
+
+    DataLogManager.log(String.format("End condition: ", endCondition));
 
     return endCondition;
   }
