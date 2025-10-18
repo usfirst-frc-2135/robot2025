@@ -135,23 +135,25 @@ public class SwervePIDVisionTarget extends Command
     // omegaPub.set(speeds.omegaRadiansPerSecond);
 
     Vision m_rangeProportionall = m_vision( );
-        LinearVelocity maxSpeed;
-        //*m_rangeProportionall.rangeProportional(maxSpeed);
-    
+    LinearVelocity maxSpeed;
+    m_rangeProportionall.rangeProportionalLeft(maxSpeed);
+    m_rangeProportionall.rangeProportionalRight(maxSpeed);
+
     Vision m_aimProportionall = m_vision( );
-        AngularVelocity kMaxAngularRate;
-        //*m_aimProportionall.aimProportional(kMaxAngularRate);
-    
-        //*m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
-      }
-    
-      private Vision m_vision( )
-    {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'm_vision'");
-    }
-    
-    @Override
+    AngularVelocity kMaxAngularRate;
+    m_aimProportionall.aimProportionalLeft(kMaxAngularRate);
+    m_aimProportionall.aimProportionalRight(kMaxAngularRate);
+
+    //*m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
+  }
+
+  private Vision m_vision( )
+  {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'm_vision'");
+  }
+
+  @Override
   public void end(boolean interrupted)
   {
     // TODO: Update this logging call to make sense for our use - display the left/right, and end speeds
@@ -177,11 +179,13 @@ public class SwervePIDVisionTarget extends Command
     boolean speed = driveSpeeds.get( ).vxMetersPerSecond < kSpeedTolerance.in(MetersPerSecond)
         && driveSpeeds.get( ).vyMetersPerSecond < kSpeedTolerance.in(MetersPerSecond);
 
-    //*DataLogManager.log(String.format("%s: end conditions for SwervePIDVisionTarget  R: %s P: %s S: %s", getName( ), rotation, position, speed));
+    DataLogManager.log(String.format("%s: end conditions for SwervePIDVisionTarget S: %s", getName( ), speed));
 
-    //*endCondition = endDebouncer.calculate(rotation && position && speed);
+    endCondition = endDebouncer.calculate(speed);
 
     endConditionLogger.accept(endCondition);
+
+    DataLogManager.log(String.format("End condition: ", endCondition));
 
     return endCondition;
   }
