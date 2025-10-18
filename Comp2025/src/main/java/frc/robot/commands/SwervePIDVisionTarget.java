@@ -48,9 +48,10 @@ public class SwervePIDVisionTarget extends Command
 
   // Main objects
   //private CommandSwerveDrivetrain               m_swerve;
+  private Vision                                m_vision; // NOTE: Don't need goal pose tracking
   private Pose2d                                m_goalPose; // NOTE: Don't need goal pose tracking
 
-  // PID controllers - NOTE: Our PID controllers are in the vision class, so we don't need these
+  // PID controllers - NOTE: Our PID controllers are in the vision class, so we don't need these // Was 5.0 mps for a 1 m offset (too large)
   private static final PIDConstants             kTranslationPID    = new PIDConstants(5.0, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
   private static final PIDConstants             kRotationPID       = new PIDConstants(5.0, 0, 0);
   private PPHolonomicDriveController            m_DriveController  =
@@ -133,18 +134,24 @@ public class SwervePIDVisionTarget extends Command
     // vyPub.set(speeds.vyMetersPerSecond);
     // omegaPub.set(speeds.omegaRadiansPerSecond);
 
-    Vision m_rangeProportionall = new Vision( );
-    LinearVelocity maxSpeed;
-    //*m_rangeProportionall.rangeProportional(maxSpeed);
-
-    Vision m_aimProportionall = new Vision( );
-    AngularVelocity kMaxAngularRate;
-    //*m_aimProportionall.aimProportional(kMaxAngularRate);
-
-    //*m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
-  }
-
-  @Override
+    Vision m_rangeProportionall = m_vision( );
+        LinearVelocity maxSpeed;
+        //*m_rangeProportionall.rangeProportional(maxSpeed);
+    
+    Vision m_aimProportionall = m_vision( );
+        AngularVelocity kMaxAngularRate;
+        //*m_aimProportionall.aimProportional(kMaxAngularRate);
+    
+        //*m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
+      }
+    
+      private Vision m_vision( )
+    {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'm_vision'");
+    }
+    
+    @Override
   public void end(boolean interrupted)
   {
     // TODO: Update this logging call to make sense for our use - display the left/right, and end speeds
