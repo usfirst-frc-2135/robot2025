@@ -167,31 +167,27 @@ public class Vision extends SubsystemBase
   //
   public AngularVelocity aimProportional(LinearVelocity maxSpeed, int selectedBranch, AngularVelocity maxAngularRate)
   {
-
     double limelightTX;
     double TX;
-    double TXanticipated = 700;
+    double TXdesired = 0;
     if (selectedBranch == 0)
     {
       limelightTX = LimelightHelpers.getTX(Constants.kLLLeftName);
       if (limelightTX == 0)
       {
-        TX = limelightTX - TXanticipated;
-
+        TX = limelightTX - TXdesired;
       }
-
     }
     else if (selectedBranch == 2)
     {
       limelightTX = LimelightHelpers.getTX(Constants.kLLRightName);
       if (limelightTX == 0)
       {
-        TX = limelightTX - TXanticipated;
+        TX = limelightTX - TXdesired;
       }
     }
     double proportionalFactor = -LimelightHelpers.getTX(Constants.kLLLeftName) * kAimingKp;
     return maxAngularRate.times(proportionalFactor);
-
   }
 
   //    declare a double named limelightTX;
@@ -214,6 +210,12 @@ public class Vision extends SubsystemBase
    * 
    * Limelight auto-ranging control for distance velocity. Only aligns the left Limelight.
    * 
+   * @param left
+   * 
+   * @param right
+   * 
+   * @param center
+   * 
    * @param maxSpeed
    *          max speed to scale against
    * @return desired proportional linear velocity in chassis forward direction
@@ -226,16 +228,13 @@ public class Vision extends SubsystemBase
   {
     double TY;
     double limelightTY;
-    double TYanticipated = 350;
+    double TYdesired = 0;
     if (selectedBranch == 0)
     {
       limelightTY = LimelightHelpers.getTY(Constants.kLLLeftName);
       if (limelightTY == 0)
       {
-        if (limelightTY == 0)
-        {
-          TY = limelightTY - TYanticipated;
-        }
+        TY = limelightTY - TYdesired;
       }
     }
     else if (selectedBranch == 2)
@@ -243,12 +242,11 @@ public class Vision extends SubsystemBase
       limelightTY = LimelightHelpers.getTY(Constants.kLLRightName);
       if (limelightTY == 0)
       {
-        TY = limelightTY - TYanticipated;
+        TY = limelightTY - TYdesired;
       }
     }
     double proportionalFactor = LimelightHelpers.getTY(Constants.kLLLeftName) * kDrivingKp;
     return maxSpeed.times(proportionalFactor);
-
   }
   //    declare a double named limelightTY;
   //    if (selectedBranch == 0)
