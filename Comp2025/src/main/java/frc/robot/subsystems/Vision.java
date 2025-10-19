@@ -152,11 +152,8 @@ public class Vision extends SubsystemBase
    * 
    * @param maxAngularRate
    *          max angular rate to scale against
-   * @param left
-   * 
-   * @param right
-   * 
-   * @param center
+   * @param selectedBranch(left,
+   *          right, center)
    * 
    * @return desired proportional angular velocity to rotate the chassis
    */
@@ -183,11 +180,9 @@ public class Vision extends SubsystemBase
    * 
    * Limelight auto-ranging control for distance velocity. Only aligns the left Limelight.
    * 
-   * @param left
+   * @param selectedBranch(left,
+   *          right, center)
    * 
-   * @param right
-   * 
-   * @param center
    * 
    * @param maxSpeed
    *          max speed to scale against
@@ -400,30 +395,6 @@ public class Vision extends SubsystemBase
 
     DataLogManager.log(String.format("Vision: branch: %d goal tag: %d goal pose %s", reefLevel.get( ), reefTag, goalPose));
     return goalPose;
-  }
-
-  public void rangeProportionalLeft(LinearVelocity maxSpeed)
-  {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'rangeProportionalLeft'");
-  }
-
-  public void aimProportionalRight(AngularVelocity kMaxAngularRate)
-  {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'aimProportionalRight'");
-  }
-
-  public void rangeProportionalRight(LinearVelocity maxSpeed)
-  {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'rangeProportionalRight'");
-  }
-
-  public void aimProportionalLeft(AngularVelocity kMaxAngularRate)
-  {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'aimProportionalLeft'");
   }
 
 }

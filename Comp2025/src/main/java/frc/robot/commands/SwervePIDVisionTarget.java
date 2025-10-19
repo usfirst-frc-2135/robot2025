@@ -87,9 +87,9 @@ public class SwervePIDVisionTarget extends Command
   public SwervePIDVisionTarget(CommandSwerveDrivetrain swerve, Vision vision)
   {
     // TODO: Since we will be commanding the swerve subsystem to drive to where we want to go,
-    // TODO: we MUST pass in a reference to call setControl with the desired speeds
-    // TODO: I uncommented where you had commented it out, since it needs to come back
-    m_swerve = swerve;
+        // TODO: we MUST pass in a reference to call setControl with the desired speeds
+        // TODO: I uncommented where you had commented it out, since it needs to come back
+    CommandSwerveDrivetrain m_swerve = swerve;
     m_vision = vision;
     addRequirements(swerve);
     setName("SwervePIDVisionTarget");
