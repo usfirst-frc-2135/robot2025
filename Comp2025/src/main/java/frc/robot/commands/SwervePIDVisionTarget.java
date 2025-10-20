@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -29,7 +29,8 @@ public class SwervePIDVisionTarget extends Command
 {
   // Constants
   private static final LinearVelocity       kMaxSpeed                 = MetersPerSecond.of(3.5);     // Cap max applied velocity to 3.5 mps in either direction
-  private static final AngularVelocity      kAngularVelocityTolerance = RadiansPerSecond.of(0.1);;
+  private static final AngularVelocity      kMaxAngularRate           = RotationsPerSecond.of(1.0); // Max 1.0 rot per second
+  private static final AngularVelocity      kAngularVelocityTolerance = RotationsPerSecond.of(0.01);;
   private static final LinearVelocity       kSpeedTolerance           = InchesPerSecond.of(2.0);    // Was 0.25 inches per second which is extremely small
 
   // Main objects
@@ -98,7 +99,7 @@ public class SwervePIDVisionTarget extends Command
     m_speed = m_vision.rangeProportional(m_selectedBranch, kMaxSpeed);
 
     // TODO: declare an AngularVelocity variable "rps" and set it to the return value from ...aimProportional which returns rotations per second
-    m_rps = m_vision.aimProportional(m_selectedBranch, m_rps);
+    m_rps = m_vision.aimProportional(m_selectedBranch, kMaxAngularRate);
 
     // TODO: We need a new m_swerve method that will take the linear speed (in chassis X direction) and rotations per second (like Apollo's code)
     m_swerve.setControl(new SwerveRequest.RobotCentric( ).withVelocityX(m_speed).withRotationalRate(m_rps));
