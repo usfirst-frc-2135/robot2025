@@ -21,7 +21,7 @@
           },
           {
             "title": "AutoMode",
-            "x": 768.0,
+            "x": 640.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
@@ -34,7 +34,7 @@
           },
           {
             "title": "StartPosition",
-            "x": 768.0,
+            "x": 640.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
@@ -47,7 +47,7 @@
           },
           {
             "title": "AutoDelay",
-            "x": 768.0,
+            "x": 640.0,
             "y": 256.0,
             "width": 128.0,
             "height": 128.0,
@@ -75,7 +75,7 @@
           {
             "title": "calibrated",
             "x": 896.0,
-            "y": 256.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -119,7 +119,7 @@
             "title": "Field",
             "x": 0.0,
             "y": 0.0,
-            "width": 768.0,
+            "width": 640.0,
             "height": 384.0,
             "type": "Field",
             "properties": {
@@ -133,6 +133,40 @@
               "field_rotation": 0.0,
               "robot_color": 4294198070,
               "trajectory_color": 4294967295
+            }
+          },
+          {
+            "title": "LeftUpdate",
+            "x": 768.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/swerve/LeftUpdate",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "RightUpdate",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/swerve/RightUpdate",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
