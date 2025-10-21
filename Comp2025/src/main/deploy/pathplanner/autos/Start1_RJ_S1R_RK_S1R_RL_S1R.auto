@@ -33,6 +33,12 @@
           "data": {
             "pathName": "S1R-RL"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RL-S1R"
+          }
         }
       ]
     }

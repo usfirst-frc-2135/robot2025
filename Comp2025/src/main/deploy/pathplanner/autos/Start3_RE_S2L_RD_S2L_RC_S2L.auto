@@ -33,6 +33,12 @@
           "data": {
             "pathName": "S2L-RC"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RC-S2L"
+          }
         }
       ]
     }
