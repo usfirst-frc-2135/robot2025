@@ -25,7 +25,8 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
 
   // Drive to score
 
-  private Command driveToScore(String phase, PathPlannerPath path, CommandSwerveDrivetrain drive, Elevator elev, Manipulator man)
+  private Command driveToScore(String phase, PathPlannerPath path, CommandSwerveDrivetrain drive, Elevator elev, Manipulator man,
+      double delayUntilElevatorUp)
   {
     return new SequentialCommandGroup(                                                      //
         new LogCommand(getName( ), phase + ": Drive to branch and score coral"),            //
@@ -34,7 +35,7 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
             new SequentialCommandGroup(                                                     //
                 man.getMoveToPositionCommand(ClawMode.CORALMAINTAIN, man::getAngleSafeState), // ~275 msec
                 // Delay some time during the path before pre-raising the elevator
-                new WaitCommand(0.55),                                               //
+                new WaitCommand(delayUntilElevatorUp),                                      //
                 elev.getMoveToPositionCommand(elev::getHeightCoralL4))                      // ~900 msec
         )                                                                                   //
     );
@@ -76,7 +77,7 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
 
         new LogCommand(getName( ), phase + ": Wait for coral to be acquired and stop rollers"), //
         new WaitUntilCommand(man::isCoralDetected),
-        // new WaitUntilCommand(manipulator::isCoralDetected).withTimeout(0.3),    // Temporary for debugging
+        // new WaitUntilCommand(manipulator::isCoralDetected).withTimeout(0.3),             // Temporary for debugging
         man.getMoveToPositionCommand(ClawMode.STOP, man::getCurrentAngle));
   }
 
@@ -93,6 +94,8 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
    * 9 - Drive to a branch
    * 10 - Score the third coral
    * 11 - Drive to coral station
+   * 12 - Drive to a branch
+   * 13 - Score the fourth coral
    * 
    * @param ppPaths
    *          list of auto paths to follow
@@ -114,7 +117,7 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
 
         // Score preloaded coral
 
-        driveToScore("PRELOAD", ppPaths.get(0), drivetrain, elevator, manipulator),
+        driveToScore("PRELOAD", ppPaths.get(0), drivetrain, elevator, manipulator, 0.470),
         expelCoral("PRELOAD", elevator, manipulator),
 
         // First Coral Station
@@ -122,21 +125,23 @@ public class AutoPreloadCoral3 extends SequentialCommandGroup
         
         driveToAcquire("CORAL1", ppPaths.get(1), drivetrain, elevator, manipulator),
         acquireCoral("CORAL1", manipulator),
-        driveToScore("CORAL1", ppPaths.get(2), drivetrain, elevator, manipulator),
+        driveToScore("CORAL1", ppPaths.get(2), drivetrain, elevator, manipulator, 0.600),
         expelCoral("CORAL1", elevator, manipulator),
 
         // Second Coral Station
 
         driveToAcquire("CORAL2", ppPaths.get(3), drivetrain, elevator, manipulator),
         acquireCoral("CORAL2", manipulator),
-        driveToScore("CORAL2", ppPaths.get(4), drivetrain, elevator, manipulator),
+        driveToScore("CORAL2", ppPaths.get(4), drivetrain, elevator, manipulator,0.600),
         expelCoral("CORAL2", elevator, manipulator),
     
-        // Return elevator down
+        // Third Coral Station
 
         driveToAcquire("CORAL3", ppPaths.get(5), drivetrain, elevator, manipulator),
-        acquireCoral("CORAL3", manipulator)
-  
+        acquireCoral("CORAL3", manipulator),
+        driveToScore("CORAL3", ppPaths.get(6), drivetrain, elevator, manipulator, 0.600),
+        expelCoral("CORAL3", elevator, manipulator)
+
         // @formatter:on
     );
   }
