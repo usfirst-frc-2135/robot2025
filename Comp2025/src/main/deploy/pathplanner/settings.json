@@ -13,8 +13,8 @@
     "1-AutoLeave",
     "2-AutoPreload",
     "3-AutoPreloadCoral",
-    "5-AutoPreloadAlgae",
-    "4-AutoPreloadCoral2",
+    "5-AutoPreloadCoral3",
+    "6-AutoPreloadAlgae",
     "9-AutoTest"
   ],
   "defaultMaxVel": 3.9,
