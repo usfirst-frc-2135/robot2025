@@ -137,7 +137,8 @@ public class RobotContainer
     AUTOLEAVE,          // Leave starting line
     AUTOPRELOAD,        // Preload coral
     AUTOPRELOADCORAL,   // Preload coral and score one more
-    AUTOPRELOADCORAL2, AUTOPRELOADCORAL3,  // Preload coral and score two more
+    AUTOPRELOADCORAL2,  // Preload coral and score two more
+    AUTOPRELOADCORAL3,  // Preload coral and score three more
     AUTOPRELOADALGAE,   // Preload coral and score one algae
     AUTOTEST            // Run a selected test auto
   }
@@ -572,6 +573,10 @@ public class RobotContainer
       case AUTOPRELOADCORAL :
         m_autoCommand =
             new AutoPreloadCoral(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
+        break;
+      case AUTOPRELOADCORAL2 :
+        m_autoCommand =
+            new AutoPreloadCoral2(m_ppPathList, m_drivetrain, m_elevator, m_manipulator, m_hid, this::getReefLevelCommand);
         break;
       case AUTOPRELOADCORAL3 :
         m_autoCommand =
