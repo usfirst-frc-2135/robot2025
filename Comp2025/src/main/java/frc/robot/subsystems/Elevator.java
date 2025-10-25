@@ -90,7 +90,7 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightCoralL1          = 11.0;            // By definition - at L1 for scoring coral
   private static final double  kHeightCoralL2          = 8.0;             // By definition - at L2 for scoring coral
   private static final double  kHeightCoralL3          = 15.5;            // By definition - at L3 for scoring coral
-  private static final double  kHeightCoralL4          = 28.0;            // By definition - at L4 for scoring coral
+  private static final double  kHeightCoralL4          = 28.25;            // By definition - at L4 for scoring coral
 
   private static final double  kHeightAlgaeProcessor   = 3.5;             // By definition - at scoring algae in processor
   private static final double  kHeightAlgaeL23         = 12.5;            // By definition - at L23 for taking algae
