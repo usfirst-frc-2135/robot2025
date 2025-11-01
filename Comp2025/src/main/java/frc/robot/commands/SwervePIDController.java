@@ -45,7 +45,7 @@ public class SwervePIDController extends Command
   private Pose2d                                m_goalPose;
 
   // PID controllers
-  private static final PIDConstants             kTranslationPID    = new PIDConstants(3.2, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
+  private static final PIDConstants             kTranslationPID    = new PIDConstants(3.5, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
   private static final PIDConstants             kRotationPID       = new PIDConstants(5.0, 0, 0);
   private PPHolonomicDriveController            m_DriveController  =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
