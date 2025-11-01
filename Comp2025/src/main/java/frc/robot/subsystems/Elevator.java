@@ -95,7 +95,7 @@ public class Elevator extends SubsystemBase
   private static final double  kHeightAlgaeProcessor   = 3.5;             // By definition - at scoring algae in processor
   private static final double  kHeightAlgaeL23         = 12.5;            // By definition - at L23 for taking algae
   private static final double  kHeightAlgaeL34         = 20.5;            // By definition - at L34 for taking algae
-  private static final double  kHeightAlgaeNet         = 30.75;           // By definition - at scoring algae in net
+  private static final double  kHeightAlgaeNet         = 30.75;           // By definition - at scoring algae in net  
 
   /** Elevator manual move parameters */
   private enum JoystickMode

@@ -1,15 +1,15 @@
 
 package frc.robot.commands;
 
-
 import java.util.Map;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants;
+import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.ELConsts.ReefLevel;
 import frc.robot.subsystems.Elevator;
@@ -69,18 +69,30 @@ public class ScoreAlgae extends SequentialCommandGroup
                 Map.entry(ReefLevel.TWO, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet))
               ), 
               this::selectLevel), 
- 
+              new SelectCommand<>(
+                // Maps selector values to commands
+                Map.ofEntries(
+                  Map.entry(ReefLevel.ONE, new LogCommand(getName(), "Manipulator Net")),
+                 
+                  Map.entry(ReefLevel.TWO,ParallelCommandGroup(
+                 manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet), 
+                 manipulator.getMoveToPositionCommand(ClawMode.ALGAEEXPEL, manipulator::getAngleAlgaeNet))    
+              ),
+                this::selectLevel 
+                ),
+              
         new LogCommand(getName(), "Move Manipulator to reef position based on the level"), 
         new SelectCommand<>( 
           // Maps selector values to commands 
           Map.ofEntries( 
                 Map.entry(ReefLevel.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeProcessor)), 
-                Map.entry(ReefLevel.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet))
-              ),  
-              this::selectLevel)
+               Map.entry(ReefLevel.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet))
+               ),  
+              this::selectLevel
+              ));
         
         // @formatter:on
-    );
+    
   }
 
   @Override

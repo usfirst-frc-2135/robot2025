@@ -100,7 +100,7 @@ public class Manipulator extends SubsystemBase
   private static final double       kWristAngleAlgae23        = 29.0;
   private static final double       kWristAngleAlgae34        = 29.0;
   private static final double       kWristAngleAlgaeProcessor = 50.0;
-  private static final double       kWristAngleAlgaeNet       = -10.0;
+  private static final double       kWristAngleAlgaeNet       = -60;//-10
 
   // Claw roller speeds
   private static final DutyCycleOut kClawRollerStop           = new DutyCycleOut(0.0).withIgnoreHardwareLimits(true);
