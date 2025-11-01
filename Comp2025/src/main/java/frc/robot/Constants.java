@@ -46,7 +46,7 @@ public class Constants
   public static final double      kBranchSpacing        = Units.inchesToMeters(13.0);  // Distance between branches
   public static final double      kRobotLength          = Units.inchesToMeters(34.5);  // Our robot length
   public static final double      kSetbackCoral         = kRobotLength / 2;                                     // Distance robot is set back from branch to score coral
-  public static final double      kSetbackAlgae         = kRobotLength / 2 + Units.inchesToMeters(16.0); // Distance robot is set back from reef to grab algae
+  public static final double      kSetbackAlgae         = kRobotLength / 2 + Units.inchesToMeters(10.0); // Distance robot is set back from reef to grab algae
 
   // Scoring poses relative to an AprilTag (X - robot setback, Y - left, center, right)
 
