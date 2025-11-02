@@ -45,13 +45,14 @@ public class Constants
 
   public static final double      kBranchSpacing        = Units.inchesToMeters(13.0);  // Distance between branches
   public static final double      kRobotLength          = Units.inchesToMeters(34.5);  // Our robot length
-  public static final double      kRobotSetback         = kRobotLength / 2;                   // Distance robot is set back from branch to score
+  public static final double      kSetbackCoral         = kRobotLength / 2;                                     // Distance robot is set back from branch to score coral
+  public static final double      kSetbackAlgae         = kRobotLength / 2 + Units.inchesToMeters(16.0); // Distance robot is set back from reef to grab algae
 
   // Scoring poses relative to an AprilTag (X - robot setback, Y - left, center, right)
 
-  public static final Transform2d kBranchScoreLeft      = new Transform2d(kRobotSetback, -kBranchSpacing / 2, Rotation2d.k180deg);
-  public static final Transform2d kBranchScoreCenter    = new Transform2d(kRobotSetback, 0, Rotation2d.k180deg);
-  public static final Transform2d kBranchScoreRight     = new Transform2d(kRobotSetback, +kBranchSpacing / 2, Rotation2d.k180deg);
+  public static final Transform2d kBranchScoreLeft      = new Transform2d(kSetbackCoral, -kBranchSpacing / 2, Rotation2d.k180deg);
+  public static final Transform2d kBranchScoreCenter    = new Transform2d(kSetbackAlgae, 0, Rotation2d.k180deg);
+  public static final Transform2d kBranchScoreRight     = new Transform2d(kSetbackCoral, +kBranchSpacing / 2, Rotation2d.k180deg);
 
   /****************************************************************************
    * CAN IDs and PWM IDs
