@@ -65,34 +65,34 @@ public class ScoreAlgae extends SequentialCommandGroup
         new SelectCommand<>( 
           // Maps selector values to commands 
           Map.ofEntries( 
-                Map.entry(ReefLevel.ONE, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor)), 
-                Map.entry(ReefLevel.TWO, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet))
-              ), 
-              this::selectLevel), 
-              new SelectCommand<>(
-                // Maps selector values to commands
-                Map.ofEntries(
-                  Map.entry(ReefLevel.ONE, new LogCommand(getName(), "Manipulator Net")),
-                 
-                  Map.entry(ReefLevel.TWO,ParallelCommandGroup(
-                 manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet), 
-                 manipulator.getMoveToPositionCommand(ClawMode.ALGAEEXPEL, manipulator::getAngleAlgaeNet))    
-              ),
-                this::selectLevel 
-                ),
+              Map.entry(ReefLevel.ONE, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor)), 
+              Map.entry(ReefLevel.TWO, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet))
+            ), 
+            this::selectLevel),
+
+        new SelectCommand<>(
+          // Maps selector values to commands
+          Map.ofEntries(
+              Map.entry(ReefLevel.ONE, new LogCommand(getName(), "Manipulator Net")),
+              Map.entry(ReefLevel.TWO, new ParallelCommandGroup(
+                manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet), 
+                manipulator.getMoveToPositionCommand(ClawMode.ALGAEEXPEL, manipulator::getAngleAlgaeNet)
+              ))
+            ),
+            this::selectLevel),
               
         new LogCommand(getName(), "Move Manipulator to reef position based on the level"), 
         new SelectCommand<>( 
           // Maps selector values to commands 
           Map.ofEntries( 
-                Map.entry(ReefLevel.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeProcessor)), 
-               Map.entry(ReefLevel.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet))
-               ),  
-              this::selectLevel
-              ));
+              Map.entry(ReefLevel.ONE, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeProcessor)), 
+              Map.entry(ReefLevel.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet))
+            ),  
+            this::selectLevel
+            ));
         
         // @formatter:on
-    
+
   }
 
   @Override
