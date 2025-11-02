@@ -126,7 +126,8 @@ public class RobotContainer
       table.getIntegerTopic(ELConsts.kReefLevelString).publish( );   // Level of the reef to score or acquire from (1-4)
   private final IntegerPublisher                      m_reefBranchPub =
       table.getIntegerTopic(VIConsts.kReefBranchString).publish( );  // Branch of the reef to score or acquire from (left, middle, right)
-  private Command                                     m_autoCommand;    // Selected autonomous command
+  private Command                                     m_autoCommand;  // Selected autonomous command
+  private List<PathPlannerPath>                       m_ppPathList;   // Path list for the selected auto
 
   /**
    * Chooser options for autonomous commands - all starting from poses 1-3
@@ -477,11 +478,13 @@ public class RobotContainer
    * 
    * Reset odometery to initial pose in the first autonomous path
    */
-  List<PathPlannerPath> m_ppPathList;
-  PathPlannerPath       m_initialPath;
-
   void resetOdometryToInitialPose(PathPlannerPath initialPath)
   {
+    if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
+    {
+      initialPath = initialPath.flipPath( );
+    }
+
     // Set field centric robot position to start of auto sequence
     try
     {
@@ -593,28 +596,15 @@ public class RobotContainer
 
     DataLogManager.log(String.format("getAuto: autoMode %s (%s)", autoKey, m_autoCommand.getName( )));
 
-    // If on red alliance, flip each path, then reset odometry
-    m_initialPath = m_ppPathList.get(0);
-    if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
-    {
-      m_initialPath = m_initialPath.flipPath( );
-    }
-
-    // Set field centric robot position to start of auto sequence
-    Pose2d startPose = m_initialPath.getStartingHolonomicPose( ).get( );
-    DataLogManager.log(String.format("getAuto: starting pose %s", startPose));
-    m_drivetrain.resetPoseAndLimelight(startPose);
+    // Update robot pose to where we want immediately so it displays correctly in dashboard
+    resetOdometryToInitialPose(m_ppPathList.get(0));
 
     // Build the autonomous command to run
     m_autoCommand = new SequentialCommandGroup(                                                       //
         new InstantCommand(( ) -> Robot.timeMarker("AutoStart")),                                 //
-        new InstantCommand(( ) ->
+        new InstantCommand(( ) ->      // Update pose again right before we run the command
         {
-          // If on red alliance, flip each path, then reset odometry
-          m_initialPath = m_ppPathList.get(0);
-          if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
-            m_initialPath = m_initialPath.flipPath( );
-          resetOdometryToInitialPose(m_initialPath);
+          resetOdometryToInitialPose(m_ppPathList.get(0));
         }, m_drivetrain),                                                                             //
         new LogCommand("Autodelay", String.format("Delaying %.1f seconds ...", delay)), //
         new WaitCommand(delay),                                                                       //
