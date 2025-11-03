@@ -1,7 +1,8 @@
 package frc.robot.commands;
 
-import java.util.Map;
 import static edu.wpi.first.units.Units.Seconds;
+
+import java.util.Map;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -13,12 +14,11 @@ import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.ELConsts.ReefLevel;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.HID;
 import frc.robot.subsystems.Manipulator;
 
 public class ExpelAlgae extends SequentialCommandGroup
 {
-    private ReefLevel selectLevel( )
+  private ReefLevel selectLevel( )
   {
     NetworkTable table = NetworkTableInstance.getDefault( ).getTable(Constants.kRobotString);
     int level = (int) table.getIntegerTopic(ELConsts.kReefLevelString).subscribe(0).get( );
@@ -34,6 +34,7 @@ public class ExpelAlgae extends SequentialCommandGroup
         return ReefLevel.TWO;
     }
   }
+
   /**
    * Group command to use the subsystems to expel a coral onto the reef
    * 
@@ -41,10 +42,8 @@ public class ExpelAlgae extends SequentialCommandGroup
    *          elevator subsystem
    * @param manipulator
    *          manipulator subsystem
-   * @param hid
-   *          hid subsystem
    */
-  public ExpelAlgae(Elevator elevator, Manipulator manipulator, HID hid)
+  public ExpelAlgae(Elevator elevator, Manipulator manipulator)
   {
     setName("ExpelCoral");
 
