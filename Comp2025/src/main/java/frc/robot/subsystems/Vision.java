@@ -243,18 +243,18 @@ public class Vision extends SubsystemBase
 
     for (int tag = 17; tag <= 22; tag++)
     {
-      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value, 4);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value, 4);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value, 4);
     }
 
     // DataLogManager.log(String.format("-----"));
 
     // for (int tag = 6; tag <= 11; tag++)
     // {
-    //   getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
-    //   getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
-    //   getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
+    //   getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value, 4);
+    //   getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value, 4);
+    //   getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value, 4);
     // }
 
     // DataLogManager.log(String.format("-----"));
@@ -312,7 +312,7 @@ public class Vision extends SubsystemBase
    * 
    * Calculate a scoring waypoint for a given tag ID and branch (left, center, right)
    */
-  private static Pose2d getScoringGoalPose(int tag, int branch)
+  private static Pose2d getScoringGoalPose(int tag, int branch, int level)
   {
     Pose2d atPose = VIConsts.kATField.getTagPose(tag).orElse(new Pose3d( )).toPose2d( );
     Transform2d branchOffset;
@@ -320,14 +320,14 @@ public class Vision extends SubsystemBase
     switch (branch)
     {
       case 0 :  // Left
-        branchOffset = Constants.kBranchScoreLeft;
+        branchOffset = (level == 1) ? Constants.kBranchScoreLeftL1 : Constants.kBranchScoreLeft;
         break;
       default :
       case 1 :  // Algae
-        branchOffset = Constants.kBranchScoreCenter;
+        branchOffset = (level == 1) ? Constants.kBranchScoreCenterL1 : Constants.kBranchScoreCenter;
         break;
       case 2 :  // Right
-        branchOffset = Constants.kBranchScoreRight;
+        branchOffset = (level == 1) ? Constants.kBranchScoreRightL1 : Constants.kBranchScoreRight;
         break;
     }
 
@@ -352,10 +352,11 @@ public class Vision extends SubsystemBase
   {
     int reefTag = findClosestReefTag(currentPose);
 
-    int reefOffset = (int) reefBranch.get( );
+    int branch = (int) reefBranch.get( );
+    int level = (int) reefLevel.get( );
 
     int relativeReefTag = reefTag - blueReefTags[0];
-    Pose2d goalPose = getScoringGoalPose(reefTag, reefOffset);
+    Pose2d goalPose = getScoringGoalPose(reefTag, branch, level);
 
     if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
     {

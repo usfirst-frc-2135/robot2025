@@ -54,6 +54,10 @@ public class Constants
   public static final Transform2d kBranchScoreCenter    = new Transform2d(kSetbackAlgae, 0, Rotation2d.k180deg);
   public static final Transform2d kBranchScoreRight     = new Transform2d(kSetbackCoral, +kBranchSpacing / 2, Rotation2d.k180deg);
 
+  public static final Transform2d kBranchScoreLeftL1    = new Transform2d(kSetbackCoral, -kBranchSpacing / 2, Rotation2d.k180deg);
+  public static final Transform2d kBranchScoreCenterL1  = new Transform2d(kSetbackCoral, 0, Rotation2d.k180deg);
+  public static final Transform2d kBranchScoreRightL1   = new Transform2d(kSetbackCoral, +kBranchSpacing / 2, Rotation2d.k180deg);
+
   /****************************************************************************
    * CAN IDs and PWM IDs
    ****************************************************************************/
