@@ -287,10 +287,10 @@ public class RobotContainer
     // Add command groups to dashboard
     SmartDashboard.putData("AcquireAlgae", new AcquireAlgae(m_elevator, m_manipulator, m_hid));
     SmartDashboard.putData("AcquireCoral", new AcquireCoral(m_elevator, m_manipulator, m_hid));
-    SmartDashboard.putData("ExpelAlgae", new ExpelAlgae(m_elevator, m_manipulator, m_hid));
-    SmartDashboard.putData("ExpelCoral", new ExpelCoral(m_elevator, m_manipulator, m_hid));
-    SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator, m_hid));
-    SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator, m_hid));
+    SmartDashboard.putData("ExpelAlgae", new ExpelAlgae(m_elevator, m_manipulator));
+    SmartDashboard.putData("ExpelCoral", new ExpelCoral(m_elevator, m_manipulator));
+    SmartDashboard.putData("ScoreAlgae", new ScoreAlgae(m_elevator, m_manipulator));
+    SmartDashboard.putData("ScoreCoral", new ScoreCoral(m_elevator, m_manipulator));
   }
 
   /****************************************************************************
@@ -305,12 +305,8 @@ public class RobotContainer
     //
     // Driver - A, B, X, Y
     // 
-    m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
-    m_driverPad.b( ).whileTrue(new SequentialCommandGroup(    //
-        m_drivetrain.getAlignToReefPIDCommand( ), //
-        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(0.5), 0.5), //
-        m_hid.getHIDRumbleDriverCommand(Constants.kRumbleOn, Seconds.of(0.5), 0.5)  //
-    ));
+    m_driverPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator));
+    m_driverPad.b( ).whileTrue(m_drivetrain.getAlignToReefPIDCommand( ));
     m_driverPad.x( ).onTrue(new LogCommand("driverPad", "X"));
     m_driverPad.y( ).whileTrue(getSlowSwerveCommand( )); // Note: left lower paddle!
 
@@ -366,8 +362,8 @@ public class RobotContainer
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
-    m_driverPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_hid));
-    m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_hid));
+    m_driverPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator));
+    m_driverPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator));
 
     m_driverPad.leftStick( ).onTrue(new LogCommand("driverPad", "left stick"));
     m_driverPad.rightStick( ).onTrue(new LogCommand("driverPad", "right stick"));
@@ -378,7 +374,7 @@ public class RobotContainer
     //
     // Operator - A, B, X, Y
     //
-    m_operatorPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator, m_hid));
+    m_operatorPad.a( ).onTrue(new ExpelCoral(m_elevator, m_manipulator));
     m_operatorPad.b( ).onTrue(getSelectReefBranchCommand(VIConsts.ReefBranch.RIGHT));
     m_operatorPad.x( ).onTrue(getSelectReefBranchCommand(VIConsts.ReefBranch.LEFT));
     m_operatorPad.y( ).onTrue(getSelectReefBranchCommand(VIConsts.ReefBranch.ALGAE));
@@ -407,9 +403,9 @@ public class RobotContainer
     // Xbox enums { leftX = 0, leftY = 1, leftTrigger = 2, rightTrigger = 3, rightX = 4, rightY = 5}
     // Xbox on MacOS { leftX = 0, leftY = 1, rightX = 2, rightY = 3, leftTrigger = 5, rightTrigger = 4}
     //
-    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator, m_hid));
-    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onFalse(new ExpelAlgae(m_elevator, m_manipulator, m_hid));
-    m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator, m_hid));
+    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onTrue(new ScoreAlgae(m_elevator, m_manipulator));
+    m_operatorPad.leftTrigger(Constants.kTriggerThreshold).onFalse(new ExpelAlgae(m_elevator, m_manipulator));
+    m_operatorPad.rightTrigger(Constants.kTriggerThreshold).onTrue(new ScoreCoral(m_elevator, m_manipulator));
 
     m_operatorPad.leftStick( ).toggleOnTrue(new LogCommand("operPad", "left stick"));
     m_operatorPad.rightStick( ).toggleOnTrue(new LogCommand("operPad", "right stick"));

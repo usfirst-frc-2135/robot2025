@@ -1,19 +1,17 @@
 
 package frc.robot.commands;
 
-
 import java.util.Map;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants;
+import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.ELConsts.ReefLevel;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.HID;
 import frc.robot.subsystems.Manipulator;
 
 /**
@@ -46,10 +44,8 @@ public class ScoreAlgae extends SequentialCommandGroup
    *          elevator subsystem
    * @param manipulator
    *          manipulator subsystem
-   * @param hid
-   *          hid subsystem
    */
-  public ScoreAlgae(Elevator elevator, Manipulator manipulator, HID hid)
+  public ScoreAlgae(Elevator elevator, Manipulator manipulator)
   {
     setName("ScoreAlgae");
 
