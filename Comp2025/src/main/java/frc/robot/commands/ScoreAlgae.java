@@ -5,9 +5,9 @@ import java.util.Map;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.Constants.ELConsts;
@@ -68,18 +68,21 @@ public class ScoreAlgae extends SequentialCommandGroup
               Map.entry(ReefLevel.ONE, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeProcessor)), 
               Map.entry(ReefLevel.TWO, elevator.getMoveToPositionCommand(elevator::getHeightAlgaeNet))
             ), 
-            this::selectLevel),
+            this::selectLevel
+          ),
 
+        // Handle algae to net timing to release for the "throw"
         new SelectCommand<>(
           // Maps selector values to commands
           Map.ofEntries(
-              Map.entry(ReefLevel.ONE, new LogCommand(getName(), "Manipulator Net")),
-              Map.entry(ReefLevel.TWO, new ParallelCommandGroup(
-                manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet), 
-                manipulator.getMoveToPositionCommand(ClawMode.ALGAEEXPEL, manipulator::getAngleAlgaeNet)
-              ))
+              Map.entry(ReefLevel.ONE, new LogCommand(getName(), "Manipulator already moving to processor, do nothing here")),
+              Map.entry(ReefLevel.TWO, new SequentialCommandGroup(
+                new WaitCommand(0.050),
+                manipulator.getMoveToPositionCommand(ClawMode.ALGAEEXPEL, manipulator::getAngleAlgaeNet))
+                )
             ),
-            this::selectLevel),
+            this::selectLevel
+          ),
               
         new LogCommand(getName(), "Move Manipulator to reef position based on the level"), 
         new SelectCommand<>( 
@@ -89,7 +92,8 @@ public class ScoreAlgae extends SequentialCommandGroup
               Map.entry(ReefLevel.TWO, manipulator.getMoveToPositionCommand(ClawMode.ALGAEMAINTAIN, manipulator::getAngleAlgaeNet))
             ),  
             this::selectLevel
-            ));
+          )  
+      );
         
         // @formatter:on
 
