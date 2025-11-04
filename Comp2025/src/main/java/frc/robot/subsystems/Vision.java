@@ -19,10 +19,12 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
 import frc.robot.lib.LimelightHelpers;
+import frc.robot.subsystems.Manipulator;
 
 /****************************************************************************
  * 
@@ -249,9 +251,9 @@ public class Vision extends SubsystemBase
 
     for (int tag = 17; tag <= 22; tag++)
     {
-      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
-      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value, 4);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value, 4);
+      getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value, 4);
     }
 
     // DataLogManager.log(String.format("-----"));
@@ -318,7 +320,7 @@ public class Vision extends SubsystemBase
    * 
    * Calculate a scoring waypoint for a given tag ID and branch (left, center, right)
    */
-  private static Pose2d getScoringGoalPose(int tag, int branch)
+  private static Pose2d getScoringGoalPose(int tag, int branch, int level)
   {
     Pose2d atPose = VIConsts.kATField.getTagPose(tag).orElse(new Pose3d( )).toPose2d( );
     Transform2d branchOffset;
@@ -330,7 +332,7 @@ public class Vision extends SubsystemBase
         break;
       default :
       case 1 :  // Algae
-        branchOffset = Constants.kBranchScoreCenter;
+        branchOffset = ((level == 1)?Constants.kBranchScoreCenter:Constants.kBranchAquireAlgae);
         break;
       case 2 :  // Right
         branchOffset = Constants.kBranchScoreRight;
@@ -366,6 +368,11 @@ public class Vision extends SubsystemBase
     Pose2d goalPose;
     int reefTag = 0;
 
+    // if (Manipulator.isAlgaeDetected == false ){
+
+
+    // }
+
     // TODO: IF algae NOT detected
 
     reefTag = findClosestReefTag(currentPose);
@@ -373,7 +380,8 @@ public class Vision extends SubsystemBase
     int branch = (int) reefBranch.get( );
 
     int relativeReefTag = reefTag - blueReefTags[0];
-    goalPose = getScoringGoalPose(reefTag, branch);
+    int level = 4;
+    goalPose = getScoringGoalPose(reefTag, branch, level);
 
     // TODO: ELSE algae is detected in manipulator
 
