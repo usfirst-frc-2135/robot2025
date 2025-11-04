@@ -51,7 +51,8 @@ public class Constants
   // Scoring poses relative to an AprilTag (X - robot setback, Y - left, center, right)
 
   public static final Transform2d kBranchScoreLeft      = new Transform2d(kSetbackCoral, -kBranchSpacing / 2, Rotation2d.k180deg);
-  public static final Transform2d kBranchScoreCenter    = new Transform2d(kSetbackAlgae, 0, Rotation2d.k180deg);
+  public static final Transform2d kBranchScoreCenter    = new Transform2d(kSetbackCoral, 0, Rotation2d.k180deg);
+  public static final Transform2d kBranchAquireAlgae    = new Transform2d(kSetbackAlgae, 0, Rotation2d.k180deg);
   public static final Transform2d kBranchScoreRight     = new Transform2d(kSetbackCoral, +kBranchSpacing / 2, Rotation2d.k180deg);
 
   /****************************************************************************
