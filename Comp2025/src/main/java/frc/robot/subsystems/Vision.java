@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -65,22 +66,27 @@ public class Vision extends SubsystemBase
   };
 
   // Constants
-  private static final double               kAimingKp  = 0.01;
-  private static final double               kDrivingKp = 0.06;
+  private static final double               kAimingKp          = 0.01;
+  private static final double               kDrivingKp         = 0.06;
 
   // Objects
 
   /* What to publish over networktables for telemetry */
-  private static final NetworkTableInstance ntInst     = NetworkTableInstance.getDefault( );
+  private static final NetworkTableInstance ntInst             = NetworkTableInstance.getDefault( );
 
   // Network tables publisher objects
-  private static final NetworkTable         robotTable = ntInst.getTable(Constants.kRobotString);
-  private static final IntegerSubscriber    reefLevel  = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
-  private static final IntegerSubscriber    reefBranch = robotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
+  private static final NetworkTable         robotTable         = ntInst.getTable(Constants.kRobotString);
+  private static final IntegerSubscriber    reefLevel          =
+      robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
+  private static final IntegerSubscriber    reefBranch         =
+      robotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
+
+  private BooleanSubscriber                 m_coralDetectedSub = robotTable.getBooleanTopic("coralDetected").subscribe(false);
+  private BooleanSubscriber                 m_algaeDetectedSub = robotTable.getBooleanTopic("algaeDetected").subscribe(false);
 
   // Declare module variables
   @SuppressWarnings("unused")
-  private streamMode                        m_stream   = streamMode.STANDARD;
+  private streamMode                        m_stream           = streamMode.STANDARD;
 
   /****************************************************************************
    * 
@@ -338,24 +344,43 @@ public class Vision extends SubsystemBase
 
   /****************************************************************************
    * 
-   * * Find Goal Pose for a given blue reef AprilTag ID
+   * * Find Goal Pose for a given current pose based on branch, level, and game piece detected
+   * 
+   * For Scoring Coral and Algae
    * 
    * 1) Get the closest reef AprilTag
    * 2) Retrive the a branch/face offset selection (left, middle (algae), right)
    * 3) Use the closest blue AprilTag ID and branch offset to find goal pose
-   * 4) Return the goal pose (blue side only)
+   * 4) Return the flipped goal pose based on red or blue alliance
+   * 
+   * For Acquiring Algae (no algae or coral detected)
+   * 
+   * 1) Load the Processor reef tag pose and calculate the offset
+   * 2) Return the flipped goal pose based on red or blue alliance
    * 
    * @return goalPose
-   *         goal pose for the reef tag passed in
+   *         goal pose for the current pose passed in
    */
   public static Pose2d findGoalPose(Pose2d currentPose)
   {
-    int reefTag = findClosestReefTag(currentPose);
+    Pose2d goalPose;
+    int reefTag = 0;
 
-    int reefOffset = (int) reefBranch.get( );
+    // TODO: IF algae NOT detected
+
+    reefTag = findClosestReefTag(currentPose);
+
+    int branch = (int) reefBranch.get( );
 
     int relativeReefTag = reefTag - blueReefTags[0];
-    Pose2d goalPose = getScoringGoalPose(reefTag, reefOffset);
+    goalPose = getScoringGoalPose(reefTag, branch);
+
+    // TODO: ELSE algae is detected in manipulator
+
+    // Get the processor blue april tag pose and calculate an offset from it where we want the robot to stop
+    // goalPose = ...;
+
+    // TODO: ENDIF
 
     if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
     {
@@ -366,4 +391,5 @@ public class Vision extends SubsystemBase
     DataLogManager.log(String.format("Vision: branch: %d goal tag: %d goal pose %s", reefLevel.get( ), reefTag, goalPose));
     return goalPose;
   }
+
 }
