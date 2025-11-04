@@ -19,12 +19,10 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
 import frc.robot.lib.LimelightHelpers;
-import frc.robot.subsystems.Manipulator;
 
 /****************************************************************************
  * 
@@ -260,9 +258,9 @@ public class Vision extends SubsystemBase
 
     // for (int tag = 6; tag <= 11; tag++)
     // {
-    //   getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value);
-    //   getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value);
-    //   getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value);
+    //   getScoringGoalPose(tag, VIConsts.ReefBranch.LEFT.value, 4);
+    //   getScoringGoalPose(tag, VIConsts.ReefBranch.ALGAE.value, 4);
+    //   getScoringGoalPose(tag, VIConsts.ReefBranch.RIGHT.value, 4);
     // }
 
     // DataLogManager.log(String.format("-----"));
@@ -332,7 +330,7 @@ public class Vision extends SubsystemBase
         break;
       default :
       case 1 :  // Algae
-        branchOffset = ((level == 1)?Constants.kBranchScoreCenter:Constants.kBranchAquireAlgae);
+        branchOffset = (level == 1) ? Constants.kBranchScoreCenter : Constants.kBranchAquireAlgae;
         break;
       case 2 :  // Right
         branchOffset = Constants.kBranchScoreRight;
@@ -370,7 +368,6 @@ public class Vision extends SubsystemBase
 
     // if (Manipulator.isAlgaeDetected == false ){
 
-
     // }
 
     // TODO: IF algae NOT detected
@@ -378,9 +375,9 @@ public class Vision extends SubsystemBase
     reefTag = findClosestReefTag(currentPose);
 
     int branch = (int) reefBranch.get( );
+    int level = (int) reefLevel.get( );
 
     int relativeReefTag = reefTag - blueReefTags[0];
-    int level = 4;
     goalPose = getScoringGoalPose(reefTag, branch, level);
 
     // TODO: ELSE algae is detected in manipulator
