@@ -203,7 +203,7 @@ public class Manipulator extends SubsystemBase
   // Network tables subscriber objects
   private final NetworkTableInstance  ntInst              = NetworkTableInstance.getDefault( );
   private final NetworkTable          robotTable          = ntInst.getTable(Constants.kRobotString);
-  private IntegerSubscriber           reefLevel           = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
+  private IntegerSubscriber           m_reefLevel         = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
 
   /****************************************************************************
    * 
@@ -629,8 +629,8 @@ public class Manipulator extends SubsystemBase
             m_clawRequestVolts = kCoralSpeedAcquire;
             break;
           case CORALEXPEL :
-            m_clawRequestVolts = ((int) reefLevel.get( ) == 1) ? kCoralSpeedExpelL1 : kCoralSpeedExpel;
-            DataLogManager.log(String.format("%s: reefLevel.get is %d", getSubsystem( ), (int) reefLevel.get( )));
+            m_clawRequestVolts = ((int) m_reefLevel.get( ) == 1) ? kCoralSpeedExpelL1 : kCoralSpeedExpel;
+            DataLogManager.log(String.format("%s: reefLevel.get is %d", getSubsystem( ), (int) m_reefLevel.get( )));
             break;
           case ALGAEHOLD :  // Special case above the switch - this case doesn't execute!
             m_clawRequestVolts = kAlgaeSpeedHold;

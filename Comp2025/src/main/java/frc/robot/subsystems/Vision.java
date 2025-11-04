@@ -77,13 +77,14 @@ public class Vision extends SubsystemBase
 
   // Network tables publisher objects
   private static final NetworkTable         robotTable         = ntInst.getTable(Constants.kRobotString);
-  private static final IntegerSubscriber    reefLevel          =
+  private static final IntegerSubscriber    m_reefLevel        =
       robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
-  private static final IntegerSubscriber    reefBranch         =
+  private static final IntegerSubscriber    m_reefBranch       =
       robotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
 
-  private static BooleanSubscriber          m_coralDetectedSub = robotTable.getBooleanTopic("coralDetected").subscribe(false);
-  private static BooleanSubscriber          m_algaeDetectedSub = robotTable.getBooleanTopic("algaeDetected").subscribe(false);
+  private static final NetworkTable         manTable           = NetworkTableInstance.getDefault( ).getTable("manipulator");
+  // private static final BooleanSubscriber    m_coralDetectedSub = manTable.getBooleanTopic("coralDetected").subscribe(false);
+  private static final BooleanSubscriber    m_algaeDetectedSub = manTable.getBooleanTopic("algaeDetected").subscribe(false);
 
   // Declare module variables
   @SuppressWarnings("unused")
@@ -326,14 +327,14 @@ public class Vision extends SubsystemBase
 
     switch (branch)
     {
-      case 0 :  // Left
+      case 0 :  // Left - coral
         branchOffset = Constants.kBranchScoreLeft;
         break;
       default :
-      case 1 :  // Algae
+      case 1 :  // Center - (L1) coral, (L2-L4) algae
         branchOffset = (level == 1) ? Constants.kBranchScoreCenter : Constants.kBranchAquireAlgae;
         break;
-      case 2 :  // Right
+      case 2 :  // Right - coral
         branchOffset = Constants.kBranchScoreRight;
         break;
     }
@@ -347,16 +348,18 @@ public class Vision extends SubsystemBase
    * 
    * * Find Goal Pose for a given current pose based on branch, level, and game piece detected
    * 
-   * For Scoring Coral and Algae
+   * For Scoring Coral and Algae (no algae detected)
    * 
    * 1) Get the closest reef AprilTag
    * 2) Retrive the a branch/face offset selection (left, middle (algae), right)
-   * 3) Use the closest blue AprilTag ID and branch offset to find goal pose
-   * 4) Return the flipped goal pose based on red or blue alliance
+   * 3) Retrieve the scoring level selection (1-4)
+   * 4) Use the closest blue AprilTag ID and branch offset to find goal pose
+   * 5) Return the flipped goal pose based on red or blue alliance
    * 
    * For Acquiring Algae (no algae or coral detected)
    * 
-   * 1) Load the Processor reef tag pose and calculate the offset
+   * 1) Load the Processor reef tag pose
+   * 2) Transform using the robot setback
    * 2) Return the flipped goal pose based on red or blue alliance
    * 
    * @return goalPose
@@ -366,19 +369,20 @@ public class Vision extends SubsystemBase
   {
     Pose2d goalPose;
     int reefTag = 0;
-
     int relativeReefTag = 0;
+
+    // No algae being held, do normal reef alignment
     if (!m_algaeDetectedSub.get( ))
     {
       reefTag = findClosestReefTag(currentPose);
 
-      int branch = (int) reefBranch.get( );
-      int level = (int) reefLevel.get( );
+      int branch = (int) m_reefBranch.get( );
+      int level = (int) m_reefLevel.get( );
 
       relativeReefTag = reefTag - blueReefTags[0];
       goalPose = getScoringGoalPose(reefTag, branch, level);
     }
-    else
+    else  // Align to processor
     {
       Pose2d atPose = VIConsts.kATField.getTagPose(16).get( ).toPose2d( );
       Transform2d transform = new Transform2d(Constants.kSetbackAlgae, 0, Rotation2d.k180deg);
@@ -391,7 +395,7 @@ public class Vision extends SubsystemBase
       reefTag = redReefTags[relativeReefTag];
     }
 
-    DataLogManager.log(String.format("Vision: branch: %d goal tag: %d goal pose %s", reefLevel.get( ), reefTag, goalPose));
+    DataLogManager.log(String.format("Vision: branch: %d goal tag: %d goal pose %s", m_reefLevel.get( ), reefTag, goalPose));
     return goalPose;
   }
 
