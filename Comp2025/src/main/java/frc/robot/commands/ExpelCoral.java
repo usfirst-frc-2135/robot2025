@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.CRConsts.ClawMode;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.HID;
 import frc.robot.subsystems.Manipulator;
 
 public class ExpelCoral extends SequentialCommandGroup
@@ -17,10 +16,8 @@ public class ExpelCoral extends SequentialCommandGroup
    *          elevator subsystem
    * @param manipulator
    *          manipulator subsystem
-   * @param hid
-   *          hid subsystem
    */
-  public ExpelCoral(Elevator elevator, Manipulator manipulator, HID hid)
+  public ExpelCoral(Elevator elevator, Manipulator manipulator)
   {
     setName("ExpelCoral");
 

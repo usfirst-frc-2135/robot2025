@@ -52,8 +52,8 @@ public class AutoPreloadCoral extends SequentialCommandGroup
 
         new LogCommand(getName(), "Drive to branch and score preload coral"),
         drivetrain.getPathCommand(ppPaths.get(0)),
-        new ScoreCoral(elevator, manipulator, hid),
-        new ExpelCoral(elevator, manipulator, hid),
+        new ScoreCoral(elevator, manipulator),
+        new ExpelCoral(elevator, manipulator),
 
         new LogCommand(getName(), "Drive to coral station and acquire second coral"),
         new ParallelCommandGroup(
@@ -63,8 +63,8 @@ public class AutoPreloadCoral extends SequentialCommandGroup
 
         new LogCommand(getName(), "Drive to branch and score second coral"),
         drivetrain.getPathCommand(ppPaths.get(2)),
-        new ScoreCoral(elevator, manipulator, hid),
-        new ExpelCoral(elevator, manipulator, hid)
+        new ScoreCoral(elevator, manipulator),
+        new ExpelCoral(elevator, manipulator)
                 
         // @formatter:on
     );

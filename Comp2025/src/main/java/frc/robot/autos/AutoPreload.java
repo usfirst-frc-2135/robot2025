@@ -46,8 +46,8 @@ public class AutoPreload extends SequentialCommandGroup
 
         new LogCommand(getName(), "Drive to branch and score preload coral"),
         drivetrain.getPathCommand(ppPaths.get(0)),
-        new ScoreCoral(elevator, manipulator, hid),
-        new ExpelCoral(elevator, manipulator, hid)
+        new ScoreCoral(elevator, manipulator),
+        new ExpelCoral(elevator, manipulator)
         
         // @formatter:on
     );
