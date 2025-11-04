@@ -7,6 +7,7 @@ import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanSubscriber;
@@ -81,8 +82,8 @@ public class Vision extends SubsystemBase
   private static final IntegerSubscriber    reefBranch         =
       robotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
 
-  private BooleanSubscriber                 m_coralDetectedSub = robotTable.getBooleanTopic("coralDetected").subscribe(false);
-  private BooleanSubscriber                 m_algaeDetectedSub = robotTable.getBooleanTopic("algaeDetected").subscribe(false);
+  private static BooleanSubscriber          m_coralDetectedSub = robotTable.getBooleanTopic("coralDetected").subscribe(false);
+  private static BooleanSubscriber          m_algaeDetectedSub = robotTable.getBooleanTopic("algaeDetected").subscribe(false);
 
   // Declare module variables
   @SuppressWarnings("unused")
@@ -366,26 +367,23 @@ public class Vision extends SubsystemBase
     Pose2d goalPose;
     int reefTag = 0;
 
-    // if (Manipulator.isAlgaeDetected == false ){
+    int relativeReefTag = 0;
+    if (!m_algaeDetectedSub.get( ))
+    {
+      reefTag = findClosestReefTag(currentPose);
 
-    // }
+      int branch = (int) reefBranch.get( );
+      int level = (int) reefLevel.get( );
 
-    // TODO: IF algae NOT detected
-
-    reefTag = findClosestReefTag(currentPose);
-
-    int branch = (int) reefBranch.get( );
-    int level = (int) reefLevel.get( );
-
-    int relativeReefTag = reefTag - blueReefTags[0];
-    goalPose = getScoringGoalPose(reefTag, branch, level);
-
-    // TODO: ELSE algae is detected in manipulator
-
-    // Get the processor blue april tag pose and calculate an offset from it where we want the robot to stop
-    // goalPose = ...;
-
-    // TODO: ENDIF
+      relativeReefTag = reefTag - blueReefTags[0];
+      goalPose = getScoringGoalPose(reefTag, branch, level);
+    }
+    else
+    {
+      Pose2d atPose = VIConsts.kATField.getTagPose(16).get( ).toPose2d( );
+      Transform2d transform = new Transform2d(Constants.kSetbackAlgae, 0, Rotation2d.k180deg);
+      goalPose = atPose.transformBy(transform);
+    }
 
     if (DriverStation.getAlliance( ).orElse(Alliance.Blue) == Alliance.Red)
     {
