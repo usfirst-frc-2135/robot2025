@@ -385,7 +385,7 @@ public class Vision extends SubsystemBase
     else  // Align to processor
     {
       Pose2d atPose = VIConsts.kATField.getTagPose(16).get( ).toPose2d( );
-      Transform2d transform = new Transform2d(Constants.kSetbackAlgae, 0, Rotation2d.k180deg);
+      Transform2d transform = new Transform2d(Constants.kSetbackProcAlgae, 0, Rotation2d.k180deg);
       goalPose = atPose.transformBy(transform);
     }
 
