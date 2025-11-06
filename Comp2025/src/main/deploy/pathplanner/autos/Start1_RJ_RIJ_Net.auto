@@ -26,6 +26,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "5-AutoPreloadAlgae",
+  "folder": "6-AutoPreloadAlgae",
   "choreoAuto": false
 }
