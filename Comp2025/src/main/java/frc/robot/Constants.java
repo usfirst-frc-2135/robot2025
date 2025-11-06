@@ -52,12 +52,13 @@ public class Constants
 
   // Scoring poses relative to an AprilTag (X - robot setback, Y - left, center, right)
 
-  public static final Transform2d kBranchScoreLeft      =
+  public static final Transform2d kBranchCoralLeft      =
       new Transform2d(kSetbackReefCoral, -kBranchSpacing / 2, Rotation2d.k180deg);
-  public static final Transform2d kBranchScoreCenter    = new Transform2d(kSetbackReefCoral, 0, Rotation2d.k180deg);
-  public static final Transform2d kBranchAquireAlgae    = new Transform2d(kSetbackReefAlgae, 0, Rotation2d.k180deg);
-  public static final Transform2d kBranchScoreRight     =
+  public static final Transform2d kBranchCoralCenter    = new Transform2d(kSetbackReefCoral, 0, Rotation2d.k180deg);
+  public static final Transform2d kBranchCoralRight     =
       new Transform2d(kSetbackReefCoral, +kBranchSpacing / 2, Rotation2d.k180deg);
+
+  public static final Transform2d kBranchAquireAlgae    = new Transform2d(kSetbackReefAlgae, 0, Rotation2d.k180deg);
 
   /****************************************************************************
    * CAN IDs and PWM IDs

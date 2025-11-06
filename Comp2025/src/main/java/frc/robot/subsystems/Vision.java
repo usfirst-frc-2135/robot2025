@@ -328,14 +328,14 @@ public class Vision extends SubsystemBase
     switch (branch)
     {
       case 0 :  // Left - coral
-        branchOffset = Constants.kBranchScoreLeft;
+        branchOffset = Constants.kBranchCoralLeft;
         break;
       default :
       case 1 :  // Center - (L1) coral, (L2-L4) algae
-        branchOffset = (level == 1) ? Constants.kBranchScoreCenter : Constants.kBranchAquireAlgae;
+        branchOffset = (level == 1) ? Constants.kBranchCoralCenter : Constants.kBranchAquireAlgae;
         break;
       case 2 :  // Right - coral
-        branchOffset = Constants.kBranchScoreRight;
+        branchOffset = Constants.kBranchCoralRight;
         break;
     }
 
