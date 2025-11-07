@@ -38,7 +38,7 @@ public class SwervePIDController extends Command
 {
   // Constants
   private static final double                   kMaxVelocity       = 3.8;                                 // Max robot velocity in MPS
-  private static final double                   kMaxAcceleration   = 4.5;                                 // Max robot acceleration in MPS^2
+  private static final double                   kMaxAcceleration   = 4.0;                                 // Max robot acceleration in MPS^2
   private static final Rotation2d               kRotationTolerance = Rotation2d.fromDegrees(1.0);
   private static final Distance                 kPositionTolerance = Inches.of(1.5);
   private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);
@@ -48,7 +48,7 @@ public class SwervePIDController extends Command
   private Pose2d                                m_goalPose;
 
   // PID controllers
-  private static final PIDConstants             kTranslationPID    = new PIDConstants(3.5, 0, 0);
+  private static final PIDConstants             kTranslationPID    = new PIDConstants(3.0, 0, 0);
   private static final PIDConstants             kRotationPID       = new PIDConstants(15.0, 0, 0);
   private PPHolonomicDriveController            m_DriveController  =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
