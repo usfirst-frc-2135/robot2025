@@ -335,7 +335,7 @@ public class Vision extends SubsystemBase
         branchOffset = (level == 1) ? Constants.kBranchCoralCenter : Constants.kBranchAquireAlgae;
         break;
       case 2 :  // Right - coral
-        branchOffset = (level == 1) ? Constants.kBranchCoralRightL1: Constants.kBranchCoralRight;
+        branchOffset = (level == 1) ? Constants.kBranchCoralRightL1 : Constants.kBranchCoralRight;
         break;
 
     }

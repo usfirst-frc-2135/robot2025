@@ -44,11 +44,11 @@ public class Constants
   // Robot physical dimensions
 
   public static final double      kBranchSpacing        = Units.inchesToMeters(13.0);  // Distance between branches
+  public static final double      kL1Spacing            = Units.inchesToMeters(5.5);   // Distance to outside of branches
   public static final double      kRobotLength          = Units.inchesToMeters(34.5);  // Our robot length
   public static final double      kSetbackReefCoral     = kRobotLength / 2;                                       // Distance robot is set back from branch to score coral
   public static final double      kSetbackReefAlgae     = kRobotLength / 2 + Units.inchesToMeters(8.0);   // Distance robot is set back from reef to grab algae
-  // TODO: The extra 22.0 inches is ONLY for our field since processor is not recessed in wall (16.0 in is correct number for real field)
-  public static final double      kSetbackProcAlgae     = kRobotLength / 2 + Units.inchesToMeters(16.0 + 22.0);   // Distance robot is set back from reef to grab algae
+  public static final double      kSetbackProcAlgae     = kRobotLength / 2 + Units.inchesToMeters(20.0);   // Distance robot is set back from reef to grab algae
 
   // Scoring poses relative to an AprilTag (X - robot setback, Y - left, center, right)
 
@@ -57,11 +57,10 @@ public class Constants
   public static final Transform2d kBranchCoralCenter    = new Transform2d(kSetbackReefCoral, 0, Rotation2d.k180deg);
   public static final Transform2d kBranchCoralRight     =
       new Transform2d(kSetbackReefCoral, +kBranchSpacing / 2, Rotation2d.k180deg);
-  public static final Transform2d kBranchCoralLeftL1     =
-      new Transform2d(kSetbackReefCoral, (-kBranchSpacing / 2)- Units.inchesToMeters(5.5), Rotation2d.k180deg);
-  public static final Transform2d kBranchCoralRightL1     =
-      new Transform2d(kSetbackReefCoral, (+kBranchSpacing / 2)+Units.inchesToMeters(5.5), Rotation2d.k180deg);
-  
+  public static final Transform2d kBranchCoralLeftL1    =
+      new Transform2d(kSetbackReefCoral, (-kBranchSpacing / 2) - kL1Spacing, Rotation2d.k180deg);
+  public static final Transform2d kBranchCoralRightL1   =
+      new Transform2d(kSetbackReefCoral, (+kBranchSpacing / 2) + kL1Spacing, Rotation2d.k180deg);
 
   public static final Transform2d kBranchAquireAlgae    = new Transform2d(kSetbackReefAlgae, 0, Rotation2d.k180deg);
 
