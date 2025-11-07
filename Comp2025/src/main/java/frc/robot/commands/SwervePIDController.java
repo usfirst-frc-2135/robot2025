@@ -48,8 +48,8 @@ public class SwervePIDController extends Command
   private Pose2d                                m_goalPose;
 
   // PID controllers
-  private static final PIDConstants             kTranslationPID    = new PIDConstants(3.0, 0, 0);
-  private static final PIDConstants             kRotationPID       = new PIDConstants(15.0, 0, 0);
+  private static final PIDConstants             kTranslationPID    = new PIDConstants(2.6, 0, 0);
+  private static final PIDConstants             kRotationPID       = new PIDConstants(10.0, 0, 0);
   private PPHolonomicDriveController            m_DriveController  =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
   private static final SlewRateLimiter          m_vxAccelLimiter   = new SlewRateLimiter(kMaxAcceleration);
