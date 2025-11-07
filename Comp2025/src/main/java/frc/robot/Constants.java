@@ -57,6 +57,11 @@ public class Constants
   public static final Transform2d kBranchCoralCenter    = new Transform2d(kSetbackReefCoral, 0, Rotation2d.k180deg);
   public static final Transform2d kBranchCoralRight     =
       new Transform2d(kSetbackReefCoral, +kBranchSpacing / 2, Rotation2d.k180deg);
+  public static final Transform2d kBranchCoralLeftL1     =
+      new Transform2d(kSetbackReefCoral, (-kBranchSpacing / 2)- Units.inchesToMeters(3.25), Rotation2d.k180deg);
+  public static final Transform2d kBranchCoralRightL1     =
+      new Transform2d(kSetbackReefCoral, (-kBranchSpacing / 2)+Units.inchesToMeters(3.25), Rotation2d.k180deg);
+  
 
   public static final Transform2d kBranchAquireAlgae    = new Transform2d(kSetbackReefAlgae, 0, Rotation2d.k180deg);
 

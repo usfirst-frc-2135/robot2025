@@ -328,15 +328,16 @@ public class Vision extends SubsystemBase
     switch (branch)
     {
       case 0 :  // Left - coral
-        branchOffset = Constants.kBranchCoralLeft;
+        branchOffset = (level == 1) ? Constants.kBranchCoralLeftL1 : Constants.kBranchCoralLeft;
         break;
       default :
       case 1 :  // Center - (L1) coral, (L2-L4) algae
         branchOffset = (level == 1) ? Constants.kBranchCoralCenter : Constants.kBranchAquireAlgae;
         break;
       case 2 :  // Right - coral
-        branchOffset = Constants.kBranchCoralRight;
+        branchOffset = (level == 1) ? Constants.kBranchCoralRightL1: Constants.kBranchCoralRight;
         break;
+
     }
 
     Pose2d pose = atPose.transformBy(branchOffset);
