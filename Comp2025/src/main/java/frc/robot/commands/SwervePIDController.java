@@ -13,8 +13,10 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -35,20 +37,23 @@ import frc.robot.subsystems.Vision;
 public class SwervePIDController extends Command
 {
   // Constants
-  // private static final LinearVelocity           kMaxSpeed          = MetersPerSecond.of(3.5);     // Cap max applied velocity to 3.5 mps in either direction
-  private static final Rotation2d               kRotationTolerance = Rotation2d.fromDegrees(2.0);
-  private static final Distance                 kPositionTolerance = Inches.of(1.5);              // Was 0.8 inches which is tiny
-  private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);    // Was 0.25 inches per second which is extremely small
+  private static final double                   kMaxVelocity       = 3.8;                                 // Max robot velocity in MPS
+  private static final double                   kMaxAcceleration   = 4.0;                                 // Max robot acceleration in MPS^2
+  private static final Rotation2d               kRotationTolerance = Rotation2d.fromDegrees(1.0);
+  private static final Distance                 kPositionTolerance = Inches.of(1.5);
+  private static final LinearVelocity           kSpeedTolerance    = InchesPerSecond.of(2.0);
 
   // Main objects
   private CommandSwerveDrivetrain               m_swerve;
   private Pose2d                                m_goalPose;
 
   // PID controllers
-  private static final PIDConstants             kTranslationPID    = new PIDConstants(3.5, 0, 0); // Was 5.0 mps for a 1 m offset (too large)
-  private static final PIDConstants             kRotationPID       = new PIDConstants(5.0, 0, 0);
+  private static final PIDConstants             kTranslationPID    = new PIDConstants(2.6, 0, 0);
+  private static final PIDConstants             kRotationPID       = new PIDConstants(10.0, 0, 0);
   private PPHolonomicDriveController            m_DriveController  =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
+  private static final SlewRateLimiter          m_vxAccelLimiter   = new SlewRateLimiter(kMaxAcceleration);
+  private static final SlewRateLimiter          m_vyAccelLimiter   = new SlewRateLimiter(kMaxAcceleration);
 
   // Debouncer debouncer
   private static final Time                     kEndDebounce       = Seconds.of(0.04);
@@ -99,6 +104,11 @@ public class SwervePIDController extends Command
   {
     Pose2d currentPose = driveStatePose.get( );
     m_goalPose = Vision.findGoalPose(currentPose);
+
+    // Initialize the slew rate limiter
+    m_vxAccelLimiter.reset(driveSpeeds.get( ).vxMetersPerSecond);
+    m_vyAccelLimiter.reset(driveSpeeds.get( ).vyMetersPerSecond);
+
     DataLogManager.log(String.format("%s: initial current pose: %s goalPose %s", getName( ), currentPose, m_goalPose));
   }
 
@@ -108,8 +118,18 @@ public class SwervePIDController extends Command
     PathPlannerTrajectoryState goalState = new PathPlannerTrajectoryState( );
     goalState.pose = m_goalPose;
 
+    // Calculate theoretical PID chassis speeds to get to our goal (assumes no max velocity or acceleration)
     ChassisSpeeds speeds = m_DriveController.calculateRobotRelativeSpeeds(driveStatePose.get( ), goalState);
 
+    // Constrain the speeds (velocities) to what the robot can actually do
+    speeds.vxMetersPerSecond = MathUtil.clamp(speeds.vxMetersPerSecond, -kMaxVelocity, kMaxVelocity);
+    speeds.vyMetersPerSecond = MathUtil.clamp(speeds.vyMetersPerSecond, -kMaxVelocity, kMaxVelocity);
+
+    // Constrain the acceleration to what the robot can actually do (with no/little wheel slip)
+    speeds.vxMetersPerSecond = m_vxAccelLimiter.calculate(speeds.vxMetersPerSecond);
+    speeds.vyMetersPerSecond = m_vyAccelLimiter.calculate(speeds.vyMetersPerSecond);
+
+    // Output for logging
     vxPub.set(speeds.vxMetersPerSecond);
     vyPub.set(speeds.vyMetersPerSecond);
     omegaPub.set(speeds.omegaRadiansPerSecond);
@@ -120,23 +140,32 @@ public class SwervePIDController extends Command
   @Override
   public void end(boolean interrupted)
   {
-    DataLogManager
-        .log(String.format("%s: interrupted end conditions P: %s G: %s", getName( ), driveStatePose.get( ), m_goalPose));
+    // Reset logging outputs
+    vxPub.set(0.0);
+    vyPub.set(0.0);
+    omegaPub.set(0.0);
+
+    DataLogManager.log(String.format("%s: interrupted: %s end conditions P: %s G: %s", getName( ), interrupted,
+        driveStatePose.get( ), m_goalPose));
   }
 
   @Override
   public boolean isFinished( )
   {
-    Pose2d diff = driveStatePose.get( ).relativeTo(m_goalPose);
+    Transform2d poseError = new Transform2d(driveStatePose.get( ), m_goalPose);
 
-    errorPub.set(Math.sqrt(Math.pow(diff.getX( ), 2) + Math.pow(diff.getY( ), 2)));
+    double error = Math.hypot(poseError.getX( ), poseError.getY( ));
+    errorPub.set(error);
 
-    boolean rotation = MathUtil.isNear(0.0, diff.getRotation( ).getRotations( ), kRotationTolerance.getRotations( ), 0.0, 1.0);
+    boolean position = error < kPositionTolerance.in(Meters);
 
-    boolean position = diff.getTranslation( ).getNorm( ) < kPositionTolerance.in(Meters);
+    boolean rotation = MathUtil.isNear(m_goalPose.getRotation( ).getRotations( ),
+        driveStatePose.get( ).getRotation( ).getRotations( ), kRotationTolerance.getRotations( ), 0.0, 1.0);
+    // DataLogManager.log(String.format("exp: %s act: %s tol: %s", m_goalPose.getRotation( ).getRotations( ),
+    //     driveStatePose.get( ).getRotation( ).getRotations( ), kRotationTolerance.getRotations( )));
 
-    boolean speed = driveSpeeds.get( ).vxMetersPerSecond < kSpeedTolerance.in(MetersPerSecond)
-        && driveSpeeds.get( ).vyMetersPerSecond < kSpeedTolerance.in(MetersPerSecond);
+    boolean speed = Math.abs(driveSpeeds.get( ).vxMetersPerSecond) < kSpeedTolerance.in(MetersPerSecond)
+        && Math.abs(driveSpeeds.get( ).vyMetersPerSecond) < kSpeedTolerance.in(MetersPerSecond);
 
     DataLogManager.log(String.format("%s: end conditions R: %s P: %s S: %s", getName( ), rotation, position, speed));
 
