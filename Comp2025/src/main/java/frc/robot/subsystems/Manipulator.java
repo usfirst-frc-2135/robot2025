@@ -92,7 +92,7 @@ public class Manipulator extends SubsystemBase
   private static final double       kWristAngleSafeState      = -103.0;
 
   private static final double       kWristAngleCoralStation   = -130.4;
-  private static final double       kWristAngleCoralL1        = -37.6;
+  private static final double       kWristAngleCoralL1        = -41;
   private static final double       kWristAngleCoralL2        = -103.0;
   private static final double       kWristAngleCoralL3        = -103.0;
   private static final double       kWristAngleCoralL4        = -84.5;
