@@ -25,6 +25,9 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.util.swerve.SwerveSetpoint;
+import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -32,8 +35,11 @@ import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
@@ -69,30 +75,31 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final boolean        m_useLimelight           = true;
 
     /* What to publish over networktables for telemetry */
-    private final NetworkTableInstance  ntInst                   = NetworkTableInstance.getDefault( );
+    private final NetworkTableInstance  kNTInst              = NetworkTableInstance.getDefault( );
 
     /* Robot pose for field positioning */
-    private final Field2d               field               = new Field2d();
-    private final FieldObject2d         llPoseLeft          = field.getObject("llPose-left"); 
-    private final FieldObject2d         llPoseRight         = field.getObject("llPose-right"); 
+    private final Field2d               kField               = new Field2d();
+    private final FieldObject2d         kLLPoseLeft          = kField.getObject("llPose-left"); 
+    private final FieldObject2d         kLLPoseRight         = kField.getObject("llPose-right"); 
 
-    private final NetworkTable              driveStateTable = ntInst.getTable("DriveState");
-    private final StructSubscriber<Pose2d>  driveStatePose  = driveStateTable.getStructTopic("Pose", Pose2d.struct).subscribe(new Pose2d( ));
+    private final NetworkTable              kDriveStateTable = kNTInst.getTable("DriveState");
+    private final StructSubscriber<Pose2d>  m_driveStatePose  = kDriveStateTable.getStructTopic("Pose", Pose2d.struct).subscribe(new Pose2d( ));
 
     /* Robot set pose */
-    private final NetworkTable          swerveTable         = ntInst.getTable("swerve");
-    private final DoubleArrayPublisher  setPosePub          = swerveTable.getDoubleArrayTopic("setPose").publish();
-    private final DoubleArraySubscriber setPoseSub          = swerveTable.getDoubleArrayTopic("setPose").subscribe(new double[3]);
+    private final NetworkTable          kSwerveTable         = kNTInst.getTable("swerve");
+    private final DoubleArrayPublisher  m_setPosePub         = kSwerveTable.getDoubleArrayTopic("setPose").publish();
+    private final DoubleArraySubscriber m_setPoseSub         = kSwerveTable.getDoubleArrayTopic("setPose").subscribe(new double[3]);
 
-    private MedianFilter leftFilter = new MedianFilter(5);
-    private MedianFilter rightFilter = new MedianFilter(5);
+    private MedianFilter                m_leftFilter         = new MedianFilter(5);
+    private MedianFilter                m_rightFilter        = new MedianFilter(5);
 
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("swerve");
+    private BooleanPublisher            m_leftUpdate         = kSwerveTable.getBooleanTopic("LeftUpdate").publish();
+    private BooleanPublisher            m_rightUpdate        = kSwerveTable.getBooleanTopic("RightUpdate").publish();
 
-    private BooleanPublisher leftUpdate = table.getBooleanTopic("LeftUpdate").publish();
-    private BooleanPublisher rightUpdate = table.getBooleanTopic("RightUpdate").publish();
+    private double []                   m_moduleDistances    = {0, 0, 0, 0};
 
-    private double [] moduleDistances = {0, 0, 0, 0};
+    private SwerveSetpointGenerator     m_setpointGenerator;
+    private SwerveSetpoint              m_previousSetpoint;
 
     /* Robot pathToPose constraints */
     private final PathConstraints       kPathFindConstraints = new PathConstraints( // 
@@ -278,6 +285,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 this::resetPose,         // Consumer for seeding pose against auto
                 () -> getState().Speeds, // Supplier of current robot speeds
                 // Consumer of ChassisSpeeds and feedforwards to drive the robot
+                // (speeds) -> driveRobotRelative(speeds),      // TODO:  swerve setpoint generator testing
                 (speeds, feedforwards) -> setControl(
                     m_pathApplyRobotSpeeds.withSpeeds(speeds)
                         .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
@@ -294,6 +302,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
                 this // Subsystem for requirements
             );
+            
+              m_setpointGenerator = new SwerveSetpointGenerator(
+                config, // The robot configuration. This is the same config used for generating trajectories and running path following commands.
+                Units.rotationsToRadians(10.0) // The max rotation velocity of a swerve module in radians per second. This should probably be stored in your Constants file
+
+            );
+
+            // Initialize the previous setpoint to the robot's current speeds & module states
+            ChassisSpeeds currentSpeeds = this.getState().Speeds; // Method to get current robot-relative chassis speeds
+            SwerveModuleState[] currentStates = this.getState().ModuleStates; // Method to get the current swerve module states
+            m_previousSetpoint = new SwerveSetpoint(currentSpeeds, currentStates, DriveFeedforwards.zeros(config.numModules)); 
+
         } catch (Exception ex) {
             DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
         }
@@ -352,11 +372,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         if (m_useLimelight) {
-            double left = (visionUpdate(Constants.kLLLeftName, llPoseLeft)) ? 1.0 : 0.0;
-            leftUpdate.set(leftFilter.calculate(left) > 0.5);
+            double left = (visionUpdate(Constants.kLLLeftName, kLLPoseLeft)) ? 1.0 : 0.0;
+            m_leftUpdate.set(m_leftFilter.calculate(left) > 0.5);
 
-            double right = (visionUpdate(Constants.kLLRightName, llPoseRight)) ? 1.0 : 0.0;
-            rightUpdate.set(rightFilter.calculate(right) > 0.5);
+            double right = (visionUpdate(Constants.kLLRightName, kLLPoseRight)) ? 1.0 : 0.0;
+            m_rightUpdate.set(m_rightFilter.calculate(right) > 0.5);
         }
     }
 
@@ -419,8 +439,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     private void initDashboard( )
     {
-        setPosePub.set(new double[3]);
-        SmartDashboard.putData("Field", field);
+        m_setPosePub.set(new double[3]);
+        SmartDashboard.putData("Field", kField);
 
         // Get the default instance of NetworkTables that was created automatically when the robot program starts
         SmartDashboard.putData("SetPose", getResetPoseCommand( ));
@@ -532,6 +552,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         LimelightHelpers.SetRobotOrientation(Constants.kLLRightName, pose.getRotation( ).getDegrees( ), 0, 0, 0, 0, 0);
     }
 
+    /****************************************************************************
+     * 
+     * This method will take in desired robot-relative chassis speeds,
+     * generate a swerve setpoint, then set the target state for each module
+     *
+     * @param speeds
+     *            The desired robot-relative speeds
+     */
+    public void driveRobotRelative(ChassisSpeeds speeds)
+    {
+        // Note: it is important to not discretize speeds before or after
+        // using the setpoint generator, as it will discretize them for you
+        m_previousSetpoint = m_setpointGenerator.generateSetpoint(m_previousSetpoint, // The previous setpoint
+                speeds, // The desired target speeds
+                0.02 // The loop time of the robot code, in seconds
+        );
+
+        setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(m_previousSetpoint.robotRelativeSpeeds( )));
+        // setModuleStates(m_previousSetpoint.moduleStates( )); // TODO:  Original setpoint generator sample code
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     /////////////////////// COMMAND FACTORIES //////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -543,8 +584,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Command getResetPoseCommand( )
     {
         return this
-                .runOnce(( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(setPoseSub.get( )[0], setPoseSub.get( )[1]),
-                        new Rotation2d(setPoseSub.get( )[2])))) //
+                .runOnce(
+                        ( ) -> resetPoseAndLimelight(new Pose2d(new Translation2d(m_setPoseSub.get( )[0], m_setPoseSub.get( )[1]),
+                                new Rotation2d(m_setPoseSub.get( )[2])))) //
                 .withName("ResetOdometry").ignoringDisable(true);
     }
 
@@ -560,7 +602,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    moduleDistances[i] = this.getState( ).ModulePositions[i].distanceMeters;
+                    m_moduleDistances[i] = this.getState( ).ModulePositions[i].distanceMeters;
                 }
             }
             else
@@ -568,12 +610,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 double average = 0;
                 for (int i = 0; i < 4; i++)
                 {
-                    moduleDistances[i] = this.getState( ).ModulePositions[i].distanceMeters - moduleDistances[i];
-                    average += Math.abs(moduleDistances[i]);
+                    m_moduleDistances[i] = this.getState( ).ModulePositions[i].distanceMeters - m_moduleDistances[i];
+                    average += Math.abs(m_moduleDistances[i]);
                 }
                 average /= 4;
                 DataLogManager.log(String.format("%s:  0: %.3f 1: %.3f 2: %.3f 3: %.3f average %.3f", this.getName( ),
-                        moduleDistances[0], moduleDistances[1], moduleDistances[2], moduleDistances[3], average));
+                        m_moduleDistances[0], m_moduleDistances[1], m_moduleDistances[2], m_moduleDistances[3], average));
             }
         }).ignoringDisable(true);
     }
@@ -615,7 +657,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     private Command getAlignToReefFollowCommand( )
     {
-        Pose2d currentPose = driveStatePose.get( );
+        Pose2d currentPose = m_driveStatePose.get( );
         Pose2d goalPose = Vision.findGoalPose(currentPose);
 
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(currentPose, goalPose);
@@ -643,7 +685,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     private Command getAlignToReefPPFindCommand( )
     {
-        Pose2d currentPose = driveStatePose.get( );
+        Pose2d currentPose = m_driveStatePose.get( );
         Pose2d goalPose = Vision.findGoalPose(currentPose);
 
         return new SequentialCommandGroup(                                                                                      //

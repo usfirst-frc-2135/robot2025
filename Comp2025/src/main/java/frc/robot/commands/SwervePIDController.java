@@ -135,6 +135,7 @@ public class SwervePIDController extends Command
     omegaPub.set(speeds.omegaRadiansPerSecond);
 
     m_swerve.setControl(new SwerveRequest.ApplyRobotSpeeds( ).withSpeeds(speeds));
+    // m_swerve.driveRobotRelative(speeds);     // TODO: swerve setpoint generator testing
   }
 
   @Override
