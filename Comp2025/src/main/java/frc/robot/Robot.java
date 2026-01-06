@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot
 {
   private static final boolean m_isComp          = detectRobot( );         // Detect which robot is in use
-  private final RobotContainer m_robotContainer  = new RobotContainer( );  // Create that robot
+  private final RobotContainer m_robotContainer  = new RobotContainer(this);    // Create that robot
   private Command              m_autonomousCommand;
   private boolean              m_faultsCleared   = false;
   private static double        m_timeMark        = Timer.getFPGATimestamp( );
