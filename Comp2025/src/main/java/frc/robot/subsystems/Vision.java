@@ -1,5 +1,6 @@
+
 //
-// Vision Subystem - handle limelight interface
+// Vision Class - handle limelight interface
 //
 package frc.robot.subsystems;
 
@@ -19,7 +20,6 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ELConsts;
 import frc.robot.Constants.VIConsts;
@@ -27,9 +27,9 @@ import frc.robot.lib.LimelightHelpers;
 
 /****************************************************************************
  * 
- * Vision subsystem class
+ * Vision class
  */
-public class Vision extends SubsystemBase
+public class Vision
 {
 
   /** Camera stream mode parameter */
@@ -73,18 +73,19 @@ public class Vision extends SubsystemBase
   // Objects
 
   /* What to publish over networktables for telemetry */
-  private static final NetworkTableInstance ntInst             = NetworkTableInstance.getDefault( );
+  private String                            m_name             = new String( );
+  private static final NetworkTableInstance kNTInst            = NetworkTableInstance.getDefault( );
 
   // Network tables publisher objects
-  private static final NetworkTable         robotTable         = ntInst.getTable(Constants.kRobotString);
+  private static final NetworkTable         kRobotTable        = kNTInst.getTable(Constants.kRobotString);
   private static final IntegerSubscriber    m_reefLevel        =
-      robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
+      kRobotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
   private static final IntegerSubscriber    m_reefBranch       =
-      robotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
+      kRobotTable.getIntegerTopic(VIConsts.kReefBranchString).subscribe((0));
 
-  private static final NetworkTable         manTable           = NetworkTableInstance.getDefault( ).getTable("manipulator");
-  // private static final BooleanSubscriber    m_coralDetectedSub = manTable.getBooleanTopic("coralDetected").subscribe(false);
-  private static final BooleanSubscriber    m_algaeDetectedSub = manTable.getBooleanTopic("algaeDetected").subscribe(false);
+  private static final NetworkTable         kManTable          = NetworkTableInstance.getDefault( ).getTable("manipulator");
+  // private static final BooleanSubscriber    m_coralDetectedSub = kManTable.getBooleanTopic("coralDetected").subscribe(false);
+  private static final BooleanSubscriber    m_algaeDetectedSub = kManTable.getBooleanTopic("algaeDetected").subscribe(false);
 
   // Declare module variables
   @SuppressWarnings("unused")
@@ -97,7 +98,6 @@ public class Vision extends SubsystemBase
   public Vision( )
   {
     setName("Vision");
-    setSubsystem("Vision");
 
     loadFieldAndDisplayPoses( );       // Identify the field and print useful poses
 
@@ -106,33 +106,27 @@ public class Vision extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Periodic actions that run every scheduler loop time (20 msec)
+   * Getter and setter for managing the class name
    */
-  @Override
-  public void periodic( )
+  private void setName(String name)
   {
-    // This method will be called once per scheduler run
+    m_name = name;
   }
+
+  public String getName( )
+  {
+    return m_name;
+  }
+
+  // Put methods for controlling this class here. Call these from Commands.
 
   /****************************************************************************
    * 
-   * Periodic actions that run every scheduler loop time (20 msec) during simulation
-   */
-  @Override
-  public void simulationPeriodic( )
-  {
-    // This method will be called once per scheduler run during simulation
-  }
-
-  // Put methods for controlling this subsystem here. Call these from Commands.
-
-  /****************************************************************************
-   * 
-   * Initialize subsystem during robot mode changes
+   * Initialize class during robot mode changes
    */
   public void initialize( )
   {
-    DataLogManager.log(String.format("%s: Subsystem initialized!", getSubsystem( )));
+    DataLogManager.log(String.format("%s: Subsystem initialized!", getName( )));
 
     LimelightHelpers.setLEDMode_ForceOff(Constants.kLLLeftName);          // These work on LL3 and lower (not LL4)
     LimelightHelpers.setLEDMode_ForceOff(Constants.kLLRightName);         // These work on LL3 and lower (not LL4)
@@ -145,11 +139,11 @@ public class Vision extends SubsystemBase
 
   /****************************************************************************
    * 
-   * Run vision subsystem during auto and teleop
+   * Run vision during auto and teleop
    */
   public void run( )
   {
-    DataLogManager.log(String.format("%s: Subsystem running!", getSubsystem( )));
+    DataLogManager.log(String.format("%s: Subsystem running!", getName( )));
 
     SetCPUThrottleLevel(false);
     SetIMUModeInternal( );
@@ -195,7 +189,7 @@ public class Vision extends SubsystemBase
    */
   public void SetCPUThrottleLevel(boolean throttle)
   {
-    DataLogManager.log(String.format("%s: Set Throttle level to %s", getSubsystem( ), throttle));
+    DataLogManager.log(String.format("%s: Set Throttle level to %s", getName( ), throttle));
     LimelightHelpers.SetThrottle(Constants.kLLLeftName, throttle ? 100 : 0);
     LimelightHelpers.SetThrottle(Constants.kLLRightName, throttle ? 100 : 0);
   }
@@ -208,7 +202,7 @@ public class Vision extends SubsystemBase
   public void SetIMUModeExternalSeed( )
   {
     final imuMode mode = imuMode.EXTERNAL_SEED;
-    DataLogManager.log(String.format("%s: Set IMU Mode to %d (%s)", getSubsystem( ), mode.value, mode));
+    DataLogManager.log(String.format("%s: Set IMU Mode to %d (%s)", getName( ), mode.value, mode));
     // LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
     // LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
   }
@@ -221,7 +215,7 @@ public class Vision extends SubsystemBase
   public void SetIMUModeInternal( )
   {
     final imuMode mode = imuMode.INTERNAL;
-    DataLogManager.log(String.format("%s: Set IMU Mode to %d (%s)", getSubsystem( ), mode.value, mode));
+    DataLogManager.log(String.format("%s: Set IMU Mode to %d (%s)", getName( ), mode.value, mode));
     // LimelightHelpers.SetIMUMode(Constants.kLLLeftName, mode.value);
     // LimelightHelpers.SetIMUMode(Constants.kLLRightName, mode.value);
   }
