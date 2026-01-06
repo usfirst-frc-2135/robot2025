@@ -61,5 +61,7 @@
   ],
   "files.eol": "\n",
   "java.format.settings.url": "eclipse-formatter.xml",
-  "java.format.settings.profile": "Eclipse"
+  "java.format.settings.profile": "Eclipse",
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true
 }
