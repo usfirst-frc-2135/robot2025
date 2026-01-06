@@ -194,6 +194,7 @@ public class Constants
     /** LED animation to be used */
     public enum ANIMATION
     {
+      SOLID,      // Clears animation for solid colors (including OFF)
       COLORFLOW,  // Single color flow through string
       FIRE,       // Fire pattern from one end of string
       LARSON,     // Ping-pong pattern bouncing between string ends
@@ -203,7 +204,6 @@ public class Constants
       STROBE,     // Strobe flashing with a single color
       TWINKLE,    // Twinkles leds on
       TWINKLEOFF, // Twinkles leds off
-      CLEARALL,   // Clears animations
       DASHBOARD   // Animation taken from the dashboard
     }
   }
