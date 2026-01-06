@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -339,4 +340,41 @@ public class PhoenixUtil6
     DataLogManager.log(String.format("  UnlicensedFeatureInUse ............. %5s %5s",
         canRange.getFault_UnlicensedFeatureInUse( ).getValue( ), canRange.getStickyFault_UnlicensedFeatureInUse( ).getValue( )));
   }
+
+  /****************************************************************************
+   * 
+   * Print fault flags for a CANdle
+   * 
+   * @param candle
+   *          reference to a CANdle LED controller
+   * @param name
+   *          descriptive name of the CANdle
+   */
+  public void candlePrintFaults(CANdle candle, String name)
+  {
+    DataLogManager.log(String.format("%s: ------------------ DUMP FAULTS ------------------", name));
+    StatusSignal<Integer> faults = candle.getFaultField( );
+    StatusSignal<Integer> stickyFaults = candle.getStickyFaultField( );
+    DataLogManager.log(String.format("  5VTooHigh ......... %5s %5s", candle.getFault_5VTooHigh( ).toString( ),
+        candle.getStickyFault_5VTooHigh( ).toString( )));
+    DataLogManager.log(String.format("  5VTooLow .......... %5s %5s", candle.getFault_5VTooLow( ).toString( ),
+        candle.getStickyFault_5VTooLow( ).toString( )));
+    DataLogManager.log(String.format("  BootDuringEnable .. %5s %5s", candle.getFault_BootDuringEnable( ).toString( ),
+        candle.getStickyFault_BootDuringEnable( ).toString( )));
+    DataLogManager.log(String.format("  Hardware .......... %5s %5s", candle.getFault_Hardware( ).toString( ),
+        candle.getStickyFault_BootDuringEnable( ).toString( )));
+    DataLogManager.log(String.format("  Overvoltage ....... %5s %5s", candle.getFault_Overvoltage( ).toString( ),
+        candle.getStickyFault_Overvoltage( ).toString( )));
+    DataLogManager.log(String.format("  ShortCircuit ...... %5s %5s", candle.getFault_ShortCircuit( ).toString( ),
+        candle.getStickyFault_ShortCircuit( ).toString( )));
+    DataLogManager.log(String.format("  SoftwareFuse ...... %5s %5s", candle.getFault_SoftwareFuse( ).toString( ),
+        candle.getStickyFault_SoftwareFuse( ).toString( )));
+    DataLogManager.log(String.format("  Thermal ........... %5s %5s", candle.getFault_Thermal( ).toString( ),
+        candle.getStickyFault_Thermal( ).toString( )));
+    DataLogManager.log(String.format("  Undervoltage ...... %5s %5s", candle.getFault_Undervoltage( ).toString( ),
+        candle.getStickyFault_Undervoltage( ).toString( )));
+    DataLogManager.log(String.format("  UnlicensedFeatureInUse .. %5s %5s", candle.getFault_UnlicensedFeatureInUse( ).toString( ),
+        candle.getStickyFault_UnlicensedFeatureInUse( ).toString( )));
+  }
+
 }
