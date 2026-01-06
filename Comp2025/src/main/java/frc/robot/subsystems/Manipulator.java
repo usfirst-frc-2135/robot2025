@@ -116,7 +116,7 @@ public class Manipulator extends SubsystemBase
   private static final DutyCycleOut kAlgaeSpeedHold           = new DutyCycleOut(0.2).withIgnoreHardwareLimits(true);
 
   /** Wrist rotary motor manual move parameters */
-  private enum JoystickMode
+  public enum JoystickMode
   {
     INIT,     // Initialize rotary
     INBOARD,  // Wrist moving into the robot
@@ -201,9 +201,9 @@ public class Manipulator extends SubsystemBase
   private BooleanPublisher            m_algaeDetectedPub;
 
   // Network tables subscriber objects
-  private final NetworkTableInstance  ntInst              = NetworkTableInstance.getDefault( );
-  private final NetworkTable          robotTable          = ntInst.getTable(Constants.kRobotString);
-  private IntegerSubscriber           m_reefLevel         = robotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
+  private final NetworkTableInstance  kNTInst             = NetworkTableInstance.getDefault( );
+  private final NetworkTable          kRobotTable         = kNTInst.getTable(Constants.kRobotString);
+  private IntegerSubscriber           m_reefLevel         = kRobotTable.getIntegerTopic(ELConsts.kReefLevelString).subscribe((0));
 
   /****************************************************************************
    * 
