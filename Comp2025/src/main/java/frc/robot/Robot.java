@@ -61,7 +61,7 @@ public class Robot extends TimedRobot
       PortForwarder.add(port, Constants.kLLRightName + ".local", port);
     }
 
-    FollowPathCommand.warmupCommand( ).withName("PathPlanner - warmupCommand").schedule( ); // Recommended by PathPlanner docs
+    CommandScheduler.getInstance( ).schedule(FollowPathCommand.warmupCommand( ).withName("PathPlanner - warmupCommand")); // Recommended by PathPlanner docs
 
     Robot.timeMarker("Robot: after warmup");
   }
@@ -159,7 +159,7 @@ public class Robot extends TimedRobot
     // schedule the autonomous command selected by the RobotContainer class
     if (m_autonomousCommand != null)
     {
-      m_autonomousCommand.schedule( );
+      CommandScheduler.getInstance( ).schedule(m_autonomousCommand);
     }
   }
 

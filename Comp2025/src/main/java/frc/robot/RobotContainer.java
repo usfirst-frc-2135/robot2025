@@ -268,7 +268,7 @@ public class RobotContainer
 
       if ((m_autoCommand = getAutonomousCommand( )) != null)
       {
-        m_autoCommand.schedule( );
+        CommandScheduler.getInstance( ).schedule(m_autoCommand);
       }
     }));
 
